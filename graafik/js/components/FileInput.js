@@ -34,9 +34,9 @@ export default {
 
     parseCSV(csvContent) {
       const lines = csvContent.split('\n').filter(line => line.trim() !== '');
-      const headers = lines[0].split(',').map(header => header.trim());
+      const headers = lines[0].split(';').map(header => header.trim());
       return lines.slice(1).map(line => {
-        const values = line.split(',').map(value => value.trim());
+        const values = line.toUpperCase().split(';').map(value => value.trim());
         return headers.reduce((obj, header, index) => {
           console.log("OBJ", header)
           console.log(values[index])
