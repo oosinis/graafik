@@ -26,7 +26,7 @@ export default {
           const data = this.parseCSV(csvContent);
           this.$emit('parsed-data', data);
         };
-        reader.readAsText(this.file);
+        reader.readAsText(this.file, 'UTF-8');
       } else {
         alert('Please upload a valid CSV file.');
       }
@@ -38,8 +38,6 @@ export default {
       return lines.slice(1).map(line => {
         const values = line.toUpperCase().split(';').map(value => value.trim());
         return headers.reduce((obj, header, index) => {
-          console.log("OBJ", header)
-          console.log(values[index])
           obj[header] = values[index];
           return obj;
         }, {});

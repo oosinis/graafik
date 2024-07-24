@@ -1,13 +1,15 @@
 import FileInput from "./FileInput.js";
+import { processCSVData } from "./DataProcessor.js";
 
 export default {
   components: { FileInput },
 
   template: `
+
       <h1>CSV File Upload</h1>
       <FileInput @parsed-data="handleParsedData" />
       <div v-if="csvData.length">
-        <h2>Parsed CSV Data</h2>
+        <h2>Processed CSV Data</h2>
         <table border="1">
           <thead>
             <tr>
@@ -22,7 +24,7 @@ export default {
         </table>
       </div>
 
-  `,
+      `,
 
   data() {
     return {
@@ -32,12 +34,14 @@ export default {
   computed: {
     headers() {
       return this.csvData.length ? Object.keys(this.csvData[0]) : [];
+
     }
   },
   
   methods: {
     handleParsedData(data) {
-      this.csvData = data;
+      console.log(data);
+      this.csvData = processCSVData(data);
     }
   }
 }
