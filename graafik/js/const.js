@@ -1,7 +1,9 @@
-export const weekEnd = ['l', 'p'];
-export const sickLeave = 'h';
-export const vacation = 'p';
-export const requestOffDay = 'x';
-export const requestworkDay = 't';
+export const weekEnd = ['L', 'P'];
+export const sickLeave = 'H';
+export const vacation = 'P';
+export const requestOffDay = 'X';
+export const requestWorkDay = 'T';
+
+export const requestsList = [sickLeave, vacation, requestOffDay, requestWorkDay];
 
 
