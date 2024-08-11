@@ -22,6 +22,237 @@ const weekdayPersonnel = [
 const weekendPersonnel = [...weekdayPersonnel];
 
 export function processCSVData(csvContent) {
+  const emptyTable = JSON.parse(JSON.stringify(csvContent)); // Deep copy to avoid mutation
+  const neededPersonnelList = createNeededPersonnelList(emptyTable);
+  const numberOfDates = Object.keys(emptyTable[0]).length - 1; // Exclude the name/title column
+
+  const initialState = {
+    schedule: {}, // { date: { shiftIndex: employeeId } }
+    employeeShifts: {}, // { employeeId: [dates they are scheduled] }
+    currentSum: 0,
+  };
+
+  let bestState = {
+    schedule: null,
+    currentSum: -Infinity,
+  };
+
+  // Start recursive backtracking
+  backtrack(
+    0, // current date index
+    0, // current shift index
+    initialState,
+    neededPersonnelList,
+    emptyTable,
+    numberOfDates,
+    bestState
+  );
+
+  // After backtracking, apply the best schedule to the emptyTable
+  if (bestState.schedule) {
+    for (const date in bestState.schedule) {
+      for (const shiftIdx in bestState.schedule[date]) {
+        const employeeId = bestState.schedule[date][shiftIdx];
+        // Assign the shift duration or identifier to the cell
+        emptyTable[employeeId][parseInt(date) + 1] = neededPersonnelList[date][shiftIdx].duration; // +1 to account for the title column
+      }
+    }
+  }
+
+  return emptyTable;
+}
+
+// Recursive backtracking function
+function backtrack(
+  dateIdx,
+  shiftIdx,
+  state,
+  neededPersonnelList,
+  emptyTable,
+  numberOfDates,
+  bestState
+) {
+  // If all dates are processed
+  if (dateIdx === numberOfDates) {
+    // Check if current schedule is better than the best found so far
+    if (state.currentSum > bestState.currentSum) {
+      bestState.schedule = JSON.parse(JSON.stringify(state.schedule));
+      bestState.currentSum = state.currentSum;
+    }
+    return;
+  }
+
+
+  const shiftsForDate = neededPersonnelList[dateIdx];
+  const totalShifts = shiftsForDate.length;
+
+  // If all shifts for the current date are processed, move to the next date
+  if (shiftIdx === totalShifts) {
+    backtrack(dateIdx + 1, 0, state, neededPersonnelList, emptyTable, numberOfDates, bestState);
+    return;
+  }
+
+  // Try assigning each employee to the current shift
+  for (let employeeId = 1; employeeId < emptyTable.length; employeeId++) {
+    // Check if employee is already scheduled for this date
+    if (isEmployeeScheduled(state.schedule, dateIdx, employeeId)) {
+      continue;
+    }
+
+    // Check if employee is available for this shift
+    const availability = emptyTable[employeeId][dateIdx + 1]; // +1 to account for the title column
+    if (!isEmployeeAvailable(availability, shiftsForDate[shiftIdx])) {
+      continue;
+    }
+
+    // Check other constraints (e.g., rest periods)
+    if (!checkOtherConstraints(state.employeeShifts, employeeId, dateIdx, shiftsForDate[shiftIdx])) {
+      continue;
+    }
+
+    // Calculate the change in score
+    const changeInSum = calculateChangeInSum(availability, state.employeeShifts, employeeId, dateIdx, shiftsForDate[shiftIdx]);
+
+    // Prune if the potential sum isn't better than the best found so far
+    if (state.currentSum + changeInSum <= bestState.currentSum) {
+      continue;
+    }
+
+    // Make the assignment
+    assignShift(state, dateIdx, shiftIdx, employeeId, changeInSum);
+
+    // Recursive call to assign the next shift
+    backtrack(
+      dateIdx,
+      shiftIdx + 1,
+      state,
+      neededPersonnelList,
+      emptyTable,
+      numberOfDates,
+      bestState
+    );
+
+    // Backtrack: undo the assignment
+    unassignShift(state, dateIdx, shiftIdx, employeeId, changeInSum);
+  }
+}
+
+// Helper functions
+
+function isEmployeeScheduled(schedule, dateIdx, employeeId) {
+  if (!schedule[dateIdx]) return false;
+  for (const shift in schedule[dateIdx]) {
+    if (schedule[dateIdx][shift] === employeeId) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isEmployeeAvailable(availability, shift) {
+  // Implement logic based on the 'H', 'P', 'X', 'T', or other codes
+  // For example:
+  if (availability === 'H') return false; // On sick leave
+  if (availability === 'P') return false; // On vacation
+  // Add more conditions as needed
+  return true; // Available
+}
+
+function checkOtherConstraints(employeeShifts, employeeId, dateIdx, shift) {
+  // Implement other constraints such as rest periods, maximum working hours, etc.
+  // For example:
+  const previousShifts = employeeShifts[employeeId];
+  if (!previousShifts) return true; // No previous shifts
+
+  // Check rest period between shifts
+  for (const prevDateIdx of previousShifts) {
+    const daysBetween = dateIdx - prevDateIdx;
+    if (daysBetween < requiredRestDays(shift)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function requiredRestDays(shift) {
+  // Return the required number of rest days after a given shift
+  // For example:
+  if (shift === shiftMap['24-Hour Shift']) return 3;
+  if (shift === shiftMap['Day Shift']) return 1;
+  // Add more conditions as needed
+  return 0;
+}
+
+function calculateChangeInSum(availability, employeeShifts, employeeId, dateIdx, shift) {
+  // Implement logic to calculate the change in the cumulative score
+  // For example:
+  let change = 0;
+  if (availability === 'X') change -= 25; // Undesirable day
+  if (availability === 'T') change += 10; // Preferred day
+
+  // Add more based on previous shifts, etc.
+  return change;
+}
+
+function assignShift(state, dateIdx, shiftIdx, employeeId, changeInSum) {
+  // Update the schedule
+  if (!state.schedule[dateIdx]) {
+    state.schedule[dateIdx] = {};
+  }
+  state.schedule[dateIdx][shiftIdx] = employeeId;
+
+  // Update employee shifts
+  if (!state.employeeShifts[employeeId]) {
+    state.employeeShifts[employeeId] = [];
+  }
+  state.employeeShifts[employeeId].push(dateIdx);
+
+  // Update the cumulative sum
+  state.currentSum += changeInSum;
+}
+
+function unassignShift(state, dateIdx, shiftIdx, employeeId, changeInSum) {
+  // Remove from the schedule
+  delete state.schedule[dateIdx][shiftIdx];
+  if (Object.keys(state.schedule[dateIdx]).length === 0) {
+    delete state.schedule[dateIdx];
+  }
+
+  // Remove from employee shifts
+  const index = state.employeeShifts[employeeId].indexOf(dateIdx);
+  if (index > -1) {
+    state.employeeShifts[employeeId].splice(index, 1);
+  }
+  if (state.employeeShifts[employeeId].length === 0) {
+    delete state.employeeShifts[employeeId];
+  }
+
+  // Update the cumulative sum
+  state.currentSum -= changeInSum;
+}
+
+function createNeededPersonnelList(csvContent) {
+  const weekdays = Object.values(csvContent[0]).slice(1); // Exclude the title column
+  const neededPersonnelList = [];
+
+  weekdays.forEach((day, dateIndex) => {
+    const personnelSource = weekEnd.includes(day) ? weekendPersonnel : weekdayPersonnel;
+    const neededPersonnel = [];
+
+    personnelSource.forEach(personnel => {
+      for (let i = 0; i < personnel.count; i++) {
+        neededPersonnel.push(personnel.shift);
+      }
+    });
+
+    neededPersonnelList[dateIndex] = neededPersonnel;
+  });
+
+  return neededPersonnelList;
+}
+/*
+export function processCSVData(csvContent) {
 
 
   const emptyTable = csvContent;
@@ -341,7 +572,7 @@ export function processCSVData(csvContent) {
   return emptyTable;
 
 }
-
+*/
 function createEmptyTable(csvContent) {
   // Get the number of rows and columns from the existing matrix
   const rows = csvContent.length;
@@ -352,7 +583,7 @@ function createEmptyTable(csvContent) {
 
   return newTable;
 }
-
+/*
 function createNeededPersonnelList(csvContent) {
   const weekdays = Object.values(csvContent[0]).slice(0, -1);
   const needed_personnel_list = [];
@@ -372,7 +603,7 @@ function createNeededPersonnelList(csvContent) {
 
   return needed_personnel_list;
 }
-
+*/
 
 function addShiftRows(csvContent) {
 
