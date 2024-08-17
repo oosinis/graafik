@@ -69,6 +69,7 @@ public class Main {
 
         List<TöötajaVahetus[][]> parimadGraafikud = new ArrayList<>();
         TöötajaVahetus[][] parimGraafik = new TöötajaVahetus[0][0];
+
         GraafikuLoogika.rekursioon(kirjaPandudVahetused, tühiGraafik, parimGraafik, töötajateGraafik, töötajad, vahetusteNimekiri, parimadGraafikud, 0, -100, 0, kuuPikkus, false);
 
         for (TöötajaVahetus[][] graafik : parimadGraafikud) {
