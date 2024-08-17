@@ -39,6 +39,32 @@ public class TöötajateGraafik {
         }
     }
 
+    public void removeFromTöötajateGraafik(Töötaja töötaja, Integer kuupäev) {
+        // Check if the employee is in the schedule
+        if (töötajateGraafik.containsKey(töötaja)) {
+            // Get the employee's schedule
+            HashMap<Integer, Vahetus> töötajaGraafik = töötajateGraafik.get(töötaja);
+
+            // Check if the specific date has a shift assigned
+            if (töötajaGraafik.containsKey(kuupäev)) {
+                // Remove the shift for the specific date
+                töötajaGraafik.remove(kuupäev);
+                System.out.println("Removed vahetus for " + töötaja.getNimi() + " on date: " + kuupäev);
+
+                // If the employee's schedule is empty, remove the employee from the main schedule
+                if (töötajaGraafik.isEmpty()) {
+                    töötajateGraafik.remove(töötaja);
+                    System.out.println("Removed employee " + töötaja.getNimi() + " from the schedule as they have no shifts left.");
+                }
+            } else {
+                System.out.println("No vahetus found for " + töötaja.getNimi() + " on date: " + kuupäev);
+            }
+        } else {
+            System.out.println("Employee " + töötaja.getNimi() + " is not in the schedule.");
+        }
+    }
+
+
 
     @Override
     public String toString() {

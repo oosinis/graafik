@@ -13,21 +13,24 @@ public class TöötajateNimekiri {
         List<Integer> helvePuhkusePäevad = new ArrayList<>();
         ArrayList<Integer> helveSooviPuhkepäevad = new ArrayList<>(Arrays.asList(1, 26, 27, 28, 29));
         HashMap<Integer, Vahetus> helveSooviTööpäevad = new HashMap<>();
-        Töötaja helve = new Töötaja(0, "Helve", 1.0, -6,  0, helvePuhkusePäevad, helveSooviPuhkepäevad, helveSooviTööpäevad);
+        List<Integer> helveHaiguslehePäevad = new ArrayList<>();
+        Töötaja helve = new Töötaja(0, "Helve", 1.0, -6,  0, helvePuhkusePäevad, helveSooviPuhkepäevad, helveSooviTööpäevad, helveHaiguslehePäevad);
         töötajateNimekiri.add(helve);
 
         // KAI
         List<Integer> kaiPuhkusePäevad = new ArrayList<>();
         List<Integer> kaiSooviPuhkepäevad = new ArrayList<>(Arrays.asList(27, 28, 29 , 30));
         HashMap<Integer, Vahetus> kaiSooviTööpäevad = new HashMap<>();
-        Töötaja kai = new Töötaja(1, "Kai", 1.0, -8, 8, kaiPuhkusePäevad, kaiSooviPuhkepäevad, kaiSooviTööpäevad);
+        List<Integer> kaiHaiguslehePäevad = new ArrayList<>();
+        Töötaja kai = new Töötaja(1, "Kai", 1.0, -8, 8, kaiPuhkusePäevad, kaiSooviPuhkepäevad, kaiSooviTööpäevad, kaiHaiguslehePäevad);
         töötajateNimekiri.add(kai);
 
         // KAJA
         List<Integer> kajaPuhkusePäevad = new ArrayList<>();
         List<Integer> kajaSooviPuhkePäevad = new ArrayList<>();
         HashMap<Integer, Vahetus> kajaSooviTööpäevad = new HashMap<>();
-        Töötaja kaja = new Töötaja(2, "Kaja", 1.0, -8, 0, kajaPuhkusePäevad, kajaSooviPuhkePäevad, kajaSooviTööpäevad);
+        List<Integer> kajaHaiguslehePäevad = new ArrayList<>();
+        Töötaja kaja = new Töötaja(2, "Kaja", 1.0, -8, 0, kajaPuhkusePäevad, kajaSooviPuhkePäevad, kajaSooviTööpäevad, kajaHaiguslehePäevad);
         //töötajateNimekiri.add(kaja);
 
         // PÄRJA
@@ -42,7 +45,8 @@ public class TöötajateNimekiri {
                 28, new Vahetus(24, "osakond"),
                 30, new Vahetus(24, "osakond")
             ));
-        Töötaja pärja = new Töötaja(3, "Pärja", 1.0, -12, 8, pärjaPuhkusePäevad, pärjaSooviPuhkePäevad, pärjaSooviTööpäevad);
+        List<Integer> pärjaHaiguslehePäevad = new ArrayList<>();
+        Töötaja pärja = new Töötaja(3, "Pärja", 1.0, -12, 8, pärjaPuhkusePäevad, pärjaSooviPuhkePäevad, pärjaSooviTööpäevad, pärjaHaiguslehePäevad);
         töötajateNimekiri.add(pärja);
     }
 
