@@ -1,6 +1,6 @@
 package data;
 
-import objects.Vahetus;
+import objects.Shift;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,14 +8,13 @@ import java.util.List;
 
 public class TööpäevaVahetus {
 
-    List<Vahetus> tööpäevaVahetus = new ArrayList<>(Arrays.asList(
-            new Vahetus(24, "intensiiv"),
-            new Vahetus(24, "osakond"),
-            new Vahetus(8, "lühike päev")
+    List<Shift> tööpäevaVahetus = new ArrayList<>(Arrays.asList(new Shift(24, "intensiiv"),
+            new Shift(24, "osakond"),
+            new Shift(8, "lühike päev")
     ));
 
 
-    public List<Vahetus> getTööpäevaVahetus() {
+    public List<Shift> getTööpäevaVahetus() {
         return tööpäevaVahetus;
     }
 

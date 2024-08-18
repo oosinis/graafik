@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Töötaja {
+public class Worker {
 
     int employeeId;
     String nimi;
@@ -13,11 +13,11 @@ public class Töötaja {
     int eelmiseKuuVahetuseTunnid;
     List<Integer> puhkusePäevad = new ArrayList<>();
     List<Integer> sooviPuhkePäevad = new ArrayList<>();
-    HashMap<Integer, Vahetus> sooviTööPäevad = new HashMap<>();
+    HashMap<Integer, Shift> sooviTööPäevad = new HashMap<>();
 
     List<Integer> haiguslehePäevad = new ArrayList<>();
 
-    public Töötaja(int employeeId, String nimi, double töökoormus, Integer eelmiseKuuÜlejääk, int eelmiseKuuVahetuseTunnid, List<Integer> puhkusePäevad, List<Integer> sooviPuhkePäevad, HashMap<Integer, Vahetus> sooviTööPäevad, List<Integer> haiguslehePäevad) {
+    public Worker(int employeeId, String nimi, double töökoormus, Integer eelmiseKuuÜlejääk, int eelmiseKuuVahetuseTunnid, List<Integer> puhkusePäevad, List<Integer> sooviPuhkePäevad, HashMap<Integer, Shift> sooviTööPäevad, List<Integer> haiguslehePäevad) {
         this.employeeId = employeeId;
         this.nimi = nimi;
         this.töökoormus = töökoormus;
@@ -85,11 +85,11 @@ public class Töötaja {
         this.sooviPuhkePäevad = sooviPuhkePäevad;
     }
 
-    public HashMap<Integer, Vahetus> getSooviTööPäevad() {
+    public HashMap<Integer, Shift> getSooviTööPäevad() {
         return sooviTööPäevad;
     }
 
-    public void setSooviTööPäevad(HashMap<Integer, Vahetus> sooviTööPäevad) {
+    public void setSooviTööPäevad(HashMap<Integer, Shift> sooviTööPäevad) {
         this.sooviTööPäevad = sooviTööPäevad;
     }
 

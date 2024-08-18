@@ -1,6 +1,6 @@
 package objects;
 
-public class Vahetus {
+public class Shift {
     // Attributes
     private int pikkus; // Duration in minutes or hours
     private String kategooria;
@@ -11,7 +11,7 @@ public class Vahetus {
     public static final String OSAKOND = "osakond";
 
     // Constructor
-    public Vahetus(int pikkus, String kategooria) {
+    public Shift(int pikkus, String kategooria) {
         this.pikkus = pikkus;
         setCategory(kategooria);
     }

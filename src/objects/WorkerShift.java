@@ -1,27 +1,27 @@
 package objects;
 
-public class TöötajaVahetus {
-    private Vahetus vahetus;
-    private Töötaja töötaja;
+public class WorkerShift {
+    private Shift vahetus;
+    private Worker töötaja;
 
-    public TöötajaVahetus(Vahetus vahetus, Töötaja töötaja) {
+    public WorkerShift(Shift vahetus, Worker töötaja) {
         this.vahetus = vahetus;
         this.töötaja = töötaja;
     }
 
-    public Vahetus getVahetus() {
+    public Shift getVahetus() {
         return vahetus;
     }
 
-    public void setVahetus(Vahetus vahetus) {
+    public void setVahetus(Shift vahetus) {
         this.vahetus = vahetus;
     }
 
-    public Töötaja getTöötaja() {
+    public Worker getTöötaja() {
         return töötaja;
     }
 
-    public void setTöötaja(Töötaja töötaja) {
+    public void setTöötaja(Worker töötaja) {
         this.töötaja = töötaja;
     }
 

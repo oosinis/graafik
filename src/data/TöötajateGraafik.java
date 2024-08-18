@@ -1,24 +1,23 @@
 package data;
 
-import objects.Töötaja;
-import objects.Vahetus;
-
 import java.util.HashMap;
 import java.util.Map;
+import objects.Shift;
+import objects.Worker;
 
 public class TöötajateGraafik {
 
-    HashMap<Töötaja, HashMap<Integer, Vahetus>> töötajateGraafik;
+    HashMap<Worker, HashMap<Integer, Shift>> töötajateGraafik;
 
-    public TöötajateGraafik(HashMap<Töötaja, HashMap<Integer, Vahetus>> töötajateGraafik) {
+    public TöötajateGraafik(HashMap<Worker, HashMap<Integer, Shift>> töötajateGraafik) {
         this.töötajateGraafik = töötajateGraafik;
     }
 
-    public void addToTöötajaGraafik(Töötaja töötaja, Integer kuupäev, Vahetus vahetus) {
+    public void addToTöötajaGraafik(Worker töötaja, Integer kuupäev, Shift vahetus) {
         // Check if the employee is already in the schedule
         if (töötajateGraafik.containsKey(töötaja)) {
             // Get the employee's schedule
-            HashMap<Integer, Vahetus> töötajaGraafik = töötajateGraafik.get(töötaja);
+            HashMap<Integer, Shift> töötajaGraafik = töötajateGraafik.get(töötaja);
 
             // Check if the specific date already has a shift assigned
             if (töötajaGraafik.containsKey(kuupäev)) {
@@ -30,7 +29,7 @@ public class TöötajateGraafik {
             }
         } else {
             // If the employee does not exist, create a new schedule for them
-            HashMap<Integer, Vahetus> newGraafik = new HashMap<>();
+            HashMap<Integer, Shift> newGraafik = new HashMap<>();
             newGraafik.put(kuupäev, vahetus);
 
             // Add the new schedule to the main schedule
@@ -39,11 +38,11 @@ public class TöötajateGraafik {
         }
     }
 
-    public void removeFromTöötajateGraafik(Töötaja töötaja, Integer kuupäev) {
+    public void removeFromTöötajateGraafik(Worker töötaja, Integer kuupäev) {
         // Check if the employee is in the schedule
         if (töötajateGraafik.containsKey(töötaja)) {
             // Get the employee's schedule
-            HashMap<Integer, Vahetus> töötajaGraafik = töötajateGraafik.get(töötaja);
+            HashMap<Integer, Shift> töötajaGraafik = töötajateGraafik.get(töötaja);
 
             // Check if the specific date has a shift assigned
             if (töötajaGraafik.containsKey(kuupäev)) {
@@ -71,17 +70,17 @@ public class TöötajateGraafik {
         StringBuilder sb = new StringBuilder();
 
         // Loop through the main HashMap
-        for (Map.Entry<Töötaja, HashMap<Integer, Vahetus>> employeeEntry : töötajateGraafik.entrySet()) {
-            Töötaja töötaja = employeeEntry.getKey();
-            HashMap<Integer, Vahetus> schedule = employeeEntry.getValue();
+        for (Map.Entry<Worker, HashMap<Integer, Shift>> employeeEntry : töötajateGraafik.entrySet()) {
+            Worker töötaja = employeeEntry.getKey();
+            HashMap<Integer, Shift> schedule = employeeEntry.getValue();
 
             // Append employee's name
             sb.append("Töötaja: ").append(töötaja.getNimi()).append("\n");
 
             // Loop through the employee's schedule
-            for (Map.Entry<Integer, Vahetus> scheduleEntry : schedule.entrySet()) {
+            for (Map.Entry<Integer, Shift> scheduleEntry : schedule.entrySet()) {
                 Integer kuupäev = scheduleEntry.getKey();
-                Vahetus vahetus = scheduleEntry.getValue();
+                Shift vahetus = scheduleEntry.getValue();
 
                 // Append date and shift details
                 sb.append("  Kuupäev: ").append(kuupäev)

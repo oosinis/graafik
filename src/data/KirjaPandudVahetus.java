@@ -1,15 +1,15 @@
 package data;
 
-import objects.Töötaja;
-import objects.Vahetus;
+import objects.Worker;
+import objects.Shift;
 
 public class KirjaPandudVahetus {
     int kuupäev;
-    Töötaja töötaja;
-    Vahetus vahetus;
+    Worker töötaja;
+    Shift vahetus;
     int hindeMuutus;
 
-    public KirjaPandudVahetus(int kuupäev, Töötaja töötaja, Vahetus vahetus, int hindeMuutus) {
+    public KirjaPandudVahetus(int kuupäev, Worker töötaja, Shift vahetus, int hindeMuutus) {
         this.kuupäev = kuupäev;
         this.töötaja = töötaja;
         this.vahetus = vahetus;
@@ -24,19 +24,19 @@ public class KirjaPandudVahetus {
         this.kuupäev = kuupäev;
     }
 
-    public Töötaja getTöötaja() {
+    public Worker getTöötaja() {
         return töötaja;
     }
 
-    public void setTöötaja(Töötaja töötaja) {
+    public void setTöötaja(Worker töötaja) {
         this.töötaja = töötaja;
     }
 
-    public Vahetus getVahetus() {
+    public Shift getVahetus() {
         return vahetus;
     }
 
-    public void setVahetus(Vahetus vahetus) {
+    public void setVahetus(Shift vahetus) {
         this.vahetus = vahetus;
     }
 

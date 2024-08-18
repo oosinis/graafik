@@ -1,8 +1,8 @@
 package data;
 
-import objects.Töötaja;
-import objects.TöötajaVahetus;
-import objects.Vahetus;
+import objects.Worker;
+import objects.WorkerShift;
+import objects.Shift;
 
 import java.util.*;
 
@@ -11,39 +11,39 @@ public class GraafikuLoogika {
     int kuuPikkus;
     int[] kuuPäevad;
     Character esimenePäev;
-    List<Töötaja> töötajad;
+    List<Worker> töötajad;
     List<Character> nädalaPäevad = new ArrayList<>(Arrays.asList('E', 'T', 'K', 'N', 'R', 'L', 'P'));
 
 
-    public static TöötajaVahetus[][] createTühiGraafik(int kuuPikkus, List<Töötaja> töötajad) {
-        TöötajaVahetus[][] tühiGraafik = new TöötajaVahetus[kuuPikkus][töötajad.size()];
+    public static WorkerShift[][] createTühiGraafik(int kuuPikkus, List<Worker> töötajad) {
+        WorkerShift[][] tühiGraafik = new WorkerShift[kuuPikkus][töötajad.size()];
         return tühiGraafik;
     }
 
-    public static TöötajaVahetus[][] createSooviGraafik(int kuuPikkus, List<Töötaja> töötajad) {
-        TöötajaVahetus[][] sooviGraafik = new TöötajaVahetus[kuuPikkus][töötajad.size()];
+    public static WorkerShift[][] createSooviGraafik(int kuuPikkus, List<Worker> töötajad) {
+        WorkerShift[][] sooviGraafik = new WorkerShift[kuuPikkus][töötajad.size()];
 
         for (int i = 0; i < töötajad.size(); i++) {
-            Töötaja töötaja = töötajad.get(i);
-            HashMap<Integer, Vahetus> sooviTööPäevad = töötaja.getSooviTööPäevad();
-            for (Map.Entry<Integer, Vahetus> entry : sooviTööPäevad.entrySet()) {
+            Worker töötaja = töötajad.get(i);
+            HashMap<Integer, Shift> sooviTööPäevad = töötaja.getSooviTööPäevad();
+            for (Map.Entry<Integer, Shift> entry : sooviTööPäevad.entrySet()) {
                 int kuupäev = entry.getKey() - 1;
-                Vahetus vahetus = entry.getValue();
-                sooviGraafik[kuupäev][i] = new TöötajaVahetus(vahetus, töötaja);
+                Shift vahetus = entry.getValue();
+                sooviGraafik[kuupäev][i] = new WorkerShift(vahetus, töötaja);
             }
         }
         return sooviGraafik;
     }
 
-    public static HashMap<Integer, List<Vahetus>> createVahetusteList(int kuuPikus) {
-        HashMap<Integer, List<Vahetus>> tööpäevaVahetus = new HashMap<>();
+    public static HashMap<Integer, List<Shift>> createVahetusteList(int kuuPikus) {
+        HashMap<Integer, List<Shift>> tööpäevaVahetus = new HashMap<>();
         for (int i = 0; i < kuuPikus; i++) {
             tööpäevaVahetus.put(i, new TööpäevaVahetus().tööpäevaVahetus);
         }
         return tööpäevaVahetus;
     }
 
-    private static int getHindemuutus(int kuupäev, Töötaja töötaja, Vahetus vahetus) {
+    private static int getHindemuutus(int kuupäev, Worker töötaja, Shift vahetus) {
         int muutus = 0;
         if (töötaja.getPuhkusePäevad().contains(kuupäev)) muutus = -50;
         else if (töötaja.getSooviPuhkePäevad().contains(kuupäev)) muutus = -25;
@@ -53,22 +53,22 @@ public class GraafikuLoogika {
     }
 
     private static void lisaVahetusNimekirja(List<KirjaPandudVahetus> kirjaPandudVahetused,
-                                             TöötajaVahetus[][] tühiGraafik,
+                                             WorkerShift[][] tühiGraafik,
                                              TöötajateGraafik töötajateGraafik,
-                                             HashMap<Integer, List<Vahetus>> vahetusteList,
+                                             HashMap<Integer, List<Shift>> vahetusteList,
                                              int kuupäev,
-                                             Töötaja töötaja,
+                                             Worker töötaja,
                                              int hindeMuutus,
                                              int praeguneHinne,
-                                             Vahetus vahetus
+                                             Shift vahetus
     ) {
 
-        tühiGraafik[kuupäev][töötaja.getEmployeeId()] = new TöötajaVahetus(vahetus, töötaja);
+        tühiGraafik[kuupäev][töötaja.getEmployeeId()] = new WorkerShift(vahetus, töötaja);
         kirjaPandudVahetused.add(new KirjaPandudVahetus(kuupäev, töötaja, vahetus, hindeMuutus));
 
         töötajateGraafik.addToTöötajaGraafik(töötaja, kuupäev, vahetus);
 
-        List<Vahetus> vahetusedForDay = vahetusteList.get(kuupäev);
+        List<Shift> vahetusedForDay = vahetusteList.get(kuupäev);
         if (vahetusedForDay != null) {
             vahetusedForDay.remove(vahetus);
         } else {
@@ -79,14 +79,14 @@ public class GraafikuLoogika {
     }
 
     private static void eemaldaVahetusNimekirjast(List<KirjaPandudVahetus> kirjaPandudVahetused,
-                                                  TöötajaVahetus[][] tühiGraafik,
+                                                  WorkerShift[][] tühiGraafik,
                                                   TöötajateGraafik töötajateGraafik,
-                                                  HashMap<Integer, List<Vahetus>> vahetusteList,
+                                                  HashMap<Integer, List<Shift>> vahetusteList,
                                                   int kuupäev,
-                                                  Töötaja töötaja,
+                                                  Worker töötaja,
                                                   int hindeMuutus,
                                                   int praeguneHinne,
-                                                  Vahetus vahetus) {
+                                                  Shift vahetus) {
 
         tühiGraafik[kuupäev][töötaja.getEmployeeId()] = null;
         kirjaPandudVahetused.remove(kirjaPandudVahetused.size() - 1);
@@ -95,13 +95,13 @@ public class GraafikuLoogika {
         praeguneHinne -= hindeMuutus;
     }
 
-    private static Boolean kasJubaTöölKirjas(int kuupäev, Töötaja töötaja, TöötajateGraafik töötajateGraafik) {
+    private static Boolean kasJubaTöölKirjas(int kuupäev, Worker töötaja, TöötajateGraafik töötajateGraafik) {
         if (töötajateGraafik.containsKey(töötaja)) {
             return töötajateGraafik.get(töötaja).containsKey(kuupäev);
         } return false;
     }
 
-    private static Boolean kasTöötajaVaba(int kuupäev, Töötaja töötaja) {
+    private static Boolean kasTöötajaVaba(int kuupäev, Worker töötaja) {
         if (töötaja.getHaiguslehePäevad().contains(kuupäev)) return false;
         return true;
     }
@@ -112,12 +112,12 @@ public class GraafikuLoogika {
 
     public static void rekursioon(
             List<KirjaPandudVahetus> kirjaPandudVahetused,
-            TöötajaVahetus[][] tühiGraafik,
-            TöötajaVahetus[][] parimGraafik,
+            WorkerShift[][] tühiGraafik,
+            WorkerShift[][] parimGraafik,
             TöötajateGraafik töötajateGraafik,
-            List<Töötaja> töötajateNimekiri,
-            HashMap<Integer, List<Vahetus>> vahetusteList,
-            List<TöötajaVahetus[][]> parimadGraafikud,
+            List<Worker> töötajateNimekiri,
+            HashMap<Integer, List<Shift>> vahetusteList,
+            List<WorkerShift[][]> parimadGraafikud,
             int praeguneHinne,
             int parimHinne,
             int kuupäev,
@@ -148,10 +148,10 @@ public class GraafikuLoogika {
             rekursioon(kirjaPandudVahetused, tühiGraafik, parimGraafik, töötajateGraafik, töötajateNimekiri, vahetusteList, parimadGraafikud, praeguneHinne, parimHinne, kuupäev++, alustatud);
             return;
         }
-        Vahetus vahetus = vahetusteList.get(kuupäev).get(0);
+        Shift vahetus = vahetusteList.get(kuupäev).get(0);
 
         // suur loop kõige ümber
-        for (Töötaja töötaja : töötajateNimekiri) {
+        for (Worker töötaja : töötajateNimekiri) {
 
             // TODO kas juba kirjas
             if (kasJubaTöölKirjas(kuupäev, töötaja, töötajateGraafik)) return;
