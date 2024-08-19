@@ -43,6 +43,7 @@ public class ScheduleCreator {
                     if (yesterdayShift != "24" && todayShift.equals("") && tomorrowShift != "24") {
                         scheduleMatrix[i][personIndex] =  "24";
                         break;
+                        // Kui keegi ei matchi selle conditioniga siis paneme kellegile soovipuhkepäeva peale ehk D ja ss kui ka ei saa ehk ülejäänud P jne ss PUTSIS
                     }
                 }
             }
