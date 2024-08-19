@@ -18,8 +18,49 @@ public class ScheduleCreator {
             Arrays.fill(scheduleMatrix[i], "");
         }
 
+        // Step 1 fill worker wishes
         for (Worker töötaja : töötajateNimekiri) {
             assignShifts(töötaja, scheduleMatrix);
+        }
+
+        // Siin Reegel 2 kas iga paev töötab 2 inimest
+        for (int i = 0; i < daysInMonth; i++) {
+            List<String> yesterDay = null;
+            if (i != 0) yesterDay = Arrays.asList(scheduleMatrix[i-1]);
+            var today = Arrays.asList(scheduleMatrix[i]);
+            // Siia vaja teha check et kui daysinmont on saavutatud ss ei saa vota järgmist päeva kui rohkem päevi pole
+            var tomorrow = Arrays.asList(scheduleMatrix[i + 1]);
+            var includes24 = today.contains("24");
+            var includes12 = today.contains("12");
+            
+            if (!includes24) {
+                for (int personIndex = 0; personIndex < today.size(); personIndex++) {
+                    String yesterdayShift = null;
+                    if (i != 0) yesterdayShift = yesterDay.get(personIndex);
+                    var todayShift = today.get(personIndex);
+                    var tomorrowShift = tomorrow.get(personIndex);
+                    // Reegel 1 check et eelmine päev polnud 24h ja järka päev kah
+                    if (yesterdayShift != "24" && todayShift.equals("") && tomorrowShift != "24") {
+                        scheduleMatrix[i][personIndex] =  "24";
+                        break;
+                    }
+                }
+            }
+
+            if (!includes12) {
+                for (int personIndex = 0; personIndex < today.size(); personIndex++) {
+                    String yesterdayShift = null;
+                    if (i != 0) yesterdayShift = yesterDay.get(personIndex);
+                    var todayShift = today.get(personIndex);
+                    var tomorrowShift = tomorrow.get(personIndex);
+                    // Reegel 1 check et eelmine päev polnud 24h ja järka päev kah
+                    if (yesterdayShift != "24" && todayShift.equals("") && tomorrowShift != "24") {
+                        scheduleMatrix[i][personIndex] =  "12";
+                        break;
+                    }
+                }
+            }
+
         }
 
         printSchedule(scheduleMatrix, töötajateNimekiri);
@@ -38,16 +79,18 @@ public class ScheduleCreator {
             scheduleMatrix[day][töötaja.getEmployeeId()] = String.valueOf(entry.getValue().getDuration());
         }
 
-        // Desired Vacation Days
-        for (Integer dayOff : desiredVacationDays) {
-            scheduleMatrix[dayOff - 1][töötaja.getEmployeeId()] = "D";
-        }
-
         // Vacation Days
         for (Integer vacationDay : vacationDays) {
             scheduleMatrix[vacationDay - 1][töötaja.getEmployeeId()] = "P";
         }
 
+        // Desired Vacation Days
+        for (Integer dayOff : desiredVacationDays) {
+            scheduleMatrix[dayOff - 1][töötaja.getEmployeeId()] = "D";
+        }
+    }
+
+    private static void checkConstraints(String[][] scheduleMatrix) {
         // Loogika mida tööandja nõuab, ehk nö constraints
         // 1. Peale 24h vahtust oleks päev vaba
         // 2. Teatud arv töötajaid tööl, nt hetkel võiks teha 2 kuna töötajaid 4
@@ -57,6 +100,8 @@ public class ScheduleCreator {
         // 3.3 puhkepäevad peavad olema tagatud ehk P
         // 3.4 soovitud puhkepäevad antakse siis kui 3.2 päeva kohta täidetud
         // ja ss mingit hinnet vaja v mitu graafikut ja ss hinnete võrdlus?
+        // Loeks failist
+        // Output faili
     }
 
     private static void printSchedule(String[][] scheduleMatrix, List<Worker> töötajateNimekiri) {
