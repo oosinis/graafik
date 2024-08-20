@@ -95,7 +95,7 @@ public class ScheduleCreator {
             String todayShift = todayShifts.get(personIndex);
             String tomorrowShift = tomorrowShifts.isEmpty() ? "" : tomorrowShifts.get(personIndex);
 
-            if (isValidShift(yesterdayShift, todayShift, tomorrowShift, shiftType)) {
+            if (isValidShift(yesterdayShift, todayShift, tomorrowShift, shiftType)) { // Biggest problem: right now assigning it to the first person :(
                 scheduleMatrix[dayIndex][personIndex] = shiftType;
                 break;
             }
