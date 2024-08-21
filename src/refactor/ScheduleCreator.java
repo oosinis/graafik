@@ -18,7 +18,7 @@ public class ScheduleCreator {
 
         AssignWorkerWishes.assignWorkerWishes(töötajateNimekiri, scheduleMatrix);
 
-        fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
+        AssignShifts.fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
         printScheduleAndCalculateHours(scheduleMatrix, töötajateNimekiri);
     }

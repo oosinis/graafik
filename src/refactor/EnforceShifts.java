@@ -11,7 +11,7 @@ public class EnforceShifts {
 
 
     // Ensure that each day has at least one "24" and one "8" shift
-    private static void enforceMinimumShifts(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts,
+    public static void enforceMinimumShifts(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts,
             List<Worker> töötajateNimekiri) {
 
         Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
@@ -31,12 +31,12 @@ public class EnforceShifts {
     }
 
     // Assign a shift to a worker who has a desired vacation day ("D")
-    private static void assignShiftToWorkerWithD(Shift[][] scheduleMatrix, int dayIndex, List<Worker> töötajateNimekiri,
+    public static void assignShiftToWorkerWithD(Shift[][] scheduleMatrix, int dayIndex, List<Worker> töötajateNimekiri,
             Shift shift) {
         for (int personIndex = 0; personIndex < töötajateNimekiri.size(); personIndex++) {
             if (scheduleMatrix[dayIndex][personIndex].getCategory().equals("D")) {
                 if (isValidShiftForD(scheduleMatrix, dayIndex, personIndex, shift)) {
-                    if (dayIndex < 6 || atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
+                    if (dayIndex < 6 || ValidateShifts.atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
 
                         scheduleMatrix[dayIndex][personIndex] = shift;
                         break;
@@ -47,7 +47,7 @@ public class EnforceShifts {
     }
 
     // Check if the shift can be assigned to a worker with "D"
-    private static boolean isValidShiftForD(Shift[][] scheduleMatrix, int dayIndex, int personIndex, Shift shift) {
+    public static boolean isValidShiftForD(Shift[][] scheduleMatrix, int dayIndex, int personIndex, Shift shift) {
         Shift yesterdayShift = dayIndex > 0 ? scheduleMatrix[dayIndex - 1][personIndex] : new Shift(0, "");
         Shift tomorrowShift = dayIndex < scheduleMatrix.length - 1 ? scheduleMatrix[dayIndex + 1][personIndex]
                 : new Shift(0, "");

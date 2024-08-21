@@ -5,7 +5,7 @@ import objects.Shift;
 public class ValidateShifts {
 
   // Check if assigning a Shift is possible
-  private static boolean isValidShift(Shift yesterdayShift, Shift todayShift, Shift tomorrowShift, Shift shift) {
+  public static boolean isValidShift(Shift yesterdayShift, Shift todayShift, Shift tomorrowShift, Shift shift) {
 
     if (shift.getDuration() == 24) {
       return yesterdayShift.getCategory().equals("") && todayShift.getCategory().equals("")
@@ -18,7 +18,7 @@ public class ValidateShifts {
     return false;
   }
 
-  private static Boolean atLeastTwoRestdays(Shift[][] scheduleMatrix, int dayIndex, int workerIndex) {
+  public static Boolean atLeastTwoRestdays(Shift[][] scheduleMatrix, int dayIndex, int workerIndex) {
 
     int consecutiveRestDays = 0;
 
