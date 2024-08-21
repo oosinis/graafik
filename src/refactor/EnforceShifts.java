@@ -1,5 +1,6 @@
 package refactor;
 
+import java.util.Arrays;
 import java.util.List;
 
 import objects.Shift;
@@ -12,14 +13,14 @@ public class EnforceShifts {
 
     // Ensure that each day has at least one "24" and one "8" shift
     public static void enforceMinimumShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> töötajateNimekiri) {
-        for (int i = 0; i < daysInMonth; i++) {
+        for (int dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
             List<Shift> yesterdayShifts;
-            if (i == 0)
-              yesterdayShifts = getEelmisestKuusÜletulevad(scheduleMatrix, töötajateNimekiri);
+            if (dayIndex == 0)
+              yesterdayShifts = HelperMethods.getEelmisestKuusÜletulevad(scheduleMatrix, töötajateNimekiri);
             else
-              yesterdayShifts = getShiftsForDay(scheduleMatrix, i - 1);
-            List<Shift> tomorrowShifts = getShiftsForDay(scheduleMatrix, i + 1);
-            List<Shift> todayShifts = Arrays.asList(scheduleMatrix[i]);
+              yesterdayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex - 1);
+            List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 1);
+            List<Shift> todayShifts = Arrays.asList(scheduleMatrix[dayIndex]);
 
             Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
             if (!todayShifts.contains(intensiivShift)) {
@@ -44,7 +45,7 @@ public class EnforceShifts {
         for (int personIndex = 0; personIndex < töötajateNimekiri.size(); personIndex++) {
             if (scheduleMatrix[dayIndex][personIndex].getCategory().equals("D")) {
                 if (isValidShiftForD(scheduleMatrix, dayIndex, personIndex, shift)) {
-                    if (dayIndex < 6 || ValidateShifts.atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
+                    if (dayIndex < 6 || HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
 
                         scheduleMatrix[dayIndex][personIndex] = shift;
                         break;

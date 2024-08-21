@@ -14,10 +14,10 @@ public class AssignShifts {
     for (int i = 0; i < daysInMonth; i++) {
       List<Shift> yesterdayShifts;
       if (i == 0)
-        yesterdayShifts = getEelmisestKuusÜletulevad(scheduleMatrix, töötajateNimekiri);
+        yesterdayShifts = HelperMethods.getEelmisestKuusÜletulevad(scheduleMatrix, töötajateNimekiri);
       else
-        yesterdayShifts = getShiftsForDay(scheduleMatrix, i - 1);
-      List<Shift> tomorrowShifts = getShiftsForDay(scheduleMatrix, i + 1);
+        yesterdayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, i - 1);
+      List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, i + 1);
       List<Shift> todayShifts = Arrays.asList(scheduleMatrix[i]);
 
       Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
@@ -37,27 +37,6 @@ public class AssignShifts {
     }
   }
 
-  public static List<Shift> getEelmisestKuusÜletulevad(Shift[][] scheduleMatrix, List<Worker> töötajateNimekiri) {
-    List<Shift> eelmiseKuuVahetused = new ArrayList<>();
-    for (Worker worker : töötajateNimekiri) {
-      // ei tea kas on intensiivis, aga otseselt pole vahet
-      if (worker.getEelmiseKuuVahetuseTunnid() == 8)
-        eelmiseKuuVahetused.add(new Shift(24, Shift.INTENSIIV));
-      else
-        eelmiseKuuVahetused.add(new Shift(0, ""));
-    }
-    return eelmiseKuuVahetused;
-  }
-
-  // Get Shifts for certain Day
-  public static List<Shift> getShiftsForDay(Shift[][] scheduleMatrix, int dayIndex) {
-    if (dayIndex < 0 || dayIndex >= scheduleMatrix.length) { // First day dont take previous day / Last day dont take
-                                                             // next day
-      return Collections.emptyList();
-    }
-    return Arrays.asList(scheduleMatrix[dayIndex]);
-  }
-
   // Assign needed shifts for the day
   public static void assignShiftForDay(Shift[][] scheduleMatrix, int dayIndex, List<Shift> yesterdayShifts,
       List<Shift> todayShifts, List<Shift> tomorrowShifts, Shift shift) {
@@ -66,10 +45,10 @@ public class AssignShifts {
       Shift todayShift = todayShifts.get(personIndex);
       Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(personIndex);
 
-      if (ValidateShifts.isValidShift(yesterdayShift, todayShift, tomorrowShift, shift)) { // Biggest problem: right now
-                                                                            // assigning it to the first person :(
+      if (isValidShift(yesterdayShift, todayShift, tomorrowShift, shift)) { // Biggest problem: right now
+        // assigning it to the first person :(
 
-        if (dayIndex < 6 || ValidateShifts.atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
+        if (dayIndex < 6 || HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
           if (shift.getDuration() == 24) {
             AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 1, dayIndex + 2), scheduleMatrix,
                 personIndex,
@@ -82,6 +61,18 @@ public class AssignShifts {
     }
   }
 
-  
+  // Check if assigning a Shift is possible
+  public static boolean isValidShift(Shift yesterdayShift, Shift todayShift, Shift tomorrowShift, Shift shift) {
+
+    if (shift.getDuration() == 24) {
+      return yesterdayShift.getCategory().equals("") && todayShift.getCategory().equals("")
+          && tomorrowShift.getCategory().equals("");
+    }
+    if (shift.getDuration() == 8) {
+      return (yesterdayShift.getDuration() != 24) && (todayShift.getCategory().equals(""))
+          && (tomorrowShift.getDuration() != 24);
+    }
+    return false;
+  }
 
 }
