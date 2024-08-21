@@ -41,7 +41,7 @@ public class AssignShifts {
         if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) { // Biggest problem: right now assigning it to the first person :(
           if (dayIndex < 6 || HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
             if (shift.getDuration() == 24) {
-              AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 1, dayIndex + 2), scheduleMatrix,
+              AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
                   personIndex,
                   new Shift(0, Shift.KEELATUD));
             }
@@ -55,7 +55,7 @@ public class AssignShifts {
   // Check if assigning a Shift is possible
   public static boolean isValidShift(Shift todayShift, Shift tomorrowShift,Shift dayAfterTomorrowShift ,Shift shift) {
     if (shift.getDuration() == 24) {
-      return todayShift.getCategory().equals("") && tomorrowShift.getCategory().equals("") && dayAfterTomorrowShift.getDuration() == 0;
+      return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getCategory().equals(Shift.TÜHI) && dayAfterTomorrowShift.getDuration() == 0;
     }
     if (shift.getDuration() == 8) {
       return todayShift.getCategory().equals("") && tomorrowShift.getDuration() != 24;
