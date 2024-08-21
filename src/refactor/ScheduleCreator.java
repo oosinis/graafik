@@ -15,11 +15,17 @@ public class ScheduleCreator {
 
         int daysInMonth = 30;
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, töötajateNimekiri.size());
-
+        
+        // Step 1
         AssignWorkerWishes.assignWorkerWishes(töötajateNimekiri, scheduleMatrix);
 
+        // Step 2 fill shifts
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
+        // Step 3 Verify minimum shifts per day
+        EnforceShifts.enforceMinimumShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
+
+        // Export matrix
         printScheduleAndCalculateHours(scheduleMatrix, töötajateNimekiri);
     }
 

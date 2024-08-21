@@ -11,22 +11,30 @@ public class EnforceShifts {
 
 
     // Ensure that each day has at least one "24" and one "8" shift
-    public static void enforceMinimumShifts(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts,
-            List<Worker> töötajateNimekiri) {
+    public static void enforceMinimumShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> töötajateNimekiri) {
+        for (int i = 0; i < daysInMonth; i++) {
+            List<Shift> yesterdayShifts;
+            if (i == 0)
+              yesterdayShifts = getEelmisestKuusÜletulevad(scheduleMatrix, töötajateNimekiri);
+            else
+              yesterdayShifts = getShiftsForDay(scheduleMatrix, i - 1);
+            List<Shift> tomorrowShifts = getShiftsForDay(scheduleMatrix, i + 1);
+            List<Shift> todayShifts = Arrays.asList(scheduleMatrix[i]);
 
-        Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
-        if (!todayShifts.contains(intensiivShift)) {
-            assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, intensiivShift);
-        }
+            Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
+            if (!todayShifts.contains(intensiivShift)) {
+                assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, intensiivShift);
+            }
 
-        Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
-        if (!todayShifts.contains(osakonnaShift)) {
-            assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, osakonnaShift);
-        }
+            Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
+            if (!todayShifts.contains(osakonnaShift)) {
+                assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, osakonnaShift);
+            }
 
-        Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
-        if (!todayShifts.contains(lühikeShift)) {
-            assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, lühikeShift);
+            Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
+            if (!todayShifts.contains(lühikeShift)) {
+                assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, lühikeShift);
+            }
         }
     }
 

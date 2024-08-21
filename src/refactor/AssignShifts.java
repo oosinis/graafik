@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import objects.Shift;
 import objects.Worker;
 
@@ -34,11 +33,6 @@ public class AssignShifts {
       Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
       if (!todayShifts.contains(lühikeShift)) {
         assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, lühikeShift);
-      }
-      // Ensure at least one "24" and one "8" shift per day
-      if (!todayShifts.contains(intensiivShift) || !todayShifts.contains(osakonnaShift)
-          || !todayShifts.contains(lühikeShift)) {
-        EnforceShifts.enforceMinimumShifts(scheduleMatrix, i, todayShifts, töötajateNimekiri);
       }
     }
   }
