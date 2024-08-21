@@ -49,7 +49,11 @@ public class ScheduleCreator {
     // Assign Vacation and desired vacation days
     private static void assignSpecificShifts(List<Integer> days, Shift[][] scheduleMatrix, int workerId, Shift shift) {
         for (Integer day : days) {
-            scheduleMatrix[day - 1][workerId] = shift;
+            try {
+                scheduleMatrix[day - 1][workerId] = shift;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                break;
+            }
         }
     }
 
@@ -60,6 +64,7 @@ public class ScheduleCreator {
             Shift shift = entry.getValue();
             scheduleMatrix[day][workerId] = shift;
         }
+
     }
 
     // Fill in rest of the shifts
@@ -84,9 +89,11 @@ public class ScheduleCreator {
             assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, lühikeShift);
         }
 
-        // Ensure at least one "24" and one "12" shift per day
+        // Ensure at least one "24" and one "8" shift per day
+        System.out.println("TODAY:: " + todayShifts);
         if (!todayShifts.contains(intensiivShift) || !todayShifts.contains(osakonnaShift)
                 || !todayShifts.contains(lühikeShift)) {
+            System.out.println("ei sisalda ühte nendest");
             enforceMinimumShifts(scheduleMatrix, i, todayShifts, töötajateNimekiri);
         }
 
@@ -96,7 +103,6 @@ public class ScheduleCreator {
     private static void fillShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> töötajateNimekiri) {
         for (int i = 1; i < daysInMonth; i++) {
             List<Shift> yesterdayShifts = getShiftsForDay(scheduleMatrix, i - 1);
-            System.out.println(yesterdayShifts);
             List<Shift> tomorrowShifts = getShiftsForDay(scheduleMatrix, i + 1);
             List<Shift> todayShifts = Arrays.asList(scheduleMatrix[i]);
 
@@ -114,10 +120,11 @@ public class ScheduleCreator {
             if (!todayShifts.contains(lühikeShift)) {
                 assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, lühikeShift);
             }
-
-            // Ensure at least one "24" and one "12" shift per day
+            // Ensure at least one "24" and one "8" shift per day
+            System.out.println("TODAY:: " + todayShifts);
             if (!todayShifts.contains(intensiivShift) || !todayShifts.contains(osakonnaShift)
                     || !todayShifts.contains(lühikeShift)) {
+                System.out.println("ei sisalda ühte nendest");
                 enforceMinimumShifts(scheduleMatrix, i, todayShifts, töötajateNimekiri);
             }
         }
@@ -127,8 +134,10 @@ public class ScheduleCreator {
         List<Shift> eelmiseKuuVahetused = new ArrayList<>();
         for (Worker worker : töötajateNimekiri) {
             // ei tea kas on intensiivis, aga otseselt pole vahet
-            if (worker.getEelmiseKuuVahetuseTunnid() == 8) eelmiseKuuVahetused.add(new Shift(24, Shift.INTENSIIV));
-            else eelmiseKuuVahetused.add(new Shift(0, ""));
+            if (worker.getEelmiseKuuVahetuseTunnid() == 8)
+                eelmiseKuuVahetused.add(new Shift(24, Shift.INTENSIIV));
+            else
+                eelmiseKuuVahetused.add(new Shift(0, ""));
         }
         return eelmiseKuuVahetused;
     }
@@ -152,26 +161,36 @@ public class ScheduleCreator {
 
             if (isValidShift(yesterdayShift, todayShift, tomorrowShift, shift)) { // Biggest problem: right now
                                                                                   // assigning it to the first person :(
-                scheduleMatrix[dayIndex][personIndex] = shift;
-                break;
+
+                if (dayIndex < 6 || atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
+                    if (shift.getDuration() == 24) {
+                        assignSpecificShifts(Arrays.asList(dayIndex + 1, dayIndex + 2), scheduleMatrix, personIndex,
+                                new Shift(0, "P"));
+                    }
+                    scheduleMatrix[dayIndex][personIndex] = shift;
+                    System.out
+                            .println("Added shift: " + shift + " to day " + (dayIndex + 1) + ", worker " + personIndex);
+                    break;
+                }
             }
         }
     }
 
     // Check if assigning a Shift is possible
     private static boolean isValidShift(Shift yesterdayShift, Shift todayShift, Shift tomorrowShift, Shift shift) {
+
         if (shift.getDuration() == 24) {
             return yesterdayShift.getCategory().equals("") && todayShift.getCategory().equals("")
                     && tomorrowShift.getCategory().equals("");
         }
-        if (shift.getDuration() == 12) {
+        if (shift.getDuration() == 8) {
             return (yesterdayShift.getDuration() != 24) && (todayShift.getCategory().equals(""))
                     && (tomorrowShift.getDuration() != 24);
         }
         return false;
     }
 
-    // Ensure that each day has at least one "24" and one "12" shift
+    // Ensure that each day has at least one "24" and one "8" shift
     private static void enforceMinimumShifts(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts,
             List<Worker> töötajateNimekiri) {
 
@@ -197,8 +216,13 @@ public class ScheduleCreator {
         for (int personIndex = 0; personIndex < töötajateNimekiri.size(); personIndex++) {
             if (scheduleMatrix[dayIndex][personIndex].getCategory().equals("D")) {
                 if (isValidShiftForD(scheduleMatrix, dayIndex, personIndex, shift)) {
-                    scheduleMatrix[dayIndex][personIndex] = shift;
-                    break;
+                    if (dayIndex < 6 || atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
+
+                        scheduleMatrix[dayIndex][personIndex] = shift;
+                        System.out.println("Added shift: " + shift + " to worker with 'D' on day " + (dayIndex + 1)
+                                + ", worker " + personIndex);
+                        break;
+                    }
                 }
             }
         }
@@ -218,6 +242,25 @@ public class ScheduleCreator {
         return false;
     }
 
+    private static Boolean atLeastTwoRestdays(Shift[][] scheduleMatrix, int dayIndex, int workerIndex) {
+
+        int consecutiveRestDays = 0;
+
+        for (int i = dayIndex - 6; i < dayIndex; i++) {
+            Shift shift = scheduleMatrix[i][workerIndex];
+
+            if (shift.getDuration() == 0) {
+                consecutiveRestDays++;
+                if (consecutiveRestDays >= 2) {
+                    return true;
+                }
+            } else {
+                consecutiveRestDays = 0;
+            }
+        }
+        return false; // No two consecutive rest days found
+    }
+
     // Print Schedule and calculate total hours worked by each employee
     private static void printScheduleAndCalculateHours(Shift[][] scheduleMatrix, List<Worker> töötajateNimekiri) {
         int[] totalHours = new int[töötajateNimekiri.size()]; // Array to store total hours for each employee
@@ -230,7 +273,7 @@ public class ScheduleCreator {
                 totalHours[emp] += shift.getDuration(); // Add shift duration to the employee's total hours
 
                 System.out.print(töötajateNimekiri.get(emp).getNimi() + ": ");
-                System.out.print(shift.getDuration() + " ");
+                System.out.print(/*shift.getCategory() + ", " + */shift.getDuration() + " ");
             }
             System.out.println();
         }

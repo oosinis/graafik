@@ -1,5 +1,7 @@
 package objects;
 
+import java.util.Objects;
+
 public class Shift {
     // Attributes
     private int pikkus; // Duration in minutes or hours
@@ -36,11 +38,22 @@ public class Shift {
 
     // Setter for category with validation
     public void setCategory(String category) {
-        if (category.equals(INTENSIIV) || category.equals(LÜHIKE_PÄEV) || category.equals(OSAKOND) || category.equals(TÜHI) || category.equals(PUHKUS) || category.equals(SOOVI_PUHKUS)) {
+        if (category.equals(INTENSIIV) || category.equals(LÜHIKE_PÄEV) || category.equals(OSAKOND)
+                || category.equals(TÜHI) || category.equals(PUHKUS) || category.equals(SOOVI_PUHKUS)) {
             this.kategooria = category;
         } else {
             throw new IllegalArgumentException("Invalid category. Choose from: intensiiv, lühike, osakond.");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Shift shift = (Shift) o;
+        return this.getDuration() == shift.getDuration() && this.getCategory().equals(shift.getCategory());
     }
 
     @Override
