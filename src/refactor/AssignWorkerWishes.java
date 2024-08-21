@@ -36,7 +36,7 @@ public class AssignWorkerWishes {
     public static void assignSpecificShifts(List<Integer> days, Shift[][] scheduleMatrix, int workerId, Shift shift) {
         for (Integer day : days) {
             try {
-                scheduleMatrix[day][workerId] = shift;
+                scheduleMatrix[day - 1][workerId] = shift;
             } catch (ArrayIndexOutOfBoundsException e) {
                 break;
             }

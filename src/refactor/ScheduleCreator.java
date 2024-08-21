@@ -19,14 +19,37 @@ public class ScheduleCreator {
         // Step 1
         AssignWorkerWishes.assignWorkerWishes(töötajateNimekiri, scheduleMatrix);
 
-        // Step 2 fill shifts
+        // Step 2 KEELATUD päevad
+        AddForbiddenDays(töötajateNimekiri,scheduleMatrix);
+
+        // Step 3 fill shifts
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
         // Step 3 Verify minimum shifts per day
-        EnforceShifts.enforceMinimumShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
+        //EnforceShifts.enforceMinimumShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
         // Export matrix
         printScheduleAndCalculateHours(scheduleMatrix, töötajateNimekiri);
+    }
+
+    public static void AddForbiddenDays(List<Worker> töötajateNimekiri, Shift[][] scheduleMatrix) {
+        for (Worker worker : töötajateNimekiri) {
+            // ei tea kas on intensiivis, aga otseselt pole vahet
+            if (worker.getEelmiseKuuVahetuseTunnid() == 8) {
+                scheduleMatrix[0][worker.getEmployeeId()] = new Shift(0, Shift.KEELATUD);
+                scheduleMatrix[1][worker.getEmployeeId()] = new Shift(0, Shift.KEELATUD);
+            }
+        }
+        for (int i = 0; i < scheduleMatrix.length; i++) {
+            for (int personIndex = 0; personIndex < scheduleMatrix[i].length; personIndex++) {
+                if(i == scheduleMatrix.length-1) continue;
+                if(scheduleMatrix[i][personIndex].getDuration() == 24) {
+                    scheduleMatrix[i + 1][personIndex] = new Shift(0, Shift.KEELATUD);
+                    if(i == scheduleMatrix.length-2) continue;
+                    scheduleMatrix[i + 2][personIndex] = new Shift(0, Shift.KEELATUD);
+                }
+            }
+        }
     }
 
 
@@ -43,8 +66,7 @@ public class ScheduleCreator {
 
                 totalHours[emp] += shift.getDuration(); // Add shift duration to the employee's total hours
 
-                System.out.print(töötajateNimekiri.get(emp).getNimi() + ": ");
-                System.out.print(/*shift.getCategory() + ", " + */shift.getDuration() + " ");
+                System.out.print(töötajateNimekiri.get(emp).getNimi() + ": " + shift.getCategory() + "| ");
             }
             System.out.println();
         }

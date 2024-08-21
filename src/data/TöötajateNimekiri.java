@@ -40,7 +40,7 @@ public class TöötajateNimekiri {
         List<Integer> mariliisSooviPuhkePäevad = new ArrayList<>(Arrays.asList(10));
         HashMap<Integer, Shift> mariliisSooviTööpäevad = new HashMap<>();
         List<Integer> mariliisHaiguslehePäevad = new ArrayList<>();
-        Worker mariliis = new Worker(2, "Mari-Liis", 1.0, -12, 0, mariliisPuhkusePäevad, mariliisSooviPuhkePäevad,
+        Worker mariliis = new Worker(3, "Mari-Liis", 1.0, -12, 0, mariliisPuhkusePäevad, mariliisSooviPuhkePäevad,
                 mariliisSooviTööpäevad, mariliisHaiguslehePäevad);
         töötajateNimekiri.add(mariliis);
 
@@ -49,7 +49,7 @@ public class TöötajateNimekiri {
         List<Integer> olgaSooviPuhkePäevad = new ArrayList<>(Arrays.asList(10, 21, 28, 30));
         HashMap<Integer, Shift> olgaSooviTööpäevad = new HashMap<>();
         List<Integer> olgaHaiguslehePäevad = new ArrayList<>();
-        Worker olga = new Worker(2, "Olga", 1.0, -8, 0, olgaPuhkusePäevad, olgaSooviPuhkePäevad, olgaSooviTööpäevad,
+        Worker olga = new Worker(4, "Olga", 1.0, -8, 0, olgaPuhkusePäevad, olgaSooviPuhkePäevad, olgaSooviTööpäevad,
                 olgaHaiguslehePäevad);
         töötajateNimekiri.add(olga);
 
@@ -65,7 +65,7 @@ public class TöötajateNimekiri {
                 28, new Shift(24, Shift.OSAKOND),
                 30, new Shift(24, Shift.OSAKOND)));
         List<Integer> pärjaHaiguslehePäevad = new ArrayList<>();
-        Worker pärja = new Worker(3, "Pärja", 1.0, -12, 8, pärjaPuhkusePäevad, pärjaSooviPuhkePäevad,
+        Worker pärja = new Worker(5, "Pärja", 1.0, -12, 8, pärjaPuhkusePäevad, pärjaSooviPuhkePäevad,
                 pärjaSooviTööpäevad, pärjaHaiguslehePäevad);
         töötajateNimekiri.add(pärja);
     }
