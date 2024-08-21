@@ -5,8 +5,6 @@ import java.util.*;
 import objects.Shift;
 import objects.Worker;
 
-import refactor.AssignWorkerWishes;
-
 
 public class ScheduleCreator {
 
@@ -48,9 +46,8 @@ public class ScheduleCreator {
             if (!todayShifts.contains(lühikeShift)) {
                 assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, lühikeShift);
             }
-            // Ensure at least one "24" and one "8" shift per day
-            if (!todayShifts.contains(intensiivShift) || !todayShifts.contains(osakonnaShift)
-                    || !todayShifts.contains(lühikeShift)) {
+            // Ensure at least two "24" and one "8" shift per day
+            if (!todayShifts.contains(intensiivShift) || !todayShifts.contains(osakonnaShift) || !todayShifts.contains(lühikeShift)) {
                 enforceMinimumShifts(scheduleMatrix, i, todayShifts, töötajateNimekiri);
             }
         }
@@ -70,8 +67,7 @@ public class ScheduleCreator {
 
     // Get Shifts for certain Day
     private static List<Shift> getShiftsForDay(Shift[][] scheduleMatrix, int dayIndex) {
-        if (dayIndex < 0 || dayIndex >= scheduleMatrix.length) { // First day dont take previous day / Last day dont
-                                                                 // take next day
+        if (dayIndex < 0 || dayIndex >= scheduleMatrix.length) { // First day dont take previous day / Last day dont take next day
             return Collections.emptyList();
         }
         return Arrays.asList(scheduleMatrix[dayIndex]);
@@ -85,11 +81,9 @@ public class ScheduleCreator {
             Shift todayShift = todayShifts.get(personIndex);
             Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(personIndex);
 
-            if (isValidShift(yesterdayShift, todayShift, tomorrowShift, shift)) { // Biggest problem: right now
-                                                                                  // assigning it to the first person :(
-
-                if (dayIndex < 6 || atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
-                    if (shift.getDuration() == 24) {
+            if (isValidShift(yesterdayShift, todayShift, tomorrowShift, shift)) { // Biggest problem: right now assigning it to the first person :(
+                if (dayIndex < 5 || atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
+                    if (shift.getDuration() == 24) { // isValidShift paneme loogika et 24h 2p enne ja 2p pärast ei oleks 24h vahetust
                         AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 1, dayIndex + 2), scheduleMatrix, personIndex,
                                 new Shift(0, "P"));
                     }
@@ -114,9 +108,8 @@ public class ScheduleCreator {
         return false;
     }
 
-    // Ensure that each day has at least one "24" and one "8" shift
-    private static void enforceMinimumShifts(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts,
-            List<Worker> töötajateNimekiri) {
+    // Ensure that each day has at least two "24" and one "8" shift
+    private static void enforceMinimumShifts(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts, List<Worker> töötajateNimekiri) {
 
         Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
         if (!todayShifts.contains(intensiivShift)) {
@@ -168,7 +161,7 @@ public class ScheduleCreator {
 
         int consecutiveRestDays = 0;
 
-        for (int i = dayIndex - 6; i < dayIndex; i++) {
+        for (int i = dayIndex - 5; i < dayIndex; i++) {
             Shift shift = scheduleMatrix[i][workerIndex];
 
             if (shift.getDuration() == 0) {

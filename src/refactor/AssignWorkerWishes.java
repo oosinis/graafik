@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import objects.Shift;
 import objects.Worker;
 
@@ -37,7 +36,7 @@ public class AssignWorkerWishes {
     public static void assignSpecificShifts(List<Integer> days, Shift[][] scheduleMatrix, int workerId, Shift shift) {
         for (Integer day : days) {
             try {
-                scheduleMatrix[day - 1][workerId] = shift;
+                scheduleMatrix[day][workerId] = shift;
             } catch (ArrayIndexOutOfBoundsException e) {
                 break;
             }
