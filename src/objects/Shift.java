@@ -9,6 +9,9 @@ public class Shift {
     public static final String INTENSIIV = "intensiiv";
     public static final String LÜHIKE_PÄEV = "lühike päev";
     public static final String OSAKOND = "osakond";
+    public static final String TÜHI = "";
+    public static final String PUHKUS = "P";
+    public static final String SOOVI_PUHKUS = "D";
 
     // Constructor
     public Shift(int pikkus, String kategooria) {
@@ -33,7 +36,7 @@ public class Shift {
 
     // Setter for category with validation
     public void setCategory(String category) {
-        if (category.equals(INTENSIIV) || category.equals(LÜHIKE_PÄEV) || category.equals(OSAKOND)) {
+        if (category.equals(INTENSIIV) || category.equals(LÜHIKE_PÄEV) || category.equals(OSAKOND) || category.equals(TÜHI) || category.equals(PUHKUS) || category.equals(SOOVI_PUHKUS)) {
             this.kategooria = category;
         } else {
             throw new IllegalArgumentException("Invalid category. Choose from: intensiiv, lühike, osakond.");

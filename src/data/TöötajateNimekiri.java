@@ -35,13 +35,14 @@ public class TöötajateNimekiri {
         // PÄRJA
         List<Integer> pärjaPuhkusePäevad = new ArrayList<>();
         List<Integer> pärjaSooviPuhkePäevad = new ArrayList<>();
-        HashMap<Integer, Shift> pärjaSooviTööpäevad = new HashMap<>(Map.of(4, new Shift(24, "osakond"),
-                7, new Shift(24, "osakond"),
-                10, new Shift(24, "osakond"),
-                13, new Shift(24, "osakond"),
-                21, new Shift(24, "osakond"),
-                28, new Shift(24, "osakond"),
-                30, new Shift(24, "osakond")
+        HashMap<Integer, Shift> pärjaSooviTööpäevad = new HashMap<>(Map.of(
+            4, new Shift(24, Shift.OSAKOND),
+            7, new Shift(24, Shift.OSAKOND),
+            10, new Shift(24, Shift.OSAKOND),
+            13, new Shift(24, Shift.OSAKOND),
+            21, new Shift(24, Shift.OSAKOND),
+            28, new Shift(24, Shift.OSAKOND),
+            30, new Shift(24, Shift.OSAKOND)
             ));
         List<Integer> pärjaHaiguslehePäevad = new ArrayList<>();
         Worker pärja = new Worker(3, "Pärja", 1.0, -12, 8, pärjaPuhkusePäevad, pärjaSooviPuhkePäevad, pärjaSooviTööpäevad, pärjaHaiguslehePäevad);

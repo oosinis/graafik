@@ -12,7 +12,7 @@ public class ScheduleCreator {
         List<Worker> töötajateNimekiri = töötajateNimekiriInstance.getTöötajateNimekiri();
 
         int daysInMonth = 30;
-        String[][] scheduleMatrix = initializeScheduleMatrix(daysInMonth, töötajateNimekiri.size());
+        Shift[][] scheduleMatrix = initializeScheduleMatrix(daysInMonth, töötajateNimekiri.size());
 
         assignWorkerWishes(töötajateNimekiri, scheduleMatrix);
         fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
@@ -21,67 +21,75 @@ public class ScheduleCreator {
     }
 
     // Initialize empty matrix
-    private static String[][] initializeScheduleMatrix(int daysInMonth, int numberOfWorkers) {
-        String[][] scheduleMatrix = new String[daysInMonth][numberOfWorkers];
+    private static Shift[][] initializeScheduleMatrix(int daysInMonth, int numberOfWorkers) {
+        Shift[][] scheduleMatrix = new Shift[daysInMonth][numberOfWorkers];
         for (int i = 0; i < daysInMonth; i++) {
-            Arrays.fill(scheduleMatrix[i], "");
+            Arrays.fill(scheduleMatrix[i], new Shift(0, ""));
         }
         return scheduleMatrix;
     }
 
     // Fill in Workers requested days
-    private static void assignWorkerWishes(List<Worker> töötajateNimekiri, String[][] scheduleMatrix) {
+    private static void assignWorkerWishes(List<Worker> töötajateNimekiri, Shift[][] scheduleMatrix) {
         for (Worker töötaja : töötajateNimekiri) {
             assignShifts(töötaja, scheduleMatrix);
         }
     }
 
     // Get day types
-    private static void assignShifts(Worker töötaja, String[][] scheduleMatrix) {
-        assignSpecificShifts(töötaja.getSooviTööPäevad(), scheduleMatrix, töötaja.getEmployeeId(), "");
-        assignSpecificShifts(töötaja.getPuhkusePäevad(), scheduleMatrix, töötaja.getEmployeeId(), "P");
-        assignSpecificShifts(töötaja.getSooviPuhkePäevad(), scheduleMatrix, töötaja.getEmployeeId(), "D");
+    private static void assignShifts(Worker töötaja, Shift[][] scheduleMatrix) {
+        assignSooviTööpäevad(töötaja.getSooviTööPäevad(), scheduleMatrix, töötaja.getEmployeeId());
+        assignSpecificShifts(töötaja.getPuhkusePäevad(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "P"));
+        assignSpecificShifts(töötaja.getSooviPuhkePäevad(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "D"));
     }
 
     // Assign Vacation and desired vacation days
-    private static void assignSpecificShifts(List<Integer> days, String[][] scheduleMatrix, int workerId, String shift) {
+    private static void assignSpecificShifts(List<Integer> days, Shift[][] scheduleMatrix, int workerId, Shift shift) {
         for (Integer day : days) {
             scheduleMatrix[day - 1][workerId] = shift;
         }
     }
 
     // Assign Work shifts
-    private static void assignSpecificShifts(HashMap<Integer, Shift> workDays, String[][] scheduleMatrix, int workerId, String shift) {
+    private static void assignSooviTööpäevad(HashMap<Integer, Shift> workDays, Shift[][] scheduleMatrix, int workerId) {
         for (Map.Entry<Integer, Shift> entry : workDays.entrySet()) {
-            int day = entry.getKey() - 1; // 0-based index
-            scheduleMatrix[day][workerId] = String.valueOf(entry.getValue().getDuration());
+            int day = entry.getKey() - 1; // Adjust for 0-based index
+            Shift shift = entry.getValue();
+            scheduleMatrix[day][workerId] = shift;
         }
     }
 
     // Fill in rest of the shifts
-    private static void fillShifts(String[][] scheduleMatrix, int daysInMonth, List<Worker> töötajateNimekiri) {
+    private static void fillShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> töötajateNimekiri) {
         for (int i = 0; i < daysInMonth; i++) {
-            List<String> yesterdayShifts = getShiftsForDay(scheduleMatrix, i - 1);
-            List<String> tomorrowShifts = getShiftsForDay(scheduleMatrix, i + 1);
-            List<String> todayShifts = Arrays.asList(scheduleMatrix[i]);
-
-            if (!todayShifts.contains("24")) {
-                assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, "24");
+            List<Shift> yesterdayShifts = getShiftsForDay(scheduleMatrix, i - 1);
+            List<Shift> tomorrowShifts = getShiftsForDay(scheduleMatrix, i + 1);
+            List<Shift> todayShifts = Arrays.asList(scheduleMatrix[i]);
+            
+            Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
+            if (!todayShifts.contains(intensiivShift)) {
+                assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, intensiivShift);
             }
 
-            if (!todayShifts.contains("12")) {
-                assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, "12");
+            Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
+            if (!todayShifts.contains(osakonnaShift)) {
+                assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, osakonnaShift);
+            }
+
+            Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
+            if (!todayShifts.contains(lühikeShift)) {
+                assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, lühikeShift);
             }
 
             // Ensure at least one "24" and one "12" shift per day
-            if (!todayShifts.contains("24") || !todayShifts.contains("12")) {
+            if (!todayShifts.contains(intensiivShift) || !todayShifts.contains(osakonnaShift) || !todayShifts.contains(lühikeShift)) {
                 enforceMinimumShifts(scheduleMatrix, i, todayShifts, töötajateNimekiri);
             }
         }
     }
 
     // Get Shifts for certain Day
-    private static List<String> getShiftsForDay(String[][] scheduleMatrix, int dayIndex) {
+    private static List<Shift> getShiftsForDay(Shift[][] scheduleMatrix, int dayIndex) {
         if (dayIndex < 0 || dayIndex >= scheduleMatrix.length) { // First day dont take previous day / Last day dont take next day 
             return Collections.emptyList();
         }
@@ -89,46 +97,55 @@ public class ScheduleCreator {
     }
 
     // Assign needed shifts for the day
-    private static void assignShiftForDay(String[][] scheduleMatrix, int dayIndex, List<String> yesterdayShifts, List<String> todayShifts, List<String> tomorrowShifts, String shiftType) {
+    private static void assignShiftForDay(Shift[][] scheduleMatrix, int dayIndex, List<Shift> yesterdayShifts, List<Shift> todayShifts, List<Shift> tomorrowShifts, Shift shift) {
         for (int personIndex = 0; personIndex < todayShifts.size(); personIndex++) {
-            String yesterdayShift = yesterdayShifts.isEmpty() ? "" : yesterdayShifts.get(personIndex);
-            String todayShift = todayShifts.get(personIndex);
-            String tomorrowShift = tomorrowShifts.isEmpty() ? "" : tomorrowShifts.get(personIndex);
+            Shift yesterdayShift = yesterdayShifts.isEmpty() ? new Shift(0, "") : yesterdayShifts.get(personIndex);
+            Shift todayShift = todayShifts.get(personIndex);
+            Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(personIndex);
 
-            if (isValidShift(yesterdayShift, todayShift, tomorrowShift, shiftType)) { // Biggest problem: right now assigning it to the first person :(
-                scheduleMatrix[dayIndex][personIndex] = shiftType;
+            if (isValidShift(yesterdayShift, todayShift, tomorrowShift, shift)) { // Biggest problem: right now assigning it to the first person :(
+                scheduleMatrix[dayIndex][personIndex] = shift;
                 break;
             }
         }
     }
 
     // Check if assigning a Shift is possible
-    private static boolean isValidShift(String yesterdayShift, String todayShift, String tomorrowShift, String shiftType) {
-        if (shiftType.equals("24")) {
-            return yesterdayShift.equals("") && todayShift.equals("") && tomorrowShift.equals("");
+    private static boolean isValidShift(Shift yesterdayShift, Shift todayShift, Shift tomorrowShift, Shift shift) {
+        if (shift.getDuration() == 24) {
+            return yesterdayShift.getCategory().equals("") && todayShift.getCategory().equals("") && tomorrowShift.getCategory().equals("");
         }
-        if (shiftType.equals("12")) {
-            return !yesterdayShift.equals("24") && todayShift.equals("") && !tomorrowShift.equals("24");
+        if (shift.getDuration() == 12) {
+            return (yesterdayShift.getDuration() != 24) && (todayShift.getCategory().equals("")) && (tomorrowShift.getDuration() != 24);
         }
         return false;
     }
 
     // Ensure that each day has at least one "24" and one "12" shift
-    private static void enforceMinimumShifts(String[][] scheduleMatrix, int dayIndex, List<String> todayShifts, List<Worker> töötajateNimekiri) {
-        if (!todayShifts.contains("24")) {
-            assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, "24");
+    private static void enforceMinimumShifts(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts, List<Worker> töötajateNimekiri) {
+
+        Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
+        if (!todayShifts.contains(intensiivShift)) {
+            assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, intensiivShift);
         }
-        if (!todayShifts.contains("12")) {
-            assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, "12");
+
+        Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
+        if (!todayShifts.contains(osakonnaShift)) {
+            assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, osakonnaShift);
+        }
+
+        Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
+        if (!todayShifts.contains(lühikeShift)) {
+            assignShiftToWorkerWithD(scheduleMatrix, dayIndex, töötajateNimekiri, lühikeShift);
         }
     }
 
     // Assign a shift to a worker who has a desired vacation day ("D")
-    private static void assignShiftToWorkerWithD(String[][] scheduleMatrix, int dayIndex, List<Worker> töötajateNimekiri, String shiftType) {
+    private static void assignShiftToWorkerWithD(Shift[][] scheduleMatrix, int dayIndex, List<Worker> töötajateNimekiri, Shift shift) {
         for (int personIndex = 0; personIndex < töötajateNimekiri.size(); personIndex++) {
-            if (scheduleMatrix[dayIndex][personIndex].equals("D")) {
-                if (isValidShiftForD(scheduleMatrix, dayIndex, personIndex, shiftType)) {
-                    scheduleMatrix[dayIndex][personIndex] = shiftType;
+            if (scheduleMatrix[dayIndex][personIndex].getCategory().equals("D")) {
+                if (isValidShiftForD(scheduleMatrix, dayIndex, personIndex, shift)) {
+                    scheduleMatrix[dayIndex][personIndex] = shift;
                     break;
                 }
             }
@@ -136,25 +153,25 @@ public class ScheduleCreator {
     }
 
     // Check if the shift can be assigned to a worker with "D"
-    private static boolean isValidShiftForD(String[][] scheduleMatrix, int dayIndex, int personIndex, String shiftType) {
-        String yesterdayShift = dayIndex > 0 ? scheduleMatrix[dayIndex - 1][personIndex] : "";
-        String tomorrowShift = dayIndex < scheduleMatrix.length - 1 ? scheduleMatrix[dayIndex + 1][personIndex] : "";
-        if (shiftType.equals("24")) {
-            return yesterdayShift.equals("") && tomorrowShift.equals("");
+    private static boolean isValidShiftForD(Shift[][] scheduleMatrix, int dayIndex, int personIndex, Shift shift) {
+        Shift yesterdayShift = dayIndex > 0 ? scheduleMatrix[dayIndex - 1][personIndex] : new Shift(0, "");
+        Shift tomorrowShift = dayIndex < scheduleMatrix.length - 1 ? scheduleMatrix[dayIndex + 1][personIndex] : new Shift(0, "");
+        if (shift.getDuration() == 24) {
+            return yesterdayShift.getCategory().equals("") && tomorrowShift.getCategory().equals("");
         }
-        if (shiftType.equals("12")) {
-            return !yesterdayShift.equals("24") && !tomorrowShift.equals("24");
+        if (shift.getDuration() == 8) {
+            return yesterdayShift.getDuration() != 24 && tomorrowShift.getDuration() != 24;
         }
         return false;
     }
 
     // Print Schedule
-    private static void printSchedule(String[][] scheduleMatrix, List<Worker> töötajateNimekiri) {
+    private static void printSchedule(Shift[][] scheduleMatrix, List<Worker> töötajateNimekiri) {
         for (int day = 0; day < scheduleMatrix.length; day++) {
             System.out.print("Day " + (day + 1) + ": ");
             for (int emp = 0; emp < scheduleMatrix[day].length; emp++) {
                 System.out.print(töötajateNimekiri.get(emp).getNimi() + ": ");
-                System.out.print(scheduleMatrix[day][emp] + " ");
+                System.out.print(scheduleMatrix[day][emp].getDuration() + " ");
             }
             System.out.println();
         }
