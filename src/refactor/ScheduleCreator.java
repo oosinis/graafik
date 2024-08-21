@@ -5,104 +5,32 @@ import java.util.*;
 import objects.Shift;
 import objects.Worker;
 
+import refactor.AssignWorkerWishes;
+
+
 public class ScheduleCreator {
+
 
     public static void main(String[] args) {
         TöötajateNimekiri töötajateNimekiriInstance = new TöötajateNimekiri();
         List<Worker> töötajateNimekiri = töötajateNimekiriInstance.getTöötajateNimekiri();
 
         int daysInMonth = 30;
-        Shift[][] scheduleMatrix = initializeScheduleMatrix(daysInMonth, töötajateNimekiri.size());
+        Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, töötajateNimekiri.size());
 
-        assignWorkerWishes(töötajateNimekiri, scheduleMatrix);
+        AssignWorkerWishes.assignWorkerWishes(töötajateNimekiri, scheduleMatrix);
 
-        // esimene võtab eelmise päeva vahetused selle üleliigse 8h järgi mis tabelis
-        fillFirstDayShifts(scheduleMatrix, töötajateNimekiri);
         fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
         printScheduleAndCalculateHours(scheduleMatrix, töötajateNimekiri);
     }
 
-    // Initialize empty matrix
-    private static Shift[][] initializeScheduleMatrix(int daysInMonth, int numberOfWorkers) {
-        Shift[][] scheduleMatrix = new Shift[daysInMonth][numberOfWorkers];
-        for (int i = 0; i < daysInMonth; i++) {
-            Arrays.fill(scheduleMatrix[i], new Shift(0, ""));
-        }
-        return scheduleMatrix;
-    }
-
-    // Fill in Workers requested days
-    private static void assignWorkerWishes(List<Worker> töötajateNimekiri, Shift[][] scheduleMatrix) {
-        for (Worker töötaja : töötajateNimekiri) {
-            assignShifts(töötaja, scheduleMatrix);
-        }
-    }
-
-    // Get day types
-    private static void assignShifts(Worker töötaja, Shift[][] scheduleMatrix) {
-        assignSooviTööpäevad(töötaja.getSooviTööPäevad(), scheduleMatrix, töötaja.getEmployeeId());
-        assignSpecificShifts(töötaja.getPuhkusePäevad(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "P"));
-        assignSpecificShifts(töötaja.getSooviPuhkePäevad(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "D"));
-    }
-
-    // Assign Vacation and desired vacation days
-    private static void assignSpecificShifts(List<Integer> days, Shift[][] scheduleMatrix, int workerId, Shift shift) {
-        for (Integer day : days) {
-            try {
-                scheduleMatrix[day - 1][workerId] = shift;
-            } catch (ArrayIndexOutOfBoundsException e) {
-                break;
-            }
-        }
-    }
-
-    // Assign Work shifts
-    private static void assignSooviTööpäevad(HashMap<Integer, Shift> workDays, Shift[][] scheduleMatrix, int workerId) {
-        for (Map.Entry<Integer, Shift> entry : workDays.entrySet()) {
-            int day = entry.getKey() - 1; // Adjust for 0-based index
-            Shift shift = entry.getValue();
-            scheduleMatrix[day][workerId] = shift;
-        }
-
-    }
-
-    // Fill in rest of the shifts
-    private static void fillFirstDayShifts(Shift[][] scheduleMatrix, List<Worker> töötajateNimekiri) {
-        int i = 0;
-        List<Shift> yesterdayShifts = getEelmisestKuusÜletulevad(scheduleMatrix, töötajateNimekiri);
-        List<Shift> tomorrowShifts = getShiftsForDay(scheduleMatrix, i + 1);
-        List<Shift> todayShifts = Arrays.asList(scheduleMatrix[i]);
-
-        Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
-        if (!todayShifts.contains(intensiivShift)) {
-            assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, intensiivShift);
-        }
-
-        Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
-        if (!todayShifts.contains(osakonnaShift)) {
-            assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, osakonnaShift);
-        }
-
-        Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
-        if (!todayShifts.contains(lühikeShift)) {
-            assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, lühikeShift);
-        }
-
-        // Ensure at least one "24" and one "8" shift per day
-        System.out.println("TODAY:: " + todayShifts);
-        if (!todayShifts.contains(intensiivShift) || !todayShifts.contains(osakonnaShift)
-                || !todayShifts.contains(lühikeShift)) {
-            System.out.println("ei sisalda ühte nendest");
-            enforceMinimumShifts(scheduleMatrix, i, todayShifts, töötajateNimekiri);
-        }
-
-    }
-
     // Fill in rest of the shifts
     private static void fillShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> töötajateNimekiri) {
-        for (int i = 1; i < daysInMonth; i++) {
-            List<Shift> yesterdayShifts = getShiftsForDay(scheduleMatrix, i - 1);
+        for (int i = 0; i < daysInMonth; i++) {
+            List<Shift> yesterdayShifts;
+            if (i == 0) yesterdayShifts = getEelmisestKuusÜletulevad(scheduleMatrix, töötajateNimekiri);
+            else yesterdayShifts = getShiftsForDay(scheduleMatrix, i - 1);
             List<Shift> tomorrowShifts = getShiftsForDay(scheduleMatrix, i + 1);
             List<Shift> todayShifts = Arrays.asList(scheduleMatrix[i]);
 
@@ -121,10 +49,8 @@ public class ScheduleCreator {
                 assignShiftForDay(scheduleMatrix, i, yesterdayShifts, todayShifts, tomorrowShifts, lühikeShift);
             }
             // Ensure at least one "24" and one "8" shift per day
-            System.out.println("TODAY:: " + todayShifts);
             if (!todayShifts.contains(intensiivShift) || !todayShifts.contains(osakonnaShift)
                     || !todayShifts.contains(lühikeShift)) {
-                System.out.println("ei sisalda ühte nendest");
                 enforceMinimumShifts(scheduleMatrix, i, todayShifts, töötajateNimekiri);
             }
         }
@@ -164,12 +90,10 @@ public class ScheduleCreator {
 
                 if (dayIndex < 6 || atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
                     if (shift.getDuration() == 24) {
-                        assignSpecificShifts(Arrays.asList(dayIndex + 1, dayIndex + 2), scheduleMatrix, personIndex,
+                        AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 1, dayIndex + 2), scheduleMatrix, personIndex,
                                 new Shift(0, "P"));
                     }
                     scheduleMatrix[dayIndex][personIndex] = shift;
-                    System.out
-                            .println("Added shift: " + shift + " to day " + (dayIndex + 1) + ", worker " + personIndex);
                     break;
                 }
             }
@@ -219,8 +143,6 @@ public class ScheduleCreator {
                     if (dayIndex < 6 || atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
 
                         scheduleMatrix[dayIndex][personIndex] = shift;
-                        System.out.println("Added shift: " + shift + " to worker with 'D' on day " + (dayIndex + 1)
-                                + ", worker " + personIndex);
                         break;
                     }
                 }
