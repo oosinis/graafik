@@ -28,6 +28,7 @@ public class ScheduleCreator {
         // Step 3 Verify minimum shifts per day
         //EnforceShifts.enforceMinimumShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
+
         // Export matrix
         printScheduleAndCalculateHours(scheduleMatrix, töötajateNimekiri);
     }
@@ -42,10 +43,10 @@ public class ScheduleCreator {
         }
         for (int i = 0; i < scheduleMatrix.length; i++) {
             for (int personIndex = 0; personIndex < scheduleMatrix[i].length; personIndex++) {
-                if(i == scheduleMatrix.length-1) continue;
+                if(i == scheduleMatrix.length - 1) continue;
                 if(scheduleMatrix[i][personIndex].getDuration() == 24) {
                     scheduleMatrix[i + 1][personIndex] = new Shift(0, Shift.KEELATUD);
-                    if(i == scheduleMatrix.length-2) continue;
+                    if(i == scheduleMatrix.length - 2 || scheduleMatrix[i + 2][personIndex].getDuration() != 0) continue;
                     scheduleMatrix[i + 2][personIndex] = new Shift(0, Shift.KEELATUD);
                 }
             }
