@@ -1,6 +1,8 @@
 package refactor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import objects.Shift;
 import objects.Worker;
@@ -8,50 +10,71 @@ import objects.Worker;
 public class AssignShifts {
 
   // Fill in rest of the shifts
-  public static void fillShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> töötajateNimekiri) {
-    for (int i = 0; i < daysInMonth; i++) {
-      List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, i);
-      List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, i + 1);
-      List<Shift> dayAfterTomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, i + 2);
+  public static void fillShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers) {
+    for (int dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
+      List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
+      List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 1);
+      List<Shift> dayAfterTomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 2);
 
       Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
       if (!todayShifts.contains(intensiivShift)) {
-        assignShiftForDay(scheduleMatrix, i, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, intensiivShift);
+        assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, intensiivShift, workers);
+      }
+
+      if (!todayShifts.contains(intensiivShift)) {
+        EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, intensiivShift, workers);
       }
 
       Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
       if (!todayShifts.contains(osakonnaShift)) {
-        assignShiftForDay(scheduleMatrix, i, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, osakonnaShift);
+        assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, osakonnaShift, workers);
+      }
+
+      if (!todayShifts.contains(osakonnaShift)) {
+        EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, osakonnaShift, workers);
       }
 
       Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
       if (!todayShifts.contains(lühikeShift)) {
-        assignShiftForDay(scheduleMatrix, i, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift);
+        assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift, workers);
       }
+
+      if (!todayShifts.contains(lühikeShift)) {
+        EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift, workers);
+      }
+
+      // check kas midagi puudu ja ss force see D peale, kui ss ka ei saa s vaatame mis homme toimub et ta ei saa ja votame ära selle nt kui 24h, ja assignime kellegile jarka päev
+
     }
   }
 
   // Assign needed shifts for the day
-  public static void assignShiftForDay(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts, List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift) {
+  public static void assignShiftForDay(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts, List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers) {
+    List<Worker> sortedWorkers = new ArrayList<>(workers);
+    sortedWorkers.sort(Comparator.comparingDouble(Worker::getPercentageWorked));
 
-      for (int personIndex = 0; personIndex < todayShifts.size(); personIndex++) {
-        
-        Shift todayShift = todayShifts.get(personIndex);
-        Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(personIndex);
-        Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "") : dayAfterTomorrowShifts.get(personIndex);
+    for (Worker worker : sortedWorkers) {
+      
+      Shift todayShift = todayShifts.get(worker.getEmployeeId());
+      Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(worker.getEmployeeId());
+      Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "") : dayAfterTomorrowShifts.get(worker.getEmployeeId());
 
-        if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) { // Biggest problem: right now assigning it to the first person :(
-          if (dayIndex < 6 || HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, personIndex)) {
-            if (shift.getDuration() == 24) {
-              AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
-                  personIndex,
-                  new Shift(0, Shift.KEELATUD));
-            }
-            scheduleMatrix[dayIndex][personIndex] = shift;
-            break;
+      if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) {
+        if (dayIndex < 6 || HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
+          if (shift.getDuration() == 24) {
+            AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
+            worker.getEmployeeId(),
+                new Shift(0, Shift.KEELATUD));
           }
+          scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
+
+          worker.setHoursWorked(shift.getDuration());
+          worker.setPercentageWorked((shift.getDuration() * 100) / worker.getTöökoormus());
+
+          break;
         }
       }
+    }
   }
 
   // Check if assigning a Shift is possible

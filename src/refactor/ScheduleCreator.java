@@ -20,17 +20,34 @@ public class ScheduleCreator {
         AssignWorkerWishes.assignWorkerWishes(töötajateNimekiri, scheduleMatrix);
 
         // Step 2 KEELATUD päevad
-        AddForbiddenDays(töötajateNimekiri,scheduleMatrix);
+        AddForbiddenDays(töötajateNimekiri, scheduleMatrix);
+
+        ChangeWorkLoads(töötajateNimekiri);
 
         // Step 3 fill shifts
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
-        // Step 3 Verify minimum shifts per day
-        EnforceShifts.enforceMinimumShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
-
+        // Print päevad kus putsus, teated et puudu on 24.10
 
         // Export matrix
         printScheduleAndCalculateHours(scheduleMatrix, töötajateNimekiri);
+    }
+
+    public static void ChangeWorkLoads(List<Worker> workers) {
+        for (Worker worker : workers) {
+            int vacationHrValue;
+            vacationHrValue = switch (worker.getTöökoormus()) {
+                case 84 -> 4;
+                case 126 -> 6;
+                default -> 8;
+            };
+            worker.setTöökoormus(worker.getTöökoormus() - (worker.getPuhkusePäevad().size() * vacationHrValue));
+            worker.setTöökoormus(worker.getTöökoormus() + worker.getEelmiseKuuÜlejääk());
+            for (Map.Entry<Integer, Shift> entry : worker.getSooviTööPäevad().entrySet()) {
+                worker.setTöökoormus(worker.getTöökoormus() -  entry.getValue().getDuration());
+            }
+            if (worker.getEelmiseKuuVahetuseTunnid() == 8) worker.setHoursWorked(8);
+        }
     }
 
     public static void AddForbiddenDays(List<Worker> töötajateNimekiri, Shift[][] scheduleMatrix) {

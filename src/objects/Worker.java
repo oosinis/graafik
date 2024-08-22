@@ -8,16 +8,18 @@ public class Worker {
 
     int employeeId;
     String nimi;
-    double töökoormus;
+    int töökoormus;
     Integer eelmiseKuuÜlejääk;
     int eelmiseKuuVahetuseTunnid;
     List<Integer> puhkusePäevad = new ArrayList<>();
     List<Integer> sooviPuhkePäevad = new ArrayList<>();
     HashMap<Integer, Shift> sooviTööPäevad = new HashMap<>();
+    int hoursWorked;
+    double percentageWorked;
 
     List<Integer> haiguslehePäevad = new ArrayList<>();
 
-    public Worker(int employeeId, String nimi, double töökoormus, Integer eelmiseKuuÜlejääk, int eelmiseKuuVahetuseTunnid, List<Integer> puhkusePäevad, List<Integer> sooviPuhkePäevad, HashMap<Integer, Shift> sooviTööPäevad, List<Integer> haiguslehePäevad) {
+    public Worker(int employeeId, String nimi, int  töökoormus, Integer eelmiseKuuÜlejääk, int eelmiseKuuVahetuseTunnid, List<Integer> puhkusePäevad, List<Integer> sooviPuhkePäevad, HashMap<Integer, Shift> sooviTööPäevad, List<Integer> haiguslehePäevad) {
         this.employeeId = employeeId;
         this.nimi = nimi;
         this.töökoormus = töökoormus;
@@ -45,11 +47,11 @@ public class Worker {
         this.nimi = nimi;
     }
 
-    public double getTöökoormus() {
+    public int getTöökoormus() {
         return töökoormus;
     }
 
-    public void setTöökoormus(double töökoormus) {
+    public void setTöökoormus(int töökoormus) {
         this.töökoormus = töökoormus;
     }
 
@@ -99,6 +101,22 @@ public class Worker {
 
     public void setHaiguslehePäevad(List<Integer> haiguslehePäevad) {
         this.haiguslehePäevad = haiguslehePäevad;
+    }
+
+    public int getHoursWorked() {
+        return hoursWorked;
+    }
+
+    public void setHoursWorked(int hoursWorked) {
+        this.hoursWorked += hoursWorked;
+    }
+
+    public double getPercentageWorked() {
+        return percentageWorked;
+    }
+
+    public void setPercentageWorked(double percentageWorked) {
+        this.percentageWorked += percentageWorked;
     }
 
     @Override
