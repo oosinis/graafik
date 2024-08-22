@@ -26,7 +26,7 @@ public class ScheduleCreator {
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
         // Step 3 Verify minimum shifts per day
-        //EnforceShifts.enforceMinimumShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
+        EnforceShifts.enforceMinimumShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
 
         // Export matrix
@@ -52,9 +52,6 @@ public class ScheduleCreator {
             }
         }
     }
-
-
-
 
     // Print Schedule and calculate total hours worked by each employee
     private static void printScheduleAndCalculateHours(Shift[][] scheduleMatrix, List<Worker> töötajateNimekiri) {

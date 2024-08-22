@@ -33,7 +33,9 @@ public class AssignShifts {
 
   // Assign needed shifts for the day
   public static void assignShiftForDay(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts, List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift) {
+
       for (int personIndex = 0; personIndex < todayShifts.size(); personIndex++) {
+        
         Shift todayShift = todayShifts.get(personIndex);
         Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(personIndex);
         Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "") : dayAfterTomorrowShifts.get(personIndex);

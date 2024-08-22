@@ -77,7 +77,7 @@ public class TöötajateNimekiri {
         Worker rimma = new Worker(6, "Rimma", 1.0, -2, 0, rimmaPuhkusePäevad, rimmaSooviPuhkePäevad,
                 rimmaSooviTööpäevad,
                 rimmaHaiguslehePäevad);
-        töötajateNimekiri.add(rimma);
+        //töötajateNimekiri.add(rimma);
 
         // ester
         List<Integer> esterPuhkusePäevad = new ArrayList<>();
@@ -87,7 +87,7 @@ public class TöötajateNimekiri {
         Worker ester = new Worker(7, "Ester", 0.75, 4, 0, esterPuhkusePäevad, esterSooviPuhkePäevad,
                 esterSooviTööpäevad,
                 esterHaiguslehePäevad);
-        töötajateNimekiri.add(ester);
+        //töötajateNimekiri.add(ester);
 
         // laine
         List<Integer> lainePuhkusePäevad = new ArrayList<>(Arrays.asList(13,14,15,16,17,18,19,20,21,22));
@@ -97,7 +97,7 @@ public class TöötajateNimekiri {
         Worker laine = new Worker(7, "Laine", 0.75, -4, 0, lainePuhkusePäevad, laineSooviPuhkePäevad,
                 laineSooviTööpäevad,
                 laineHaiguslehePäevad);
-        töötajateNimekiri.add(laine);
+        //töötajateNimekiri.add(laine);
 
     }
 
