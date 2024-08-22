@@ -21,13 +21,15 @@ public class ScheduleCreator {
 
         // Step 2 KEELATUD päevad
         AddForbiddenDays(töötajateNimekiri, scheduleMatrix);
-
+        
+        // Step 3 
         ChangeWorkLoads(töötajateNimekiri);
 
-        // Step 3 fill shifts
+        // Step 4 fill shifts
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, töötajateNimekiri);
 
-        // Print päevad kus putsus, teated et puudu on 24.10
+        // Print päevad kus putsus, teated et puudu on 24.10 näiteks töötajaid
+        // Proovida kõik inimesed panna sinna nimekirja
 
         // Export matrix
         printScheduleAndCalculateHours(scheduleMatrix, töötajateNimekiri);
