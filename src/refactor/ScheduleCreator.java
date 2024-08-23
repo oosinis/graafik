@@ -82,15 +82,15 @@ public class ScheduleCreator {
         int[] totalHours = new int[töötajateNimekiri.size()]; // Array to store total hours for each employee
 
         for (int day = 0; day < scheduleMatrix.length; day++) {
-            System.out.print("Day " + (day + 1) + ": ");
+            //System.out.print("Day " + (day + 1) + ": ");
             for (int emp = 0; emp < scheduleMatrix[day].length; emp++) {
                 Shift shift = scheduleMatrix[day][emp];
 
                 totalHours[emp] += shift.getDuration(); // Add shift duration to the employee's total hours
 
-                System.out.print(töötajateNimekiri.get(emp).getNimi() + ": " + shift.getCategory() + "| ");
+                //System.out.print(töötajateNimekiri.get(emp).getNimi() + ": " + shift.getCategory() + "| ");
             }
-            System.out.println();
+            //System.out.println();
         }
 
         // Print total hours worked by each employee

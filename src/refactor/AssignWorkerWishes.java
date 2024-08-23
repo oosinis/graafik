@@ -48,6 +48,7 @@ public class AssignWorkerWishes {
         for (Map.Entry<Integer, Shift> entry : workDays.entrySet()) {
             int day = entry.getKey() - 1; // Adjust for 0-based index
             Shift shift = entry.getValue();
+            if (day == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
             scheduleMatrix[day][workerId] = shift;
         }
 

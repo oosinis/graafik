@@ -59,6 +59,8 @@ public class MatrixToCSV {
               rowString.append(shift.getDuration()).append(",");
             else if (vahetused.get(shiftIndex).getCategory() == Shift.LÜHIKE_PÄEV && shift.getCategory().equals("P"))
               rowString.append("P,");
+            else if (vahetused.get(shiftIndex).getCategory() == Shift.LÜHIKE_PÄEV && shift.getCategory().equals("D"))
+              rowString.append("D,");
             else
               rowString.append(",");
 
@@ -92,6 +94,11 @@ public class MatrixToCSV {
             rowString.setLength(rowString.length() - 1);
           }
           writer.println(rowString.toString());
+          if (shiftIndex == vahetused.size() - 1) {
+            rowString = new StringBuilder();
+            writer.println(rowString.toString());
+          }
+
         }
       }
     }

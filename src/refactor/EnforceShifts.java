@@ -28,6 +28,8 @@ public class EnforceShifts {
             AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
                 worker.getEmployeeId(),
                 new Shift(0, Shift.KEELATUD));
+            if (dayIndex == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
+
           }
           scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
 

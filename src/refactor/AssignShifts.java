@@ -21,33 +21,33 @@ public class AssignShifts {
         assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, intensiivShift,
             workers);
       }
-
       if (!todayShifts.contains(intensiivShift)) {
         EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts,
             dayAfterTomorrowShifts, intensiivShift, workers);
       }
+      if (!todayShifts.contains(intensiivShift)) System.out.println("Kuupäeval " + dayIndex + " puudu intensiiv vahetus");
 
       Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
       if (!todayShifts.contains(osakonnaShift)) {
         assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, osakonnaShift,
             workers);
       }
-
       if (!todayShifts.contains(osakonnaShift)) {
         EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts,
             dayAfterTomorrowShifts, osakonnaShift, workers);
       }
+      if (!todayShifts.contains(intensiivShift)) System.out.println("Kuupäeval " + dayIndex + " puudu osakonna vahetus");
 
       Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
       if (!todayShifts.contains(lühikeShift)) {
         assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift,
             workers);
       }
-
       if (!todayShifts.contains(lühikeShift)) {
         EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts,
             dayAfterTomorrowShifts, lühikeShift, workers);
       }
+      if (!todayShifts.contains(intensiivShift)) System.out.println("Kuupäeval " + dayIndex + " puudu lühike vahetus");
 
       // check kas midagi puudu ja ss force see D peale, kui ss ka ei saa s vaatame
       // mis homme toimub et ta ei saa ja votame ära selle nt kui 24h, ja assignime
@@ -75,6 +75,9 @@ public class AssignShifts {
             AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
                 worker.getEmployeeId(),
                 new Shift(0, Shift.KEELATUD));
+
+            if (dayIndex == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
+
           }
 
           scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
