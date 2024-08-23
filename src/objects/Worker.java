@@ -8,7 +8,8 @@ public class Worker {
 
     int employeeId;
     String nimi;
-    int töökoormus;
+    int töökoormuseTunnid;
+    double tööKoormus;
     Integer eelmiseKuuÜlejääk;
     int eelmiseKuuVahetuseTunnid;
     List<Integer> puhkusePäevad = new ArrayList<>();
@@ -19,10 +20,13 @@ public class Worker {
 
     List<Integer> haiguslehePäevad = new ArrayList<>();
 
-    public Worker(int employeeId, String nimi, int  töökoormus, Integer eelmiseKuuÜlejääk, int eelmiseKuuVahetuseTunnid, List<Integer> puhkusePäevad, List<Integer> sooviPuhkePäevad, HashMap<Integer, Shift> sooviTööPäevad, List<Integer> haiguslehePäevad) {
+    public Worker(int employeeId, String nimi, int töökoormuseTunnid, double tööKoormus, Integer eelmiseKuuÜlejääk, int eelmiseKuuVahetuseTunnid,
+            List<Integer> puhkusePäevad, List<Integer> sooviPuhkePäevad, HashMap<Integer, Shift> sooviTööPäevad,
+            List<Integer> haiguslehePäevad) {
         this.employeeId = employeeId;
         this.nimi = nimi;
-        this.töökoormus = töökoormus;
+        this.töökoormuseTunnid = töökoormuseTunnid;
+        this.tööKoormus = tööKoormus;
         this.eelmiseKuuÜlejääk = eelmiseKuuÜlejääk;
         this.eelmiseKuuVahetuseTunnid = eelmiseKuuVahetuseTunnid;
         this.puhkusePäevad = puhkusePäevad;
@@ -47,13 +51,22 @@ public class Worker {
         this.nimi = nimi;
     }
 
-    public int getTöökoormus() {
-        return töökoormus;
+    public int getTöökoormuseTunnid() {
+        return töökoormuseTunnid;
     }
 
-    public void setTöökoormus(int töökoormus) {
-        this.töökoormus = töökoormus;
+    public void setTöökoormuseTunnid(int töökoormuseTunnid) {
+        this.töökoormuseTunnid = töökoormuseTunnid;
     }
+
+    public double getTööKoormus() {
+        return tööKoormus;
+    }
+
+    public void setTööKoormus(int tööKoormus) {
+        this.tööKoormus = tööKoormus;
+    }
+
 
     public Integer getEelmiseKuuÜlejääk() {
         return eelmiseKuuÜlejääk;
