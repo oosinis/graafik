@@ -17,26 +17,30 @@ public class AssignShifts {
       List<Shift> dayAfterTomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 2);
 
       Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
-      if (!todayShifts.contains(intensiivShift)) {
+      Shift intensiivShiftKuuLõpp = new Shift(16, Shift.INTENSIIV);
+
+      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftKuuLõpp)) {
         assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, intensiivShift,
             workers);
       }
-      if (!todayShifts.contains(intensiivShift)) {
+      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftKuuLõpp)) {
         EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts,
             dayAfterTomorrowShifts, intensiivShift, workers);
       }
-      if (!todayShifts.contains(intensiivShift)) System.out.println("Kuupäeval " + dayIndex + " puudu intensiiv vahetus");
+      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftKuuLõpp)) System.out.println("Kuupäeval " + dayIndex + " puudu intensiiv vahetus");
 
       Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
-      if (!todayShifts.contains(osakonnaShift)) {
+      Shift osakonnaShiftKuuLõpp = new Shift(16, Shift.OSAKOND);
+
+      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftKuuLõpp)) {
         assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, osakonnaShift,
             workers);
       }
-      if (!todayShifts.contains(osakonnaShift)) {
+      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftKuuLõpp)) {
         EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts,
             dayAfterTomorrowShifts, osakonnaShift, workers);
       }
-      if (!todayShifts.contains(intensiivShift)) System.out.println("Kuupäeval " + dayIndex + " puudu osakonna vahetus");
+      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftKuuLõpp)) System.out.println("Kuupäeval " + dayIndex + " puudu osakonna vahetus");
 
       Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
       if (!todayShifts.contains(lühikeShift)) {

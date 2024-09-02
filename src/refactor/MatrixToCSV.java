@@ -94,10 +94,7 @@ public class MatrixToCSV {
             rowString.setLength(rowString.length() - 1);
           }
           writer.println(rowString.toString());
-          if (shiftIndex == vahetused.size() - 1) {
-            rowString = new StringBuilder();
-            writer.println(rowString.toString());
-          }
+
 
         }
       }
