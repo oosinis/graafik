@@ -7,6 +7,15 @@ import objects.Worker;
 
 public class ScheduleCreator {
 
+    // TODO: cleanup kasutamata filid
+    // nimetused korda
+    // comments
+    // print to main et näeks tabelid ilma excelita
+    // muu refactor jamap failid meetodi kokku
+
+    // MEILIST: puhkuse päevade arvutus
+    // 9 ja 10h vahetused --> nt pikendame 8h vahetusi kui pole kvartali tunnid koos
+
     public static void main(String[] args) {
         TöötajateNimekiri töötajateNimekiriInstance = new TöötajateNimekiri();
         List<Worker> töötajateNimekiri = töötajateNimekiriInstance.getTöötajateNimekiri();
@@ -88,7 +97,7 @@ public class ScheduleCreator {
 
                 totalHours[emp] += shift.getDuration(); // Add shift duration to the employee's total hours
 
-                //System.out.print(töötajateNimekiri.get(emp).getNimi() + ": " + shift.getCategory() + "| ");
+                System.out.print(töötajateNimekiri.get(emp).getNimi() + ": " + shift.getCategory() + "| ");
             }
             //System.out.println();
         }
