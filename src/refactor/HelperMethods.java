@@ -31,5 +31,10 @@ public class HelperMethods {
     }
     return false; // No two consecutive rest days found
   }
+
+  public static int weekdayOfDate(int dateIndex, int firstDayOfMonth) {
+
+    return (dateIndex + firstDayOfMonth) % 7;
+  }
 }
 

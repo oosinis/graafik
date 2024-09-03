@@ -51,61 +51,60 @@ public class Worker {
         this.name = nimi;
     }
 
-    public int getTöökoormuseTunnid() {
+    public int getWorkLoadHours() {
         return workLoadHours;
     }
 
-    public void setTöökoormuseTunnid(int töökoormuseTunnid) {
-        this.workLoadHours = töökoormuseTunnid;
+    public void setWorkLoadHours(int workLoadHours) {
+        this.workLoadHours = workLoadHours;
     }
 
-    public double getTööKoormus() {
+    public double getWorkLoad() {
         return workLoad;
     }
 
-    public void setTööKoormus(int tööKoormus) {
-        this.workLoad = tööKoormus;
+    public void setWorkLoad(double workLoad) {
+        this.workLoad = workLoad;
     }
 
-
-    public Integer getEelmiseKuuÜlejääk() {
+    public Integer getHoursBalance() {
         return hoursBalance;
     }
 
-    public void setEelmiseKuuÜlejääk(Integer eelmiseKuuÜlejääk) {
-        this.hoursBalance = eelmiseKuuÜlejääk;
+    public void setHoursBalance(Integer hoursBalance) {
+        this.hoursBalance = hoursBalance;
     }
 
-    public int getEelmiseKuuVahetuseTunnid() {
+    public int getLastMonthLastDayHours() {
         return lastMonthLastDayHours;
     }
 
-    public void setEelmiseKuuVahetuseTunnid(int eelmiseKuuVahetuseTunnid) {
-        this.lastMonthLastDayHours = eelmiseKuuVahetuseTunnid;
+    public void setLastMonthLastDayHours(int lastMonthLastDayHours) {
+        this.lastMonthLastDayHours = lastMonthLastDayHours;
     }
 
-    public List<Integer> getPuhkusePäevad() {
+    public List<Integer> getVacationDays() {
         return vacationDays;
     }
 
-    public void setPuhkusePäevad(List<Integer> puhkusePäevad) {
-        this.vacationDays = puhkusePäevad;
+    public void setVacationDays(List<Integer> vacationDays) {
+        this.vacationDays = vacationDays;
     }
 
-    public List<Integer> getSooviPuhkePäevad() {
+    public List<Integer> getDesiredVacationDays() {
         return desiredVacationDays;
     }
 
-    public void setSooviPuhkePäevad(List<Integer> sooviPuhkePäevad) {
-        this.desiredVacationDays = sooviPuhkePäevad;
+    public void setDesiredVacationDays(List<Integer> desiredVacationDays) {
+        this.desiredVacationDays = desiredVacationDays;
     }
 
-    public HashMap<Integer, Shift> getSooviTööPäevad() {
+    public HashMap<Integer, Shift> getDesiredWorkDays() {
         return desiredWorkDays;
     }
 
-    public void setSooviTööPäevad(HashMap<Integer, Shift> sooviTööPäevad) {
-        this.desiredWorkDays = sooviTööPäevad;
+    public void setDesiredWorkDays(HashMap<Integer, Shift> desiredWorkDays) {
+        this.desiredWorkDays = desiredWorkDays;
     }
 
     public List<Integer> getSickLeaveDays() {

@@ -83,7 +83,7 @@ public class AssignShifts {
           scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
 
           worker.setHoursWorked(shift.getDuration());
-          worker.setPercentageWorked((shift.getDuration() * 100) / worker.getTöökoormuseTunnid());
+          worker.setPercentageWorked((shift.getDuration() * 100) / worker.getWorkLoadHours());
 
           break;
         }

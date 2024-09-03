@@ -4,10 +4,10 @@ import java.util.*;
 import objects.Shift;
 import objects.Worker;
 
-public class TöötajateNimekiri {
-    private List<Worker> töötajateNimekiri = new ArrayList<>();
+public class WorkersList {
+    private List<Worker> workersList = new ArrayList<>();
 
-    public TöötajateNimekiri() {
+    public WorkersList() {
         // HELVE
         List<Integer> helvePuhkusePäevad = new ArrayList<>();
         ArrayList<Integer> helveSooviPuhkepäevad = new ArrayList<>(Arrays.asList(1, 26, 27, 28, 29));
@@ -15,7 +15,7 @@ public class TöötajateNimekiri {
         List<Integer> helveHaiguslehePäevad = new ArrayList<>();
         Worker helve = new Worker(0, "Helve", 168, 1.0, -6, 0, helvePuhkusePäevad, helveSooviPuhkepäevad,
                 helveSooviTööpäevad, helveHaiguslehePäevad);
-        töötajateNimekiri.add(helve);
+        workersList.add(helve);
 
         // KAI
         List<Integer> kaiPuhkusePäevad = new ArrayList<>();
@@ -24,7 +24,7 @@ public class TöötajateNimekiri {
         List<Integer> kaiHaiguslehePäevad = new ArrayList<>();
         Worker kai = new Worker(1, "Kai", 168, 1.0, -8, 8, kaiPuhkusePäevad, kaiSooviPuhkepäevad, kaiSooviTööpäevad,
                 kaiHaiguslehePäevad);
-        töötajateNimekiri.add(kai);
+        workersList.add(kai);
 
         // KAJA
         List<Integer> kajaPuhkusePäevad = new ArrayList<>();
@@ -34,7 +34,7 @@ public class TöötajateNimekiri {
         Worker kaja = new Worker(2, "Kaja", 168, 1.0, -6, 0, kajaPuhkusePäevad, kajaSooviPuhkePäevad,
                 kajaSooviTööpäevad,
                 kajaHaiguslehePäevad);
-        töötajateNimekiri.add(kaja);
+        workersList.add(kaja);
 
         // MARI-LIIS
         List<Integer> mariliisPuhkusePäevad = new ArrayList<>();
@@ -43,7 +43,7 @@ public class TöötajateNimekiri {
         List<Integer> mariliisHaiguslehePäevad = new ArrayList<>();
         Worker mariliis = new Worker(3, "Mari-Liis", 168, 1.0, -12, 0, mariliisPuhkusePäevad, mariliisSooviPuhkePäevad,
                 mariliisSooviTööpäevad, mariliisHaiguslehePäevad);
-        töötajateNimekiri.add(mariliis);
+        workersList.add(mariliis);
 
         // Olga
         List<Integer> olgaPuhkusePäevad = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
@@ -53,7 +53,7 @@ public class TöötajateNimekiri {
         Worker olga = new Worker(4, "Olga", 168, 1.0, -8, 0, olgaPuhkusePäevad, olgaSooviPuhkePäevad,
                 olgaSooviTööpäevad,
                 olgaHaiguslehePäevad);
-        töötajateNimekiri.add(olga);
+        workersList.add(olga);
 
         // PÄRJA
         List<Integer> pärjaPuhkusePäevad = new ArrayList<>();
@@ -69,7 +69,7 @@ public class TöötajateNimekiri {
         List<Integer> pärjaHaiguslehePäevad = new ArrayList<>();
         Worker pärja = new Worker(5, "Pärja", 168, 1.0, -12, 8, pärjaPuhkusePäevad, pärjaSooviPuhkePäevad,
                 pärjaSooviTööpäevad, pärjaHaiguslehePäevad);
-        töötajateNimekiri.add(pärja);
+        workersList.add(pärja);
 
         // RIMMA
         List<Integer> rimmaPuhkusePäevad = new ArrayList<>();
@@ -79,7 +79,7 @@ public class TöötajateNimekiri {
         Worker rimma = new Worker(6, "Rimma", 168, 1.0, -2, 0, rimmaPuhkusePäevad, rimmaSooviPuhkePäevad,
                 rimmaSooviTööpäevad,
                 rimmaHaiguslehePäevad);
-        töötajateNimekiri.add(rimma);
+        workersList.add(rimma);
 
         // ester
         List<Integer> esterPuhkusePäevad = new ArrayList<>();
@@ -89,7 +89,7 @@ public class TöötajateNimekiri {
         Worker ester = new Worker(7, "Ester", 126, 0.75, 4, 0, esterPuhkusePäevad, esterSooviPuhkePäevad,
                 esterSooviTööpäevad,
                 esterHaiguslehePäevad);
-        töötajateNimekiri.add(ester);
+        workersList.add(ester);
 
         // laine
         List<Integer> lainePuhkusePäevad = new ArrayList<>(Arrays.asList(13, 14, 15, 16, 17, 18, 19, 20, 21, 22));
@@ -99,7 +99,7 @@ public class TöötajateNimekiri {
         Worker laine = new Worker(8, "Laine", 126, 0.75, -4, 0, lainePuhkusePäevad, laineSooviPuhkePäevad,
                 laineSooviTööpäevad,
                 laineHaiguslehePäevad);
-        töötajateNimekiri.add(laine);
+        workersList.add(laine);
 
         // natalja
         List<Integer> nataljaPuhkusePäevad = new ArrayList<>();
@@ -109,7 +109,7 @@ public class TöötajateNimekiri {
         Worker natalja = new Worker(9, "natalja", 126, 0.75, -4, 0, nataljaPuhkusePäevad, nataljaSooviPuhkePäevad,
                 nataljaSooviTööpäevad,
                 nataljaHaiguslehePäevad);
-        töötajateNimekiri.add(natalja);
+        workersList.add(natalja);
 
         // reelika
         List<Integer> reelikaPuhkusePäevad = new ArrayList<>();
@@ -119,7 +119,7 @@ public class TöötajateNimekiri {
         Worker reelika = new Worker(10, "reelika", 126, 0.75, -10, 0, reelikaPuhkusePäevad, reelikaSooviPuhkePäevad,
                 reelikaSooviTööpäevad,
                 reelikaHaiguslehePäevad);
-        töötajateNimekiri.add(reelika);
+        workersList.add(reelika);
 
         // tiina
         List<Integer> tiinaPuhkusePäevad = new ArrayList<>(Arrays.asList(23, 24, 25, 26, 27, 28, 29, 30));
@@ -129,7 +129,7 @@ public class TöötajateNimekiri {
         Worker tiina = new Worker(11, "tiina", 126, 0.75, -4, 0, tiinaPuhkusePäevad, tiinaSooviPuhkePäevad,
                 tiinaSooviTööpäevad,
                 tiinaHaiguslehePäevad);
-        töötajateNimekiri.add(tiina);
+        workersList.add(tiina);
 
         // anna_k_m
         List<Integer> anna_k_mPuhkusePäevad = new ArrayList<>();
@@ -140,7 +140,7 @@ public class TöötajateNimekiri {
         Worker anna_k_m = new Worker(12, "anna_k_m", 84, 0.5, -6, 0, anna_k_mPuhkusePäevad, anna_k_mSooviPuhkePäevad,
                 anna_k_mSooviTööpäevad,
                 anna_k_mHaiguslehePäevad);
-        töötajateNimekiri.add(anna_k_m);
+        workersList.add(anna_k_m);
 
         // nadezda
         List<Integer> nadezdaPuhkusePäevad = new ArrayList<>();
@@ -153,16 +153,12 @@ public class TöötajateNimekiri {
         Worker nadezda = new Worker(13, "nadezda", 168, 1.0, -4, 0, nadezdaPuhkusePäevad, nadezdaSooviPuhkePäevad,
                 nadezdaSooviTööpäevad,
                 nadezdaHaiguslehePäevad);
-        töötajateNimekiri.add(nadezda);
+        workersList.add(nadezda);
     }
 
     // Getter method for the list
-    public List<Worker> getTöötajateNimekiri() {
-        return töötajateNimekiri;
+    public List<Worker> getWorkersList() {
+        return workersList;
     }
 
-    // Setter method for the list
-    public void setTöötajateNimekiri(List<Worker> töötajateNimekiri) {
-        this.töötajateNimekiri = töötajateNimekiri;
-    }
 }
