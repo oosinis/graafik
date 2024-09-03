@@ -13,8 +13,8 @@ public class HelperMethods {
     return Arrays.asList(scheduleMatrix[dayIndex]);
   }
 
+  // Ensure 2 restdays for 24hr shift
   public static Boolean atLeastTwoRestdays(Shift[][] scheduleMatrix, int dayIndex, int workerIndex) {
-
     int consecutiveRestDays = 0;
 
     for (int i = dayIndex - 5; i < dayIndex; i++) {

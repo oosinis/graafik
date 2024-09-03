@@ -7,32 +7,32 @@ import java.util.List;
 public class Worker {
 
     int employeeId;
-    String nimi;
-    int töökoormuseTunnid;
-    double tööKoormus;
-    Integer eelmiseKuuÜlejääk;
-    int eelmiseKuuVahetuseTunnid;
-    List<Integer> puhkusePäevad = new ArrayList<>();
-    List<Integer> sooviPuhkePäevad = new ArrayList<>();
-    HashMap<Integer, Shift> sooviTööPäevad = new HashMap<>();
+    String name;
+    int workLoadHours;
+    double workLoad;
+    Integer hoursBalance;
+    int lastMonthLastDayHours;
+    List<Integer> vacationDays = new ArrayList<>();
+    List<Integer> desiredVacationDays = new ArrayList<>();
+    HashMap<Integer, Shift> desiredWorkDays = new HashMap<>();
     int hoursWorked;
     double percentageWorked;
 
-    List<Integer> haiguslehePäevad = new ArrayList<>();
+    List<Integer> sickLeaveDays = new ArrayList<>();
 
-    public Worker(int employeeId, String nimi, int töökoormuseTunnid, double tööKoormus, Integer eelmiseKuuÜlejääk, int eelmiseKuuVahetuseTunnid,
-            List<Integer> puhkusePäevad, List<Integer> sooviPuhkePäevad, HashMap<Integer, Shift> sooviTööPäevad,
-            List<Integer> haiguslehePäevad) {
+    public Worker(int employeeId, String name, int workLoadHours, double workLoad, Integer hoursBalance, int lastMonthLastDayHours,
+            List<Integer> vacationDays, List<Integer> desiredVacationDays, HashMap<Integer, Shift> desiredWorkDays,
+            List<Integer> sickLeaveDays) {
         this.employeeId = employeeId;
-        this.nimi = nimi;
-        this.töökoormuseTunnid = töökoormuseTunnid;
-        this.tööKoormus = tööKoormus;
-        this.eelmiseKuuÜlejääk = eelmiseKuuÜlejääk;
-        this.eelmiseKuuVahetuseTunnid = eelmiseKuuVahetuseTunnid;
-        this.puhkusePäevad = puhkusePäevad;
-        this.sooviPuhkePäevad = sooviPuhkePäevad;
-        this.sooviTööPäevad = sooviTööPäevad;
-        this.haiguslehePäevad = haiguslehePäevad;
+        this.name = name;
+        this.workLoadHours = workLoadHours;
+        this.workLoad = workLoad;
+        this.hoursBalance = hoursBalance;
+        this.lastMonthLastDayHours = lastMonthLastDayHours;
+        this.vacationDays = vacationDays;
+        this.desiredVacationDays = desiredVacationDays;
+        this.desiredWorkDays = desiredWorkDays;
+        this.sickLeaveDays = sickLeaveDays;
     }
 
     public int getEmployeeId() {
@@ -43,77 +43,77 @@ public class Worker {
         this.employeeId = employeeId;
     }
 
-    public String getNimi() {
-        return nimi;
+    public String getName() {
+        return name;
     }
 
-    public void setNimi(String nimi) {
-        this.nimi = nimi;
+    public void setName(String nimi) {
+        this.name = nimi;
     }
 
     public int getTöökoormuseTunnid() {
-        return töökoormuseTunnid;
+        return workLoadHours;
     }
 
     public void setTöökoormuseTunnid(int töökoormuseTunnid) {
-        this.töökoormuseTunnid = töökoormuseTunnid;
+        this.workLoadHours = töökoormuseTunnid;
     }
 
     public double getTööKoormus() {
-        return tööKoormus;
+        return workLoad;
     }
 
     public void setTööKoormus(int tööKoormus) {
-        this.tööKoormus = tööKoormus;
+        this.workLoad = tööKoormus;
     }
 
 
     public Integer getEelmiseKuuÜlejääk() {
-        return eelmiseKuuÜlejääk;
+        return hoursBalance;
     }
 
     public void setEelmiseKuuÜlejääk(Integer eelmiseKuuÜlejääk) {
-        this.eelmiseKuuÜlejääk = eelmiseKuuÜlejääk;
+        this.hoursBalance = eelmiseKuuÜlejääk;
     }
 
     public int getEelmiseKuuVahetuseTunnid() {
-        return eelmiseKuuVahetuseTunnid;
+        return lastMonthLastDayHours;
     }
 
     public void setEelmiseKuuVahetuseTunnid(int eelmiseKuuVahetuseTunnid) {
-        this.eelmiseKuuVahetuseTunnid = eelmiseKuuVahetuseTunnid;
+        this.lastMonthLastDayHours = eelmiseKuuVahetuseTunnid;
     }
 
     public List<Integer> getPuhkusePäevad() {
-        return puhkusePäevad;
+        return vacationDays;
     }
 
     public void setPuhkusePäevad(List<Integer> puhkusePäevad) {
-        this.puhkusePäevad = puhkusePäevad;
+        this.vacationDays = puhkusePäevad;
     }
 
     public List<Integer> getSooviPuhkePäevad() {
-        return sooviPuhkePäevad;
+        return desiredVacationDays;
     }
 
     public void setSooviPuhkePäevad(List<Integer> sooviPuhkePäevad) {
-        this.sooviPuhkePäevad = sooviPuhkePäevad;
+        this.desiredVacationDays = sooviPuhkePäevad;
     }
 
     public HashMap<Integer, Shift> getSooviTööPäevad() {
-        return sooviTööPäevad;
+        return desiredWorkDays;
     }
 
     public void setSooviTööPäevad(HashMap<Integer, Shift> sooviTööPäevad) {
-        this.sooviTööPäevad = sooviTööPäevad;
+        this.desiredWorkDays = sooviTööPäevad;
     }
 
-    public List<Integer> getHaiguslehePäevad() {
-        return haiguslehePäevad;
+    public List<Integer> getSickLeaveDays() {
+        return sickLeaveDays;
     }
 
-    public void setHaiguslehePäevad(List<Integer> haiguslehePäevad) {
-        this.haiguslehePäevad = haiguslehePäevad;
+    public void setSickLeaveDays(List<Integer> haiguslehePäevad) {
+        this.sickLeaveDays = haiguslehePäevad;
     }
 
     public int getHoursWorked() {
@@ -135,7 +135,7 @@ public class Worker {
     @Override
     public String toString() {
         return "Töötaja{" +
-                "nimi='" + nimi + '\'' +
+                "nimi='" + name + '\'' +
                 '}';
     }
 }

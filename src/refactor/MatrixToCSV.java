@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import objects.Shift;
 import objects.Worker;
 
@@ -49,7 +48,7 @@ public class MatrixToCSV {
         for (int shiftIndex = 0; shiftIndex < vahetused.size(); shiftIndex++) {
 
           StringBuilder rowString = new StringBuilder();
-          rowString.append(employee.getNimi()).append(","); // Add the employee name at the start of the row
+          rowString.append(employee.getName()).append(","); // Add the employee name at the start of the row
 
           rowString.append(vahetused.get(shiftIndex).getCategory()).append(",");
 

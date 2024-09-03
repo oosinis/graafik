@@ -53,10 +53,6 @@ public class AssignShifts {
       }
       if (!todayShifts.contains(intensiivShift)) System.out.println("Kuupäeval " + dayIndex + " puudu lühike vahetus");
 
-      // check kas midagi puudu ja ss force see D peale, kui ss ka ei saa s vaatame
-      // mis homme toimub et ta ei saa ja votame ära selle nt kui 24h, ja assignime
-      // kellegile jarka päev
-
     }
   }
 
