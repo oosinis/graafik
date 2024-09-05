@@ -34,6 +34,7 @@ public class EnforceShifts {
           scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
 
           worker.setHoursWorked(shift.getDuration());
+          worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
           worker.setPercentageWorked((shift.getDuration() * 100) / worker.getWorkLoadHours());
 
           break;

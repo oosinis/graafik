@@ -64,7 +64,7 @@ public class AssignShifts {
 
     for (Worker worker : sortedWorkers) {
 
-      Shift todayShift = todayShifts.get(worker.getEmployeeId());
+      Shift todayShift = todayShifts.get(worker.getEmployeeId()); // that worker's shift today
       Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(worker.getEmployeeId());
       Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "")
           : dayAfterTomorrowShifts.get(worker.getEmployeeId());
@@ -83,6 +83,7 @@ public class AssignShifts {
           scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
 
           worker.setHoursWorked(shift.getDuration());
+          worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
           worker.setPercentageWorked((shift.getDuration() * 100) / worker.getWorkLoadHours());
 
           break;
