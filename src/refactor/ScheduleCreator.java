@@ -28,7 +28,7 @@ public class ScheduleCreator {
         // Step 3 Muuda koormuse põhjal 
         ChangeWorkLoads.ChangeWorkLoads(workersList, firstDayOfMonth);
 
-        // Step 4 fill shifts
+        // Step 4 fill shifts TODO:++ kui inimesel hours balance juba > 8 ss ei saa assignida shifti
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, workersList);
 
         // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assginima ainult tööpäevadle sest nv olemas juba
