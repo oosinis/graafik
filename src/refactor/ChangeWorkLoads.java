@@ -33,15 +33,19 @@ public class ChangeWorkLoads {
             }
 
             worker.setWorkLoadHours(
-                    worker.getWorkLoadHours() - (workerVacationDays * vacationHrValue));
-            worker.setWorkLoadHours(worker.getWorkLoadHours() + worker.getLastMonthLastDayHours());
+                    worker.getWorkLoadHours() - (workerVacationDays * vacationHrValue+ worker.getLastMonthLastDayHours())),
+
+            worker.setHoursBalanced(worker.getHorsBalanced() - worker.getWorkLoadHours());
 
             for (Map.Entry<Integer, Shift> entry : worker.getDesiredWorkDays().entrySet()) {
                 worker.setWorkLoadHours(worker.getWorkLoadHours() - entry.getValue().getDuration());
+                worker.setHoursBalanced(worker.getHorsBalanced() + entry.getValue().getDuration());
             }
 
-            if (worker.getLastMonthLastDayHours() == 8)
+            if (worker.getLastMonthLastDayHours() == 8) {
                 worker.setHoursWorked(8);
+                worker.setHoursBalanced(worker.getHorsBalanced() + 8);
+            }
         }
     }
 }
