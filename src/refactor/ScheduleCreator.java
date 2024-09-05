@@ -32,7 +32,7 @@ public class ScheduleCreator {
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, workersList);
 
         // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assginima ainult tööpäevadle sest nv olemas juba
-        
+        AssignExtraShifts.AddExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
 
         // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
 

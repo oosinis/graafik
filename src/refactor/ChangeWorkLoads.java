@@ -1,12 +1,9 @@
 package refactor;
 
-import objects.Shift;
-import objects.Worker;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import objects.Shift;
+import objects.Worker;
 
 public class ChangeWorkLoads {
 
@@ -26,25 +23,25 @@ public class ChangeWorkLoads {
 
             int workerVacationDays = 0;
             for (int date : worker.getVacationDays()) {
-                int weekday = HelperMethods.weekdayOfDate(date - 1, firstDayOfMonth);
+                int weekday = HelperMethods.getDay(date - 1, firstDayOfMonth);
                 if (weekday != 0 && weekday != 6) {
                     workerVacationDays++;
                 }
             }
 
             worker.setWorkLoadHours(
-                    worker.getWorkLoadHours() - (workerVacationDays * vacationHrValue+ worker.getLastMonthLastDayHours())),
+                    worker.getWorkLoadHours() - (workerVacationDays * vacationHrValue+ worker.getLastMonthLastDayHours()));
 
-            worker.setHoursBalanced(worker.getHorsBalanced() - worker.getWorkLoadHours());
+            worker.setHoursBalance(worker.getHoursBalance() - worker.getWorkLoadHours());
 
             for (Map.Entry<Integer, Shift> entry : worker.getDesiredWorkDays().entrySet()) {
                 worker.setWorkLoadHours(worker.getWorkLoadHours() - entry.getValue().getDuration());
-                worker.setHoursBalanced(worker.getHorsBalanced() + entry.getValue().getDuration());
+                worker.setHoursBalance(worker.getHoursBalance() + entry.getValue().getDuration());
             }
 
             if (worker.getLastMonthLastDayHours() == 8) {
                 worker.setHoursWorked(8);
-                worker.setHoursBalanced(worker.getHorsBalanced() + 8);
+                worker.setHoursBalance(worker.getHoursBalance() + 8);
             }
         }
     }

@@ -107,8 +107,7 @@ public class WorkersList {
         HashMap<Integer, Shift> nataljaSooviTööpäevad = new HashMap<>();
         List<Integer> nataljaHaiguslehePäevad = new ArrayList<>();
         Worker natalja = new Worker(9, "natalja", 126, 0.75, -4, 0, nataljaPuhkusePäevad, nataljaSooviPuhkePäevad,
-                nataljaSooviTööpäevad,
-                nataljaHaiguslehePäevad);
+                nataljaSooviTööpäevad, nataljaHaiguslehePäevad);
         workersList.add(natalja);
 
         // reelika
