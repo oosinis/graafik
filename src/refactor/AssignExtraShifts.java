@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AssignExtraShifts {
-    public void AddExtraShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers, int firstDayOfMonth) {
+    public static void AddExtraShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers, int firstDayOfMonth) {
         var filteredWorkers = FilterWorkers(workers);
 
         for (int dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
@@ -32,8 +32,8 @@ public class AssignExtraShifts {
         }
     }
 
-    private List<Worker> FilterWorkers(List<Worker> workers) {
-        var negativeWorkers = workers.stream().filter(w -> w.getHoursBalance() < -8).collect(Collectors.toList());
+    private static List<Worker> FilterWorkers(List<Worker> workers) {
+        var negativeWorkers = workers.stream().filter(w -> w.getHoursBalance() <= -8).collect(Collectors.toList());
         negativeWorkers.sort(Comparator.comparingDouble(Worker::getHoursBalance));
         return  negativeWorkers;
     }
