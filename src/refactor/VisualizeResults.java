@@ -1,8 +1,5 @@
 package refactor;
 
-import objects.Shift;
-import objects.Worker;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import objects.Shift;
+import objects.Worker;
 
 public class VisualizeResults {
 
@@ -113,9 +112,6 @@ public class VisualizeResults {
             //System.out.print("Day " + (day + 1) + ": ");
             for (int emp = 0; emp < scheduleMatrix[day].length; emp++) {
                 Shift shift = scheduleMatrix[day][emp];
-
-                totalHours[emp] += shift.getDuration();
-
                 System.out.print(workers.get(emp).getName() + ": " + shift.getCategory() + "| ");
             }
             System.out.println();
