@@ -14,7 +14,7 @@ public class WorkersList {
         HashMap<Integer, Shift> helveSooviTööpäevad = new HashMap<>();
         List<Integer> helveHaiguslehePäevad = new ArrayList<>();
         Worker helve = new Worker(0, "Helve", 168, 1.0, -6, 0, helvePuhkusePäevad, helveSooviPuhkepäevad,
-                helveSooviTööpäevad, helveHaiguslehePäevad);
+                helveSooviTööpäevad, helveHaiguslehePäevad, 0);
         workersList.add(helve);
 
         // KAI
@@ -23,7 +23,7 @@ public class WorkersList {
         HashMap<Integer, Shift> kaiSooviTööpäevad = new HashMap<>();
         List<Integer> kaiHaiguslehePäevad = new ArrayList<>();
         Worker kai = new Worker(1, "Kai", 168, 1.0, -8, 8, kaiPuhkusePäevad, kaiSooviPuhkepäevad, kaiSooviTööpäevad,
-                kaiHaiguslehePäevad);
+                kaiHaiguslehePäevad, 0);
         workersList.add(kai);
 
         // KAJA
@@ -33,7 +33,7 @@ public class WorkersList {
         List<Integer> kajaHaiguslehePäevad = new ArrayList<>();
         Worker kaja = new Worker(2, "Kaja", 168, 1.0, -6, 0, kajaPuhkusePäevad, kajaSooviPuhkePäevad,
                 kajaSooviTööpäevad,
-                kajaHaiguslehePäevad);
+                kajaHaiguslehePäevad, 0);
         workersList.add(kaja);
 
         // MARI-LIIS
@@ -42,7 +42,7 @@ public class WorkersList {
         HashMap<Integer, Shift> mariliisSooviTööpäevad = new HashMap<>();
         List<Integer> mariliisHaiguslehePäevad = new ArrayList<>();
         Worker mariliis = new Worker(3, "Mari-Liis", 168, 1.0, -12, 0, mariliisPuhkusePäevad, mariliisSooviPuhkePäevad,
-                mariliisSooviTööpäevad, mariliisHaiguslehePäevad);
+                mariliisSooviTööpäevad, mariliisHaiguslehePäevad, -4);
         workersList.add(mariliis);
 
         // Olga
@@ -52,7 +52,7 @@ public class WorkersList {
         List<Integer> olgaHaiguslehePäevad = new ArrayList<>();
         Worker olga = new Worker(4, "Olga", 168, 1.0, -8, 0, olgaPuhkusePäevad, olgaSooviPuhkePäevad,
                 olgaSooviTööpäevad,
-                olgaHaiguslehePäevad);
+                olgaHaiguslehePäevad, 0);
         workersList.add(olga);
 
         // PÄRJA
@@ -68,7 +68,7 @@ public class WorkersList {
                 30, new Shift(24, Shift.OSAKOND)));
         List<Integer> pärjaHaiguslehePäevad = new ArrayList<>();
         Worker pärja = new Worker(5, "Pärja", 168, 1.0, -12, 8, pärjaPuhkusePäevad, pärjaSooviPuhkePäevad,
-                pärjaSooviTööpäevad, pärjaHaiguslehePäevad);
+                pärjaSooviTööpäevad, pärjaHaiguslehePäevad, 0);
         workersList.add(pärja);
 
         // RIMMA
@@ -78,7 +78,7 @@ public class WorkersList {
         List<Integer> rimmaHaiguslehePäevad = new ArrayList<>();
         Worker rimma = new Worker(6, "Rimma", 168, 1.0, -2, 0, rimmaPuhkusePäevad, rimmaSooviPuhkePäevad,
                 rimmaSooviTööpäevad,
-                rimmaHaiguslehePäevad);
+                rimmaHaiguslehePäevad, -1);
         workersList.add(rimma);
 
         // ester
@@ -88,7 +88,7 @@ public class WorkersList {
         List<Integer> esterHaiguslehePäevad = new ArrayList<>();
         Worker ester = new Worker(7, "Ester", 126, 0.75, 4, 0, esterPuhkusePäevad, esterSooviPuhkePäevad,
                 esterSooviTööpäevad,
-                esterHaiguslehePäevad);
+                esterHaiguslehePäevad, 0);
         workersList.add(ester);
 
         // laine
@@ -98,7 +98,7 @@ public class WorkersList {
         List<Integer> laineHaiguslehePäevad = new ArrayList<>();
         Worker laine = new Worker(8, "Laine", 126, 0.75, -4, 0, lainePuhkusePäevad, laineSooviPuhkePäevad,
                 laineSooviTööpäevad,
-                laineHaiguslehePäevad);
+                laineHaiguslehePäevad, 2);
         workersList.add(laine);
 
         // natalja
@@ -107,7 +107,7 @@ public class WorkersList {
         HashMap<Integer, Shift> nataljaSooviTööpäevad = new HashMap<>();
         List<Integer> nataljaHaiguslehePäevad = new ArrayList<>();
         Worker natalja = new Worker(9, "natalja", 126, 0.75, -4, 0, nataljaPuhkusePäevad, nataljaSooviPuhkePäevad,
-                nataljaSooviTööpäevad, nataljaHaiguslehePäevad);
+                nataljaSooviTööpäevad, nataljaHaiguslehePäevad, 0);
         workersList.add(natalja);
 
         // reelika
@@ -117,7 +117,7 @@ public class WorkersList {
         List<Integer> reelikaHaiguslehePäevad = new ArrayList<>();
         Worker reelika = new Worker(10, "reelika", 126, 0.75, -10, 0, reelikaPuhkusePäevad, reelikaSooviPuhkePäevad,
                 reelikaSooviTööpäevad,
-                reelikaHaiguslehePäevad);
+                reelikaHaiguslehePäevad, 0);
         workersList.add(reelika);
 
         // tiina
@@ -127,7 +127,7 @@ public class WorkersList {
         List<Integer> tiinaHaiguslehePäevad = new ArrayList<>();
         Worker tiina = new Worker(11, "tiina", 126, 0.75, -4, 0, tiinaPuhkusePäevad, tiinaSooviPuhkePäevad,
                 tiinaSooviTööpäevad,
-                tiinaHaiguslehePäevad);
+                tiinaHaiguslehePäevad, -6);
         workersList.add(tiina);
 
         // anna_k_m
@@ -138,7 +138,7 @@ public class WorkersList {
         List<Integer> anna_k_mHaiguslehePäevad = new ArrayList<>();
         Worker anna_k_m = new Worker(12, "anna_k_m", 84, 0.5, -6, 0, anna_k_mPuhkusePäevad, anna_k_mSooviPuhkePäevad,
                 anna_k_mSooviTööpäevad,
-                anna_k_mHaiguslehePäevad);
+                anna_k_mHaiguslehePäevad, 0);
         workersList.add(anna_k_m);
 
         // nadezda
@@ -151,7 +151,7 @@ public class WorkersList {
         List<Integer> nadezdaHaiguslehePäevad = new ArrayList<>();
         Worker nadezda = new Worker(13, "nadezda", 168, 1.0, -4, 0, nadezdaPuhkusePäevad, nadezdaSooviPuhkePäevad,
                 nadezdaSooviTööpäevad,
-                nadezdaHaiguslehePäevad);
+                nadezdaHaiguslehePäevad, -2);
         workersList.add(nadezda);
     }
 

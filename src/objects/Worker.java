@@ -17,12 +17,13 @@ public class Worker {
     HashMap<Integer, Shift> desiredWorkDays = new HashMap<>();
     int hoursWorked;
     double percentageWorked;
+    int quarterHoursBalance;
 
     List<Integer> sickLeaveDays = new ArrayList<>();
 
     public Worker(int employeeId, String name, int workLoadHours, double workLoad, Integer hoursBalance, int lastMonthLastDayHours,
             List<Integer> vacationDays, List<Integer> desiredVacationDays, HashMap<Integer, Shift> desiredWorkDays,
-            List<Integer> sickLeaveDays) {
+            List<Integer> sickLeaveDays, int quarterHoursBalance) {
         this.employeeId = employeeId;
         this.name = name;
         this.workLoadHours = workLoadHours;
@@ -33,6 +34,7 @@ public class Worker {
         this.desiredVacationDays = desiredVacationDays;
         this.desiredWorkDays = desiredWorkDays;
         this.sickLeaveDays = sickLeaveDays;
+        this.quarterHoursBalance = quarterHoursBalance;
     }
 
     public int getEmployeeId() {
@@ -129,6 +131,14 @@ public class Worker {
 
     public void setPercentageWorked(double percentageWorked) {
         this.percentageWorked += percentageWorked;
+    }
+
+    public int getQuarterHoursBalance() {
+        return quarterHoursBalance;
+    }
+
+    public void setQuarterHoursBalance(int quarterHoursBalance) {
+        this.quarterHoursBalance = quarterHoursBalance;
     }
 
     @Override
