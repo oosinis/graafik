@@ -1,23 +1,21 @@
 package refactor;
 
 
-import objects.Shift;
-import objects.Worker;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+import objects.Shift;
+import objects.Worker;
 
 public class AssignExtraShifts {
     public static void AddExtraShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers, int firstDayOfMonth) {
-        var filteredWorkers = FilterWorkers(workers);
+        var filteredWorkers = HelperMethods.FilterWorkers(workers, -8);
 
         for (int dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
             
             int weekday = HelperMethods.getDay(dayIndex - 1, firstDayOfMonth);
-            if (weekday == 0 && weekday == 6) continue;
+            if (weekday == 0 || weekday == 6) continue;
 
             List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
             List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 1);
@@ -28,14 +26,8 @@ public class AssignExtraShifts {
             assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift, filteredWorkers);
             todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
             assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift, filteredWorkers);
-            filteredWorkers = FilterWorkers(filteredWorkers);
+            filteredWorkers = HelperMethods.FilterWorkers(filteredWorkers, -8);
         }
-    }
-
-    private static List<Worker> FilterWorkers(List<Worker> workers) {
-        var negativeWorkers = workers.stream().filter(w -> w.getHoursBalance() <= -8).collect(Collectors.toList());
-        negativeWorkers.sort(Comparator.comparingDouble(Worker::getHoursBalance));
-        return  negativeWorkers;
     }
 
     // Assign needed shifts for the day

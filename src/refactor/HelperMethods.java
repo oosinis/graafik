@@ -2,8 +2,11 @@ package refactor;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import objects.Shift;
+import objects.Worker;
 
 public class HelperMethods {
 
@@ -35,6 +38,12 @@ public class HelperMethods {
   public static int getDay(int dateIndex, int firstDayOfMonth) {
 
     return (dateIndex + firstDayOfMonth) % 7;
+  }
+
+  public static List<Worker> FilterWorkers(List<Worker> workers, int hoursBalance) {
+      var negativeWorkers = workers.stream().filter(w -> w.getHoursBalance() <= hoursBalance).collect(Collectors.toList());
+      negativeWorkers.sort(Comparator.comparingDouble(Worker::getHoursBalance));
+      return negativeWorkers;
   }
 }
 
