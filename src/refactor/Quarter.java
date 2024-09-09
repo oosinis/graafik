@@ -3,7 +3,6 @@ package refactor;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import objects.Shift;
 import objects.Worker;
 
@@ -17,7 +16,7 @@ public class Quarter {
     }
 
     private static void QuarterLast(Shift[][] scheduleMatrix, List<Worker> workers) {
-        List<Worker> filteredWorkers = HelperMethods.FilterWorkers(workers, -1);
+        List<Worker> filteredWorkers = FilterWorkers(workers);
         if (filteredWorkers.isEmpty()) return;
 
         for (Worker worker : filteredWorkers) {
