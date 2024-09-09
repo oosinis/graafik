@@ -39,6 +39,8 @@ public class VisualizeResults {
 
             writer.print("Eelmise kuu jääk,");
             writer.print("Puhkuse päevad,");
+            writer.print("Kvartali ülejääk,");
+
 
             writer.println(); // End of header row
 
@@ -91,6 +93,7 @@ public class VisualizeResults {
                     rowString.append(töötajaTegelikudTunnid - töötajaNorm + ",");
                     rowString.append(workers.get(empIndex).getLastMonthLastDayHours() + ",");
                     rowString.append(workers.get(empIndex).getVacationDays().size() + ",");
+                    rowString.append(workers.get(empIndex).getQuarterHoursBalance() + ",");
 
                     // Remove trailing comma and write the row
                     if (rowString.length() > 0) {
