@@ -27,7 +27,7 @@ public class AssignWorkerWishes {
 
   // Get day types
   public static void assignShifts(Worker töötaja, Shift[][] scheduleMatrix) {
-    assignSooviTööpäevad(töötaja.getDesiredWorkDays(), scheduleMatrix, töötaja.getEmployeeId());
+    assignSooviTööpäevad(töötaja, scheduleMatrix);
     assignSpecificShifts(töötaja.getVacationDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "P"));
     assignSpecificShifts(töötaja.getDesiredVacationDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "D"));
   }
@@ -44,7 +44,10 @@ public class AssignWorkerWishes {
   }
 
   // Assign Work shifts
-  private static void assignSooviTööpäevad(HashMap<Integer, Shift> workDays, Shift[][] scheduleMatrix, int workerId) {
+  private static void assignSooviTööpäevad(Worker worker, Shift[][] scheduleMatrix) {
+    HashMap<Integer, Shift> workDays = worker.getDesiredWorkDays();
+    int workerId = worker.getEmployeeId();
+
     for (Map.Entry<Integer, Shift> entry : workDays.entrySet()) {
       int day = entry.getKey() - 1; // Adjust for 0-based index
       Shift shift = entry.getValue();

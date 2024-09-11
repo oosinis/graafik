@@ -69,7 +69,7 @@ public class AssignShifts {
       Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "")
           : dayAfterTomorrowShifts.get(worker.getEmployeeId());
 
-      if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) {
+      if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift, worker)) {
         if (dayIndex < 6 || HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
           if (shift.getDuration() == 24) {
             AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
@@ -82,9 +82,8 @@ public class AssignShifts {
 
           scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
 
-          worker.setHoursWorked(shift.getDuration());
           worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
-          worker.setPercentageWorked((shift.getDuration() * 100) / worker.getWorkLoadHours());
+          worker.setPercentageWorked((double) (shift.getDuration() * 100) / worker.getWorkLoadHours());
 
           break;
         }
@@ -93,13 +92,13 @@ public class AssignShifts {
   }
 
   // Check if assigning a Shift is possible
-  public static boolean isValidShift(Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift) {
+  public static boolean isValidShift(Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift, Worker worker) {
     if (shift.getDuration() == 24) {
       return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getCategory().equals(Shift.TÜHI)
-          && dayAfterTomorrowShift.getDuration() == 0;
+          && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -16;
     }
     if (shift.getDuration() == 8) {
-      return todayShift.getCategory().equals("") && tomorrowShift.getDuration() != 24;
+      return todayShift.getCategory().equals("") && tomorrowShift.getDuration() != 24 && worker.getHoursBalance() <= 0;
     }
     return false;
   }
