@@ -6,9 +6,7 @@ import objects.Shift;
 import objects.Worker;
 
 public class ScheduleCreator {
-    //TODO: 
-    // kui inimesel hours balance juba > 8 ss ei saa assignida shifti nt viimasel nädalal v vahetab välja kellegagi kui saab
-    // Pärja fix
+    //TODO:
     // See mingi worked hours ja load hours jne kontrolli alla saada
 
     public static void main(String[] args) {
