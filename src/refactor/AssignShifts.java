@@ -94,7 +94,7 @@ public class AssignShifts {
   // Check if assigning a Shift is possible
   public static boolean isValidShift(Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift, Worker worker) {
     if (shift.getDuration() == 24) {
-      return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getCategory().equals(Shift.TÜHI)
+      return todayShift.getCategory().equals(Shift.TÜHI) && (tomorrowShift.getCategory().equals(Shift.TÜHI) || tomorrowShift.getCategory().equals(Shift.SOOVI_PUHKUS))
           && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -16;
     }
     if (shift.getDuration() == 8) {

@@ -71,7 +71,7 @@ public class AssignExtraShifts {
           && dayAfterTomorrowShift.getDuration() == 0;
     }
     if (shift.getDuration() == 8) {
-      return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24;
+      return todayShift.getCategory().equals(Shift.TÜHI);
     }
     return false;
   }
