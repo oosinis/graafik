@@ -53,7 +53,7 @@ public class VisualizeResults {
                 for (int shiftIndex = 0; shiftIndex < vahetused.size(); shiftIndex++) {
 
                     StringBuilder rowString = new StringBuilder();
-                    rowString.append(employee.getName()).append(","); // Add the employee name at the start of the row
+                    rowString.append(employee.getName()).append(",");
 
                     rowString.append(vahetused.get(shiftIndex).getCategory()).append(",");
 
@@ -70,23 +70,8 @@ public class VisualizeResults {
 
                     }
 
-                    double tööKoormus = workers.get(empIndex).getWorkLoad();
-
-                    int tööKoormuseTunnid;
-                    int puhkuseTunnid;
-                    if (tööKoormus == 0.5) {
-                        tööKoormuseTunnid = 84;
-                        puhkuseTunnid = 4;
-                    } else if (tööKoormus == 0.75) {
-                        tööKoormuseTunnid = 126;
-                        puhkuseTunnid = 6;
-                    } else {
-                        tööKoormuseTunnid = 168;
-                        puhkuseTunnid = 8;
-                    }
 
                     int töötajaNorm = (workers.get(empIndex).getWorkLoadHours());
-                    int hoursBalance = (workers.get(empIndex).getHoursBalance());
                     int töötajaTegelikudTunnid = totalHours[empIndex];
                     rowString.append(töötajaNorm + ",");
                     rowString.append(töötajaTegelikudTunnid + ",");
@@ -131,10 +116,13 @@ public class VisualizeResults {
         int[] totalHours = new int[workers.size()];
 
         for (int day = 0; day < scheduleMatrix.length; day++) {
-            for (int emp = 0; emp < scheduleMatrix[day].length; emp++) {
-                Shift shift = scheduleMatrix[day][emp];
-                totalHours[emp] += shift.getDuration();
+            for (int worker = 0; worker < scheduleMatrix[day].length; worker++) {
+                Shift shift = scheduleMatrix[day][worker];
+                totalHours[worker] += shift.getDuration();
             }
+        }
+        for (Worker worker : workers) {
+            totalHours[worker.getEmployeeId()] += worker.getLastMonthLastDayHours();
         }
 
         return totalHours;

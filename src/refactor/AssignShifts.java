@@ -98,7 +98,7 @@ public class AssignShifts {
           && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -16;
     }
     if (shift.getDuration() == 8) {
-      return todayShift.getCategory().equals("") && tomorrowShift.getDuration() != 24 && worker.getHoursBalance() <= 0;
+      return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24 && worker.getHoursBalance() <= 0;
     }
     return false;
   }

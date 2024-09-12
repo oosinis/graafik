@@ -10,7 +10,7 @@ public class AddForbiddenDays {
     public static void AddForbiddenDays(List<Worker> töötajateNimekiri, Shift[][] scheduleMatrix) {
         for (Worker worker : töötajateNimekiri) {
             if (worker.getLastMonthLastDayHours() == 8) {
-                scheduleMatrix[0][worker.getEmployeeId()] = new Shift(0, Shift.KEELATUD);
+                scheduleMatrix[0][worker.getEmployeeId()] = new Shift(8, Shift.INTENSIIV);
                 scheduleMatrix[1][worker.getEmployeeId()] = new Shift(0, Shift.KEELATUD);
             }
         }
