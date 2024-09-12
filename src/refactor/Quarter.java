@@ -10,7 +10,7 @@ public class Quarter {
 
     public static void QuarterBalance(Shift[][] scheduleMatrix, List<Worker> workers, boolean lastMonthOfQuarter) {
 
-        for (Worker worker : workers) worker.setQuarterHoursBalance(worker.getQuarterHoursBalance() + worker.getHoursBalance());
+        for (Worker worker : workers) worker.setQuarterHoursBalance(worker.getHoursBalance());
 
         if (lastMonthOfQuarter) QuarterLast(scheduleMatrix, workers);
     }
@@ -21,6 +21,7 @@ public class Quarter {
 
         for (Worker worker : filteredWorkers) {
             loop: for (int dayIndex = 0; dayIndex < scheduleMatrix.length; dayIndex++) {
+
                 Shift shift = scheduleMatrix[dayIndex][worker.getEmployeeId()];
                 if (!shift.getCategory().equals(Shift.LÜHIKE_PÄEV))  continue;
             
@@ -29,12 +30,16 @@ public class Quarter {
                         break loop;
                     }
                     case -1 -> {
-                        shift.setDuration(9);
+                        scheduleMatrix[dayIndex][worker.getEmployeeId()] = new Shift(9, Shift.LÜHIKE_PÄEV);
                         worker.setQuarterHoursBalance(worker.getQuarterHoursBalance() + 1);
+                        worker.setHoursBalance(worker.getHoursBalance() + 1);
+                        break;
                     }
                     default -> {
-                        shift.setDuration(10);
+                        scheduleMatrix[dayIndex][worker.getEmployeeId()] = new Shift(10, Shift.LÜHIKE_PÄEV);
                         worker.setQuarterHoursBalance(worker.getQuarterHoursBalance() + 2);
+                        worker.setHoursBalance(worker.getHoursBalance() + 2);
+                        break;
                     }
                 }
             }

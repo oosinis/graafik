@@ -6,8 +6,17 @@ import objects.Shift;
 import objects.Worker;
 
 public class ScheduleCreator {
-    //TODO:
-    // See mingi worked hours ja load hours jne kontrolli alla saada
+    //TODO: Edgecases
+    // Case 1 --> End of quarter worker has +6 or +7. if worker has 2 8hr shifts, remove 1 and increase the other to 10, 
+    // removed shift check if someone is missing 8-10 hrs and try to assign first on same day if cant then on other day for the same worker
+
+    // Case 2 --> End of quarter is -7, check if has 10hr or 9hr shift, take -1hr and add somewhere +8hr shift
+    
+    // Case 3 --> End of quarter is -4, check if has 2x10hr shifts, change them to 8hr and add 1 more 8hr shift
+
+    // Case 4 --> End of quarter is +4 ?
+
+    // Case 5 --> End of quarter is +2 ?
 
     public static void main(String[] args) {
         WorkersList workersListInstance = new WorkersList();
@@ -35,6 +44,8 @@ public class ScheduleCreator {
 
         // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
         Quarter.QuarterBalance(scheduleMatrix, workersList, lastMonthOfQuarter);
+
+        // Deal with Edgecases
 
         // Export matrix
         VisualizeResults.MatrixToCSV(scheduleMatrix, "./tulemus.csv", workersList);

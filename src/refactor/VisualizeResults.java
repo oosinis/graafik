@@ -76,7 +76,7 @@ public class VisualizeResults {
                     rowString.append(töötajaNorm + ",");
                     rowString.append(töötajaTegelikudTunnid + ",");
                     rowString.append(töötajaTegelikudTunnid - töötajaNorm + ",");
-                    rowString.append(workers.get(empIndex).getLastMonthLastDayHours() + ",");
+                    rowString.append(workers.get(empIndex).getLastMonthBalance() + ",");
                     rowString.append(workers.get(empIndex).getVacationDays().size() + ",");
                     rowString.append(workers.get(empIndex).getQuarterHoursBalance() + ",");
 
@@ -120,9 +120,6 @@ public class VisualizeResults {
                 Shift shift = scheduleMatrix[day][worker];
                 totalHours[worker] += shift.getDuration();
             }
-        }
-        for (Worker worker : workers) {
-            totalHours[worker.getEmployeeId()] += worker.getLastMonthLastDayHours();
         }
 
         return totalHours;

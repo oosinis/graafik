@@ -11,6 +11,7 @@ public class Worker {
     int workLoadHours;
     double workLoad;
     Integer hoursBalance;
+    Integer lastMonthBalance;
     int lastMonthLastDayHours;
     List<Integer> vacationDays = new ArrayList<>();
     List<Integer> desiredVacationDays = new ArrayList<>();
@@ -28,6 +29,7 @@ public class Worker {
         this.name = name;
         this.workLoadHours = workLoadHours;
         this.workLoad = workLoad;
+        this.lastMonthBalance = hoursBalance;
         this.hoursBalance = hoursBalance;
         this.lastMonthLastDayHours = lastMonthLastDayHours;
         this.vacationDays = vacationDays;
@@ -67,6 +69,14 @@ public class Worker {
 
     public void setWorkLoad(double workLoad) {
         this.workLoad = workLoad;
+    }
+
+    public Integer getLastMonthBalance() {
+        return lastMonthBalance;
+    }
+
+    public void setLastMonthBalance(Integer lastMonthBalance) {
+        this.lastMonthBalance = lastMonthBalance;
     }
 
     public Integer getHoursBalance() {
