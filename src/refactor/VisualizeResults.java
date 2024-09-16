@@ -75,7 +75,7 @@ public class VisualizeResults {
 
                     int töötajaNorm = (workers.get(empIndex).getWorkLoadHours());
                     int töötajaTegelikudTunnid = totalHours[empIndex];
-                    rowString.append(töötajaNorm + ",");
+                    rowString.append(töötajaNorm + (workers.get(empIndex).getTrainingDays().size() * 8) + ",");
                     rowString.append(töötajaTegelikudTunnid + ",");
                     rowString.append(töötajaTegelikudTunnid - töötajaNorm + ",");
                     rowString.append(workers.get(empIndex).getLastMonthBalance() + ",");

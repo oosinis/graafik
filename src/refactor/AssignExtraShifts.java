@@ -44,22 +44,9 @@ public class AssignExtraShifts {
 
         if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) {
             if (HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) && HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
-            if (shift.getDuration() == 24) {
-                AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
-                    worker.getEmployeeId(),
-                    new Shift(0, Shift.KEELATUD));
-
-                if (dayIndex == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
-
-            }
-
-            scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
-
-
-            worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
-
-
-            break;
+                scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
+                worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
+                break;
             }
         }
     }
