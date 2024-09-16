@@ -43,7 +43,7 @@ public class AssignExtraShifts {
             : dayAfterTomorrowShifts.get(worker.getEmployeeId());
 
         if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) {
-            if (dayIndex < 6 || HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
+            if (HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) && HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
             if (shift.getDuration() == 24) {
                 AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
                     worker.getEmployeeId(),
@@ -55,9 +55,9 @@ public class AssignExtraShifts {
 
             scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
 
-            worker.setHoursWorked(shift.getDuration());
+
             worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
-            worker.setPercentageWorked((shift.getDuration() * 100) / worker.getWorkLoadHours());
+
 
             break;
             }

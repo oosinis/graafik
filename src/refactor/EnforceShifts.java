@@ -15,7 +15,7 @@ public class EnforceShifts {
     sortedWorkers.sort(Comparator.comparingDouble(Worker::getPercentageWorked));
 
     for (Worker worker : sortedWorkers) {
-      if (!scheduleMatrix[dayIndex][worker.getEmployeeId()].getCategory().equals("D"))
+      if (!scheduleMatrix[dayIndex][worker.getEmployeeId()].getCategory().equals(Shift.SOOVI_PUHKUS) || !scheduleMatrix[dayIndex][worker.getEmployeeId()].getCategory().equals(Shift.TÜHI))
         continue;
 
       Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(worker.getEmployeeId());
@@ -23,7 +23,7 @@ public class EnforceShifts {
           : dayAfterTomorrowShifts.get(worker.getEmployeeId());
 
       if (isValidShiftForD(tomorrowShift, dayAfterTomorrowShift, shift, worker)) {
-        if (dayIndex < 6 || HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
+        if (HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
           if (shift.getDuration() == 24) {
             AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
                 worker.getEmployeeId(),
@@ -33,9 +33,8 @@ public class EnforceShifts {
           }
           scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
 
-          worker.setHoursWorked(shift.getDuration());
+
           worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
-          worker.setPercentageWorked((double) (shift.getDuration() * 100) / worker.getWorkLoadHours());
 
           break;
         }

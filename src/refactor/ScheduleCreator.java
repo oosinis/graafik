@@ -23,7 +23,7 @@ public class ScheduleCreator {
         List<Worker> workersList = workersListInstance.getWorkersList();
         boolean lastMonthOfQuarter = true;
 
-        int daysInMonth = 30;
+        int daysInMonth = 31;
         int firstDayOfMonth = 2;
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 

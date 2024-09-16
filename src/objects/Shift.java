@@ -13,6 +13,9 @@ public class Shift {
     public static final String PUHKUS = "P";
     public static final String SOOVI_PUHKUS = "D";
     public static final String KEELATUD = "X";
+    public static final String KOOLITUS = "K";
+
+
 
     // Constructor
     public Shift(int pikkus, String kategooria) {
@@ -38,7 +41,7 @@ public class Shift {
     // Setter for category with validation
     public void setCategory(String category) {
         if (category.equals(INTENSIIV) || category.equals(LÜHIKE_PÄEV) || category.equals(OSAKOND)
-                || category.equals(TÜHI) || category.equals(PUHKUS) || category.equals(SOOVI_PUHKUS) || category.equals(KEELATUD)) {
+                || category.equals(TÜHI) || category.equals(PUHKUS) || category.equals(SOOVI_PUHKUS) || category.equals(KEELATUD) || category.equals(KOOLITUS)) {
             this.kategooria = category;
         } else {
             throw new IllegalArgumentException("Invalid category. Choose from: intensiiv, lühike, osakond.");

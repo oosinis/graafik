@@ -47,8 +47,8 @@ public class VisualizeResults {
             // Write each employee's name and their corresponding shifts
             for (int empIndex = 0; empIndex < workers.size(); empIndex++) {
                 Worker employee = workers.get(empIndex);
-                List<Shift> vahetused = new ArrayList<>(Arrays.asList(new Shift(24, Shift.INTENSIIV),
-                        new Shift(24, Shift.OSAKOND), new Shift(8, Shift.LÜHIKE_PÄEV)));
+                List<Shift> vahetused = new ArrayList<>(Arrays.asList(new Shift(24, Shift.INTENSIIV), new Shift(8, Shift.LÜHIKE_PÄEV),
+                        new Shift(24, Shift.OSAKOND)));
 
                 for (int shiftIndex = 0; shiftIndex < vahetused.size(); shiftIndex++) {
 
@@ -65,6 +65,8 @@ public class VisualizeResults {
                             rowString.append("P,");
                         else if (vahetused.get(shiftIndex).getCategory() == Shift.LÜHIKE_PÄEV && shift.getCategory().equals("D"))
                             rowString.append("D,");
+                        else if (vahetused.get(shiftIndex).getCategory() == Shift.LÜHIKE_PÄEV && shift.getCategory().equals(Shift.KOOLITUS))
+                            rowString.append("K,");
                         else
                             rowString.append(",");
 
@@ -78,7 +80,7 @@ public class VisualizeResults {
                     rowString.append(töötajaTegelikudTunnid - töötajaNorm + ",");
                     rowString.append(workers.get(empIndex).getLastMonthBalance() + ",");
                     rowString.append(workers.get(empIndex).getVacationDays().size() + ",");
-                    rowString.append(workers.get(empIndex).getQuarterHoursBalance() + ",");
+                    rowString.append(töötajaTegelikudTunnid - töötajaNorm + workers.get(empIndex).getLastMonthBalance() + ",");
 
                     // Remove trailing comma and write the row
                     if (rowString.length() > 0) {

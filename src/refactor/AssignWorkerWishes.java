@@ -30,6 +30,7 @@ public class AssignWorkerWishes {
     assignSooviTööpäevad(töötaja, scheduleMatrix);
     assignSpecificShifts(töötaja.getVacationDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "P"));
     assignSpecificShifts(töötaja.getDesiredVacationDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "D"));
+    assignSpecificShifts(töötaja.getTrainingDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(8, Shift.KOOLITUS));
   }
 
   // Assign Vacation and desired vacation days

@@ -16,27 +16,22 @@ public class Worker {
     List<Integer> vacationDays = new ArrayList<>();
     List<Integer> desiredVacationDays = new ArrayList<>();
     HashMap<Integer, Shift> desiredWorkDays = new HashMap<>();
-    int hoursWorked;
-    double percentageWorked;
-    int quarterHoursBalance;
-
     List<Integer> sickLeaveDays = new ArrayList<>();
+    List<Integer> trainingDays = new ArrayList<>();
 
-    public Worker(int employeeId, String name, int workLoadHours, double workLoad, Integer hoursBalance, int lastMonthLastDayHours,
-            List<Integer> vacationDays, List<Integer> desiredVacationDays, HashMap<Integer, Shift> desiredWorkDays,
-            List<Integer> sickLeaveDays, int quarterHoursBalance) {
+    public Worker(int employeeId, String name, int workLoadHours, double workLoad, Integer hoursBalance, int lastMonthLastDayHours, List<Integer> vacationDays, List<Integer> desiredVacationDays, HashMap<Integer, Shift> desiredWorkDays, List<Integer> sickLeaveDays, List<Integer> trainingDays) {
         this.employeeId = employeeId;
         this.name = name;
         this.workLoadHours = workLoadHours;
         this.workLoad = workLoad;
-        this.lastMonthBalance = hoursBalance;
         this.hoursBalance = hoursBalance;
+        this.lastMonthBalance = hoursBalance;
         this.lastMonthLastDayHours = lastMonthLastDayHours;
         this.vacationDays = vacationDays;
         this.desiredVacationDays = desiredVacationDays;
         this.desiredWorkDays = desiredWorkDays;
         this.sickLeaveDays = sickLeaveDays;
-        this.quarterHoursBalance = quarterHoursBalance;
+        this.trainingDays = trainingDays;
     }
 
     public int getEmployeeId() {
@@ -51,8 +46,8 @@ public class Worker {
         return name;
     }
 
-    public void setName(String nimi) {
-        this.name = nimi;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getWorkLoadHours() {
@@ -71,20 +66,20 @@ public class Worker {
         this.workLoad = workLoad;
     }
 
-    public Integer getLastMonthBalance() {
-        return lastMonthBalance;
-    }
-
-    public void setLastMonthBalance(Integer lastMonthBalance) {
-        this.lastMonthBalance = lastMonthBalance;
-    }
-
     public Integer getHoursBalance() {
         return hoursBalance;
     }
 
     public void setHoursBalance(Integer hoursBalance) {
         this.hoursBalance = hoursBalance;
+    }
+
+    public Integer getLastMonthBalance() {
+        return lastMonthBalance;
+    }
+
+    public void setLastMonthBalance(Integer lastMonthBalance) {
+        this.lastMonthBalance = lastMonthBalance;
     }
 
     public int getLastMonthLastDayHours() {
@@ -123,33 +118,22 @@ public class Worker {
         return sickLeaveDays;
     }
 
-    public void setSickLeaveDays(List<Integer> haiguslehePäevad) {
-        this.sickLeaveDays = haiguslehePäevad;
+    public void setSickLeaveDays(List<Integer> sickLeaveDays) {
+        this.sickLeaveDays = sickLeaveDays;
     }
 
-    public int getHoursWorked() {
-        return hoursWorked;
+    public List<Integer> getTrainingDays() {
+        return trainingDays;
     }
 
-    public void setHoursWorked(int hoursWorked) {
-        this.hoursWorked += hoursWorked;
+    public void setTrainingDays(List<Integer> trainingDays) {
+        this.trainingDays = trainingDays;
     }
 
     public double getPercentageWorked() {
-        return percentageWorked;
+        return workLoadHours + hoursBalance;
     }
 
-    public void setPercentageWorked(double percentageWorked) {
-        this.percentageWorked += percentageWorked;
-    }
-
-    public int getQuarterHoursBalance() {
-        return quarterHoursBalance;
-    }
-
-    public void setQuarterHoursBalance(int quarterHoursBalance) {
-        this.quarterHoursBalance = quarterHoursBalance;
-    }
 
     @Override
     public String toString() {

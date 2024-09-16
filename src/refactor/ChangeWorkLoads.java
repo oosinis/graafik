@@ -29,10 +29,15 @@ public class ChangeWorkLoads {
                 }
             }
 
+            int trainingHours = 0;
+            for (Integer trainingDay : worker.getTrainingDays()) {
+                trainingHours += 8;
+            }
+
             worker.setWorkLoadHours(
                     worker.getWorkLoadHours() - (workerVacationDays * vacationHrValue));
 
-            worker.setHoursBalance(worker.getHoursBalance() - worker.getWorkLoadHours() + worker.getLastMonthLastDayHours());
+            worker.setHoursBalance(worker.getHoursBalance() - worker.getWorkLoadHours() + worker.getLastMonthLastDayHours() + trainingHours);
 
             for (Map.Entry<Integer, Shift> entry : worker.getDesiredWorkDays().entrySet()) worker.setHoursBalance(worker.getHoursBalance() + entry.getValue().getDuration());
 
