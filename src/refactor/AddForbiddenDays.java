@@ -15,7 +15,14 @@ public class AddForbiddenDays {
             }
         }
 
-        for (int i = 0; i < scheduleMatrix.length; i++) {
+        for (int personIndex = 0; personIndex < scheduleMatrix[0].length; personIndex++) {
+            if (workers.get(personIndex).getLastMonthLastDayHours() == 8) {
+                scheduleMatrix[1][personIndex] = new Shift(0, Shift.KEELATUD);
+                scheduleMatrix[2][personIndex] = new Shift(0, Shift.KEELATUD);
+            }
+        }
+
+        for (int i = 1; i < scheduleMatrix.length; i++) {
             for (int personIndex = 0; personIndex < scheduleMatrix[i].length; personIndex++) {
                 if (i == scheduleMatrix.length - 1)
                     continue;

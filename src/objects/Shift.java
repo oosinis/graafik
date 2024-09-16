@@ -42,7 +42,7 @@ public class Shift {
                 || category.equals(TÜHI) || category.equals(PUHKUS) || category.equals(SOOVI_PUHKUS) || category.equals(KEELATUD) || category.equals(KOOLITUS)) {
             this.category = category;
         } else {
-            throw new IllegalArgumentException("Invalid category. Choose from: intensiiv, lühike, osakond.");
+            throw new IllegalArgumentException("Invalid category. Choose from: intensiiv, lühike, osakond, tühi, puhkus, soovi_puhkus, keelatud, koolitus");
         }
     }
 
