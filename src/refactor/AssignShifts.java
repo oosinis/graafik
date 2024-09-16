@@ -71,10 +71,12 @@ public class AssignShifts {
 
       if (isValidShift(scheduleMatrix, dayIndex, todayShift, tomorrowShift, dayAfterTomorrowShift, shift, worker)) {
         if (shift.getDuration() == 24) {
-          AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
-              worker.getEmployeeId(),
-              new Shift(0, Shift.KEELATUD));
-          if (dayIndex == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
+          if (dayIndex > 0 && scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0) {
+            AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
+                    worker.getEmployeeId(),
+                    new Shift(0, Shift.KEELATUD));
+            if (dayIndex == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
+          }
         }
 
         scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
