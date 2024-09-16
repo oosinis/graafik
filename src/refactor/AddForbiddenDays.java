@@ -7,8 +7,8 @@ import java.util.List;
 
 public class AddForbiddenDays {
 
-    public static void AddForbiddenDays(List<Worker> töötajateNimekiri, Shift[][] scheduleMatrix) {
-        for (Worker worker : töötajateNimekiri) {
+    public static void addForbiddenDays(List<Worker> workers, Shift[][] scheduleMatrix) {
+        for (Worker worker : workers) {
             if (worker.getLastMonthLastDayHours() == 8) {
                 scheduleMatrix[0][worker.getEmployeeId()] = new Shift(8, Shift.INTENSIIV);
                 scheduleMatrix[1][worker.getEmployeeId()] = new Shift(0, Shift.KEELATUD);

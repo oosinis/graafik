@@ -22,7 +22,7 @@ public class EnforceShifts {
       Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "")
           : dayAfterTomorrowShifts.get(worker.getEmployeeId());
 
-      if (isValidShiftForD(tomorrowShift, dayAfterTomorrowShift, shift, worker)) {
+      if (isValidShiftForD(scheduleMatrix, dayIndex, tomorrowShift, dayAfterTomorrowShift, shift, worker)) {
         if (HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) && HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
           if (shift.getDuration() == 24) {
             AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
@@ -40,16 +40,15 @@ public class EnforceShifts {
   }
 
   // Check if the shift can be assigned to a worker with "D"
-  public static boolean isValidShiftForD(Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift, Worker worker) {
+  public static boolean isValidShiftForD(Shift[][] scheduleMatrix, int dayIndex, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift, Worker worker) {
+    if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) return false;
 
     if (shift.getDuration() == 24) {
       return tomorrowShift.getCategory().equals(Shift.TÜHI) && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -16;
     }
-
     if (shift.getDuration() == 8) {
       return tomorrowShift.getDuration() != 24 && worker.getHoursBalance() <= 0;
     }
-
     return false;
   }
 }

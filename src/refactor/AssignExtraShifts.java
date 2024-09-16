@@ -2,18 +2,17 @@ package refactor;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import objects.Shift;
 import objects.Worker;
 
 public class AssignExtraShifts {
-    public static void AddExtraShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers, int firstDayOfMonth) {
+    public static void addExtraShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers, int firstDayOfMonth) {
         var filteredWorkers = HelperMethods.FilterWorkers(workers, -8);
 
         for (int dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
-            
+
             int weekday = HelperMethods.getDay(dayIndex - 1, firstDayOfMonth);
             if (weekday == 0 || weekday == 6) continue;
 
@@ -37,29 +36,28 @@ public class AssignExtraShifts {
 
         for (Worker worker : sortedWorkers) {
 
-        Shift todayShift = todayShifts.get(worker.getEmployeeId()); // that worker's shift today
-        Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(worker.getEmployeeId());
-        Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "")
-            : dayAfterTomorrowShifts.get(worker.getEmployeeId());
+            Shift todayShift = todayShifts.get(worker.getEmployeeId()); // that worker's shift today
+            Shift tomorrowShift = tomorrowShifts.isEmpty() ? new Shift(0, "") : tomorrowShifts.get(worker.getEmployeeId());
+            Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "")
+                    : dayAfterTomorrowShifts.get(worker.getEmployeeId());
 
-        if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) {
-            if (HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) && HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
+            if (isValidShift(scheduleMatrix, dayIndex, worker, todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) {
                 scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
                 worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
                 break;
             }
         }
     }
-  }
 
-  public static boolean isValidShift(Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift) {
-    if (shift.getDuration() == 24) {
-      return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getCategory().equals(Shift.TÜHI)
-          && dayAfterTomorrowShift.getDuration() == 0;
+    public static boolean isValidShift(Shift[][] scheduleMatrix, int dayIndex, Worker worker, Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift) {
+        if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) || !HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) return false;
+        if (shift.getDuration() == 24) {
+            return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getCategory().equals(Shift.TÜHI)
+                    && dayAfterTomorrowShift.getDuration() == 0;
+        }
+        if (shift.getDuration() == 8) {
+            return todayShift.getCategory().equals(Shift.TÜHI);
+        }
+        return false;
     }
-    if (shift.getDuration() == 8) {
-      return todayShift.getCategory().equals(Shift.TÜHI);
-    }
-    return false;
-  }
 }

@@ -2,8 +2,8 @@ package objects;
 
 public class Shift {
     // Attributes
-    private int pikkus; // Duration in minutes or hours
-    private String kategooria;
+    private int duration; // Duration in minutes or hours
+    private String category;
 
     // Categories
     public static final String INTENSIIV = "intensiiv";
@@ -15,34 +15,32 @@ public class Shift {
     public static final String KEELATUD = "X";
     public static final String KOOLITUS = "K";
 
-
-
     // Constructor
-    public Shift(int pikkus, String kategooria) {
-        this.pikkus = pikkus;
-        setCategory(kategooria);
+    public Shift(int duration, String category) {
+        this.duration = duration;
+        setCategory(category);
     }
 
     // Getter for duration
     public int getDuration() {
-        return pikkus;
+        return duration;
     }
 
     // Setter for duration
     public void setDuration(int duration) {
-        this.pikkus = duration;
+        this.duration = duration;
     }
 
     // Getter for category
     public String getCategory() {
-        return kategooria;
+        return category;
     }
 
     // Setter for category with validation
     public void setCategory(String category) {
         if (category.equals(INTENSIIV) || category.equals(LÜHIKE_PÄEV) || category.equals(OSAKOND)
                 || category.equals(TÜHI) || category.equals(PUHKUS) || category.equals(SOOVI_PUHKUS) || category.equals(KEELATUD) || category.equals(KOOLITUS)) {
-            this.kategooria = category;
+            this.category = category;
         } else {
             throw new IllegalArgumentException("Invalid category. Choose from: intensiiv, lühike, osakond.");
         }
@@ -61,8 +59,8 @@ public class Shift {
     @Override
     public String toString() {
         return "Vahetus{" +
-                "pikkus=" + pikkus +
-                ", kategooria='" + kategooria + '\'' +
+                "pikkus=" + duration +
+                ", kategooria='" + category + '\'' +
                 '}';
     }
 }

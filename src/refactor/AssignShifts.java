@@ -17,30 +17,30 @@ public class AssignShifts {
       List<Shift> dayAfterTomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 2);
 
       Shift intensiivShift = new Shift(24, Shift.INTENSIIV);
-      Shift intensiivShiftKuuLõpp = new Shift(16, Shift.INTENSIIV);
+      Shift intensiivShiftLastDayOfMonth = new Shift(16, Shift.INTENSIIV);
 
-      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftKuuLõpp)) {
+      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
         assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, intensiivShift,
             workers);
       }
-      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftKuuLõpp)) {
+      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
         EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts,
             dayAfterTomorrowShifts, intensiivShift, workers);
       }
-      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftKuuLõpp)) System.out.println("Kuupäeval " + dayIndex + " puudu intensiiv vahetus");
+      if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) System.out.println("Kuupäeval " + dayIndex + " puudu intensiiv vahetus");
 
       Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
-      Shift osakonnaShiftKuuLõpp = new Shift(16, Shift.OSAKOND);
+      Shift osakonnaShiftLastDayOfMonth = new Shift(16, Shift.OSAKOND);
 
-      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftKuuLõpp)) {
+      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
         assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, osakonnaShift,
             workers);
       }
-      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftKuuLõpp)) {
+      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
         EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts,
             dayAfterTomorrowShifts, osakonnaShift, workers);
       }
-      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftKuuLõpp)) System.out.println("Kuupäeval " + dayIndex + " puudu osakonna vahetus");
+      if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) System.out.println("Kuupäeval " + dayIndex + " puudu osakonna vahetus");
 
       Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
       if (!todayShifts.contains(lühikeShift)) {
@@ -51,7 +51,7 @@ public class AssignShifts {
         EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts,
             dayAfterTomorrowShifts, lühikeShift, workers);
       }
-      if (!todayShifts.contains(intensiivShift)) System.out.println("Kuupäeval " + dayIndex + " puudu lühike vahetus");
+      if (!todayShifts.contains(lühikeShift)) System.out.println("Kuupäeval " + dayIndex + " puudu lühike vahetus");
 
     }
   }
@@ -69,32 +69,29 @@ public class AssignShifts {
       Shift dayAfterTomorrowShift = dayAfterTomorrowShifts.isEmpty() ? new Shift(0, "")
           : dayAfterTomorrowShifts.get(worker.getEmployeeId());
 
-      if (isValidShift(todayShift, tomorrowShift, dayAfterTomorrowShift, shift, worker)) {
-        if (HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) && HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
-          if (shift.getDuration() == 24) {
-            AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
-                worker.getEmployeeId(),
-                new Shift(0, Shift.KEELATUD));
-
-            if (dayIndex == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
-
-          }
-
-          scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
-
-          worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
-
-          break;
+      if (isValidShift(scheduleMatrix, dayIndex, todayShift, tomorrowShift, dayAfterTomorrowShift, shift, worker)) {
+        if (shift.getDuration() == 24) {
+          AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
+              worker.getEmployeeId(),
+              new Shift(0, Shift.KEELATUD));
+          if (dayIndex == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
         }
+
+        scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
+        worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
+
+        break;
       }
+
     }
   }
 
   // Check if assigning a Shift is possible
-  public static boolean isValidShift(Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift, Worker worker) {
+  public static boolean isValidShift(Shift[][] scheduleMatrix, int dayIndex, Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift, Worker worker) {
+    if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) || !HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) return false;
     if (shift.getDuration() == 24) {
       return todayShift.getCategory().equals(Shift.TÜHI) && (tomorrowShift.getCategory().equals(Shift.TÜHI) || tomorrowShift.getCategory().equals(Shift.SOOVI_PUHKUS))
-          && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -16;
+              && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -16;
     }
     if (shift.getDuration() == 8) {
       return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24 && worker.getHoursBalance() <= 0;
