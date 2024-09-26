@@ -19,7 +19,7 @@ public class AssignExtraShifts {
             List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
             List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 1);
             List<Shift> dayAfterTomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 2);
-            Shift lühikeShift = new Shift(8, Shift.OSAKOND);
+            Shift lühikeShift = new Shift(8, Shift.INTENSIIV);
 
 
             assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift, filteredWorkers);
