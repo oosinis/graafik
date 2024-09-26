@@ -43,7 +43,7 @@ public class AssignShifts {
             }
             
             // Assign Short shift
-            Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
+            Shift lühikeShift = new Shift(8, Shift.OSAKOND);
             if (!todayShifts.contains(lühikeShift)) {
                 assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift,
                         workers);
@@ -136,7 +136,7 @@ public class AssignShifts {
         Shift intensiivShiftLastDayOfMonth = new Shift(16, Shift.INTENSIIV);
         Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
         Shift osakonnaShiftLastDayOfMonth = new Shift(16, Shift.OSAKOND);
-        Shift lühikeShift = new Shift(8, Shift.LÜHIKE_PÄEV);
+        Shift lühikeShift = new Shift(8, Shift.OSAKOND);
         if (!todayShifts.contains(lühikeShift)) System.out.println("Kuupäeval " + dayIndex + " puudu lühike vahetus");
         if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) System.out.println("Kuupäeval " + dayIndex + " puudu osakonna vahetus");
         if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) System.out.println("Kuupäeval " + dayIndex + " puudu intensiiv vahetus");

@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
 import objects.Shift;
 import objects.Worker;
 
@@ -51,24 +53,24 @@ public class VisualizeResults {
                 List<Shift> vahetused = new ArrayList<>(Arrays.asList(new Shift(24, Shift.INTENSIIV), new Shift(8, Shift.LÜHIKE_PÄEV),
                         new Shift(24, Shift.OSAKOND)));
 
-                for (int shiftIndex = 0; shiftIndex < vahetused.size(); shiftIndex++) {
+                for (Shift value : vahetused) {
 
                     StringBuilder rowString = new StringBuilder();
                     rowString.append(employee.getName()).append(",");
 
-                    rowString.append(vahetused.get(shiftIndex).getCategory()).append(",");
+                    rowString.append(value.getCategory()).append(",");
 
                     for (Shift[] dayShifts : matrix) {
                         Shift shift = dayShifts[empIndex];
-                        if (shift.getCategory().equals(vahetused.get(shiftIndex).getCategory()))
+                        if (shift.getCategory().equals(value.getCategory()))
                             rowString.append(shift.getDuration()).append(",");
-                        else if (vahetused.get(shiftIndex).getCategory() == Shift.LÜHIKE_PÄEV && shift.getCategory().equals("P"))
+                        else if (Objects.equals(value.getCategory(), Shift.INTENSIIV) && shift.getCategory().equals("P"))
                             rowString.append("P,");
-                        else if (vahetused.get(shiftIndex).getCategory() == Shift.LÜHIKE_PÄEV && shift.getCategory().equals("D"))
+                        else if (Objects.equals(value.getCategory(), Shift.INTENSIIV) && shift.getCategory().equals("D"))
                             rowString.append("D,");
-                        else if (vahetused.get(shiftIndex).getCategory() == Shift.LÜHIKE_PÄEV && shift.getCategory().equals(Shift.KOOLITUS))
+                        else if (Objects.equals(value.getCategory(), Shift.INTENSIIV) && shift.getCategory().equals(Shift.KOOLITUS))
                             rowString.append("K,");
-                        else if (vahetused.get(shiftIndex).getCategory() == Shift.OSAKOND && shift.getCategory().equals(Shift.KOOLITUS))
+                        else if (Objects.equals(value.getCategory(), Shift.OSAKOND) && shift.getCategory().equals(Shift.KOOLITUS))
                             rowString.append(8 + ",");
                         else
                             rowString.append(",");
