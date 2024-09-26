@@ -7,8 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-
 import objects.Shift;
 import objects.Worker;
 
@@ -50,32 +48,36 @@ public class VisualizeResults {
             for (int empIndex = 0; empIndex < workers.size(); empIndex++) {
 
                 Worker employee = workers.get(empIndex);
-                List<Shift> vahetused = new ArrayList<>(Arrays.asList(new Shift(24, Shift.INTENSIIV), new Shift(8, Shift.LÜHIKE_PÄEV),
-                        new Shift(24, Shift.OSAKOND)));
+                List<String> shiftCategories = new ArrayList<>(Arrays.asList(Shift.INTENSIIV, Shift.OSAKOND));
 
-                for (Shift value : vahetused) {
+                for (String category : shiftCategories) {
 
                     StringBuilder rowString = new StringBuilder();
                     rowString.append(employee.getName()).append(",");
 
-                    rowString.append(value.getCategory()).append(",");
+                    rowString.append(category).append(",");
 
                     for (Shift[] dayShifts : matrix) {
                         Shift shift = dayShifts[empIndex];
-                        if (shift.getCategory().equals(value.getCategory()))
-                            rowString.append(shift.getDuration()).append(",");
-                        else if (Objects.equals(value.getCategory(), Shift.INTENSIIV) && shift.getCategory().equals("P"))
-                            rowString.append("P,");
-                        else if (Objects.equals(value.getCategory(), Shift.INTENSIIV) && shift.getCategory().equals("D"))
-                            rowString.append("D,");
-                        else if (Objects.equals(value.getCategory(), Shift.INTENSIIV) && shift.getCategory().equals(Shift.KOOLITUS))
-                            rowString.append("K,");
-                        else if (Objects.equals(value.getCategory(), Shift.OSAKOND) && shift.getCategory().equals(Shift.KOOLITUS))
-                            rowString.append(8 + ",");
-                        else
-                            rowString.append(",");
 
+                        if (category.equals(Shift.INTENSIIV)) {
+                            switch (shift.getCategory()) {
+                                case Shift.INTENSIIV -> rowString.append(shift.getDuration()).append(",");
+                                case Shift.PUHKUS -> rowString.append("P,");
+                                case Shift.SOOVI_PUHKUS -> rowString.append("D,");
+                                case Shift.KOOLITUS -> rowString.append("K,");
+                                default -> rowString.append(",");
+                            }
+                        }
+                        else if (category.equals(Shift.OSAKOND)) {
+                            switch (shift.getCategory()) {
+                                case Shift.OSAKOND -> rowString.append(shift.getDuration()).append(",");
+                                case Shift.KOOLITUS -> rowString.append(8 + ",");
+                                default -> rowString.append(",");
+                            }
+                        }
                     }
+                    
 
 
                     int töötajaNorm = (workers.get(empIndex).getWorkLoadHours() + (workers.get(empIndex).getTrainingDays().size() * 8));
