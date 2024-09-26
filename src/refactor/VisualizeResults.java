@@ -46,6 +46,7 @@ public class VisualizeResults {
 
             // Write each employee's name and their corresponding shifts
             for (int empIndex = 0; empIndex < workers.size(); empIndex++) {
+
                 Worker employee = workers.get(empIndex);
                 List<Shift> vahetused = new ArrayList<>(Arrays.asList(new Shift(24, Shift.INTENSIIV), new Shift(8, Shift.LÜHIKE_PÄEV),
                         new Shift(24, Shift.OSAKOND)));
@@ -67,15 +68,17 @@ public class VisualizeResults {
                             rowString.append("D,");
                         else if (vahetused.get(shiftIndex).getCategory() == Shift.LÜHIKE_PÄEV && shift.getCategory().equals(Shift.KOOLITUS))
                             rowString.append("K,");
+                        else if (vahetused.get(shiftIndex).getCategory() == Shift.OSAKOND && shift.getCategory().equals(Shift.KOOLITUS))
+                            rowString.append(8 + ",");
                         else
                             rowString.append(",");
 
                     }
 
 
-                    int töötajaNorm = (workers.get(empIndex).getWorkLoadHours());
+                    int töötajaNorm = (workers.get(empIndex).getWorkLoadHours() + (workers.get(empIndex).getTrainingDays().size() * 8));
                     int töötajaTegelikudTunnid = totalHours[empIndex];
-                    rowString.append(töötajaNorm + (workers.get(empIndex).getTrainingDays().size() * 8) + ",");
+                    rowString.append(töötajaNorm + ",");
                     rowString.append(töötajaTegelikudTunnid + ",");
                     rowString.append(töötajaTegelikudTunnid - töötajaNorm + ",");
                     rowString.append(workers.get(empIndex).getLastMonthBalance() + ",");

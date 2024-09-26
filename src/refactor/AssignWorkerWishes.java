@@ -35,11 +35,9 @@ public class AssignWorkerWishes {
 
   // Assign Vacation and desired vacation days
   public static void assignSpecificShifts(List<Integer> days, Shift[][] scheduleMatrix, int workerId, Shift shift) {
-    for (Integer day : days) {
-      try {
+    for (int day : days) {
+      if (scheduleMatrix.length > day - 1) {
         scheduleMatrix[day - 1][workerId] = shift;
-      } catch (ArrayIndexOutOfBoundsException e) {
-        break;
       }
     }
   }

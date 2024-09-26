@@ -14,7 +14,7 @@ public class WorkersList {
         HashMap<Integer, Shift> helveDesiredWorkDays = new HashMap<>();
         List<Integer> helveSickDays = new ArrayList<>();
         List<Integer> helveTrainingDays = new ArrayList<>(List.of(10));
-        Worker helve = new Worker(0, "Helve", 176, 1.0, 0, 0, helveVacationDays, helveDesiredVacationDays,
+        Worker helve = new Worker(0, "Helve", 184, 1.0, 0, 0, helveVacationDays, helveDesiredVacationDays,
                 helveDesiredWorkDays, helveSickDays, helveTrainingDays);
         workersList.add(helve);
 
@@ -25,7 +25,7 @@ public class WorkersList {
                 31, new Shift(16, Shift.INTENSIIV)));
         List<Integer> kaiSickDays = new ArrayList<>();
         List<Integer> kaiTrainingDays = new ArrayList<>(List.of(10));
-        Worker kai = new Worker(1, "Kai", 176, 1.0, 0, 0, kaiVacationDays, kaiDesiredVacationDays, kaiDesiredWorkDays,
+        Worker kai = new Worker(1, "Kai", 184, 1.0, 0, 0, kaiVacationDays, kaiDesiredVacationDays, kaiDesiredWorkDays,
                 kaiSickDays, kaiTrainingDays);
         workersList.add(kai);
 
@@ -35,7 +35,7 @@ public class WorkersList {
         HashMap<Integer, Shift> kajaDesiredWorkDays = new HashMap<>();
         List<Integer> kajaSickDays = new ArrayList<>();
         List<Integer> kajaTrainingDays = new ArrayList<>();
-        Worker kaja = new Worker(2, "Kaja", 176, 1.0, 0, 8, kajaVacationDays, kajaDesiredVacationDays,
+        Worker kaja = new Worker(2, "Kaja", 184, 1.0, 0, 8, kajaVacationDays, kajaDesiredVacationDays,
                 kajaDesiredWorkDays,
                 kajaSickDays, kajaTrainingDays);
         workersList.add(kaja);
@@ -46,7 +46,7 @@ public class WorkersList {
         HashMap<Integer, Shift> mariliisDesiredWorkDays = new HashMap<>();
         List<Integer> mariliisSickDays = new ArrayList<>();
         List<Integer> mariliisTrainingDays = new ArrayList<>();
-        Worker mariliis = new Worker(3, "Mari-Liis", 176, 1.0, 0, 0, mariliisVacationDays, mariliisDesiredVacationDays,
+        Worker mariliis = new Worker(3, "Mari-Liis", 184, 1.0, 0, 0, mariliisVacationDays, mariliisDesiredVacationDays,
                 mariliisDesiredWorkDays, mariliisSickDays, mariliisTrainingDays);
         workersList.add(mariliis);
 
@@ -56,7 +56,7 @@ public class WorkersList {
         HashMap<Integer, Shift> olgaDesiredWorkDays = new HashMap<>();
         List<Integer> olgaSickDays = new ArrayList<>();
         List<Integer> olgaTrainingDays = new ArrayList<>(List.of(8));
-        Worker olga = new Worker(4, "Olga", 176, 1.0, 0, 0, olgaVacationDays, olgaDesiredVacationDays,
+        Worker olga = new Worker(4, "Olga", 184, 1.0, 0, 0, olgaVacationDays, olgaDesiredVacationDays,
                 olgaDesiredWorkDays,
                 olgaSickDays, olgaTrainingDays);
         workersList.add(olga);
@@ -67,7 +67,6 @@ public class WorkersList {
         HashMap<Integer, Shift> pärjaDesiredWorkDays = new HashMap<>(Map.of(
                 4, new Shift(24, Shift.OSAKOND),
                 9, new Shift(24, Shift.OSAKOND),
-                14, new Shift(24, Shift.OSAKOND),
                 16, new Shift(24, Shift.OSAKOND),
                 19, new Shift(24, Shift.OSAKOND),
                 23, new Shift(24, Shift.OSAKOND),
@@ -75,7 +74,7 @@ public class WorkersList {
                 29, new Shift(8, Shift.LÜHIKE_PÄEV)));
         List<Integer> pärjaSickDays = new ArrayList<>();
         List<Integer> pärjaTrainingDays = new ArrayList<>();
-        Worker pärja = new Worker(5, "Pärja", 176, 1.0, 0, 8, pärjaVacationDays, pärjaDesiredVacationDays,
+        Worker pärja = new Worker(5, "Pärja", 184, 1.0, 0, 8, pärjaVacationDays, pärjaDesiredVacationDays,
                 pärjaDesiredWorkDays, pärjaSickDays, pärjaTrainingDays);
         workersList.add(pärja);
 
@@ -85,7 +84,7 @@ public class WorkersList {
         HashMap<Integer, Shift> rimmaDesiredWorkDays = new HashMap<>();
         List<Integer> rimmaSickDays = new ArrayList<>();
         List<Integer> rimmaTrainingDays = new ArrayList<>(List.of(8));
-        Worker rimma = new Worker(6, "Rimma", 176, 1.0, 0, 0, rimmaVacationDays, rimmaDesiredVacationDays,
+        Worker rimma = new Worker(6, "Rimma", 184, 1.0, 0, 0, rimmaVacationDays, rimmaDesiredVacationDays,
                 rimmaDesiredWorkDays,
                 rimmaSickDays, rimmaTrainingDays);
         workersList.add(rimma);
@@ -96,7 +95,7 @@ public class WorkersList {
         HashMap<Integer, Shift> esterDesiredWorkDays = new HashMap<>();
         List<Integer> esterSickDays = new ArrayList<>();
         List<Integer> esterTrainingDays = new ArrayList<>();
-        Worker ester = new Worker(7, "Ester", 132, 0.75, 0, 0, esterVacationDays, esterDesiredVacationDays,
+        Worker ester = new Worker(7, "Ester", 138, 0.75, 0, 0, esterVacationDays, esterDesiredVacationDays,
                 esterDesiredWorkDays,
                 esterSickDays, esterTrainingDays);
         workersList.add(ester);
@@ -107,7 +106,7 @@ public class WorkersList {
         HashMap<Integer, Shift> laineDesiredWorkDays = new HashMap<>();
         List<Integer> laineSickDays = new ArrayList<>();
         List<Integer> laineTrainingDays = new ArrayList<>();
-        Worker laine = new Worker(8, "Laine", 132, 0.75, 0, 0, laineVacationDays, laineDesiredVacationDays,
+        Worker laine = new Worker(8, "Laine", 138, 0.75, 0, 0, laineVacationDays, laineDesiredVacationDays,
                 laineDesiredWorkDays,
                 laineSickDays, laineTrainingDays);
         workersList.add(laine);
@@ -118,7 +117,7 @@ public class WorkersList {
         HashMap<Integer, Shift> nataljaDesiredWorkDays = new HashMap<>();
         List<Integer> nataljaSickDays = new ArrayList<>();
         List<Integer> nataljaTrainingDays = new ArrayList<>();
-        Worker natalja = new Worker(9, "natalja", 132, 0.75, 0, 0, nataljaVacationDays, nataljaDesiredVacationDays,
+        Worker natalja = new Worker(9, "natalja", 138, 0.75, 0, 0, nataljaVacationDays, nataljaDesiredVacationDays,
                 nataljaDesiredWorkDays, nataljaSickDays, nataljaTrainingDays);
         workersList.add(natalja);
 
@@ -128,7 +127,7 @@ public class WorkersList {
         HashMap<Integer, Shift> reelikaDesiredWorkDays = new HashMap<>();
         List<Integer> reelikaSickDays = new ArrayList<>();
         List<Integer> reelikaTrainingDays = new ArrayList<>();
-        Worker reelika = new Worker(10, "reelika", 132, 0.75, 0, 0, reelikaVacationDays, reelikaDesiredVacationDays,
+        Worker reelika = new Worker(10, "reelika", 138, 0.75, 0, 0, reelikaVacationDays, reelikaDesiredVacationDays,
                 reelikaDesiredWorkDays,
                 reelikaSickDays, reelikaTrainingDays);
         workersList.add(reelika);
@@ -139,7 +138,7 @@ public class WorkersList {
         HashMap<Integer, Shift> tiinaDesiredWorkDays = new HashMap<>();
         List<Integer> tiinaSickDays = new ArrayList<>(List.of(10));
         List<Integer> tiinaTrainingDays = new ArrayList<>();
-        Worker tiina = new Worker(11, "tiina", 132, 0.75, 0, 0, tiinaVacationDays, tiinaDesiredVacationDays,
+        Worker tiina = new Worker(11, "tiina", 138, 0.75, 0, 0, tiinaVacationDays, tiinaDesiredVacationDays,
                 tiinaDesiredWorkDays,
                 tiinaSickDays, tiinaTrainingDays);
         workersList.add(tiina);
@@ -150,7 +149,7 @@ public class WorkersList {
         HashMap<Integer, Shift> nadezdaDesiredWorkDays = new HashMap<>();
         List<Integer> nadezdaSickDays = new ArrayList<>();
         List<Integer> nadezdaTrainingDays = new ArrayList<>(List.of(8));
-        Worker nadezda = new Worker(12, "nadezda", 176, 1.0, 0, 0, nadezdaVacationDays, nadezdaDesiredVacationDays,
+        Worker nadezda = new Worker(12, "nadezda", 184, 1.0, 0, 0, nadezdaVacationDays, nadezdaDesiredVacationDays,
                 nadezdaDesiredWorkDays,
                 nadezdaSickDays, nadezdaTrainingDays);
         workersList.add(nadezda);

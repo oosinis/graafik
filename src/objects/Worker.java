@@ -18,6 +18,7 @@ public class Worker {
     HashMap<Integer, Shift> desiredWorkDays = new HashMap<>();
     List<Integer> sickLeaveDays = new ArrayList<>();
     List<Integer> trainingDays = new ArrayList<>();
+    int numOf24hShifts;
 
     public Worker(int employeeId, String name, int workLoadHours, double workLoad, Integer hoursBalance, int lastMonthLastDayHours, List<Integer> vacationDays, List<Integer> desiredVacationDays, HashMap<Integer, Shift> desiredWorkDays, List<Integer> sickLeaveDays, List<Integer> trainingDays) {
         this.employeeId = employeeId;
@@ -32,6 +33,10 @@ public class Worker {
         this.desiredWorkDays = desiredWorkDays;
         this.sickLeaveDays = sickLeaveDays;
         this.trainingDays = trainingDays;
+
+        if (workLoad == 1.0) this.numOf24hShifts = 6;
+        else this.numOf24hShifts = 4;
+
     }
 
     public int getEmployeeId() {
@@ -134,6 +139,13 @@ public class Worker {
         return workLoadHours + hoursBalance;
     }
 
+    public int getNumOf24hShifts() {
+        return numOf24hShifts;
+    }
+
+    public void setNumOf24hShifts(int numOf24hShifts) {
+        this.numOf24hShifts = numOf24hShifts;
+    }
 
     @Override
     public String toString() {

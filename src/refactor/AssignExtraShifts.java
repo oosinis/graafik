@@ -13,7 +13,7 @@ public class AssignExtraShifts {
 
         for (int dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
 
-            int weekday = HelperMethods.getDay(dayIndex - 1, firstDayOfMonth);
+            int weekday = HelperMethods.getDay(dayIndex, firstDayOfMonth);
             if (weekday == 0 || weekday == 6) continue;
 
             List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
@@ -50,14 +50,8 @@ public class AssignExtraShifts {
     }
 
     public static boolean isValidShift(Shift[][] scheduleMatrix, int dayIndex, Worker worker, Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift) {
-        if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) || !HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) return false;
-        if (shift.getDuration() == 24) {
-            return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getCategory().equals(Shift.TÜHI)
-                    && dayAfterTomorrowShift.getDuration() == 0;
-        }
-        if (shift.getDuration() == 8) {
-            return todayShift.getCategory().equals(Shift.TÜHI);
-        }
-        return false;
+        if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) return false;
+
+        return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24  && tomorrowShift.getDuration() != 16 && worker.getHoursBalance() <= 0;
     }
 }

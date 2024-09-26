@@ -19,6 +19,7 @@ public class ScheduleCreator {
     // Case 5 --> End of quarter is +2 ?
 
     public static void main(String[] args) {
+
         WorkersList workersListInstance = new WorkersList();
         List<Worker> workersList = workersListInstance.getWorkersList();
         boolean lastMonthOfQuarter = true;
@@ -33,11 +34,12 @@ public class ScheduleCreator {
         // Step 2 KEELATUD päevad
         AddForbiddenDays.addForbiddenDays(workersList, scheduleMatrix);
 
-        // Step 3 Muuda koormuse põhjal 
+        // Step 3 Muuda koormuse põhjal
         ChangeWorkLoads.ChangeWorkLoads(workersList, firstDayOfMonth);
 
-        // Step 4 fill shifts 
+        // Step 4 fill shifts
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, workersList);
+        //Assign8hShifts.fillShifts(scheduleMatrix, daysInMonth, workersList);
 
         // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assginima ainult tööpäevadle sest nv olemas juba
         AssignExtraShifts.addExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
@@ -50,5 +52,6 @@ public class ScheduleCreator {
         // Export matrix
         VisualizeResults.MatrixToCSV(scheduleMatrix, "./tulemus.csv", workersList);
         VisualizeResults.printSchedule(scheduleMatrix, workersList);
+
     }
 }

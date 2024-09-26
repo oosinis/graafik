@@ -34,27 +34,15 @@ public class HelperMethods {
     return false;
   }
 
-  public static Boolean atMostTwoDaysInARow(Shift[][] scheduleMatrix, int dayIndex, int workerIndex) {
+  public static Boolean atMostXDaysInARow(Shift[][] scheduleMatrix, int dayIndex, int workerIndex, int x) {
     int consecutiveWorkDays = 0;
 
-    for (int i = dayIndex - 2; i < dayIndex; i++) {
-      if (i < 0) break;
+    for (int i = dayIndex - x; i <= dayIndex + x; i++) {
+      if (i < 0 || i >= scheduleMatrix.length) continue;
       Shift shift = scheduleMatrix[i][workerIndex];
-      if (shift.getDuration() != 0) {
+      if (shift.getDuration() != 0 || i == dayIndex) {
         consecutiveWorkDays++;
-        if (consecutiveWorkDays >= 2) {
-          return false;
-        }
-      } else {
-        consecutiveWorkDays = 0;
-      }
-    }
-    for (int i = dayIndex + 1; i < dayIndex + 2; i++) {
-      if (i >= scheduleMatrix.length) break;
-      Shift shift = scheduleMatrix[i][workerIndex];
-      if (shift.getDuration() != 0) {
-        consecutiveWorkDays++;
-        if (consecutiveWorkDays >= 2) {
+        if (consecutiveWorkDays >= x + 1) {
           return false;
         }
       } else {

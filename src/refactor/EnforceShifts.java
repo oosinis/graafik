@@ -23,13 +23,13 @@ public class EnforceShifts {
           : dayAfterTomorrowShifts.get(worker.getEmployeeId());
 
       if (isValidShiftForD(scheduleMatrix, dayIndex, tomorrowShift, dayAfterTomorrowShift, shift, worker)) {
-        if (HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) && HelperMethods.atMostTwoDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId())) {
+        if (HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) && HelperMethods.atMostXDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId(), 3)) {
           if (shift.getDuration() == 24) {
             AssignWorkerWishes.assignSpecificShifts(Arrays.asList(dayIndex + 2, dayIndex + 3), scheduleMatrix,
                 worker.getEmployeeId(),
                 new Shift(0, Shift.KEELATUD));
             if (dayIndex == scheduleMatrix.length - 1) shift = new Shift(16, shift.getCategory());
-
+            worker.setNumOf24hShifts(worker.getNumOf24hShifts() - 1);
           }
           scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
           worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
@@ -44,10 +44,10 @@ public class EnforceShifts {
     if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) return false;
 
     if (shift.getDuration() == 24) {
-      return tomorrowShift.getCategory().equals(Shift.TÜHI) && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -16;
+      return (tomorrowShift.getCategory().equals(Shift.TÜHI) || tomorrowShift.getCategory().equals(Shift.SOOVI_PUHKUS)) && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -20 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
     }
     if (shift.getDuration() == 8) {
-      return tomorrowShift.getDuration() != 24 && worker.getHoursBalance() <= 0;
+      return tomorrowShift.getDuration() != 24 && tomorrowShift.getDuration() != 16  && worker.getHoursBalance() <= -4;
     }
     return false;
   }
