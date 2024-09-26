@@ -50,7 +50,7 @@ public class AssignExtraShifts {
     }
 
     public static boolean isValidShift(Shift[][] scheduleMatrix, int dayIndex, Worker worker, Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift) {
-        if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())) return false;
+        if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())|| !HelperMethods.atMostXDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId(), 2)) return false;
 
         return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24  && tomorrowShift.getDuration() != 16 && worker.getHoursBalance() <= 0;
     }

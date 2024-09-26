@@ -22,7 +22,7 @@ public class ScheduleCreator {
 
         WorkersList workersListInstance = new WorkersList();
         List<Worker> workersList = workersListInstance.getWorkersList();
-        boolean lastMonthOfQuarter = true;
+        boolean lastMonthOfQuarter = false;
 
         int daysInMonth = 31;
         int firstDayOfMonth = 2;
@@ -35,17 +35,17 @@ public class ScheduleCreator {
         AddForbiddenDays.addForbiddenDays(workersList, scheduleMatrix);
 
         // Step 3 Muuda koormuse põhjal
-        ChangeWorkLoads.ChangeWorkLoads(workersList, firstDayOfMonth);
+        ChangeWorkLoads.changeWorkLoads(workersList, firstDayOfMonth);
 
         // Step 4 fill shifts
         AssignShifts.fillShifts(scheduleMatrix, daysInMonth, workersList);
-        //Assign8hShifts.fillShifts(scheduleMatrix, daysInMonth, workersList);
 
         // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assginima ainult tööpäevadle sest nv olemas juba
         AssignExtraShifts.addExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
 
         // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
-        Quarter.QuarterBalance(scheduleMatrix, workersList, lastMonthOfQuarter);
+        if (lastMonthOfQuarter) Quarter.QuarterBalance(scheduleMatrix, workersList);
+        
 
         // Deal with Edgecases
 

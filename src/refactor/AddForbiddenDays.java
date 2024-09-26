@@ -1,9 +1,8 @@
 package refactor;
 
+import java.util.List;
 import objects.Shift;
 import objects.Worker;
-
-import java.util.List;
 
 public class AddForbiddenDays {
 
@@ -24,12 +23,11 @@ public class AddForbiddenDays {
 
         for (int i = 1; i < scheduleMatrix.length; i++) {
             for (int personIndex = 0; personIndex < scheduleMatrix[i].length; personIndex++) {
-                if (i == scheduleMatrix.length - 1)
-                    continue;
+                if (i == scheduleMatrix.length - 1) continue;
+                
                 if (scheduleMatrix[i][personIndex].getDuration() == 24) {
                     scheduleMatrix[i + 1][personIndex] = new Shift(0, Shift.KEELATUD);
-                    if (i == scheduleMatrix.length - 2 || scheduleMatrix[i + 2][personIndex].getDuration() != 0)
-                        continue;
+                    if (i == scheduleMatrix.length - 2 || scheduleMatrix[i + 2][personIndex].getDuration() != 0) continue;
                     scheduleMatrix[i + 2][personIndex] = new Shift(0, Shift.KEELATUD);
                 }
             }

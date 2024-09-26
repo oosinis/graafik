@@ -28,8 +28,8 @@ public class AssignWorkerWishes {
   // Get day types
   public static void assignShifts(Worker töötaja, Shift[][] scheduleMatrix) {
     assignSooviTööpäevad(töötaja, scheduleMatrix);
-    assignSpecificShifts(töötaja.getVacationDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "P"));
-    assignSpecificShifts(töötaja.getDesiredVacationDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, "D"));
+    assignSpecificShifts(töötaja.getVacationDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, Shift.PUHKUS));
+    assignSpecificShifts(töötaja.getDesiredVacationDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(0, Shift.SOOVI_PUHKUS));
     assignSpecificShifts(töötaja.getTrainingDays(), scheduleMatrix, töötaja.getEmployeeId(), new Shift(8, Shift.KOOLITUS));
   }
 

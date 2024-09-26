@@ -7,7 +7,7 @@ import objects.Worker;
 
 public class ChangeWorkLoads {
 
-    public static void ChangeWorkLoads(List<Worker> workers, int firstDayOfMonth) {
+    public static void changeWorkLoads(List<Worker> workers, int firstDayOfMonth) {
 
         for (Worker worker : workers) {
             int vacationHrValue;

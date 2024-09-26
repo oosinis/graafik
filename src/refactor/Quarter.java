@@ -1,19 +1,21 @@
 package refactor;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import objects.Shift;
 import objects.Worker;
 
 public class Quarter {
 
-    public static void QuarterBalance(Shift[][] scheduleMatrix, List<Worker> workers, boolean lastMonthOfQuarter) {
+    public static void QuarterBalance(Shift[][] scheduleMatrix, List<Worker> workers) {
 
-        //if (lastMonthOfQuarter) QuarterLast(scheduleMatrix, workers);
+        QuarterLast(scheduleMatrix, workers);
     }
 
     private static void QuarterLast(Shift[][] scheduleMatrix, List<Worker> workers) {
-        //List<Worker> filteredWorkers = FilterWorkers(workers);
-        //if (filteredWorkers.isEmpty()) return;
+        List<Worker> filteredWorkers = FilterWorkers(workers);
+        if (filteredWorkers.isEmpty()) return;
 
         for (Worker worker : workers) {
             loop: for (int dayIndex = 0; dayIndex < scheduleMatrix.length; dayIndex++) {
@@ -45,10 +47,10 @@ public class Quarter {
         }
     }
 
-    /* private static List<Worker> FilterWorkers(List<Worker> workers) {
-        var negativeWorkers = workers.stream().filter(w -> w.getQuarterHoursBalance() < 0).collect(Collectors.toList());
-        negativeWorkers.sort(Comparator.comparingDouble(Worker::getQuarterHoursBalance));
+    private static List<Worker> FilterWorkers(List<Worker> workers) {
+        var negativeWorkers = workers.stream().filter(w -> w.getHoursBalance() < 0).collect(Collectors.toList());
+        negativeWorkers.sort(Comparator.comparingDouble(Worker::getHoursBalance));
         return negativeWorkers;
-    } */
+    }
 }
 
