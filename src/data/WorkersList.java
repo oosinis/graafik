@@ -25,7 +25,7 @@ public class WorkersList {
                 31, new Shift(16, Shift.INTENSIIV)));
         List<Integer> kaiSickDays = new ArrayList<>();
         List<Integer> kaiTrainingDays = new ArrayList<>(List.of(10));
-        Worker kai = new Worker(1, "Kai", 184, 1.0, 0, 0, kaiVacationDays, kaiDesiredVacationDays, kaiDesiredWorkDays,
+        Worker kai = new Worker(1, "Kai", 184 - 8, 1.0, 0, 0, kaiVacationDays, kaiDesiredVacationDays, kaiDesiredWorkDays,
                 kaiSickDays, kaiTrainingDays);
         workersList.add(kai);
 

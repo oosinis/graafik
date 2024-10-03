@@ -24,6 +24,8 @@ public class AssignExtraShifts {
 
             assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift, filteredWorkers);
             todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
+
+            lühikeShift = new Shift(8, Shift.OSAKOND);
             assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift, filteredWorkers);
             filteredWorkers = HelperMethods.FilterWorkers(filteredWorkers, -8);
         }
