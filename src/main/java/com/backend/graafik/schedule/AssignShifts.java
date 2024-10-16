@@ -45,7 +45,7 @@ public class AssignShifts {
             }
             
             // Assign Short shift
-            Shift lühikeShift = new Shift(8, Shift.OSAKOND);
+            Shift lühikeShift = new Shift(10, Shift.OSAKOND);
             if (!todayShifts.contains(lühikeShift)) {
                 assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift,
                         workers);
