@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
+import com.backend.graafik.model.RecordedShift;
+
 
 public class AssignShifts {
 
     // Fill in rest of the shifts
-    public static void fillShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers) {
+    public static void fillShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers, List<RecordedShift> recordedShifts) {
         for (int dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
             List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
             List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 1);

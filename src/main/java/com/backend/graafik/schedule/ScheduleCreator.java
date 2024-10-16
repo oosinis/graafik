@@ -1,10 +1,15 @@
 package com.backend.graafik.schedule;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.backend.graafik.data.WorkersList;
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
+import com.backend.graafik.model.RecordedShift;
+
 
 public class ScheduleCreator {
     //TODO: Edgecases
@@ -25,6 +30,8 @@ public class ScheduleCreator {
         List<Worker> workersList = workersListInstance.getWorkersList();
         boolean lastMonthOfQuarter = false;
 
+        List<RecordedShift> recordedShifts = new ArrayList<>();
+
         int daysInMonth = 30;
         int firstDayOfMonth = 4;
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
@@ -39,7 +46,7 @@ public class ScheduleCreator {
         ChangeWorkLoads.changeWorkLoads(workersList, firstDayOfMonth);
 
         // Step 4 fill shifts
-        AssignShifts.fillShifts(scheduleMatrix, daysInMonth, workersList);
+        AssignShifts.fillShifts(scheduleMatrix, daysInMonth, workersList, recordedShifts);
 
         // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assginima ainult tööpäevadle sest nv olemas juba
         AssignExtraShifts.addExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
