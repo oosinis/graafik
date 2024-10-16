@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
@@ -57,7 +58,7 @@ public class HelperMethods {
   }
 
   public static List<Worker> FilterWorkers(List<Worker> workers, int hoursBalance) {
-      var negativeWorkers = workers.stream().filter(w -> w.getHoursBalance() <= hoursBalance).collect(Collectors.toList());
+      var negativeWorkers = workers.stream().filter(w -> w.getHoursBalance() + w.getLastMonthBalance() <= hoursBalance).collect(Collectors.toList());
       negativeWorkers.sort(Comparator.comparingDouble(Worker::getHoursBalance));
       return negativeWorkers;
   }

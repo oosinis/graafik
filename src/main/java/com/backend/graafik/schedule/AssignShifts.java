@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
@@ -124,10 +125,10 @@ public class AssignShifts {
         if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())|| !HelperMethods.atMostXDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId(), 2)) return false;
         if (shift.getDuration() == 24) {
             return todayShift.getCategory().equals(Shift.TÜHI) && (tomorrowShift.getCategory().equals(Shift.TÜHI) || tomorrowShift.getCategory().equals(Shift.SOOVI_PUHKUS))
-                    && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() <= -24 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
+                    && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() + worker.getLastMonthBalance() <= -24 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
         }
-        if (shift.getDuration() == 8) {
-            return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 16 && tomorrowShift.getDuration() != 24 && worker.getHoursBalance() <= -2;
+        if (shift.getDuration() == 10) {
+            return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 16 && tomorrowShift.getDuration() != 24 && worker.getHoursBalance() + worker.getLastMonthBalance() <= -4;
         }
         return false;
     }
@@ -137,7 +138,7 @@ public class AssignShifts {
         Shift intensiivShiftLastDayOfMonth = new Shift(16, Shift.INTENSIIV);
         Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
         Shift osakonnaShiftLastDayOfMonth = new Shift(16, Shift.OSAKOND);
-        Shift lühikeShift = new Shift(8, Shift.OSAKOND);
+        Shift lühikeShift = new Shift(10, Shift.OSAKOND);
         if (!todayShifts.contains(lühikeShift)) System.out.println("Kuupäeval " + dayIndex + " puudu lühike vahetus");
         if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) System.out.println("Kuupäeval " + dayIndex + " puudu osakonna vahetus");
         if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) System.out.println("Kuupäeval " + dayIndex + " puudu intensiiv vahetus");
