@@ -4,6 +4,7 @@ package com.backend.graafik.schedule;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
@@ -54,6 +55,6 @@ public class AssignExtraShifts {
     public static boolean isValidShift(Shift[][] scheduleMatrix, int dayIndex, Worker worker, Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift) {
         if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())|| !HelperMethods.atMostXDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId(), 2)) return false;
 
-        return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24  && tomorrowShift.getDuration() != 16 && worker.getHoursBalance() <= 0;
+        return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24  && tomorrowShift.getDuration() != 16 && worker.getHoursBalance() + worker.getLastMonthBalance() <= -4;
     }
 }

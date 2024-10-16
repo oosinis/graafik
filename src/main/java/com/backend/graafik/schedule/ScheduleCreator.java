@@ -1,7 +1,8 @@
 package com.backend.graafik.schedule;
 
+import java.util.List;
+
 import com.backend.graafik.data.WorkersList;
-import java.util.*;
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
@@ -24,8 +25,8 @@ public class ScheduleCreator {
         List<Worker> workersList = workersListInstance.getWorkersList();
         boolean lastMonthOfQuarter = false;
 
-        int daysInMonth = 31;
-        int firstDayOfMonth = 2;
+        int daysInMonth = 30;
+        int firstDayOfMonth = 4;
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
         // Step 1
