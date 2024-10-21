@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.backend.graafik.data.WorkersList;
 import com.backend.graafik.model.Shift;
@@ -31,22 +32,29 @@ public class ScheduleCreator {
         boolean lastMonthOfQuarter = false;
 
         List<RecordedShift> recordedShifts = new ArrayList<>();
+        RecordedShift lastRecordedShift = new RecordedShift(0, 0, 0);
+        AtomicBoolean backtrack = new AtomicBoolean(false);
 
         int daysInMonth = 30;
-        int firstDayOfMonth = 4;
+        int firstDayOfMonth = 5;
+        Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
         // Step 1
         AssignWorkerWishes.assignWorkerWishes(workersList, scheduleMatrix);
+        AssignWorkerWishes.assignWorkerWishes(workersList, scheduleMatrixOriginal);
+
 
         // Step 2 KEELATUD päevad
         AddForbiddenDays.addForbiddenDays(workersList, scheduleMatrix);
+        AddForbiddenDays.addForbiddenDays(workersList, scheduleMatrixOriginal);
+
 
         // Step 3 Muuda koormuse põhjal
         ChangeWorkLoads.changeWorkLoads(workersList, firstDayOfMonth);
 
         // Step 4 fill shifts
-        AssignShifts.fillShifts(scheduleMatrix, daysInMonth, workersList, recordedShifts);
+        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, daysInMonth, workersList, recordedShifts, lastRecordedShift, backtrack);
 
         // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assginima ainult tööpäevadle sest nv olemas juba
         AssignExtraShifts.addExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
