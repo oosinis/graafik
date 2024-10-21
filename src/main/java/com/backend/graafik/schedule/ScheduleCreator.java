@@ -40,6 +40,7 @@ public class ScheduleCreator {
         Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
+
         // Step 1
         AssignWorkerWishes.assignWorkerWishes(workersList, scheduleMatrix);
         AssignWorkerWishes.assignWorkerWishes(workersList, scheduleMatrixOriginal);
@@ -54,9 +55,9 @@ public class ScheduleCreator {
         ChangeWorkLoads.changeWorkLoads(workersList, firstDayOfMonth);
 
         // Step 4 fill shifts
-        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, daysInMonth, workersList, recordedShifts, lastRecordedShift, backtrack);
+        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workersList, recordedShifts, lastRecordedShift, backtrack);
 
-        // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assginima ainult tööpäevadle sest nv olemas juba
+        // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assgnima ainult tööpäevadle sest nv olemas juba
         AssignExtraShifts.addExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
 
         // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks

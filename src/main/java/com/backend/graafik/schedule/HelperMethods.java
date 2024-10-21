@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import com.backend.graafik.model.RecordedShift;
@@ -74,5 +75,17 @@ public class HelperMethods {
         for (int i = 0; i < 3 && i + recorded.getShiftDate() < scheduleMatrixOriginal.length; i++) {
             scheduleMatrix[recorded.getShiftDate() + i][recorded.getWorkerId()] = scheduleMatrixOriginal[recorded.getShiftDate() + i][recorded.getWorkerId()];
         }
+    }
+
+    public static void backtrack(List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean backtrack, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers) {
+      if (!recordedShifts.isEmpty()) {
+        RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
+        lastRecordedShift.setShiftDate(recorded.getShiftDate());
+        lastRecordedShift.setWorkerId(recorded.getWorkerId());
+        lastRecordedShift.setScheduleScore(recorded.getScheduleScore());                    
+        backtrack.set(true);
+        removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
+        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workers, recordedShifts, lastRecordedShift, backtrack);
+    }
     }
 }

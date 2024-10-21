@@ -14,20 +14,15 @@ public class EnforceShifts {
     // Assign a shift to a worker who has a desired vacation day ("D")
 
     public static void assignShiftToWorkerWithD(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, int dayIndex, List<Shift> todayShifts,
-            List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean backtrack) {
+            List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean previousStepBacktrack) {
 
         List<Worker> unusedWorkers;
-        if (backtrack.get()) {
+        if (previousStepBacktrack.get()) {
             unusedWorkers = workers.subList(lastRecordedShift.getWorkerId() + 1, workers.size());
             if (unusedWorkers.isEmpty()) {
                 if (!recordedShifts.isEmpty()) {
+                  HelperMethods.backtrack(recordedShifts, lastRecordedShift, previousStepBacktrack, scheduleMatrix, scheduleMatrixOriginal, workers);
 
-                    RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
-                    lastRecordedShift.setShiftDate(recorded.getShiftDate());
-                    lastRecordedShift.setWorkerId(recorded.getWorkerId());
-                    lastRecordedShift.setScheduleScore(recorded.getScheduleScore());
-                    HelperMethods.removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
-                    backtrack.set(true);
                 }
             }
         } else unusedWorkers = workers;
@@ -57,7 +52,7 @@ public class EnforceShifts {
                 }
 
                 recordedShifts.add(new RecordedShift(dayIndex, worker.getEmployeeId(), recordedShifts.isEmpty() ? 10 : recordedShifts.get(recordedShifts.size() - 1).getScheduleScore() + 10));
-                backtrack.set(false);
+                previousStepBacktrack.set(false);
 
                 scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
                 worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());

@@ -15,7 +15,8 @@ import com.backend.graafik.model.Worker;
 public class AssignShifts {
 
     // Fill in rest of the shifts
-    public static void fillShifts(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, int daysInMonth, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean backtrack) {
+    public static void fillShifts(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean previousStepBacktrack) {
+        int daysInMonth = scheduleMatrix.length;
         for (int dayIndex = lastRecordedShift.getShiftDate(); dayIndex < daysInMonth; dayIndex++) {
             List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
             List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 1);
@@ -26,25 +27,19 @@ public class AssignShifts {
             Shift intensiivShiftLastDayOfMonth = new Shift(16, Shift.INTENSIIV);
 
             if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
-                assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, intensiivShift,
-                        workers, recordedShifts, lastRecordedShift, backtrack);
+                assignShiftForDay(scheduleMatrix, scheduleMatrixOriginal, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, intensiivShift,
+                        workers, recordedShifts, lastRecordedShift, previousStepBacktrack);
             }
             if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
                 EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, scheduleMatrixOriginal, dayIndex, todayShifts, tomorrowShifts,
-                        dayAfterTomorrowShifts, intensiivShift, workers, recordedShifts, lastRecordedShift, backtrack);
+                        dayAfterTomorrowShifts, intensiivShift, workers, recordedShifts, lastRecordedShift, previousStepBacktrack);
             }
             
             // if shift still not there, backtrack
             if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
 
                 if (!recordedShifts.isEmpty()) {
-                    RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
-                    lastRecordedShift.setShiftDate(recorded.getShiftDate());
-                    lastRecordedShift.setWorkerId(recorded.getWorkerId());
-                    lastRecordedShift.setScheduleScore(recorded.getScheduleScore());                    
-                    backtrack.set(true);
-                    HelperMethods.removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
-                    fillShifts(scheduleMatrix, scheduleMatrixOriginal, daysInMonth, workers, recordedShifts, lastRecordedShift, backtrack);
+                    HelperMethods.backtrack(recordedShifts, lastRecordedShift, previousStepBacktrack, scheduleMatrix, scheduleMatrixOriginal, workers);
                 }
 
 
@@ -55,51 +50,39 @@ public class AssignShifts {
             Shift osakonnaShiftLastDayOfMonth = new Shift(16, Shift.OSAKOND);
 
             if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
-                assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, osakonnaShift,
-                        workers, recordedShifts, lastRecordedShift, backtrack);
+                assignShiftForDay(scheduleMatrix, scheduleMatrixOriginal, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, osakonnaShift,
+                        workers, recordedShifts, lastRecordedShift, previousStepBacktrack);
             }
 
             if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
                 EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, scheduleMatrixOriginal, dayIndex, todayShifts, tomorrowShifts,
-                        dayAfterTomorrowShifts, osakonnaShift, workers, recordedShifts, lastRecordedShift, backtrack);
+                        dayAfterTomorrowShifts, osakonnaShift, workers, recordedShifts, lastRecordedShift, previousStepBacktrack);
             }
 
             // if shift still not there, backtrack
             if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
 
                 if (!recordedShifts.isEmpty()) {
-                    RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
-                    lastRecordedShift.setShiftDate(recorded.getShiftDate());
-                    lastRecordedShift.setWorkerId(recorded.getWorkerId());
-                    lastRecordedShift.setScheduleScore(recorded.getScheduleScore()); 
-                    backtrack.set(true);
-                    HelperMethods.removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
-                    fillShifts(scheduleMatrix, scheduleMatrixOriginal, daysInMonth, workers, recordedShifts, lastRecordedShift, backtrack);           
+                    HelperMethods.backtrack(recordedShifts, lastRecordedShift, previousStepBacktrack, scheduleMatrix, scheduleMatrixOriginal, workers);           
                 }              
             }
             
             // Assign Short shift
             Shift lühikeShift = new Shift(8, Shift.OSAKOND);
             if (!todayShifts.contains(lühikeShift)) {
-                assignShiftForDay(scheduleMatrix, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift,
-                        workers, recordedShifts, lastRecordedShift, backtrack);
+                assignShiftForDay(scheduleMatrix, scheduleMatrixOriginal, dayIndex, todayShifts, tomorrowShifts, dayAfterTomorrowShifts, lühikeShift,
+                        workers, recordedShifts, lastRecordedShift, previousStepBacktrack);
             }
             if (!todayShifts.contains(lühikeShift)) {
                 EnforceShifts.assignShiftToWorkerWithD(scheduleMatrix, scheduleMatrixOriginal, dayIndex, todayShifts, tomorrowShifts,
-                        dayAfterTomorrowShifts, lühikeShift, workers, recordedShifts, lastRecordedShift, backtrack);
+                        dayAfterTomorrowShifts, lühikeShift, workers, recordedShifts, lastRecordedShift, previousStepBacktrack);
             }
 
             // if shift still not there, backtrack
             if (!todayShifts.contains(lühikeShift)) {
 
                 if (!recordedShifts.isEmpty()) {
-                    RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
-                    lastRecordedShift.setShiftDate(recorded.getShiftDate());
-                    lastRecordedShift.setWorkerId(recorded.getWorkerId());
-                    lastRecordedShift.setScheduleScore(recorded.getScheduleScore());                    
-                    backtrack.set(true);
-                    HelperMethods.removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
-                    fillShifts(scheduleMatrix, scheduleMatrixOriginal, daysInMonth, workers, recordedShifts, lastRecordedShift, backtrack);
+                    HelperMethods.backtrack(recordedShifts, lastRecordedShift, previousStepBacktrack, scheduleMatrix, scheduleMatrixOriginal, workers);
                 }
 
             }
@@ -111,22 +94,16 @@ public class AssignShifts {
     
 
     // Assign needed shifts for the day
-    public static void assignShiftForDay(Shift[][] scheduleMatrix, int dayIndex, List<Shift> todayShifts,
-                                         List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean backtrack) {
+    public static void assignShiftForDay(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, int dayIndex, List<Shift> todayShifts,
+                                         List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean previousStepBacktrack) {
         
         
         List<Worker> unusedWorkers;
-        if (backtrack.get()) {
+        if (previousStepBacktrack.get()) {
             unusedWorkers = workers.subList(lastRecordedShift.getWorkerId() + 1, workers.size());
 
             if (unusedWorkers.isEmpty()) {
-                if (!recordedShifts.isEmpty()) {
-                    RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
-                    lastRecordedShift.setShiftDate(recorded.getShiftDate());
-                    lastRecordedShift.setWorkerId(recorded.getWorkerId());
-                    lastRecordedShift.setScheduleScore(recorded.getScheduleScore());                    
-                    backtrack.set(true);
-                }
+                HelperMethods.backtrack(recordedShifts, lastRecordedShift, previousStepBacktrack, scheduleMatrix, scheduleMatrixOriginal, workers);
             }
         }
         else unusedWorkers = workers;
@@ -152,7 +129,7 @@ public class AssignShifts {
                 }
 
                 recordedShifts.add(new RecordedShift(dayIndex, worker.getEmployeeId(), recordedShifts.isEmpty() ? 0 : recordedShifts.get(recordedShifts.size() - 1).getScheduleScore()));
-                backtrack.set(false);
+                previousStepBacktrack.set(false);
 
                 scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
                 worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
