@@ -23,7 +23,7 @@ public class ScheduleCreator {
 
         WorkersList workersListInstance = new WorkersList();
         List<Worker> workersList = workersListInstance.getWorkersList();
-        boolean lastMonthOfQuarter = false;
+        boolean lastMonthOfQuarter = true;
 
         int daysInMonth = 30;
         int firstDayOfMonth = 5;
