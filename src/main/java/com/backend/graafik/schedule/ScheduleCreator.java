@@ -7,10 +7,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.backend.graafik.data.WorkersList;
+import com.backend.graafik.model.RecordedShift;
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
-import com.backend.graafik.model.RecordedShift;
-
 
 public class ScheduleCreator {
     //TODO: Edgecases
@@ -18,13 +17,9 @@ public class ScheduleCreator {
     // removed shift check if someone is missing 8-10 hrs and try to assign first on same day if cant then on other day for the same worker
 
     // Case 2 --> End of quarter is -7, check if has 10hr or 9hr shift, take -1hr and add somewhere +8hr shift
-    
     // Case 3 --> End of quarter is -4, check if has 2x10hr shifts, change them to 8hr and add 1 more 8hr shift
-
     // Case 4 --> End of quarter is +4 ?
-
     // Case 5 --> End of quarter is +2 ?
-
     public static void main(String[] args) {
 
         WorkersList workersListInstance = new WorkersList();
@@ -32,7 +27,7 @@ public class ScheduleCreator {
         boolean lastMonthOfQuarter = false;
 
         List<RecordedShift> recordedShifts = new ArrayList<>();
-        RecordedShift lastRecordedShift = new RecordedShift(0, 0, 0);
+        RecordedShift lastRecordedShift = new RecordedShift(0, workersList.get(0), 0);
         AtomicBoolean backtrack = new AtomicBoolean(false);
 
         int daysInMonth = 30;
@@ -40,35 +35,47 @@ public class ScheduleCreator {
         Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
+        List<Shift[][]> bestSchedules = new ArrayList<>();
+
+        Map<Integer, List<Worker>> unusedWorkers = new HashMap<>();
+        for (int i = 0; i < scheduleMatrix.length; i++) {
+            List<Worker> workersCopy = new ArrayList<>(workersList);
+            unusedWorkers.put(i, workersCopy);
+        }
 
         // Step 1
         AssignWorkerWishes.assignWorkerWishes(workersList, scheduleMatrix);
         AssignWorkerWishes.assignWorkerWishes(workersList, scheduleMatrixOriginal);
 
-
         // Step 2 KEELATUD päevad
         AddForbiddenDays.addForbiddenDays(workersList, scheduleMatrix);
         AddForbiddenDays.addForbiddenDays(workersList, scheduleMatrixOriginal);
-
 
         // Step 3 Muuda koormuse põhjal
         ChangeWorkLoads.changeWorkLoads(workersList, firstDayOfMonth);
 
         // Step 4 fill shifts
-        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workersList, recordedShifts, lastRecordedShift, backtrack);
+        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workersList, recordedShifts, lastRecordedShift, backtrack, unusedWorkers);
+        int currentScore = recordedShifts.get(recordedShifts.size() - 1).getScheduleScore();
 
-        // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assgnima ainult tööpäevadle sest nv olemas juba
-        AssignExtraShifts.addExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
+        int bestScheduleScore = currentScore;
 
-        // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
-        if (lastMonthOfQuarter) Quarter.QuarterBalance(scheduleMatrix, workersList);
-        
+        bestSchedules.add(scheduleMatrix);
 
-        // Deal with Edgecases
 
-        // Export matrix
-        VisualizeResults.MatrixToCSV(scheduleMatrix, "./tulemus.csv", workersList);
-        VisualizeResults.printSchedule(scheduleMatrix, workersList);
+        for (Shift[][] schedule : bestSchedules) {
+
+            // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assgnima ainult tööpäevadle sest nv olemas juba
+            AssignExtraShifts.addExtraShifts(schedule, daysInMonth, workersList, firstDayOfMonth);
+
+            // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
+            if (lastMonthOfQuarter) {
+                Quarter.QuarterBalance(schedule, workersList);
+            }
+
+            VisualizeResults.MatrixToCSV(schedule, "./tulemus" + bestSchedules.indexOf(schedule) + ".csv", workersList);
+
+        }
 
     }
 }

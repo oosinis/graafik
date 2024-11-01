@@ -3,12 +3,12 @@ package com.backend.graafik.model;
 public class RecordedShift {
 
     private int shiftDate;
-    private int workerId;
+    private Worker worker;
     private int scheduleScore;
 
-    public RecordedShift(int shiftDate, int workerId, int scheduleScore) {
+    public RecordedShift(int shiftDate, Worker worker, int scheduleScore) {
         this.shiftDate = shiftDate;
-        this.workerId = workerId;
+        this.worker = worker;
         this.scheduleScore = scheduleScore;
     }
 
@@ -20,12 +20,12 @@ public class RecordedShift {
         this.shiftDate = shiftDate;
     }
 
-    public int getWorkerId() {
-        return workerId;
+    public Worker getWorker() {
+        return worker;
     }
 
-    public void setWorkerId(int workerId) {
-        this.workerId = workerId;
+    public void setWorker(Worker worker) {
+        this.worker = worker;
     }
 
     public int getScheduleScore() {

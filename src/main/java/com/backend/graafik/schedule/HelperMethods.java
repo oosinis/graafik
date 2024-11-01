@@ -1,9 +1,11 @@
 package com.backend.graafik.schedule;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -72,20 +74,55 @@ public class HelperMethods {
     }
 
     public static void removeShiftFromDay(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, RecordedShift recorded) {
+
+        Worker worker = recorded.getWorker();
+        int shiftDuration = scheduleMatrix[recorded.getShiftDate()][worker.getEmployeeId()].getDuration();
+        worker.setHoursBalance(worker.getHoursBalance() - shiftDuration);
+
+        if (shiftDuration == 24) {
+
+            worker.setNumOf24hShifts(worker.getNumOf24hShifts() + 1);
+        }
         for (int i = 0; i < 3 && i + recorded.getShiftDate() < scheduleMatrixOriginal.length; i++) {
-            scheduleMatrix[recorded.getShiftDate() + i][recorded.getWorkerId()] = scheduleMatrixOriginal[recorded.getShiftDate() + i][recorded.getWorkerId()];
+            scheduleMatrix[recorded.getShiftDate() + i][worker.getEmployeeId()] = scheduleMatrixOriginal[recorded.getShiftDate() + i][worker.getEmployeeId()];
+        }
+
+
+    }
+
+    public static void backtrack(List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean backtrack, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, Map<Integer, List<Worker>> unusedWorkers) {
+        if (!recordedShifts.isEmpty()) {
+            RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
+            lastRecordedShift.setShiftDate(recorded.getShiftDate());
+            lastRecordedShift.setWorker(recorded.getWorker());
+            lastRecordedShift.setScheduleScore(recorded.getScheduleScore());
+                unusedWorkers.put(recorded.getShiftDate() + 1, new ArrayList<>(workers));
+
+            backtrack.set(true);
+            removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
+
+            AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workers, recordedShifts, lastRecordedShift, backtrack, unusedWorkers);
         }
     }
 
-    public static void backtrack(List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean backtrack, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers) {
-      if (!recordedShifts.isEmpty()) {
-        RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
-        lastRecordedShift.setShiftDate(recorded.getShiftDate());
-        lastRecordedShift.setWorkerId(recorded.getWorkerId());
-        lastRecordedShift.setScheduleScore(recorded.getScheduleScore());                    
-        backtrack.set(true);
-        removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
-        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workers, recordedShifts, lastRecordedShift, backtrack);
+    public static void lastShiftVariation(RecordedShift lastRecordedShift) {
+
+        lastRecordedShift.setShiftDate(0);
+        lastRecordedShift.getWorker().setEmployeeId(0);
+        lastRecordedShift.setScheduleScore(-1000);
+
     }
+
+    public static Shift[][] deepCopyScheduleMatrix(Shift[][] original) {
+        Shift[][] copy = new Shift[original.length][original[1].length];
+        for (int i = 0; i < original.length; i++) {
+            for (int j = 0; j < original[i].length; j++) {
+                if (original[i][j] != null) {
+                    copy[i][j] = new Shift(original[i][j].getDuration(), original[i][j].getCategory());
+                }
+            }
+        }
+        return copy;
     }
+
 }
