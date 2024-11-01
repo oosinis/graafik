@@ -56,11 +56,9 @@ public class ScheduleCreator {
 
         // Step 4 fill shifts
         AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workersList, recordedShifts, lastRecordedShift, backtrack, unusedWorkers);
-        int currentScore = recordedShifts.get(recordedShifts.size() - 1).getScheduleScore();
-
-        int bestScheduleScore = currentScore;
 
         bestSchedules.add(scheduleMatrix);
+
 
 
         for (Shift[][] schedule : bestSchedules) {
@@ -73,8 +71,13 @@ public class ScheduleCreator {
                 Quarter.QuarterBalance(schedule, workersList);
             }
 
+            // Deal with Edgecases
+            // Export matrix
             VisualizeResults.MatrixToCSV(schedule, "./tulemus" + bestSchedules.indexOf(schedule) + ".csv", workersList);
+            //VisualizeResults.printSchedule(schedule, workersList);
+            System.out.println("Nr of best: " + bestSchedules.size());
 
+            System.out.println("LÕPP");
         }
 
     }
