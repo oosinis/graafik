@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.backend.graafik.model.RecordedShift;
 import com.backend.graafik.model.Shift;
@@ -15,19 +14,14 @@ public class EnforceShifts {
     // Assign a shift to a worker who has a desired vacation day ("D")
 
     public static void assignShiftToWorkerWithD(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, int dayIndex, List<Shift> todayShifts,
-            List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean previousStepBacktrack, Map<Integer, List<Worker>> unusedWorkers) {
+            List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, Map<Integer, List<Worker>> unusedWorkers) {
 
-        if (previousStepBacktrack.get()) {
-            if (unusedWorkers.get(dayIndex).isEmpty()) {
-                if (dayIndex == 0) HelperMethods.lastShiftVariation(lastRecordedShift);
-                else HelperMethods.backtrack(recordedShifts, lastRecordedShift, previousStepBacktrack, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
-            }
+        if (unusedWorkers.get(dayIndex).isEmpty()) {
+            HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
         }
 
         List<Worker> sortedWorkers = new ArrayList<>(unusedWorkers.get(dayIndex));
         sortedWorkers.sort(Comparator.comparingDouble(Worker::getPercentageWorked));
-
-
 
         for (Worker worker : sortedWorkers) {
             if (!scheduleMatrix[dayIndex][worker.getEmployeeId()].getCategory().equals(Shift.SOOVI_PUHKUS) && !scheduleMatrix[dayIndex][worker.getEmployeeId()].getCategory().equals(Shift.TÜHI)) {
@@ -51,8 +45,7 @@ public class EnforceShifts {
 
                 }
 
-                recordedShifts.add(new RecordedShift(dayIndex, worker, recordedShifts.isEmpty() ? -10 : recordedShifts.get(recordedShifts.size() - 1).getScheduleScore() - 10));
-                previousStepBacktrack.set(false);
+                recordedShifts.add(new RecordedShift(dayIndex, worker, recordedShifts.isEmpty() ? -10 : recordedShifts.getLast().getScheduleScore() - 10));
 
                 scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
                 worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());

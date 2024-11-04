@@ -87,42 +87,15 @@ public class HelperMethods {
             scheduleMatrix[recorded.getShiftDate() + i][worker.getEmployeeId()] = scheduleMatrixOriginal[recorded.getShiftDate() + i][worker.getEmployeeId()];
         }
 
-
     }
 
-    public static void backtrack(List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, AtomicBoolean backtrack, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, Map<Integer, List<Worker>> unusedWorkers) {
+    public static void backtrack(List<RecordedShift> recordedShifts, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, Map<Integer, List<Worker>> unusedWorkers) {
         if (!recordedShifts.isEmpty()) {
-            RecordedShift recorded = recordedShifts.remove(recordedShifts.size() - 1);
-            lastRecordedShift.setShiftDate(recorded.getShiftDate());
-            lastRecordedShift.setWorker(recorded.getWorker());
-            lastRecordedShift.setScheduleScore(recorded.getScheduleScore());
-                unusedWorkers.put(recorded.getShiftDate() + 1, new ArrayList<>(workers));
-
-            backtrack.set(true);
+            RecordedShift recorded = recordedShifts.removeLast();
+            unusedWorkers.put(recorded.getShiftDate() + 1, new ArrayList<>(workers));
             removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
-
-            AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workers, recordedShifts, lastRecordedShift, backtrack, unusedWorkers);
+            AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workers, recordedShifts, recorded, unusedWorkers);
         }
-    }
-
-    public static void lastShiftVariation(RecordedShift lastRecordedShift) {
-
-        lastRecordedShift.setShiftDate(0);
-        lastRecordedShift.getWorker().setEmployeeId(0);
-        lastRecordedShift.setScheduleScore(-1000);
-
-    }
-
-    public static Shift[][] deepCopyScheduleMatrix(Shift[][] original) {
-        Shift[][] copy = new Shift[original.length][original[1].length];
-        for (int i = 0; i < original.length; i++) {
-            for (int j = 0; j < original[i].length; j++) {
-                if (original[i][j] != null) {
-                    copy[i][j] = new Shift(original[i][j].getDuration(), original[i][j].getCategory());
-                }
-            }
-        }
-        return copy;
     }
 
 }

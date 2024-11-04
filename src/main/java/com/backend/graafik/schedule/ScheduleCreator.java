@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.backend.graafik.data.WorkersList;
 import com.backend.graafik.model.RecordedShift;
@@ -28,14 +27,11 @@ public class ScheduleCreator {
 
         List<RecordedShift> recordedShifts = new ArrayList<>();
         RecordedShift lastRecordedShift = new RecordedShift(0, workersList.get(0), 0);
-        AtomicBoolean backtrack = new AtomicBoolean(false);
 
         int daysInMonth = 30;
         int firstDayOfMonth = 5;
         Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
-
-        List<Shift[][]> bestSchedules = new ArrayList<>();
 
         Map<Integer, List<Worker>> unusedWorkers = new HashMap<>();
         for (int i = 0; i < scheduleMatrix.length; i++) {
@@ -55,30 +51,18 @@ public class ScheduleCreator {
         ChangeWorkLoads.changeWorkLoads(workersList, firstDayOfMonth);
 
         // Step 4 fill shifts
-        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workersList, recordedShifts, lastRecordedShift, backtrack, unusedWorkers);
-
-        bestSchedules.add(scheduleMatrix);
+        AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workersList, recordedShifts, lastRecordedShift, unusedWorkers);
 
 
+        // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assgnima ainult tööpäevadle sest nv olemas juba
+        AssignExtraShifts.addExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
 
-        for (Shift[][] schedule : bestSchedules) {
-
-            // Step 5 kui rahval < -8h jääk siis vaatame kuhu saab neid assginida --> ja assgnima ainult tööpäevadle sest nv olemas juba
-            AssignExtraShifts.addExtraShifts(schedule, daysInMonth, workersList, firstDayOfMonth);
-
-            // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
-            if (lastMonthOfQuarter) {
-                Quarter.QuarterBalance(schedule, workersList);
-            }
-
-            // Deal with Edgecases
-            // Export matrix
-            VisualizeResults.MatrixToCSV(schedule, "./tulemus" + bestSchedules.indexOf(schedule) + ".csv", workersList);
-            //VisualizeResults.printSchedule(schedule, workersList);
-            System.out.println("Nr of best: " + bestSchedules.size());
-
-            System.out.println("LÕPP");
+        // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
+        if (lastMonthOfQuarter) {
+            Quarter.QuarterBalance(scheduleMatrix, workersList);
         }
+        VisualizeResults.MatrixToCSV(scheduleMatrix, "./tulemus.csv", workersList);
+
 
     }
 }
