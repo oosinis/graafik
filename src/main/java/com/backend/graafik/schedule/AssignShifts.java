@@ -115,7 +115,7 @@ public class AssignShifts {
                 recordedShifts.add(new RecordedShift(dayIndex, worker, recordedShifts.isEmpty() ? 0 : recordedShifts.getLast().getScheduleScore()));
 
                 scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
-                worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
+                worker.setQuarterBalance(worker.getQuarterBalance() + shift.getDuration());
 
                 break;
             }
@@ -130,11 +130,11 @@ public class AssignShifts {
         }
         if (shift.getDuration() == 24) {
             return todayShift.getCategory().equals(Shift.TÜHI) && (tomorrowShift.getCategory().equals(Shift.TÜHI) || tomorrowShift.getCategory().equals(Shift.SOOVI_PUHKUS))
-                    && dayAfterTomorrowShift.getDuration() == 0 && worker.getHoursBalance() + worker.getLastMonthBalance() <= -24 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
+                    && dayAfterTomorrowShift.getDuration() == 0 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -24 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
         }
         if (shift.getDuration() == 8) {
 
-            return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 16 && tomorrowShift.getDuration() != 24 && worker.getHoursBalance() + worker.getLastMonthBalance() <= -4;
+            return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 16 && tomorrowShift.getDuration() != 24 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -4;
         }
         return false;
     }

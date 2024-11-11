@@ -60,12 +60,12 @@ public class EnforceShifts {
         if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId()) || !HelperMethods.atMostXDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId(), 2)) {
             return false;
         }
-
-
-    if (shift.getDuration() == 24) {
-      return (tomorrowShift.getCategory().equals(Shift.TÜHI) || tomorrowShift.getCategory().equals(Shift.SOOVI_PUHKUS)) && dayAfterTomorrowShift.getDuration() == 0 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -20 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
-    }
-    if (shift.getDuration() == 8) {
-      return tomorrowShift.getDuration() != 24 && tomorrowShift.getDuration() != 16  && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -4;
+        if (shift.getDuration() == 24) {
+            return (tomorrowShift.getCategory().equals(Shift.TÜHI) || tomorrowShift.getCategory().equals(Shift.SOOVI_PUHKUS)) && dayAfterTomorrowShift.getDuration() == 0 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -20 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
+        }
+        if (shift.getDuration() == 8) {
+            return tomorrowShift.getDuration() != 24 && tomorrowShift.getDuration() != 16 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -4;
+        }
+        return false;
     }
 }

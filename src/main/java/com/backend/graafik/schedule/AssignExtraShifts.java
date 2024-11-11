@@ -45,7 +45,7 @@ public class AssignExtraShifts {
 
             if (isValidShift(scheduleMatrix, dayIndex, worker, todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) {
                 scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
-                worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
+                worker.setQuarterBalance(worker.getQuarterBalance() + shift.getDuration());
                 break;
             }
         }

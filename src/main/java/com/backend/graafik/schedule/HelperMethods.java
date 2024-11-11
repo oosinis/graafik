@@ -72,7 +72,7 @@ public class HelperMethods {
 
         Worker worker = recorded.getWorker();
         int shiftDuration = scheduleMatrix[recorded.getShiftDate()][worker.getEmployeeId()].getDuration();
-        worker.setHoursBalance(worker.getHoursBalance() - shiftDuration);
+        worker.setQuarterBalance(worker.getQuarterBalance() - shiftDuration);
 
         if (shiftDuration == 24) {
 
