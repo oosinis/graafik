@@ -2,6 +2,7 @@ package com.backend.graafik.schedule;
 
 import java.util.List;
 import java.util.Map;
+
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
@@ -29,10 +30,7 @@ public class ChangeWorkLoads {
                 }
             }
 
-            int trainingHours = 0;
-            for (Integer trainingDay : worker.getTrainingDays()) {
-                trainingHours += 8;
-            }
+            int trainingHours = worker.getTrainingDays().size() * 8;
 
             worker.setWorkLoadHours(
                     worker.getWorkLoadHours() - (workerVacationDays * vacationHrValue) - trainingHours);
