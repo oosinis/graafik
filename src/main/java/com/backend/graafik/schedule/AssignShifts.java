@@ -35,10 +35,10 @@ public class AssignShifts {
             }
 
             // if shift still not there, backtrack
-            if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
+            /*if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
 
                 HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
-            }
+            }*/
 
             // Assign Osakonna Shift
             Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
@@ -55,10 +55,9 @@ public class AssignShifts {
             }
 
             // if shift still not there, backtrack
-            if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
-
+            /*if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
                 HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
-            }
+            }*/
 
             // Assign Short shift
             Shift lühikeShift = new Shift(8, Shift.OSAKOND);
@@ -72,13 +71,13 @@ public class AssignShifts {
             }
 
             // if shift still not there, backtrack
-            if (!todayShifts.contains(lühikeShift)) {
+            /*if (!todayShifts.contains(lühikeShift)) {
 
                 HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
-            }
+            }*/
 
             //CheckMissingShifts(todayShifts, dayIndex, recordedShifts);
-            //PrintMissingShifts(todayShifts, dayIndex);
+            PrintMissingShifts(todayShifts, dayIndex);
         }
     }
 

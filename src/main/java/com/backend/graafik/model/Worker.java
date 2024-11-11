@@ -36,7 +36,7 @@ public class Worker {
         this.trainingDays = trainingDays;
 
         if (workLoad == 1.0) this.numOf24hShifts = 6;
-        else this.numOf24hShifts = 4;
+        else this.numOf24hShifts = 5;
 
         this.initialBalance = quarterBalance;
     }

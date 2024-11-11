@@ -24,13 +24,13 @@ public class ScheduleCreator {
 
         WorkersList workersListInstance = new WorkersList();
         List<Worker> workersList = workersListInstance.getWorkersList();
-        boolean lastMonthOfQuarter = false;
+        boolean lastMonthOfQuarter = true;
 
         List<RecordedShift> recordedShifts = new ArrayList<>();
         RecordedShift lastRecordedShift = new RecordedShift(0, workersList.get(0), 0);
 
-        int daysInMonth = 30;
-        int firstDayOfMonth = 5;
+        int daysInMonth = 31;
+        int firstDayOfMonth = 0;
         Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
