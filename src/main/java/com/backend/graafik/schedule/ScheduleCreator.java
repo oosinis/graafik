@@ -46,6 +46,7 @@ public class ScheduleCreator {
 
         // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
         if (lastMonthOfQuarter) Quarter.QuarterBalance(scheduleMatrix, workersList);
+        else Month.MonthlyBalance(scheduleMatrix, workersList);
         
 
         // Deal with Edgecases

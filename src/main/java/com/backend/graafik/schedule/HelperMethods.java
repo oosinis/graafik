@@ -58,8 +58,8 @@ public class HelperMethods {
   }
 
   public static List<Worker> FilterWorkers(List<Worker> workers, int hoursBalance) {
-      var negativeWorkers = workers.stream().filter(w -> w.getHoursBalance() + w.getLastMonthBalance() <= hoursBalance).collect(Collectors.toList());
-      negativeWorkers.sort(Comparator.comparingDouble(Worker::getHoursBalance));
+      var negativeWorkers = workers.stream().filter(w -> w.getQuarterBalance() + w.getLastMonthBalance() <= hoursBalance).collect(Collectors.toList());
+      negativeWorkers.sort(Comparator.comparingDouble(Worker::getQuarterBalance));
       return negativeWorkers;
   }
 }
