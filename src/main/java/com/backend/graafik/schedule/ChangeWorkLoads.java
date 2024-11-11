@@ -35,9 +35,9 @@ public class ChangeWorkLoads {
             worker.setWorkLoadHours(
                     worker.getWorkLoadHours() - (workerVacationDays * vacationHrValue) - trainingHours);
 
-            worker.setHoursBalance(worker.getHoursBalance() - worker.getWorkLoadHours() + worker.getLastMonthLastDayHours());
+            worker.setQuarterBalance(worker.getQuarterBalance() - worker.getWorkLoadHours() + worker.getLastMonthLastDayHours());
 
-            for (Map.Entry<Integer, Shift> entry : worker.getDesiredWorkDays().entrySet()) worker.setHoursBalance(worker.getHoursBalance() + entry.getValue().getDuration());
+            for (Map.Entry<Integer, Shift> entry : worker.getDesiredWorkDays().entrySet()) worker.setQuarterBalance(worker.getQuarterBalance() + entry.getValue().getDuration());
 
         }
     }

@@ -24,7 +24,7 @@ public class ScheduleCreator {
 
         WorkersList workersListInstance = new WorkersList();
         List<Worker> workersList = workersListInstance.getWorkersList();
-        boolean lastMonthOfQuarter = true;
+        boolean lastMonthOfQuarter = false;
 
         List<RecordedShift> recordedShifts = new ArrayList<>();
         RecordedShift lastRecordedShift = new RecordedShift(0, workersList.get(0), 0);
@@ -60,9 +60,13 @@ public class ScheduleCreator {
         AssignExtraShifts.addExtraShifts(scheduleMatrix, daysInMonth, workersList, firstDayOfMonth);
 
         // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
-        if (lastMonthOfQuarter) {
-            Quarter.QuarterBalance(scheduleMatrix, workersList);
-        }
+        if (lastMonthOfQuarter) Quarter.QuarterBalance(scheduleMatrix, workersList);
+        else Month.MonthlyBalance(scheduleMatrix, workersList);
+        
+
+        // Deal with Edgecases
+
+        // Export matrix
         VisualizeResults.MatrixToCSV(scheduleMatrix, "./tulemus.csv", workersList);
 
 
