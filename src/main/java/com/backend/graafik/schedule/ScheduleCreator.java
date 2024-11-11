@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.backend.graafik.data.WorkersList;
 import com.backend.graafik.model.RecordedShift;
+
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
@@ -23,7 +24,7 @@ public class ScheduleCreator {
 
         WorkersList workersListInstance = new WorkersList();
         List<Worker> workersList = workersListInstance.getWorkersList();
-        boolean lastMonthOfQuarter = false;
+        boolean lastMonthOfQuarter = true;
 
         List<RecordedShift> recordedShifts = new ArrayList<>();
         RecordedShift lastRecordedShift = new RecordedShift(0, workersList.get(0), 0);
@@ -31,6 +32,7 @@ public class ScheduleCreator {
         int daysInMonth = 30;
         int firstDayOfMonth = 5;
         Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
+
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
         Map<Integer, List<Worker>> unusedWorkers = new HashMap<>();

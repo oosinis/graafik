@@ -18,31 +18,25 @@ public class Quarter {
         if (filteredWorkers.isEmpty()) return;
 
         for (Worker worker : workers) {
-            loop: for (Shift[] scheduleMatrix1 : scheduleMatrix) {
+            loop:
+            for (Shift[] scheduleMatrix1 : scheduleMatrix) {
                 Shift shift = scheduleMatrix1[worker.getEmployeeId()];
-                if (!shift.getCategory().equals(Shift.LÜHIKE_PÄEV))  continue;
-                switch (worker.getHoursBalance()) {
-                    case 0 -> {
-                        break loop;
-                    }
-                    case -1 -> {
-                        scheduleMatrix1[worker.getEmployeeId()] = new Shift(9, Shift.LÜHIKE_PÄEV);
-                        worker.setHoursBalance(worker.getHoursBalance() + 1);
-                        worker.setHoursBalance(worker.getHoursBalance() + 1);
-                        break;
-                    }
-                    case -10 -> {
-                        
-                    }
-                    default -> {
-                        scheduleMatrix1[worker.getEmployeeId()] = new Shift(10, Shift.LÜHIKE_PÄEV);
-                        worker.setHoursBalance(worker.getHoursBalance() + 2);
-                        worker.setHoursBalance(worker.getHoursBalance() + 2);
-                        break;
-                    }
+                if (shift.getDuration() != 8 || (!shift.getCategory().equals(Shift.OSAKOND) && !shift.getCategory().equals(Shift.INTENSIIV))) continue;
+
+                int hoursBalance = worker.getHoursBalance();
+
+                if (hoursBalance >= 0) {
+                    break loop;  // Break the loop if the balance is >= 0
+                } else if (hoursBalance == -1) {
+                    scheduleMatrix1[worker.getEmployeeId()] = new Shift(9, shift.getCategory());
+                    worker.setHoursBalance(hoursBalance + 1);
+                } else {
+                    scheduleMatrix1[worker.getEmployeeId()] = new Shift(10, shift.getCategory());
+                    worker.setHoursBalance(hoursBalance + 2);
                 }
             }
         }
+
     }
 
     private static List<Worker> FilterWorkers(List<Worker> workers) {

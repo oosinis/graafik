@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import com.backend.graafik.model.RecordedShift;
+
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
@@ -99,3 +100,4 @@ public class HelperMethods {
     }
 
 }
+
