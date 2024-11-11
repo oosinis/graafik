@@ -45,7 +45,7 @@ public class AssignExtraShifts {
 
             if (isValidShift(scheduleMatrix, dayIndex, worker, todayShift, tomorrowShift, dayAfterTomorrowShift, shift)) {
                 scheduleMatrix[dayIndex][worker.getEmployeeId()] = shift;
-                worker.setQuarterBalance(worker.getQuarterBalance() + shift.getDuration());
+                worker.setHoursBalance(worker.getHoursBalance() + shift.getDuration());
                 break;
             }
         }
@@ -54,6 +54,6 @@ public class AssignExtraShifts {
     public static boolean isValidShift(Shift[][] scheduleMatrix, int dayIndex, Worker worker, Shift todayShift, Shift tomorrowShift, Shift dayAfterTomorrowShift, Shift shift) {
         if (!HelperMethods.atLeastTwoRestdays(scheduleMatrix, dayIndex, worker.getEmployeeId())|| !HelperMethods.atMostXDaysInARow(scheduleMatrix, dayIndex, worker.getEmployeeId(), 2)) return false;
 
-        return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24  && tomorrowShift.getDuration() != 16 && worker.getQuarterBalance() <= 0;
+        return todayShift.getCategory().equals(Shift.TÜHI) && tomorrowShift.getDuration() != 24  && tomorrowShift.getDuration() != 16 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -4;
     }
 }

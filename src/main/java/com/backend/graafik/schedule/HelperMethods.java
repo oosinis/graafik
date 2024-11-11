@@ -1,10 +1,15 @@
 package com.backend.graafik.schedule;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+
+import com.backend.graafik.model.RecordedShift;
 
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
@@ -57,9 +62,35 @@ public class HelperMethods {
     return (dateIndex + firstDayOfMonth) % 7;
   }
 
-  public static List<Worker> FilterWorkers(List<Worker> workers, int hoursBalance) {
-      var negativeWorkers = workers.stream().filter(w -> w.getQuarterBalance() + w.getLastMonthBalance() <= hoursBalance).collect(Collectors.toList());
-      negativeWorkers.sort(Comparator.comparingDouble(Worker::getQuarterBalance));
-      return negativeWorkers;
-  }
+    public static List<Worker> FilterWorkers(List<Worker> workers, int hoursBalance) {
+        var negativeWorkers = workers.stream().filter(w -> w.getQuarterBalance() <= hoursBalance).collect(Collectors.toList());
+        negativeWorkers.sort(Comparator.comparingDouble(Worker::getQuarterBalance));
+        return negativeWorkers;
+    }
+
+    public static void removeShiftFromDay(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, RecordedShift recorded) {
+
+        Worker worker = recorded.getWorker();
+        int shiftDuration = scheduleMatrix[recorded.getShiftDate()][worker.getEmployeeId()].getDuration();
+        worker.setHoursBalance(worker.getHoursBalance() - shiftDuration);
+
+        if (shiftDuration == 24) {
+
+            worker.setNumOf24hShifts(worker.getNumOf24hShifts() + 1);
+        }
+        for (int i = 0; i < 3 && i + recorded.getShiftDate() < scheduleMatrixOriginal.length; i++) {
+            scheduleMatrix[recorded.getShiftDate() + i][worker.getEmployeeId()] = scheduleMatrixOriginal[recorded.getShiftDate() + i][worker.getEmployeeId()];
+        }
+
+    }
+
+    public static void backtrack(List<RecordedShift> recordedShifts, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, Map<Integer, List<Worker>> unusedWorkers) {
+        if (!recordedShifts.isEmpty()) {
+            RecordedShift recorded = recordedShifts.removeLast();
+            unusedWorkers.put(recorded.getShiftDate() + 1, new ArrayList<>(workers));
+            removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
+            AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workers, recordedShifts, recorded, unusedWorkers);
+        }
+    }
+
 }
