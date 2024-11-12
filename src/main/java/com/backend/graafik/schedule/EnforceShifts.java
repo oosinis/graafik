@@ -18,7 +18,7 @@ public class EnforceShifts {
             List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, Map<Integer, List<Worker>> unusedWorkers) {
 
         if (unusedWorkers.get(dayIndex).isEmpty()) {
-            HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
+            dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
         }
 
         List<Worker> sortedWorkers = new ArrayList<>(unusedWorkers.get(dayIndex));

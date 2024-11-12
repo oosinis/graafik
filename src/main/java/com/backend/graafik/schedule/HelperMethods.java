@@ -84,13 +84,15 @@ public class HelperMethods {
 
     }
 
-    public static void backtrack(List<RecordedShift> recordedShifts, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, Map<Integer, List<Worker>> unusedWorkers) {
+    public static int backtrack(List<RecordedShift> recordedShifts, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, Map<Integer, List<Worker>> unusedWorkers) {
         if (!recordedShifts.isEmpty()) {
             RecordedShift recorded = recordedShifts.removeLast();
             unusedWorkers.put(recorded.getShiftDate() + 1, new ArrayList<>(workers));
             removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
-            AssignShifts.fillShifts(scheduleMatrix, scheduleMatrixOriginal, workers, recordedShifts, recorded, unusedWorkers);
+            return recorded.getShiftDate();
+
         }
+        return 0;
     }
 
 }

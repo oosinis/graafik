@@ -35,10 +35,11 @@ public class AssignShifts {
             }
 
             // if shift still not there, backtrack
-            /*if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
+            if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
 
-                HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
-            }*/
+                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) + 1;
+                continue;
+            }
 
             // Assign Osakonna Shift
             Shift osakonnaShift = new Shift(24, Shift.OSAKOND);
@@ -55,9 +56,10 @@ public class AssignShifts {
             }
 
             // if shift still not there, backtrack
-            /*if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
-                HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
-            }*/
+            if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
+                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) + 1;
+                continue;
+            }
 
             // Assign Short shift
             Shift lühikeShift = new Shift(8, Shift.OSAKOND);
@@ -71,10 +73,11 @@ public class AssignShifts {
             }
 
             // if shift still not there, backtrack
-            /*if (!todayShifts.contains(lühikeShift)) {
+            if (!todayShifts.contains(lühikeShift)) {
 
-                HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
-            }*/
+                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) + 1;
+                continue;
+            }
 
             //CheckMissingShifts(todayShifts, dayIndex, recordedShifts);
             PrintMissingShifts(todayShifts, dayIndex);
@@ -86,7 +89,7 @@ public class AssignShifts {
                                          List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, Map<Integer, List<Worker>> unusedWorkers) {
 
         if (unusedWorkers.get(dayIndex).isEmpty()) {
-            HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
+            dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
         }
 
         List<Worker> sortedWorkers = new ArrayList<>(unusedWorkers.get(dayIndex));
