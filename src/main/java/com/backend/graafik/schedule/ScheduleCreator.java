@@ -2,6 +2,7 @@ package com.backend.graafik.schedule;
 
 import java.util.List;
 
+import com.backend.graafik.data.WorkerConverter;
 import com.backend.graafik.data.WorkersList;
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
@@ -21,12 +22,15 @@ public class ScheduleCreator {
 
     public static void main(String[] args) {
 
-        WorkersList workersListInstance = new WorkersList();
-        List<Worker> workersList = workersListInstance.getWorkersList();
+
         boolean lastMonthOfQuarter = false;
 
         int daysInMonth = 30;
         int firstDayOfMonth = 5;
+        int fullTimeHours = 156;
+
+        List<Worker> workersList = WorkerConverter.createWorkersList(fullTimeHours);
+
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
         // Step 1
@@ -53,6 +57,9 @@ public class ScheduleCreator {
         // Export matrix
         VisualizeResults.MatrixToCSV(scheduleMatrix, "./tulemus.csv", workersList);
         VisualizeResults.printSchedule(scheduleMatrix, workersList);
+
+
+
 
     }
 }
