@@ -1,16 +1,14 @@
 package com.backend.graafik.schedule;
 
+import com.backend.graafik.data.WorkerConverter;
+import com.backend.graafik.model.RecordedShift;
+import com.backend.graafik.model.Shift;
+import com.backend.graafik.model.Worker;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.backend.graafik.data.WorkerConverter;
-import com.backend.graafik.data.WorkersList;
-import com.backend.graafik.model.RecordedShift;
-
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
 
 public class ScheduleCreator {
     //TODO: Edgecases
@@ -23,23 +21,29 @@ public class ScheduleCreator {
     // Case 5 --> End of quarter is +2 ?
     public static void main(String[] args) {
 
+        int daysInMonth = 31;
+        int firstDayOfMonth = 0;
+        int fullTimeHours = 152;
+
+        List<Worker> workersList = WorkerConverter.createWorkersList(fullTimeHours);
+
         List<RecordedShift> recordedShifts = new ArrayList<>();
         RecordedShift lastRecordedShift = new RecordedShift(0, workersList.get(0), 0);
 
         boolean lastMonthOfQuarter = false;
 
-        int daysInMonth = 30;
-        int firstDayOfMonth = 5;
-        int fullTimeHours = 156;
         Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
-        List<Worker> workersList = WorkerConverter.createWorkersList(fullTimeHours);
 
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
         Map<Integer, List<Worker>> unusedWorkers = new HashMap<>();
         for (int i = 0; i < scheduleMatrix.length; i++) {
-            List<Worker> workersCopy = new ArrayList<>(workersList);
+            List<Worker> workersCopy = new ArrayList<>();
+            for (int j = 0; j < scheduleMatrix[i].length; j++) {
+                if (!scheduleMatrix[i][j].getCategory().equals(Shift.KEELATUD) && !scheduleMatrix[i][j].getCategory().equals(Shift.PUHKUS) && !scheduleMatrix[i][j].getCategory().equals(Shift.KOOLITUS)) workersCopy.add(workersList.get(j));
+
+            }
             unusedWorkers.put(i, workersCopy);
         }
 

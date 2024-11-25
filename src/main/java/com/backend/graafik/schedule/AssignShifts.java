@@ -17,6 +17,10 @@ public class AssignShifts {
     public static void fillShifts(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, Map<Integer, List<Worker>> unusedWorkers) {
         int daysInMonth = scheduleMatrix.length;
         for (int dayIndex = lastRecordedShift.getShiftDate(); dayIndex < daysInMonth; dayIndex++) {
+            if (dayIndex == 29) {
+                System.out.println(dayIndex);
+            }
+
             List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
             List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 1);
             List<Shift> dayAfterTomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 2);
@@ -37,7 +41,9 @@ public class AssignShifts {
             // if shift still not there, backtrack
             if (!todayShifts.contains(intensiivShift) && !todayShifts.contains(intensiivShiftLastDayOfMonth)) {
 
-                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) + 1;
+                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) - 1;
+                // If there is nothing to backtrack
+                if (dayIndex == -1) break;
                 continue;
             }
 
@@ -57,7 +63,9 @@ public class AssignShifts {
 
             // if shift still not there, backtrack
             if (!todayShifts.contains(osakonnaShift) && !todayShifts.contains(osakonnaShiftLastDayOfMonth)) {
-                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) + 1;
+                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) - 1;
+                // If there is nothing to backtrack
+                if (dayIndex == -1) break;
                 continue;
             }
 
@@ -75,7 +83,9 @@ public class AssignShifts {
             // if shift still not there, backtrack
             if (!todayShifts.contains(lühikeShift)) {
 
-                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) + 1;
+                dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers) - 1;
+                // If there is nothing to backtrack
+                if (dayIndex == -1) break;
                 continue;
             }
 
@@ -88,9 +98,7 @@ public class AssignShifts {
     public static void assignShiftForDay(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, int dayIndex, List<Shift> todayShifts,
                                          List<Shift> tomorrowShifts, List<Shift> dayAfterTomorrowShifts, Shift shift, List<Worker> workers, List<RecordedShift> recordedShifts, Map<Integer, List<Worker>> unusedWorkers) {
 
-        if (unusedWorkers.get(dayIndex).isEmpty()) {
-            dayIndex = HelperMethods.backtrack(recordedShifts, scheduleMatrix, scheduleMatrixOriginal, workers, unusedWorkers);
-        }
+
 
         List<Worker> sortedWorkers = new ArrayList<>(unusedWorkers.get(dayIndex));
         sortedWorkers.sort(Comparator.comparingDouble(Worker::getPercentageWorked));
