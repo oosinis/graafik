@@ -10,7 +10,7 @@ public class Worker {
     String name;
     int workLoadHours;
     double workLoad;
-    Integer hoursBalance;
+    Integer quarterBalance;
     Integer lastMonthBalance;
     int lastMonthLastDayHours;
     List<Integer> vacationDays = new ArrayList<>();
@@ -19,14 +19,15 @@ public class Worker {
     List<Integer> sickLeaveDays = new ArrayList<>();
     List<Integer> trainingDays = new ArrayList<>();
     int numOf24hShifts;
+    Integer initialBalance;
 
-    public Worker(int employeeId, String name, int workLoadHours, double workLoad, Integer hoursBalance, int lastMonthLastDayHours, List<Integer> vacationDays, List<Integer> desiredVacationDays, HashMap<Integer, Shift> desiredWorkDays, List<Integer> sickLeaveDays, List<Integer> trainingDays) {
+    public Worker(int employeeId, String name, int workLoadHours, double workLoad, Integer quarterBalance, int lastMonthLastDayHours, List<Integer> vacationDays, List<Integer> desiredVacationDays, HashMap<Integer, Shift> desiredWorkDays, List<Integer> sickLeaveDays, List<Integer> trainingDays) {
         this.employeeId = employeeId;
         this.name = name;
         this.workLoadHours = workLoadHours;
         this.workLoad = workLoad;
-        this.hoursBalance = hoursBalance;
-        this.lastMonthBalance = hoursBalance;
+        this.quarterBalance = quarterBalance;
+        this.lastMonthBalance = quarterBalance;
         this.lastMonthLastDayHours = lastMonthLastDayHours;
         this.vacationDays = vacationDays;
         this.desiredVacationDays = desiredVacationDays;
@@ -35,8 +36,9 @@ public class Worker {
         this.trainingDays = trainingDays;
 
         if (workLoad == 1.0) this.numOf24hShifts = 6;
-        else this.numOf24hShifts = 4;
+        else this.numOf24hShifts = 5;
 
+        this.initialBalance = quarterBalance;
     }
 
     public int getEmployeeId() {
@@ -71,12 +73,12 @@ public class Worker {
         this.workLoad = workLoad;
     }
 
-    public Integer getHoursBalance() {
-        return hoursBalance;
+    public Integer getQuarterBalance() {
+        return quarterBalance;
     }
 
-    public void setHoursBalance(Integer hoursBalance) {
-        this.hoursBalance = hoursBalance;
+    public void setQuarterBalance(Integer quarterBalance) {
+        this.quarterBalance = quarterBalance;
     }
 
     public Integer getLastMonthBalance() {
@@ -136,7 +138,7 @@ public class Worker {
     }
 
     public double getPercentageWorked() {
-        return workLoadHours + hoursBalance;
+        return workLoadHours + quarterBalance;
     }
 
     public int getNumOf24hShifts() {
@@ -145,6 +147,10 @@ public class Worker {
 
     public void setNumOf24hShifts(int numOf24hShifts) {
         this.numOf24hShifts = numOf24hShifts;
+    }
+
+    public Integer getInitialBalance() {
+        return initialBalance;
     }
 
     @Override
