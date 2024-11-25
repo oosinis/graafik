@@ -28,9 +28,9 @@ public class ScheduleCreator {
         List<Worker> workersList = WorkerConverter.createWorkersList(fullTimeHours);
 
         List<RecordedShift> recordedShifts = new ArrayList<>();
-        RecordedShift lastRecordedShift = new RecordedShift(0, workersList.get(0), 0);
+        RecordedShift lastRecordedShift = new RecordedShift(0, workersList.getFirst(), 0);
 
-        boolean lastMonthOfQuarter = false;
+        boolean lastMonthOfQuarter = true;
 
         Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
