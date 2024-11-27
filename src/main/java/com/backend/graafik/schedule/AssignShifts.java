@@ -17,9 +17,6 @@ public class AssignShifts {
     public static void fillShifts(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, List<RecordedShift> recordedShifts, RecordedShift lastRecordedShift, Map<Integer, List<Worker>> unusedWorkers) {
         int daysInMonth = scheduleMatrix.length;
         for (int dayIndex = lastRecordedShift.getShiftDate(); dayIndex < daysInMonth; dayIndex++) {
-            if (dayIndex == 29) {
-                System.out.println(dayIndex);
-            }
 
             List<Shift> todayShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex);
             List<Shift> tomorrowShifts = HelperMethods.getShiftsForDay(scheduleMatrix, dayIndex + 1);
