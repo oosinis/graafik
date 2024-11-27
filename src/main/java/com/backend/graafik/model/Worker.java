@@ -13,11 +13,11 @@ public class Worker {
     Integer quarterBalance;
     Integer lastMonthBalance;
     int lastMonthLastDayHours;
-    List<Integer> vacationDays = new ArrayList<>();
-    List<Integer> desiredVacationDays = new ArrayList<>();
-    HashMap<Integer, Shift> desiredWorkDays = new HashMap<>();
-    List<Integer> sickLeaveDays = new ArrayList<>();
-    List<Integer> trainingDays = new ArrayList<>();
+    List<Integer> vacationDays;
+    List<Integer> desiredVacationDays;
+    HashMap<Integer, Shift> desiredWorkDays;
+    List<Integer> sickLeaveDays;
+    List<Integer> trainingDays;
     int numOf24hShifts;
     Integer initialBalance;
 
