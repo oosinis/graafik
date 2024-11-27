@@ -72,7 +72,7 @@ public class WorkersList {
         HashMap<Integer, Shift> olgaDesiredWorkDays = new HashMap<>();
         List<Integer> olgaSickDays = new ArrayList<>();
         List<Integer> olgaTrainingDays = new ArrayList<>();
-        Worker olga = new Worker(5, "Olga", 112, 1.0, 0, 0, olgaVacationDays, olgaDesiredVacationDays,
+        Worker olga = new Worker(5, "Olga", 152, 1.0, 0, 0, olgaVacationDays, olgaDesiredVacationDays,
                 olgaDesiredWorkDays,
                 olgaSickDays, olgaTrainingDays);
         workersList.add(olga);
@@ -88,7 +88,7 @@ public class WorkersList {
                 18, new Shift(8,Shift.OSAKOND)));
         List<Integer> pärjaSickDays = new ArrayList<>();
         List<Integer> pärjaTrainingDays = new ArrayList<>();
-        Worker pärja = new Worker(6, "Pärja", 152, 1.0, -6, 8, pärjaVacationDays, pärjaDesiredVacationDays,
+        Worker pärja = new Worker(6, "Pärja", 152, 1.0, -6, 0, pärjaVacationDays, pärjaDesiredVacationDays,
                 pärjaDesiredWorkDays, pärjaSickDays, pärjaTrainingDays);
         workersList.add(pärja);
 
@@ -98,7 +98,7 @@ public class WorkersList {
         HashMap<Integer, Shift> rimmaDesiredWorkDays = new HashMap<>();
         List<Integer> rimmaSickDays = new ArrayList<>();
         List<Integer> rimmaTrainingDays = new ArrayList<>();
-        Worker rimma = new Worker(7, "Rimma", 152, 1.0, -2, 0, rimmaVacationDays, rimmaDesiredVacationDays,
+        Worker rimma = new Worker(7, "Rimma", 152, 1.0, -2, 8, rimmaVacationDays, rimmaDesiredVacationDays,
                 rimmaDesiredWorkDays,
                 rimmaSickDays, rimmaTrainingDays);
         workersList.add(rimma);
@@ -109,7 +109,7 @@ public class WorkersList {
         HashMap<Integer, Shift> esterDesiredWorkDays = new HashMap<>();
         List<Integer> esterSickDays = new ArrayList<>();
         List<Integer> esterTrainingDays = new ArrayList<>();
-        Worker ester = new Worker(8, "Ester", 114, 0.75, -6, 0, esterVacationDays, esterDesiredVacationDays,
+        Worker ester = new Worker(8, "Ester", 152, 1, -6, 0, esterVacationDays, esterDesiredVacationDays,
                 esterDesiredWorkDays,
                 esterSickDays, esterTrainingDays);
         workersList.add(ester);
