@@ -1,11 +1,6 @@
 package com.backend.graafik.schedule;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -69,15 +64,15 @@ public class HelperMethods {
     }
 
     public static void removeShiftFromDay(Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, RecordedShift recorded) {
-
+        // Get the worker that got assigned the last shift
         Worker worker = recorded.getWorker();
         int shiftDuration = scheduleMatrix[recorded.getShiftDate()][worker.getEmployeeId()].getDuration();
+        // Chaenge back the balance of that worker
         worker.setQuarterBalance(worker.getQuarterBalance() - shiftDuration);
 
-        if (shiftDuration == 24) {
-
-            worker.setNumOf24hShifts(worker.getNumOf24hShifts() + 1);
-        }
+        // If the shift was 24h then remove one from the count
+        // and replace the forbidden days with the original categories for those days
+        if (shiftDuration == 24) worker.setNumOf24hShifts(worker.getNumOf24hShifts() + 1);
         for (int i = 0; i < 3 && i + recorded.getShiftDate() < scheduleMatrixOriginal.length; i++) {
             scheduleMatrix[recorded.getShiftDate() + i][worker.getEmployeeId()] = scheduleMatrixOriginal[recorded.getShiftDate() + i][worker.getEmployeeId()];
         }
@@ -87,12 +82,19 @@ public class HelperMethods {
     public static int backtrack(List<RecordedShift> recordedShifts, Shift[][] scheduleMatrix, Shift[][] scheduleMatrixOriginal, List<Worker> workers, Map<Integer, List<Worker>> unusedWorkers) {
         if (!recordedShifts.isEmpty()) {
             RecordedShift recorded = recordedShifts.removeLast();
-            unusedWorkers.put(recorded.getShiftDate() + 1, new ArrayList<>(workers));
+
+
+            List<Worker> workersCopy = new ArrayList<>();
+            for (int i = 0; i < scheduleMatrixOriginal[recorded.getShiftDate() + 1].length; i++) {
+                if (!scheduleMatrixOriginal[recorded.getShiftDate() + 1][i].getCategory().equals(Shift.KEELATUD) && !scheduleMatrix[recorded.getShiftDate() + 1][i].getCategory().equals(Shift.PUHKUS) && !scheduleMatrix[recorded.getShiftDate() + 1][i].getCategory().equals(Shift.KOOLITUS)) workersCopy.add(workers.get(i));
+            }
+
+            unusedWorkers.put(recorded.getShiftDate() + 1, workersCopy);
             removeShiftFromDay(scheduleMatrix, scheduleMatrixOriginal, recorded);
             return recorded.getShiftDate();
 
         }
-        return 0;
+        return -1;
     }
 
 }

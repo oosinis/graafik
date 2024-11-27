@@ -1,15 +1,14 @@
 package com.backend.graafik.schedule;
 
+import com.backend.graafik.data.WorkerConverter;
+import com.backend.graafik.model.RecordedShift;
+import com.backend.graafik.model.Shift;
+import com.backend.graafik.model.Worker;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.backend.graafik.data.WorkersList;
-import com.backend.graafik.model.RecordedShift;
-
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
 
 public class ScheduleCreator {
     //TODO: Edgecases
@@ -22,22 +21,29 @@ public class ScheduleCreator {
     // Case 5 --> End of quarter is +2 ?
     public static void main(String[] args) {
 
-        WorkersList workersListInstance = new WorkersList();
-        List<Worker> workersList = workersListInstance.getWorkersList();
-        boolean lastMonthOfQuarter = true;
-
-        List<RecordedShift> recordedShifts = new ArrayList<>();
-        RecordedShift lastRecordedShift = new RecordedShift(0, workersList.get(0), 0);
-
         int daysInMonth = 31;
         int firstDayOfMonth = 0;
+        int fullTimeHours = 152;
+
+        List<Worker> workersList = WorkerConverter.createWorkersList(fullTimeHours);
+
+        List<RecordedShift> recordedShifts = new ArrayList<>();
+        RecordedShift lastRecordedShift = new RecordedShift(0, workersList.getFirst(), 0);
+
+        boolean lastMonthOfQuarter = true;
+
         Shift[][] scheduleMatrixOriginal = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
+
 
         Shift[][] scheduleMatrix = AssignWorkerWishes.initializeScheduleMatrix(daysInMonth, workersList.size());
 
         Map<Integer, List<Worker>> unusedWorkers = new HashMap<>();
         for (int i = 0; i < scheduleMatrix.length; i++) {
-            List<Worker> workersCopy = new ArrayList<>(workersList);
+            List<Worker> workersCopy = new ArrayList<>();
+            for (int j = 0; j < scheduleMatrix[i].length; j++) {
+                if (!scheduleMatrix[i][j].getCategory().equals(Shift.KEELATUD) && !scheduleMatrix[i][j].getCategory().equals(Shift.PUHKUS) && !scheduleMatrix[i][j].getCategory().equals(Shift.KOOLITUS)) workersCopy.add(workersList.get(j));
+
+            }
             unusedWorkers.put(i, workersCopy);
         }
 
@@ -62,13 +68,13 @@ public class ScheduleCreator {
         // Step 6 if kvartaliviimane kuu ss lisa meetod et teha vajadusel 8h vahetus --> 10h vahetuseks
         if (lastMonthOfQuarter) Quarter.QuarterBalance(scheduleMatrix, workersList);
         else Month.MonthlyBalance(scheduleMatrix, workersList);
-        
+
 
         // Deal with Edgecases
 
         // Export matrix
         VisualizeResults.MatrixToCSV(scheduleMatrix, "./tulemus.csv", workersList);
-
+        VisualizeResults.printSchedule(scheduleMatrix, workersList);
 
     }
 }
