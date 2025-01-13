@@ -95,7 +95,7 @@
 						<phase>generate-resources</phase>
 						<configuration>
 							<arguments>install</arguments>
-							<workingDirectory>src/frontend</workingDirectory> <!-- Specify the working directory here -->
+							<workingDirectory>backend/src/frontend</workingDirectory> <!-- Specify the working directory here -->
 						</configuration>
 					</execution>
 
@@ -107,14 +107,14 @@
 						<phase>generate-resources</phase>
 						<configuration>
 							<arguments>run build</arguments>
-							<workingDirectory>src/frontend</workingDirectory> <!-- Specify the working directory here -->
+							<workingDirectory>backend/src/frontend</workingDirectory> <!-- Specify the working directory here -->
 						</configuration>
 					</execution>
 				</executions>
 
 				<configuration>
 					<nodeVersion>${node.version}</nodeVersion>
-					<workingDirectory>src/frontend</workingDirectory> <!-- Ensure that the working directory is set here as well -->
+					<workingDirectory>backend/src/frontend</workingDirectory> <!-- Ensure that the working directory is set here as well -->
 				</configuration>
 			</plugin>
 

@@ -1,7 +1,6 @@
 package com.backend.graafik.schedule;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import com.backend.graafik.model.RecordedShift;
