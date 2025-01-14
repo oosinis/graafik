@@ -1,48 +1,184 @@
 {
   "workers": [
     {
-      "name": "Helve",
-      "workLoad": 1.0,
+      "id": 0,
+      "name": "Ester",
+      "workLoad": 1,
       "hoursBalance": 0,
       "lastMonthBalance": 0,
       "lastMonthLastDayHours": false,
       "vacationDays": [],
       "desiredVacationDays": [
-        6,
-        7,
-        8
+        2,
+        3,
+        15
       ],
       "desiredWorkDays": [],
       "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 0
+      "trainingDays": []
     },
     {
-      "name": "Kai",
-      "workLoad": 1.0,
+      "id": 1,
+      "name": "Helve",
+      "workLoad": 1,
       "hoursBalance": 0,
       "lastMonthBalance": 0,
       "lastMonthLastDayHours": false,
       "vacationDays": [],
       "desiredVacationDays": [
         1,
-        6,
-        7,
-        8,
-        20,
-        21,
-        22,
-        30,
-        31
+        2,
+        11,
+        12,
+        17,
+        18,
+        19
       ],
       "desiredWorkDays": [],
       "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 1
+      "trainingDays": []
     },
     {
+      "id": 2,
+      "name": "Kai",
+      "workLoad": 1,
+      "hoursBalance": 0,
+      "lastMonthBalance": 0,
+      "lastMonthLastDayHours": false,
+      "vacationDays": [],
+      "desiredVacationDays": [
+        1,
+        2,
+        3,
+        9,
+        17,
+        18,
+        19,
+        27,
+        31
+      ],
+      "desiredWorkDays": [
+        {
+          "day": 8,
+          "duration": 24
+        },
+        {
+          "day": 16,
+          "duration": 24
+        }
+      ],
+      "sickLeaveDays": [],
+      "trainingDays": []
+    },
+    {
+      "id": 3,
       "name": "Kaja",
-      "workLoad": 1.0,
+      "workLoad": 1,
+      "hoursBalance": 0,
+      "lastMonthBalance": 0,
+      "lastMonthLastDayHours": false,
+      "vacationDays": [],
+      "desiredVacationDays": [
+        18
+      ],
+      "desiredWorkDays": [],
+      "sickLeaveDays": [],
+      "trainingDays": []
+    },
+    {
+      "id": 4,
+      "name": "Nadezda",
+      "workLoad": 1,
+      "hoursBalance": 0,
+      "lastMonthBalance": 0,
+      "lastMonthLastDayHours": true,
+      "vacationDays": [],
+      "desiredVacationDays": [
+        18
+      ],
+      "desiredWorkDays": [],
+      "sickLeaveDays": [],
+      "trainingDays": []
+    },
+    {
+      "id": 5,
+      "name": "Natalja",
+      "workLoad": 1,
+      "hoursBalance": 0,
+      "lastMonthBalance": 0,
+      "lastMonthLastDayHours": true,
+      "vacationDays": [],
+      "desiredVacationDays": [
+        18
+      ],
+      "desiredWorkDays": [],
+      "sickLeaveDays": [],
+      "trainingDays": []
+    },
+    {
+      "id": 6,
+      "name": "Olga",
+      "workLoad": 1,
+      "hoursBalance": 0,
+      "lastMonthBalance": 0,
+      "lastMonthLastDayHours": false,
+      "vacationDays": [],
+      "desiredVacationDays": [
+        1,
+        2
+      ],
+      "desiredWorkDays": [],
+      "sickLeaveDays": [],
+      "trainingDays": []
+    },
+    {
+      "id": 7,
+      "name": "Pärja",
+      "workLoad": 1,
+      "hoursBalance": 0,
+      "lastMonthBalance": 0,
+      "lastMonthLastDayHours": false,
+      "vacationDays": [],
+      "desiredVacationDays": [
+        1
+      ],
+      "desiredWorkDays": [
+        {
+          "day": 5,
+          "duration": 24
+        },
+        {
+          "day": 8,
+          "duration": 24
+        },
+        {
+          "day": 12,
+          "duration": 24
+        },
+        {
+          "day": 20,
+          "duration": 24
+        },
+        {
+          "day": 23,
+          "duration": 24
+        },
+        {
+          "day": 28,
+          "duration": 24
+        },
+        {
+          "day": 30,
+          "duration": 24
+        }
+      ],
+      "sickLeaveDays": [],
+      "trainingDays": []
+    },
+    {
+      "id": 8,
+      "name": "(Rimma) Johanna",
+      "workLoad": 1,
       "hoursBalance": 0,
       "lastMonthBalance": 0,
       "lastMonthLastDayHours": false,
@@ -50,10 +186,23 @@
       "desiredVacationDays": [],
       "desiredWorkDays": [],
       "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 2
+      "trainingDays": []
     },
     {
+      "id": 9,
+      "name": "Laine",
+      "workLoad": 0.75,
+      "hoursBalance": 0,
+      "lastMonthBalance": 0,
+      "lastMonthLastDayHours": false,
+      "vacationDays": [],
+      "desiredVacationDays": [],
+      "desiredWorkDays": [],
+      "sickLeaveDays": [],
+      "trainingDays": []
+    },
+    {
+      "id": 10,
       "name": "Mari-Liis",
       "workLoad": 0.75,
       "hoursBalance": 0,
@@ -63,167 +212,21 @@
       "desiredVacationDays": [
         1,
         4,
-        7,
-        8,
-        15,
-        21,
-        22,
-        23,
-        24,
-        25,
-        26,
-        31
-      ],
-      "desiredWorkDays": [],
-      "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 3
-    },
-    {
-      "name": "Nadezda",
-      "workLoad": 1.0,
-      "hoursBalance": 8,
-      "lastMonthBalance": 0,
-      "lastMonthLastDayHours": false,
-      "vacationDays": [],
-      "desiredVacationDays": [],
-      "desiredWorkDays": [],
-      "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 4
-    },
-    {
-      "name": "Olga",
-      "workLoad": 1.0,
-      "hoursBalance": 0,
-      "lastMonthBalance": 0,
-      "lastMonthLastDayHours": false,
-      "vacationDays": [
-        9,
-        10,
+        5,
         11,
         12,
-        13,
-        14,
-        15
-      ],
-      "desiredVacationDays": [
-        7,
-        8,
-        31
-      ],
-      "desiredWorkDays": [],
-      "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 5
-    },
-    {
-      "name": "Pärja",
-      "workLoad": 1.0,
-      "hoursBalance": 8,
-      "lastMonthBalance": 0,
-      "lastMonthLastDayHours": false,
-      "vacationDays": [],
-      "desiredVacationDays": [],
-      "desiredWorkDays": [
-        {
-          "day": 4,
-          "duration": 24
-        },
-        {
-          "day": 9,
-          "duration": 24
-        },
-        {
-          "day": 12,
-          "duration": 24
-        },
-        {
-          "day": 16,
-          "duration": 24
-        },
-        {
-          "day": 18,
-          "duration": 8
-        }
-      ],
-      "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 6
-    },
-    {
-      "name": "Rimma",
-      "workLoad": 1.0,
-      "hoursBalance": 0,
-      "lastMonthBalance": 0,
-      "lastMonthLastDayHours": false,
-      "vacationDays": [],
-      "desiredVacationDays": [
-        6,
-        24,
-        31
-      ],
-      "desiredWorkDays": [],
-      "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 7
-    },
-    {
-      "name": "Ester",
-      "workLoad": 0.75,
-      "hoursBalance": 0,
-      "lastMonthBalance": 0,
-      "lastMonthLastDayHours": false,
-      "vacationDays": [],
-      "desiredVacationDays": [],
-      "desiredWorkDays": [],
-      "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 8
-    },
-    {
-      "name": "Laine",
-      "workLoad": 0.75,
-      "hoursBalance": 0,
-      "lastMonthBalance": 0,
-      "lastMonthLastDayHours": false,
-      "vacationDays": [],
-      "desiredVacationDays": [
-        26,
-        27
-      ],
-      "desiredWorkDays": [],
-      "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 9
-    },
-    {
-      "name": "Natalja",
-      "workLoad": 0.75,
-      "hoursBalance": 0,
-      "lastMonthBalance": 0,
-      "lastMonthLastDayHours": false,
-      "vacationDays": [],
-      "desiredVacationDays": [
-        1,
-        4,
-        7,
-        8,
         15,
-        21,
-        22,
+        18,
+        19,
         23,
-        24,
-        25,
-        26,
-        31
+        25
       ],
       "desiredWorkDays": [],
       "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 10
+      "trainingDays": []
     },
     {
+      "id": 11,
       "name": "Reelika",
       "workLoad": 0.75,
       "hoursBalance": 0,
@@ -232,23 +235,18 @@
       "vacationDays": [],
       "desiredVacationDays": [
         1,
-        14,
-        15,
-        20,
-        21,
-        22,
-        23,
-        24,
+        2,
+        4,
+        19,
         25,
-        26,
-        31
+        26
       ],
       "desiredWorkDays": [],
       "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 11
+      "trainingDays": []
     },
     {
+      "id": 12,
       "name": "Tiina",
       "workLoad": 0.75,
       "hoursBalance": 0,
@@ -256,20 +254,19 @@
       "lastMonthLastDayHours": false,
       "vacationDays": [],
       "desiredVacationDays": [
-        3,
-        5,
+        1,
         6,
         7,
-        8,
+        11,
+        17,
+        18,
+        19,
         27,
-        28,
-        29,
         31
       ],
       "desiredWorkDays": [],
       "sickLeaveDays": [],
-      "trainingDays": [],
-      "id": 12
+      "trainingDays": []
     }
   ]
 }

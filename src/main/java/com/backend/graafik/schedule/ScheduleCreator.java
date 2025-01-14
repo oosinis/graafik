@@ -5,10 +5,7 @@ import com.backend.graafik.model.RecordedShift;
 import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ScheduleCreator {
     //TODO: Edgecases
@@ -22,8 +19,9 @@ public class ScheduleCreator {
     public static void main(String[] args) {
 
         int daysInMonth = 31;
-        int firstDayOfMonth = 0;
-        int fullTimeHours = 152;
+        int firstDayOfMonth = 3;
+        int fullTimeHours = 176;
+        List<Integer> holidays = new ArrayList<>(Arrays.asList(1,2,3,6));
 
         List<Worker> workersList = WorkerConverter.createWorkersList(fullTimeHours);
 

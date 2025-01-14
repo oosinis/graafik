@@ -8,11 +8,12 @@ import com.backend.graafik.model.Shift;
 import com.backend.graafik.model.Worker;
 
 public class AssignExtraShifts {
-    public static void addExtraShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers, int firstDayOfMonth) {
+    public static void addExtraShifts(Shift[][] scheduleMatrix, int daysInMonth, List<Worker> workers, int firstDayOfMonth, List<Integer> holidays) {
         var filteredWorkers = HelperMethods.FilterWorkers(workers, -8);
 
         for (int dayIndex = 0; dayIndex < daysInMonth; dayIndex++) {
 
+            if (holidays.contains(dayIndex)) continue;
             int weekday = HelperMethods.getDay(dayIndex, firstDayOfMonth);
             if (weekday == 0 || weekday == 6) continue;
 
