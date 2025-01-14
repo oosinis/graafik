@@ -14,28 +14,24 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-
-interface Shift {
-  type: string
-  length: string
-}
-
-interface Worker {
-  name: string
-  assignedShifts: string[]
-}
-
-interface Rule {
-  shiftType: string;
-  priority: 'low' | 'medium' | 'high';
-  daysApplied: string[];
-  perDay: string;
-  restDays: string;
-}
+import { Shift } from '@/models/Shift'
+import { Worker } from '@/models/Worker'
+import { Rule } from '@/models/Rule'
+import { ScheduleRequest } from '@/models/ScheduleRequest'
 
 const months = [
-  'January', 'February', 'March', 'April', 'May', 'June', 
-  'July', 'August', 'September', 'October', 'November', 'December'
+  { name: 'January', value: 1 },
+  { name: 'February', value: 2 },
+  { name: 'March', value: 3 },
+  { name: 'April', value: 4 },
+  { name: 'May', value: 5 },
+  { name: 'June', value: 6 },
+  { name: 'July', value: 7 },
+  { name: 'August', value: 8 },
+  { name: 'September', value: 9 },
+  { name: 'October', value: 10 },
+  { name: 'November', value: 11 },
+  { name: 'December', value: 12 },
 ]
 
 const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -49,14 +45,16 @@ const priorities = [
 export function ShiftPlannerForm() {
   const [workers, setWorkers] = useState<Worker[]>([{ name: '', assignedShifts: [] }])
   const [shifts, setShifts] = useState<Shift[]>([{ type: '', length: '' }])
-  const [selectedMonth, setSelectedMonth] = useState<string>('')
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
+  const [fullTimeMonthlyHours, setFullTimeMonthlyHours] = useState<string>('')
   const [rules, setRules] = useState<Rule[]>([{ 
-    shiftType: 'no-shifts', 
+    shift: { type: 'no-shifts', length: '' }, 
     priority: 'medium', 
     daysApplied: [], 
     perDay: '', 
     restDays: ''
   }])
+  const [isLoading, setIsLoading] = useState(false)
 
   const addWorker = () => {
     setWorkers([...workers, { name: '', assignedShifts: [] }])
@@ -73,13 +71,14 @@ export function ShiftPlannerForm() {
     setWorkers(newWorkers)
   }
 
-  const toggleShiftForWorker = (workerIndex: number, shiftType: string) => {
+  const toggleShiftForWorker = (workerIndex: number, shift: Shift) => {
     const newWorkers = [...workers]
     const currentShifts = newWorkers[workerIndex].assignedShifts
-    if (currentShifts.includes(shiftType)) {
-      newWorkers[workerIndex].assignedShifts = currentShifts.filter(s => s !== shiftType)
+    const shiftIndex = currentShifts.findIndex(s => s.type === shift.type)
+    if (shiftIndex !== -1) {
+      newWorkers[workerIndex].assignedShifts = currentShifts.filter(s => s.type !== shift.type)
     } else {
-      newWorkers[workerIndex].assignedShifts = [...currentShifts, shiftType]
+      newWorkers[workerIndex].assignedShifts = [...currentShifts, shift]
     }
     setWorkers(newWorkers)
   }
@@ -101,7 +100,7 @@ export function ShiftPlannerForm() {
 
   const addRule = () => {
     setRules([...rules, { 
-      shiftType: 'no-shifts', 
+      shift: { type: 'no-shifts', length: '' }, 
       priority: 'medium', 
       daysApplied: [], 
       perDay: '', 
@@ -112,7 +111,7 @@ export function ShiftPlannerForm() {
   const removeRule = (index: number) => {
     const newRules = rules.filter((_, i) => i !== index)
     setRules(newRules.length ? newRules : [{
-      shiftType: 'no-shifts', 
+      shift: { type: 'no-shifts', length: '' }, 
       priority: 'medium', 
       daysApplied: [], 
       perDay: '', 
@@ -137,27 +136,81 @@ export function ShiftPlannerForm() {
     setRules(newRules)
   }
 
+  const createScheduleRequest = (): ScheduleRequest => {
+    return {
+      workers,
+      shifts,
+      rules,
+      selectedMonth: selectedMonth || 0,
+      fullTimeMonthlyHours: parseInt(fullTimeMonthlyHours, 10) || 0
+    }
+  }
+
+  const sendScheduleRequest = async (scheduleRequest: ScheduleRequest) => {
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/generate-schedule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(scheduleRequest),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate schedule')
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error('Error generating schedule:', error)
+     
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <Card className="w-full max-w-3xl">
       <CardHeader>
         <CardTitle>Worker Shift Planner</CardTitle>
       </CardHeader>
       <CardContent>
-        <form className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="month">Select Month</Label>
-            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-              <SelectTrigger id="month">
-                <SelectValue placeholder="Select a month" />
-              </SelectTrigger>
-              <SelectContent>
-                {months.map((month) => (
-                  <SelectItem key={month} value={month}>
-                    {month}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <form className="space-y-6" onSubmit={async (e) => {
+          e.preventDefault()
+          const scheduleRequest = createScheduleRequest()
+          await sendScheduleRequest(scheduleRequest)
+        }}>
+          <div className="space-y-2 flex flex-wrap items-end gap-4">
+            <div className="flex-1">
+              <Label htmlFor="month">Select Month</Label>
+              <Select 
+                value={selectedMonth ? selectedMonth.toString() : undefined} 
+                onValueChange={(value) => setSelectedMonth(parseInt(value, 10))}
+              >
+                <SelectTrigger id="month">
+                  <SelectValue placeholder="Select a month" />
+                </SelectTrigger>
+                <SelectContent>
+                  {months.map((month) => (
+                    <SelectItem key={month.value} value={month.value.toString()}>
+                      {month.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="fullTimeHours">Full time monthly hours</Label>
+              <Input
+                id="fullTimeHours"
+                type="number"
+                value={fullTimeMonthlyHours}
+                onChange={(e) => setFullTimeMonthlyHours(e.target.value)}
+                placeholder="Enter hours"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -231,8 +284,8 @@ export function ShiftPlannerForm() {
                           <div key={shift.type} className="flex items-center space-x-2">
                             <Checkbox
                               id={`${index}-${shift.type}`}
-                              checked={worker.assignedShifts.includes(shift.type)}
-                              onCheckedChange={() => toggleShiftForWorker(index, shift.type)}
+                              checked={worker.assignedShifts.some(s => s.type === shift.type)}
+                              onCheckedChange={() => toggleShiftForWorker(index, shift)}
                             />
                             <Label htmlFor={`${index}-${shift.type}`}>{shift.type}</Label>
                           </div>
@@ -262,8 +315,11 @@ export function ShiftPlannerForm() {
                   <div className="space-y-4">
                     <div className="flex items-center space-x-2">
                       <Select
-                        value={rule.shiftType}
-                        onValueChange={(value) => updateRule(index, 'shiftType', value)}
+                        value={rule.shift.type}
+                        onValueChange={(value) => {
+                          const selectedShift = shifts.find(s => s.type === value)
+                          updateRule(index, 'shift', selectedShift || { type: '', length: '' })
+                        }}
                       >
                         <SelectTrigger className="w-[200px]">
                           <SelectValue placeholder="Select shift type" />
@@ -278,9 +334,7 @@ export function ShiftPlannerForm() {
                                 </SelectItem>
                               ))
                           ) : (
-                            <SelectItem value="no-shifts" disabled>
-                              No shifts created yet
-                            </SelectItem>
+                            <SelectItem value="no-shifts">No shifts created yet</SelectItem>
                           )}
                         </SelectContent>
                       </Select>
@@ -357,8 +411,8 @@ export function ShiftPlannerForm() {
             </Button>
           </div>
 
-          <Button type="submit" className="w-full">
-            Generate Schedule
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? 'Generating...' : 'Generate Schedule'}
           </Button>
         </form>
       </CardContent>
