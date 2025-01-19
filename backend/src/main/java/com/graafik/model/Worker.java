@@ -1,4 +1,4 @@
-package com.backend.graafik.model;
+package com.graafik.model;
 
 import java.util.HashMap;
 import java.util.List;

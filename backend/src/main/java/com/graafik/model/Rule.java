@@ -1,10 +1,10 @@
-package com.backend.graafik.model;
+package com.graafik.model;
 
 public class Rule {
     public Shift Shift;
     public int Days;
     public int PerDay;
-    public int RestDaysAfter;
+    public int RestDays;
     public PriorityType Priority;
 
 

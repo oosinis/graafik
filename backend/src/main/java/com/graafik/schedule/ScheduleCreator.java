@@ -1,9 +1,9 @@
-package com.backend.graafik.schedule;
+package com.graafik.schedule;
 
-import com.backend.graafik.data.WorkerConverter;
-import com.backend.graafik.model.RecordedShift;
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.data.WorkerConverter;
+import com.graafik.model.RecordedShift;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ public class ScheduleCreator {
         for (int i = 0; i < scheduleMatrix.length; i++) {
             List<Worker> workersCopy = new ArrayList<>();
             for (int j = 0; j < scheduleMatrix[i].length; j++) {
-                if (!scheduleMatrix[i][j].getCategory().equals(Shift.KEELATUD) && !scheduleMatrix[i][j].getCategory().equals(Shift.PUHKUS) && !scheduleMatrix[i][j].getCategory().equals(Shift.KOOLITUS)) workersCopy.add(workersList.get(j));
+                if (!scheduleMatrix[i][j].getType().equals(Shift.KEELATUD) && !scheduleMatrix[i][j].getType().equals(Shift.PUHKUS) && !scheduleMatrix[i][j].getType().equals(Shift.KOOLITUS)) workersCopy.add(workersList.get(j));
 
             }
             unusedWorkers.put(i, workersCopy);

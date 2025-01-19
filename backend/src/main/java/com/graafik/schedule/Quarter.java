@@ -1,11 +1,11 @@
-package com.backend.graafik.schedule;
+package com.graafik.schedule;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 
 public class Quarter {
 
@@ -22,7 +22,7 @@ public class Quarter {
             loop:
             for (Shift[] scheduleMatrix1 : scheduleMatrix) {
                 Shift shift = scheduleMatrix1[worker.getEmployeeId()];
-                if (shift.getDuration() != 8 || (!shift.getCategory().equals(Shift.OSAKOND) && !shift.getCategory().equals(Shift.INTENSIIV)))
+                if (shift.getDuration() != 8 || (!shift.getType().equals(Shift.OSAKOND) && !shift.getType().equals(Shift.INTENSIIV)))
                     continue;
 
                 int hoursBalance = worker.getQuarterBalance();
@@ -30,10 +30,10 @@ public class Quarter {
                 if (hoursBalance >= 0) {
                     break loop;  // Break the loop if the quarter balance is >= 0
                 } else if (hoursBalance == -1) {
-                    scheduleMatrix1[worker.getEmployeeId()] = new Shift(9, shift.getCategory());
+                    scheduleMatrix1[worker.getEmployeeId()] = new Shift(9, shift.getType());
                     worker.setQuarterBalance(hoursBalance + 1);
                 } else {
-                    scheduleMatrix1[worker.getEmployeeId()] = new Shift(10, shift.getCategory());
+                    scheduleMatrix1[worker.getEmployeeId()] = new Shift(10, shift.getType());
                     worker.setQuarterBalance(hoursBalance + 2);
                 }
             }

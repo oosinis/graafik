@@ -1,9 +1,9 @@
-package com.backend.graafik.model;
+package com.graafik.model;
 
 public class Shift {
     // Attributes
     private int duration; // Duration in minutes or hours
-    private String category;
+    private String type;
 
 
     // Categories
@@ -17,9 +17,9 @@ public class Shift {
     public static final String KOOLITUS = "K";
 
     // Constructor
-    public Shift(int duration, String category) {
+    public Shift(int duration, String type) {
         this.duration = duration;
-        setCategory(category);
+        setType(type);
     }
 
     // Getter for duration
@@ -33,15 +33,15 @@ public class Shift {
     }
 
     // Getter for category
-    public String getCategory() {
-        return category;
+    public String getType() {
+        return type;
     }
 
     // Setter for category with validation
-    public void setCategory(String category) {
-        if (category.equals(INTENSIIV) || category.equals(LÜHIKE_PÄEV) || category.equals(OSAKOND)
-                || category.equals(TÜHI) || category.equals(PUHKUS) || category.equals(SOOVI_PUHKUS) || category.equals(KEELATUD) || category.equals(KOOLITUS)) {
-            this.category = category;
+    public void setType(String type) {
+        if (type.equals(INTENSIIV) || type.equals(LÜHIKE_PÄEV) || type.equals(OSAKOND)
+                || type.equals(TÜHI) || type.equals(PUHKUS) || type.equals(SOOVI_PUHKUS) || type.equals(KEELATUD) || type.equals(KOOLITUS)) {
+            this.type = type;
         } else {
             throw new IllegalArgumentException("Invalid category. Choose from: intensiiv, lühike, osakond, tühi, puhkus, soovi_puhkus, keelatud, koolitus");
         }
@@ -54,14 +54,14 @@ public class Shift {
         if (o == null || getClass() != o.getClass())
             return false;
         Shift shift = (Shift) o;
-        return this.getDuration() == shift.getDuration() && this.getCategory().equals(shift.getCategory());
+        return this.getDuration() == shift.getDuration() && this.getType().equals(shift.getType());
     }
 
     @Override
     public String toString() {
         return "Vahetus{" +
                 "pikkus=" + duration +
-                ", kategooria='" + category + '\'' +
+                ", kategooria='" + type + '\'' +
                 '}';
     }
 }

@@ -6,7 +6,7 @@ export interface ScheduleRequest {
   workers: Worker[];
   shifts: Shift[];
   rules: Rule[];
-  selectedMonth: number;
-  fullTimeMonthlyHours: number;
+  month: number;
+  fullTimeHours: number;
 }
 

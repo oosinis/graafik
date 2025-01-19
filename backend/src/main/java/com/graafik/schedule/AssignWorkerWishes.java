@@ -1,11 +1,11 @@
-package com.backend.graafik.schedule;
+package com.graafik.schedule;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 
 public class AssignWorkerWishes {
 
@@ -51,7 +51,7 @@ public class AssignWorkerWishes {
       int day = entry.getKey() - 1; // Adjust for 0-based index
       Shift shift = entry.getValue();
       if (day == scheduleMatrix.length - 1 && shift.getDuration() == 24)
-        shift = new Shift(16, shift.getCategory());
+        shift = new Shift(16, shift.getType());
       scheduleMatrix[day][workerId] = shift;
     }
 

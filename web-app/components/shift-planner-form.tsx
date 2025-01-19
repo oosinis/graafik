@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useToast } from "@/hooks/use-toast"
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -34,7 +35,15 @@ const months = [
   { name: 'December', value: 12 },
 ]
 
-const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const daysOfWeek = [
+  { name: 'Mon', value: 1 },
+  { name: 'Tue', value: 2 },
+  { name: 'Wed', value: 3 },
+  { name: 'Thu', value: 4 },
+  { name: 'Fri', value: 5 },
+  { name: 'Sat', value: 6 },
+  { name: 'Sun', value: 7 },
+]
 
 const priorities = [
   { value: 'low', label: 'Low' },
@@ -42,19 +51,29 @@ const priorities = [
   { value: 'high', label: 'High' },
 ]
 
+const isClient = typeof window !== 'undefined'
+
 export function ShiftPlannerForm() {
   const [workers, setWorkers] = useState<Worker[]>([{ name: '', assignedShifts: [] }])
-  const [shifts, setShifts] = useState<Shift[]>([{ type: '', length: '' }])
+  const [shifts, setShifts] = useState<Shift[]>([{ type: '', length: 0 }])
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
   const [fullTimeMonthlyHours, setFullTimeMonthlyHours] = useState<string>('')
   const [rules, setRules] = useState<Rule[]>([{ 
-    shift: { type: 'no-shifts', length: '' }, 
+    shift: { type: 'no-shifts', length: 0 }, 
     priority: 'medium', 
     daysApplied: [], 
-    perDay: '', 
-    restDays: ''
+    perDay: 0, 
+    restDays: 0
   }])
   const [isLoading, setIsLoading] = useState(false)
+  const [isClientState, setIsClient] = useState(false)
+  const { toast } = useToast()
+
+  useEffect(() => {
+    if (isClient) {
+      setIsClient(true)
+    }
+  }, [])
 
   const addWorker = () => {
     setWorkers([...workers, { name: '', assignedShifts: [] }])
@@ -84,48 +103,59 @@ export function ShiftPlannerForm() {
   }
 
   const addShift = () => {
-    setShifts([...shifts, { type: '', length: '' }])
+    setShifts([...shifts, { type: '', length: 0 }])
   }
 
   const removeShift = (index: number) => {
     const newShifts = shifts.filter((_, i) => i !== index)
-    setShifts(newShifts.length ? newShifts : [{ type: '', length: '' }])
+    setShifts(newShifts.length ? newShifts : [{ type: '', length: 0 }])
   }
 
-  const updateShift = (index: number, field: keyof Shift, value: string) => {
+  const updateShift = (index: number, field: keyof Shift, value: string | number) => {
     const newShifts = [...shifts]
-    newShifts[index][field] = value
+  
+    if (field === 'length') {
+      newShifts[index].length = Number(value)
+    } 
+    else {
+      newShifts[index].type = value as string
+    }
+  
     setShifts(newShifts)
   }
 
   const addRule = () => {
     setRules([...rules, { 
-      shift: { type: 'no-shifts', length: '' }, 
+      shift: { type: 'no-shifts', length: 0 }, 
       priority: 'medium', 
       daysApplied: [], 
-      perDay: '', 
-      restDays: ''
+      perDay: 0, 
+      restDays: 0
     }])
   }
 
   const removeRule = (index: number) => {
     const newRules = rules.filter((_, i) => i !== index)
     setRules(newRules.length ? newRules : [{
-      shift: { type: 'no-shifts', length: '' }, 
+      shift: { type: 'no-shifts', length: 0 }, 
       priority: 'medium', 
       daysApplied: [], 
-      perDay: '', 
-      restDays: ''
+      perDay: 0, 
+      restDays: 0
     }])
   }
 
   const updateRule = (index: number, field: keyof Rule, value: any) => {
     const newRules = [...rules]
-    newRules[index][field] = value
+    if (field === 'perDay' || field === 'restDays') {
+      newRules[index][field] = Number(value)
+    } else {
+      newRules[index][field] = value
+    }
     setRules(newRules)
   }
 
-  const toggleDayForRule = (index: number, day: string) => {
+  const toggleDayForRule = (index: number, day: number) => {
     const newRules = [...rules]
     const currentDays = newRules[index].daysApplied
     if (currentDays.includes(day)) {
@@ -141,15 +171,15 @@ export function ShiftPlannerForm() {
       workers,
       shifts,
       rules,
-      selectedMonth: selectedMonth || 0,
-      fullTimeMonthlyHours: parseInt(fullTimeMonthlyHours, 10) || 0
+      month: selectedMonth || 0,
+      fullTimeHours: parseInt(fullTimeMonthlyHours, 10) || 0
     }
   }
 
   const sendScheduleRequest = async (scheduleRequest: ScheduleRequest) => {
     setIsLoading(true)
     try {
-      const response = await fetch('/api/generate-schedule', {
+      const response = await fetch('http://localhost:8080/api/create-schedule', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,16 +192,28 @@ export function ShiftPlannerForm() {
       }
 
       const data = await response.json()
+      toast({
+        title: "Schedule generated successfully",
+        description: "Your schedule has been created and saved.",
+      })
       return data
     } catch (error) {
       console.error('Error generating schedule:', error)
-     
+      toast({
+        title: "Error generating schedule",
+        description: "There was a problem generating your schedule. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
   }
 
-  return (
+  if (!isClient) {
+    return <div>Loading...</div>
+  }
+
+  return isClient ? (
     <Card className="w-full max-w-3xl">
       <CardHeader>
         <CardTitle>Worker Shift Planner</CardTitle>
@@ -318,7 +360,7 @@ export function ShiftPlannerForm() {
                         value={rule.shift.type}
                         onValueChange={(value) => {
                           const selectedShift = shifts.find(s => s.type === value)
-                          updateRule(index, 'shift', selectedShift || { type: '', length: '' })
+                          updateRule(index, 'shift', selectedShift || { type: '', length: 0 })
                         }}
                       >
                         <SelectTrigger className="w-[200px]">
@@ -358,13 +400,13 @@ export function ShiftPlannerForm() {
                       <Label className="mb-2 block">Days Applied</Label>
                       <div className="flex flex-wrap gap-2">
                         {daysOfWeek.map((day) => (
-                          <div key={day} className="flex items-center space-x-2">
+                          <div key={day.value} className="flex items-center space-x-2">
                             <Checkbox
-                              id={`${index}-${day}`}
-                              checked={rule.daysApplied.includes(day)}
-                              onCheckedChange={() => toggleDayForRule(index, day)}
+                              id={`${index}-${day.name}`}
+                              checked={rule.daysApplied.includes(day.value)}
+                              onCheckedChange={() => toggleDayForRule(index, day.value)}
                             />
-                            <Label htmlFor={`${index}-${day}`}>{day}</Label>
+                            <Label htmlFor={`${index}-${day.name}`}>{day.name}</Label>
                           </div>
                         ))}
                       </div>
@@ -417,6 +459,6 @@ export function ShiftPlannerForm() {
         </form>
       </CardContent>
     </Card>
-  )
+  ) : null
 }
 

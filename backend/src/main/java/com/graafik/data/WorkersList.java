@@ -1,4 +1,4 @@
-package com.backend.graafik.data;
+package com.graafik.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 
 public class WorkersList {
     private final List<Worker> workersList = new ArrayList<>();

@@ -1,4 +1,4 @@
-package com.backend.graafik.schedule;
+package com.graafik.schedule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,10 +6,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import com.backend.graafik.model.RecordedShift;
+import com.graafik.model.RecordedShift;
 
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 
 public class EnforceShifts {
     // Assign a shift to a worker who has a desired vacation day ("D")
@@ -32,7 +32,7 @@ public class EnforceShifts {
                             worker.getEmployeeId(),
                             new Shift(0, Shift.KEELATUD));
                     if (dayIndex == scheduleMatrix.length - 1) {
-                        shift = new Shift(16, shift.getCategory());
+                        shift = new Shift(16, shift.getType());
                     }
                     worker.setNumOf24hShifts(worker.getNumOf24hShifts() - 1);
                 }
@@ -53,10 +53,10 @@ public class EnforceShifts {
             return false;
         }
         if (shift.getDuration() == 24) {
-            return (todayShift.getCategory().equals(Shift.TÜHI) || todayShift.getCategory().equals(Shift.SOOVI_PUHKUS)) && (tomorrowShift.getCategory().equals(Shift.TÜHI) || tomorrowShift.getCategory().equals(Shift.SOOVI_PUHKUS)) && dayAfterTomorrowShift.getDuration() == 0 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -20 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
+            return (todayShift.getType().equals(Shift.TÜHI) || todayShift.getType().equals(Shift.SOOVI_PUHKUS)) && (tomorrowShift.getType().equals(Shift.TÜHI) || tomorrowShift.getType().equals(Shift.SOOVI_PUHKUS)) && dayAfterTomorrowShift.getDuration() == 0 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -20 && worker.getNumOf24hShifts() != 0 && (dayIndex == 0 || scheduleMatrix[dayIndex - 1][worker.getEmployeeId()].getDuration() == 0);
         }
         if (shift.getDuration() == 8) {
-            return (todayShift.getCategory().equals(Shift.TÜHI) || todayShift.getCategory().equals(Shift.SOOVI_PUHKUS)) && tomorrowShift.getDuration() != 24 && tomorrowShift.getDuration() != 16 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -4;
+            return (todayShift.getType().equals(Shift.TÜHI) || todayShift.getType().equals(Shift.SOOVI_PUHKUS)) && tomorrowShift.getDuration() != 24 && tomorrowShift.getDuration() != 16 && worker.getQuarterBalance() + worker.getLastMonthBalance() <= -4;
         }
         return false;
     }

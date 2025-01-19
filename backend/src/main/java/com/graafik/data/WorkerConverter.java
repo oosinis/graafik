@@ -1,7 +1,7 @@
-package com.backend.graafik.data;
+package com.graafik.data;
 
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;

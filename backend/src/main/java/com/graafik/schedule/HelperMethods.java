@@ -1,12 +1,12 @@
-package com.backend.graafik.schedule;
+package com.graafik.schedule;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.backend.graafik.model.RecordedShift;
+import com.graafik.model.RecordedShift;
 
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 
 public class HelperMethods {
 
@@ -85,7 +85,7 @@ public class HelperMethods {
 
             List<Worker> workersCopy = new ArrayList<>();
             for (int i = 0; i < scheduleMatrixOriginal[recorded.getShiftDate() + 1].length; i++) {
-                if (!scheduleMatrixOriginal[recorded.getShiftDate() + 1][i].getCategory().equals(Shift.KEELATUD) && !scheduleMatrix[recorded.getShiftDate() + 1][i].getCategory().equals(Shift.PUHKUS) && !scheduleMatrix[recorded.getShiftDate() + 1][i].getCategory().equals(Shift.KOOLITUS)) workersCopy.add(workers.get(i));
+                if (!scheduleMatrixOriginal[recorded.getShiftDate() + 1][i].getType().equals(Shift.KEELATUD) && !scheduleMatrix[recorded.getShiftDate() + 1][i].getType().equals(Shift.PUHKUS) && !scheduleMatrix[recorded.getShiftDate() + 1][i].getType().equals(Shift.KOOLITUS)) workersCopy.add(workers.get(i));
             }
 
             unusedWorkers.put(recorded.getShiftDate() + 1, workersCopy);

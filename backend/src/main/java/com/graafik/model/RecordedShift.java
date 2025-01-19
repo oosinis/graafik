@@ -1,4 +1,4 @@
-package com.backend.graafik.model;
+package com.graafik.model;
 
 public class RecordedShift {
 

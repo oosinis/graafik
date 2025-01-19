@@ -1,4 +1,4 @@
-package com.backend.graafik.schedule;
+package com.graafik.schedule;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 
 public class VisualizeResults {
 
@@ -61,7 +61,7 @@ public class VisualizeResults {
                         Shift shift = dayShifts[empIndex];
 
                         if (category.equals(Shift.INTENSIIV)) {
-                            switch (shift.getCategory()) {
+                            switch (shift.getType()) {
                                 case Shift.INTENSIIV -> rowString.append(shift.getDuration()).append(",");
                                 case Shift.PUHKUS -> rowString.append("P,");
                                 case Shift.SOOVI_PUHKUS -> rowString.append("D,");
@@ -70,7 +70,7 @@ public class VisualizeResults {
                             }
                         }
                         else if (category.equals(Shift.OSAKOND)) {
-                            switch (shift.getCategory()) {
+                            switch (shift.getType()) {
                                 case Shift.OSAKOND -> rowString.append(shift.getDuration()).append(",");
                                 case Shift.KOOLITUS -> rowString.append(8).append(",");
                                 default -> rowString.append(",");
@@ -110,7 +110,7 @@ public class VisualizeResults {
             //System.out.print("Day " + (day + 1) + ": ");
             for (int emp = 0; emp < scheduleMatrix1.length; emp++) {
                 Shift shift = scheduleMatrix1[emp];
-                System.out.print(workers.get(emp).getName() + ": " + shift.getCategory() + "| ");
+                System.out.print(workers.get(emp).getName() + ": " + shift.getType() + "| ");
             }
             System.out.println();
         }

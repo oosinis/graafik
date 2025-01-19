@@ -1,6 +1,6 @@
 export interface Shift {
     type: string
-    length: string
+    length: number
   }
   
   

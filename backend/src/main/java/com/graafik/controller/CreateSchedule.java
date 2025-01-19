@@ -1,19 +1,19 @@
-package com.backend.graafik.controller;
+package com.graafik.controller;
 
-import com.backend.graafik.model.ScheduleRequest;
+import com.graafik.model.ScheduleRequest;
 
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-public class MessageController {
+@CrossOrigin(origins = "http://localhost:3000")
+public class CreateSchedule {
 
     @PostMapping("/create-schedule")
     public ResponseEntity<String> processSchedule(@RequestBody ScheduleRequest scheduleRequest) {
-        System.out.println("Received ScheduleRequest: " + scheduleRequest.getSelectedMonth());
+        System.out.println("Received ScheduleRequest: " + scheduleRequest.Month);
         return ResponseEntity.ok("Schedule processed!");
     }
 

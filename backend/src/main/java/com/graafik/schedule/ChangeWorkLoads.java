@@ -1,10 +1,10 @@
-package com.backend.graafik.schedule;
+package com.graafik.schedule;
 
 import java.util.List;
 import java.util.Map;
 
-import com.backend.graafik.model.Shift;
-import com.backend.graafik.model.Worker;
+import com.graafik.model.Shift;
+import com.graafik.model.Worker;
 
 public class ChangeWorkLoads {
 
