@@ -60,7 +60,7 @@ export function ShiftPlannerForm() {
   const [fullTimeMonthlyHours, setFullTimeMonthlyHours] = useState<string>('')
   const [rules, setRules] = useState<Rule[]>([{ 
     shift: { type: 'no-shifts', length: 0 }, 
-    priority: 'medium', 
+    priority: 'Medium', 
     daysApplied: [], 
     perDay: 0, 
     restDays: 0
@@ -127,7 +127,7 @@ export function ShiftPlannerForm() {
   const addRule = () => {
     setRules([...rules, { 
       shift: { type: 'no-shifts', length: 0 }, 
-      priority: 'medium', 
+      priority: 'Medium', 
       daysApplied: [], 
       perDay: 0, 
       restDays: 0
@@ -138,7 +138,7 @@ export function ShiftPlannerForm() {
     const newRules = rules.filter((_, i) => i !== index)
     setRules(newRules.length ? newRules : [{
       shift: { type: 'no-shifts', length: 0 }, 
-      priority: 'medium', 
+      priority: 'Medium', 
       daysApplied: [], 
       perDay: 0, 
       restDays: 0
