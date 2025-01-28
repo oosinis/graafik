@@ -1,9 +1,13 @@
 package com.graafik.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Shift {
-    // Attributes
-    private int duration; // Duration in minutes or hours
-    private String type;
+    @JsonProperty("type")
+    public String type;
+    @JsonProperty("duration")
+    public int duration;
+
 
 
     // Categories

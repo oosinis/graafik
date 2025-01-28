@@ -13,7 +13,7 @@ public class CreateSchedule {
 
     @PostMapping("/create-schedule")
     public ResponseEntity<String> processSchedule(@RequestBody ScheduleRequest scheduleRequest) {
-        System.out.println("Received ScheduleRequest: " + scheduleRequest.Month);
+        System.out.println("Received ScheduleRequest: " + scheduleRequest.getMonth());
         return ResponseEntity.ok("Schedule processed!");
     }
 

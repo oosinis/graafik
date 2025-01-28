@@ -55,11 +55,11 @@ const isClient = typeof window !== 'undefined'
 
 export function ShiftPlannerForm() {
   const [workers, setWorkers] = useState<Worker[]>([{ name: '', assignedShifts: [] }])
-  const [shifts, setShifts] = useState<Shift[]>([{ type: '', length: 0 }])
+  const [shifts, setShifts] = useState<Shift[]>([{ type: '', duration: 0 }])
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
   const [fullTimeMonthlyHours, setFullTimeMonthlyHours] = useState<string>('')
   const [rules, setRules] = useState<Rule[]>([{ 
-    shift: { type: 'no-shifts', length: 0 }, 
+    shift: { type: 'no-shifts', duration: 0 }, 
     priority: 'Medium', 
     daysApplied: [], 
     perDay: 0, 
@@ -103,19 +103,19 @@ export function ShiftPlannerForm() {
   }
 
   const addShift = () => {
-    setShifts([...shifts, { type: '', length: 0 }])
+    setShifts([...shifts, { type: '', duration: 0 }])
   }
 
   const removeShift = (index: number) => {
     const newShifts = shifts.filter((_, i) => i !== index)
-    setShifts(newShifts.length ? newShifts : [{ type: '', length: 0 }])
+    setShifts(newShifts.length ? newShifts : [{ type: '', duration: 0 }])
   }
 
   const updateShift = (index: number, field: keyof Shift, value: string | number) => {
     const newShifts = [...shifts]
   
-    if (field === 'length') {
-      newShifts[index].length = Number(value)
+    if (field === 'duration') {
+      newShifts[index].duration = Number(value)
     } 
     else {
       newShifts[index].type = value as string
@@ -126,7 +126,7 @@ export function ShiftPlannerForm() {
 
   const addRule = () => {
     setRules([...rules, { 
-      shift: { type: 'no-shifts', length: 0 }, 
+      shift: { type: 'no-shifts', duration: 0 }, 
       priority: 'Medium', 
       daysApplied: [], 
       perDay: 0, 
@@ -137,7 +137,7 @@ export function ShiftPlannerForm() {
   const removeRule = (index: number) => {
     const newRules = rules.filter((_, i) => i !== index)
     setRules(newRules.length ? newRules : [{
-      shift: { type: 'no-shifts', length: 0 }, 
+      shift: { type: 'no-shifts', duration: 0 }, 
       priority: 'Medium', 
       daysApplied: [], 
       perDay: 0, 
@@ -267,8 +267,8 @@ export function ShiftPlannerForm() {
                   />
                   <Input
                     type="number"
-                    value={shift.length}
-                    onChange={(e) => updateShift(index, 'length', e.target.value)}
+                    value={shift.duration}
+                    onChange={(e) => updateShift(index, 'duration', e.target.value)}
                     placeholder="Length (hours)"
                     min="1"
                     max="24"
