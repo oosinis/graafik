@@ -3,6 +3,7 @@ package com.graafik.model;
 import java.util.List;
 
 public class WorkerDto {
+    // Add property workload
     private String name;
     private List<Shift> assignedShifts;
 
