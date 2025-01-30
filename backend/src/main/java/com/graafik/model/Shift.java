@@ -1,71 +1,38 @@
 package com.graafik.model;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Shift {
-    @JsonProperty("type")
-    public String type;
-    @JsonProperty("duration")
-    public int duration;
 
+    @JsonProperty("type") // Maps the JSON field "type" to this field
+    private String type;
 
+    @JsonProperty("duration") // Maps the JSON field "duration" to this field
+    private int duration;
 
-    // Categories
-    public static final String INTENSIIV = "intensiiv";
-    public static final String LÜHIKE_PÄEV = "lühike päev";
-    public static final String OSAKOND = "osakond";
-    public static final String TÜHI = "";
-    public static final String PUHKUS = "P";
-    public static final String SOOVI_PUHKUS = "D";
-    public static final String KEELATUD = "X";
-    public static final String KOOLITUS = "K";
+    @JsonProperty("rules")
+    List<Rule> rules;
 
-    // Constructor
-    public Shift(int duration, String type) {
-        this.duration = duration;
-        setType(type);
-    }
+    // No-args constructor (required for Jackson deserialization)
+    public ShiftDto() {}
 
-    // Getter for duration
-    public int getDuration() {
-        return duration;
-    }
-
-    // Setter for duration
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    // Getter for category
+    // Getters
     public String getType() {
         return type;
     }
 
-    // Setter for category with validation
+    public int getDuration() {
+        return duration;
+    }
+
+    // Setters
     public void setType(String type) {
-        if (type.equals(INTENSIIV) || type.equals(LÜHIKE_PÄEV) || type.equals(OSAKOND)
-                || type.equals(TÜHI) || type.equals(PUHKUS) || type.equals(SOOVI_PUHKUS) || type.equals(KEELATUD) || type.equals(KOOLITUS)) {
-            this.type = type;
-        } else {
-            throw new IllegalArgumentException("Invalid category. Choose from: intensiiv, lühike, osakond, tühi, puhkus, soovi_puhkus, keelatud, koolitus");
-        }
+        this.type = type;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Shift shift = (Shift) o;
-        return this.getDuration() == shift.getDuration() && this.getType().equals(shift.getType());
-    }
-
-    @Override
-    public String toString() {
-        return "Vahetus{" +
-                "pikkus=" + duration +
-                ", kategooria='" + type + '\'' +
-                '}';
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

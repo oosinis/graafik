@@ -5,10 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public class Rule {
-
-    @JsonProperty("shift")
-    private Shift shift;
-
     @JsonProperty("daysApplied")
     private List<Integer> daysApplied;
 
@@ -17,6 +13,9 @@ public class Rule {
 
     @JsonProperty("restDays")
     private int restDays;
+
+    @JsonProperty("continuousDays")
+    private int continuousDays;
 
     @JsonProperty("priority")
     private PriorityType priority;
