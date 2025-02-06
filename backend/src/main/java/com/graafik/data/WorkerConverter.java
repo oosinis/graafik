@@ -52,7 +52,7 @@ public class WorkerConverter {
                 Integer day = (Integer) dayData.get("day");
                 Integer duration = (Integer) dayData.get("duration");
                 // Set shift type to OSAKOND every time
-                desiredWorkDays.put(day, new Shift(duration, Shift.OSAKOND));
+                desiredWorkDays.put(day, new Shift("Shift.OSAKOND", duration, new ArrayList<>()));
             }
 
             List<Integer> sickLeaveDays = (List<Integer>) workerData.get("sickLeaveDays");
