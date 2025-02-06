@@ -1,13 +1,12 @@
 package com.graafik.model;
 
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ScheduleRequest {
 
     @JsonProperty("workers")
-    private List<WorkerDto> workers;
+    private List<Worker> workers;
 
     @JsonProperty("shifts")
     private List<Shift> shifts;
@@ -15,14 +14,23 @@ public class ScheduleRequest {
     @JsonProperty("month")
     private int month;
 
+    @JsonProperty("year")
+    private int year;
+
     @JsonProperty("fullTimeHours")
     private int fullTimeHours;
 
-    // No-args constructor (required for Jackson deserialization)
-    public ScheduleRequest() {}
+    // Constructor with all fields
+    public ScheduleRequest(List<Worker> workers, List<Shift> shifts, int month, int year, int fullTimeHours) {
+        this.workers = workers;
+        this.shifts = shifts;
+        this.month = month;
+        this.year = year;
+        this.fullTimeHours = fullTimeHours;
+    }
 
     // Getters
-    public List<WorkerDto> getWorkers() {
+    public List<Worker> getWorkers() {
         return workers;
     }
 
@@ -34,12 +42,16 @@ public class ScheduleRequest {
         return month;
     }
 
+    public int getYear() {
+        return year;
+    }
+
     public int getFullTimeHours() {
         return fullTimeHours;
     }
 
     // Setters
-    public void setWorkers(List<WorkerDto> workers) {
+    public void setWorkers(List<Worker> workers) {
         this.workers = workers;
     }
 
@@ -49,6 +61,10 @@ public class ScheduleRequest {
 
     public void setMonth(int month) {
         this.month = month;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public void setFullTimeHours(int fullTimeHours) {

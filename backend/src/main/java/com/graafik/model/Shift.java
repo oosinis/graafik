@@ -13,10 +13,13 @@ public class Shift {
     private int duration;
 
     @JsonProperty("rules")
+    
     List<Rule> rules;
-
-    public Shift() {}
-
+    public Shift(String type, int duration, List<Rule> rules) {
+        this.type = type;
+        this.duration = duration;
+        this.rules = rules;
+    }
     // Getters
     public String getType() {
         return type;

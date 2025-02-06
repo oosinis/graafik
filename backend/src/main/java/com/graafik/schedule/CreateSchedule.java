@@ -1,5 +1,9 @@
 package com.graafik.schedule;
 
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.graafik.data.WorkerConverter;
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
@@ -7,16 +11,11 @@ import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.Worker;
-import com.graafik.model.WorkerDto;
-
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CreateSchedule {
     public static void main(String[] args) {
 
-        ScheduleRequest request = new ScheduleRequest(WorkerConverter.createWorkersList(152), new ArrayList<>(), 2, 2025, 152, new ArrayList<>());
+        ScheduleRequest request = new ScheduleRequest(WorkerConverter.createWorkersList(152), new ArrayList<>(), 2, 2025, 152);
         createSchedule(request);
     }
 
@@ -67,9 +66,9 @@ public class CreateSchedule {
         // go through all the generated possible assignments for the current date
         for (DaySchedule currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
 
-            if (validator(currentSchedule, currentDayShiftAssignments) < -50) continue;
+            //if (validator(currentSchedule, currentDayShiftAssignments) < -50) continue;
 
-            currentSchedule.add(currentDayShiftAssignments);
+            currentSchedule.getDaySchedules().add(currentDayShiftAssignments);
 
             // rn to not wait for all possibilities
             if (allCombinations.size() == 3) break;
@@ -78,32 +77,32 @@ public class CreateSchedule {
             generateCombinationsRecursive(scheduleRequest, date + 1, currentSchedule, allCombinations);
 
             // recursion done, remove last assignments list that was added and try with the next one
-            currentSchedule.removeLast();
+            currentSchedule.getDaySchedules().removeLast();
         }
     }
 
-    public static List<List<ShiftAssignment>> getPermutations(ScheduleRequest scheduleRequest, int date) {
-        List<List<ShiftAssignment>> result = new ArrayList<>();
+    public static List<DaySchedule> getPermutations(ScheduleRequest scheduleRequest, int date) {
+        List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
 
         List<Shift> currentDayShifts = getCurrentDayShifts(scheduleRequest, date);
 
-        permuteHelper(scheduleRequest, currentDayShifts, new DaySchedule(date, new ArrayList<>()), result);
-        return result;
+        permuteHelper(scheduleRequest, currentDayShifts, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations);
+        return allDaySchedulePermutations;
     }
 
-    private static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, DaySchedule currentDaySchedule, Schedule result) {
+    private static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, DaySchedule currentDaySchedule, List<DaySchedule> allDaySchedulePermutations) {
 
         // if all shifts have a worker assigned for them, return
         if (currentDaySchedule.getAssignments().size() == currentDayShifts.size()) {
-            result.getDaySchedules().add(currentDaySchedule);
+            allDaySchedulePermutations.add(currentDaySchedule);
             return;
         }
 
-        for (WorkerDto worker : scheduleRequest.getWorkers()) {
+        for (Worker worker : scheduleRequest.getWorkers()) {
             ShiftAssignment ShiftAssignment = new ShiftAssignment((currentDayShifts.get(currentDaySchedule.getAssignments().size())), worker);
             if (!containsWorker(currentDaySchedule, worker)) {
                 currentDaySchedule.getAssignments().add(ShiftAssignment);
-                permuteHelper(scheduleRequest, currentDayShifts, currentDaySchedule, result);
+                permuteHelper(scheduleRequest, currentDayShifts, currentDaySchedule, allDaySchedulePermutations);
                 currentDaySchedule.getAssignments().removeLast();
             }
 
@@ -113,9 +112,9 @@ public class CreateSchedule {
     // TODO: korda see genemine, või mõelda kuidas struktuur olla võiks
     public static List<Shift> getCurrentDayShifts(ScheduleRequest scheduleRequest, int date) {
         List<Shift> shifts = new ArrayList<>();
-        shifts.add(new Shift(24, Shift.OSAKOND));
-        shifts.add(new Shift(24, Shift.INTENSIIV));
-        shifts.add(new Shift(8, Shift.OSAKOND));
+        shifts.add(new Shift("Shift.OSAKOND", 24, new ArrayList<>()));
+        shifts.add(new Shift("Shift.INTENSIIV", 24, new ArrayList<>()));
+        shifts.add(new Shift("Shift.OSAKOND", 8, new ArrayList<>()));
 
         return shifts;
     }
@@ -128,7 +127,7 @@ public class CreateSchedule {
         return 0;
     }
 
-    public static boolean containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {
+    public static boolean containsWorker(DaySchedule ShiftAssignments, Worker worker) {
         for (ShiftAssignment ShiftAssignment : ShiftAssignments.getAssignments()) {
             if (ShiftAssignment.getWorker().equals(worker)) {
                 return true;
