@@ -1,8 +1,8 @@
 package com.graafik.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ScheduleRequest {
 
@@ -10,10 +10,7 @@ public class ScheduleRequest {
     private List<WorkerDto> workers;
 
     @JsonProperty("shifts")
-    private List<ShiftDto> shifts;
-
-    @JsonProperty("rules")
-    private List<Rule> rules;
+    private List<Shift> shifts;
 
     @JsonProperty("month")
     private int month;
@@ -29,12 +26,8 @@ public class ScheduleRequest {
         return workers;
     }
 
-    public List<ShiftDto> getShifts() {
+    public List<Shift> getShifts() {
         return shifts;
-    }
-
-    public List<Rule> getRules() {
-        return rules;
     }
 
     public int getMonth() {
@@ -50,12 +43,8 @@ public class ScheduleRequest {
         this.workers = workers;
     }
 
-    public void setShifts(List<ShiftDto> shifts) {
+    public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
-    }
-
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
     }
 
     public void setMonth(int month) {

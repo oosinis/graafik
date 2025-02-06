@@ -1,8 +1,8 @@
 package com.graafik.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Rule {
     @JsonProperty("daysApplied")
@@ -24,10 +24,6 @@ public class Rule {
     public Rule() {}
 
     // Getters
-    public Shift getShift() {
-        return shift;
-    }
-
     public List<Integer> getDaysApplied() {
         return daysApplied;
     }
@@ -45,10 +41,6 @@ public class Rule {
     }
 
     // Setters
-    public void setShift(Shift shift) {
-        this.shift = shift;
-    }
-
     public void setDaysApplied(List<Integer> daysApplied) {
         this.daysApplied = daysApplied;
     }

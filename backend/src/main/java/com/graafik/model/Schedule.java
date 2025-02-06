@@ -7,13 +7,3 @@ public class Schedule {
     private int year;
     private List<DaySchedule> daySchedules;
 }
-
-public class DaySchedule {
-    private int dayOfMonth;
-    private List<ShiftAssignment> assignments;
-}
-
-public class ShiftAssignment {
-    private ShiftDto shift;
-    private WorkerDto worker;
-}
