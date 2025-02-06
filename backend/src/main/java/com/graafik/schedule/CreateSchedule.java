@@ -13,17 +13,19 @@ import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
-import com.graafik.model.Worker;
+import com.graafik.model.WorkerDto;
 
 public class CreateSchedule {
     public static void main(String[] args) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-        File jsonFile = new File("backend/src/main/java/com/graafik/data/db/schedulerequest.json");
-        ScheduleRequest request = objectMapper.readValue(jsonFile, objectMapper.getTypeFactory().constructCollectionType(List.class, Shift.class));
-        
-        createSchedule(request);
+            File jsonFile = new File("backend/src/main/java/com/graafik/data/db/schedulerequest.json");
+            List<ScheduleRequest> requests = objectMapper.readValue(jsonFile, 
+            objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequest.class));
+
+            // Now pass the requests list to the createSchedule method
+            createSchedule(requests.getFirst());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,8 +79,12 @@ public class CreateSchedule {
         for (DaySchedule currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
 
             //if (validator(currentSchedule, currentDayShiftAssignments) < -50) continue;
-
-            currentSchedule.getDaySchedules().add(currentDayShiftAssignments);
+            if (currentSchedule.getDaySchedules() == null) {
+                currentSchedule.setDaySchedules(new ArrayList<>(List.of(currentDayShiftAssignments))); // Create a mutable list
+            } else {
+                currentSchedule.getDaySchedules().add(currentDayShiftAssignments); // Add to the existing list
+            }
+            
 
             // rn to not wait for all possibilities
             if (allCombinations.size() == 3) break;
@@ -94,7 +100,7 @@ public class CreateSchedule {
     public static List<DaySchedule> getPermutations(ScheduleRequest scheduleRequest, int date) {
         List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
 
-        List<Shift> currentDayShifts = getCurrentDayShifts(scheduleRequest, date);
+        List<Shift> currentDayShifts = scheduleRequest.getShifts();
 
         permuteHelper(scheduleRequest, currentDayShifts, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations);
         return allDaySchedulePermutations;
@@ -108,7 +114,7 @@ public class CreateSchedule {
             return;
         }
 
-        for (Worker worker : scheduleRequest.getWorkers()) {
+        for (WorkerDto worker : scheduleRequest.getWorkers()) {
             ShiftAssignment ShiftAssignment = new ShiftAssignment((currentDayShifts.get(currentDaySchedule.getAssignments().size())), worker);
             if (!containsWorker(currentDaySchedule, worker)) {
                 currentDaySchedule.getAssignments().add(ShiftAssignment);
@@ -119,16 +125,6 @@ public class CreateSchedule {
         }
     }
 
-    // TODO: korda see genemine, või mõelda kuidas struktuur olla võiks
-    public static List<Shift> getCurrentDayShifts(ScheduleRequest scheduleRequest, int date) {
-        List<Shift> shifts = new ArrayList<>();
-        shifts.add(new Shift("Shift.OSAKOND", 24, new ArrayList<>()));
-        shifts.add(new Shift("Shift.INTENSIIV", 24, new ArrayList<>()));
-        shifts.add(new Shift("Shift.OSAKOND", 8, new ArrayList<>()));
-
-        return shifts;
-    }
-
     // TODO
     public static int validator(List<List<ShiftAssignment>> currentSchedule, List<ShiftAssignment> currentDayShiftAssignments) {
         for (ShiftAssignment ShiftAssignment : currentDayShiftAssignments) {
@@ -137,7 +133,7 @@ public class CreateSchedule {
         return 0;
     }
 
-    public static boolean containsWorker(DaySchedule ShiftAssignments, Worker worker) {
+    public static boolean containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {
         for (ShiftAssignment ShiftAssignment : ShiftAssignments.getAssignments()) {
             if (ShiftAssignment.getWorker().equals(worker)) {
                 return true;

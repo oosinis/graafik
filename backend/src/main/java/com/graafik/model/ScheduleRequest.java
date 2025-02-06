@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ScheduleRequest {
 
     @JsonProperty("workers")
-    private List<Worker> workers;
+    private List<WorkerDto> workers;
 
     @JsonProperty("shifts")
     private List<Shift> shifts;
@@ -21,16 +21,10 @@ public class ScheduleRequest {
     private int fullTimeHours;
 
     // Constructor with all fields
-    public ScheduleRequest(List<Worker> workers, List<Shift> shifts, int month, int year, int fullTimeHours) {
-        this.workers = workers;
-        this.shifts = shifts;
-        this.month = month;
-        this.year = year;
-        this.fullTimeHours = fullTimeHours;
-    }
+    public ScheduleRequest() {}
 
     // Getters
-    public List<Worker> getWorkers() {
+    public List<WorkerDto> getWorkers() {
         return workers;
     }
 
@@ -51,7 +45,7 @@ public class ScheduleRequest {
     }
 
     // Setters
-    public void setWorkers(List<Worker> workers) {
+    public void setWorkers(List<WorkerDto> workers) {
         this.workers = workers;
     }
 

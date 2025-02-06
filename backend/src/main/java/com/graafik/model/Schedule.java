@@ -10,13 +10,6 @@ public class Schedule {
     // No-args constructor
     public Schedule() {}
 
-    // Parameterized constructor
-    public Schedule(int month, int year, List<DaySchedule> daySchedules) {
-        this.month = month;
-        this.year = year;
-        this.daySchedules = daySchedules;
-    }
-
     // Getters
     public int getMonth() {
         return month;

@@ -2,11 +2,11 @@ package com.graafik.model;
 
 public class ShiftAssignment {
     private Shift shift;
-    private Worker worker;
+    private WorkerDto worker;
 
 
     // Parameterized constructor
-    public ShiftAssignment(Shift shift, Worker worker) {
+    public ShiftAssignment(Shift shift, WorkerDto worker) {
         this.shift = shift;
         this.worker = worker;
     }
@@ -16,7 +16,7 @@ public class ShiftAssignment {
         return shift;
     }
 
-    public Worker getWorker() {
+    public WorkerDto getWorker() {
         return worker;
     }
 
@@ -25,7 +25,7 @@ public class ShiftAssignment {
         this.shift = shift;
     }
 
-    public void setWorker(Worker worker) {
+    public void setWorker(WorkerDto worker) {
         this.worker = worker;
     }
 }
