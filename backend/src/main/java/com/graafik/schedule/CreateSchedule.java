@@ -4,6 +4,9 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.File;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.graafik.data.WorkerConverter;
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
@@ -15,8 +18,15 @@ import com.graafik.model.Worker;
 public class CreateSchedule {
     public static void main(String[] args) {
 
-        ScheduleRequest request = new ScheduleRequest(WorkerConverter.createWorkersList(152), new ArrayList<>(), 2, 2025, 152);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+        File jsonFile = new File("backend/src/main/java/com/graafik/data/db/schedulerequest.json");
+        ScheduleRequest request = objectMapper.readValue(jsonFile, objectMapper.getTypeFactory().constructCollectionType(List.class, Shift.class));
+        
         createSchedule(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void createSchedule(ScheduleRequest scheduleRequest) {

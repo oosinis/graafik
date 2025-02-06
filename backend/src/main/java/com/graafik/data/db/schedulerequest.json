@@ -1,0 +1,77 @@
+{
+    "month": 5,
+    "fullTimeHours": 160,
+    "workers": [
+      {
+        "name": "John Doe",
+        "assignedShifts": [
+          {
+            "type": "Morning",
+            "duration": 8,
+            "rules": [
+              {
+                "daysApplied": [1, 2, 3],
+                "perDay": 2,
+                "restDays": 1,
+                "continuousDays": 3,
+                "priority": "High"
+              },
+              {
+                "daysApplied": [4, 5],
+                "perDay": 1,
+                "restDays": 0,
+                "continuousDays": 2,
+                "priority": "Medium"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Jane Smith",
+        "assignedShifts": [
+          {
+            "type": "Evening",
+            "duration": 6,
+            "rules": [
+              {
+                "daysApplied": [6, 7],
+                "perDay": 1,
+                "restDays": 1,
+                "continuousDays": 2,
+                "priority": "Critical"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "shifts": [
+      {
+        "type": "Night",
+        "duration": 10,
+        "rules": [
+          {
+            "daysApplied": [1, 3, 5],
+            "perDay": 1,
+            "restDays": 2,
+            "continuousDays": 3,
+            "priority": "Low"
+          }
+        ]
+      },
+      {
+        "type": "Afternoon",
+        "duration": 7,
+        "rules": [
+          {
+            "daysApplied": [2, 4, 6],
+            "perDay": 2,
+            "restDays": 1,
+            "continuousDays": 4,
+            "priority": "Medium"
+          }
+        ]
+      }
+    ]
+  }
