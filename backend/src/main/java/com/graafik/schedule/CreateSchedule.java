@@ -1,13 +1,11 @@
 package com.graafik.schedule;
 
+import java.io.File;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.io.File;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.graafik.data.WorkerConverter;
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
@@ -39,7 +37,7 @@ public class CreateSchedule {
         for (Schedule combination : allPossibleSchedules) {
             for (DaySchedule day : combination.getDaySchedules()) {
                 for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
-                    System.out.print(ShiftAssignment.getWorker() +  " " + ShiftAssignment.getShift() +", ");
+                    System.out.print(ShiftAssignment.getWorker().getName() +  " " + ShiftAssignment.getShift().getType() +", ");
                 }
                 System.out.println();
             }
@@ -68,7 +66,8 @@ public class CreateSchedule {
 
         if (date == daysInMonth) {
             // All days processed, add the combination
-            allCombinations.add(currentSchedule);
+            Schedule clonedSchedule = cloneSchedule(currentSchedule);
+            allCombinations.add(clonedSchedule);
             return;
         }
 
@@ -110,7 +109,8 @@ public class CreateSchedule {
 
         // if all shifts have a worker assigned for them, return
         if (currentDaySchedule.getAssignments().size() == currentDayShifts.size()) {
-            allDaySchedulePermutations.add(currentDaySchedule);
+            DaySchedule clonedDaySchedule = cloneDaySchedule(currentDaySchedule);
+            allDaySchedulePermutations.add(clonedDaySchedule);
             return;
         }
 
@@ -141,4 +141,32 @@ public class CreateSchedule {
         }
         return false;
     }
+
+
+    private static Schedule cloneSchedule(Schedule original) {
+        Schedule cloned = new Schedule();
+        cloned.setMonth(original.getMonth());
+        cloned.setYear(original.getYear());
+
+        if (original.getDaySchedules() != null) {
+            List<DaySchedule> clonedDaySchedules = new ArrayList<>();
+            for (DaySchedule daySchedule : original.getDaySchedules()) {
+                clonedDaySchedules.add(cloneDaySchedule(daySchedule));
+            }
+            cloned.setDaySchedules(clonedDaySchedules);
+        }
+
+        return cloned;
+    }
+
+    private static DaySchedule cloneDaySchedule(DaySchedule original) {
+        DaySchedule cloned = new DaySchedule(original.getDayOfMonth(), new ArrayList<>());
+
+        for (ShiftAssignment assignment : original.getAssignments()) {
+            cloned.getAssignments().add(new ShiftAssignment(assignment.getShift(), assignment.getWorker()));
+        }
+
+        return cloned;
+    }
+
 }
