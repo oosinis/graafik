@@ -32,4 +32,13 @@ public class DaySchedule {
     public void setAssignments(List<ShiftAssignment> assignments) {
         this.assignments = assignments;
     }
+
+    public static boolean containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {
+        for (ShiftAssignment ShiftAssignment : ShiftAssignments.getAssignments()) {
+            if (ShiftAssignment.getWorker().equals(worker)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

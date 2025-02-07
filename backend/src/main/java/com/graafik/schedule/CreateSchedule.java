@@ -33,6 +33,7 @@ public class CreateSchedule {
 
         List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
 
+        
         // Print the results
         for (Schedule combination : allPossibleSchedules) {
             for (DaySchedule day : combination.getDaySchedules()) {
@@ -43,6 +44,7 @@ public class CreateSchedule {
             }
             System.out.println("---");
         }
+            
 
     }
 
@@ -66,7 +68,7 @@ public class CreateSchedule {
 
         if (date == daysInMonth) {
             // All days processed, add the combination
-            Schedule clonedSchedule = cloneSchedule(currentSchedule);
+            Schedule clonedSchedule = HelperMethods.cloneSchedule(currentSchedule);
             allCombinations.add(clonedSchedule);
             return;
         }
@@ -77,7 +79,7 @@ public class CreateSchedule {
         // go through all the generated possible assignments for the current date
         for (DaySchedule currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
 
-            //if (validator(currentSchedule, currentDayShiftAssignments) < -50) continue;
+            if (RuleValidator.validator(scheduleRequest, currentSchedule, currentDayShiftAssignments) < -50) continue;
             if (currentSchedule.getDaySchedules() == null) {
                 currentSchedule.setDaySchedules(new ArrayList<>(List.of(currentDayShiftAssignments))); // Create a mutable list
             } else {
@@ -86,7 +88,7 @@ public class CreateSchedule {
             
 
             // rn to not wait for all possibilities
-            if (allCombinations.size() == 3) break;
+            if (allCombinations.size() == 5) break;
 
             // if rating is fine go to next date do the whole thing again
             generateCombinationsRecursive(scheduleRequest, date + 1, currentSchedule, allCombinations);
@@ -99,7 +101,7 @@ public class CreateSchedule {
     public static List<DaySchedule> getPermutations(ScheduleRequest scheduleRequest, int date) {
         List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
 
-        List<Shift> currentDayShifts = scheduleRequest.getShifts();
+        List<Shift> currentDayShifts = HelperMethods.getShiftsForDay(scheduleRequest, date);
 
         permuteHelper(scheduleRequest, currentDayShifts, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations);
         return allDaySchedulePermutations;
@@ -109,64 +111,20 @@ public class CreateSchedule {
 
         // if all shifts have a worker assigned for them, return
         if (currentDaySchedule.getAssignments().size() == currentDayShifts.size()) {
-            DaySchedule clonedDaySchedule = cloneDaySchedule(currentDaySchedule);
+            DaySchedule clonedDaySchedule = HelperMethods.cloneDaySchedule(currentDaySchedule);
             allDaySchedulePermutations.add(clonedDaySchedule);
             return;
         }
 
         for (WorkerDto worker : scheduleRequest.getWorkers()) {
             ShiftAssignment ShiftAssignment = new ShiftAssignment((currentDayShifts.get(currentDaySchedule.getAssignments().size())), worker);
-            if (!containsWorker(currentDaySchedule, worker)) {
+            if (!DaySchedule.containsWorker(currentDaySchedule, worker)) {
                 currentDaySchedule.getAssignments().add(ShiftAssignment);
                 permuteHelper(scheduleRequest, currentDayShifts, currentDaySchedule, allDaySchedulePermutations);
                 currentDaySchedule.getAssignments().removeLast();
             }
 
         }
-    }
-
-    // TODO
-    public static int validator(List<List<ShiftAssignment>> currentSchedule, List<ShiftAssignment> currentDayShiftAssignments) {
-        for (ShiftAssignment ShiftAssignment : currentDayShiftAssignments) {
-            ShiftAssignment.getShift();
-        }
-        return 0;
-    }
-
-    public static boolean containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {
-        for (ShiftAssignment ShiftAssignment : ShiftAssignments.getAssignments()) {
-            if (ShiftAssignment.getWorker().equals(worker)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    private static Schedule cloneSchedule(Schedule original) {
-        Schedule cloned = new Schedule();
-        cloned.setMonth(original.getMonth());
-        cloned.setYear(original.getYear());
-
-        if (original.getDaySchedules() != null) {
-            List<DaySchedule> clonedDaySchedules = new ArrayList<>();
-            for (DaySchedule daySchedule : original.getDaySchedules()) {
-                clonedDaySchedules.add(cloneDaySchedule(daySchedule));
-            }
-            cloned.setDaySchedules(clonedDaySchedules);
-        }
-
-        return cloned;
-    }
-
-    private static DaySchedule cloneDaySchedule(DaySchedule original) {
-        DaySchedule cloned = new DaySchedule(original.getDayOfMonth(), new ArrayList<>());
-
-        for (ShiftAssignment assignment : original.getAssignments()) {
-            cloned.getAssignments().add(new ShiftAssignment(assignment.getShift(), assignment.getWorker()));
-        }
-
-        return cloned;
     }
 
 }
