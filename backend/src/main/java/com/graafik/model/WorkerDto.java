@@ -2,10 +2,15 @@ package com.graafik.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class WorkerDto {
-    // Add property workload
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("assignedShifts")
     private List<Shift> assignedShifts;
+    @JsonProperty("workLoad")
+    private float workLoad;
 
     public WorkerDto() {}
 
@@ -23,6 +28,10 @@ public class WorkerDto {
 
     public void setAssignedShifts(List<Shift> assignedShifts) {
         this.assignedShifts = assignedShifts;
+    }
+
+    public float getWorkLoad() {
+        return workLoad;
     }
 }
 

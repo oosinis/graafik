@@ -64,7 +64,7 @@ public class CreateSchedule {
     private static void generateCombinationsRecursive(ScheduleRequest scheduleRequest, int date,
                                                       Schedule currentSchedule, List<Schedule> allCombinations) {
 
-        int daysInMonth = YearMonth.of(scheduleRequest.getYear(), scheduleRequest.getMonth()).lengthOfMonth();
+        int daysInMonth = YearMonth.of(2025, scheduleRequest.getMonth()).lengthOfMonth();
 
         if (date == daysInMonth) {
             // All days processed, add the combination

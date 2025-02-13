@@ -1,6 +1,7 @@
 package com.graafik.model;
 
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ScheduleRequest {
@@ -13,9 +14,6 @@ public class ScheduleRequest {
 
     @JsonProperty("month")
     private int month;
-
-    @JsonProperty("year")
-    private int year;
 
     @JsonProperty("fullTimeHours")
     private int fullTimeHours;
@@ -36,10 +34,6 @@ public class ScheduleRequest {
         return month;
     }
 
-    public int getYear() {
-        return year;
-    }
-
     public int getFullTimeHours() {
         return fullTimeHours;
     }
@@ -55,10 +49,6 @@ public class ScheduleRequest {
 
     public void setMonth(int month) {
         this.month = month;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 
     public void setFullTimeHours(int fullTimeHours) {
