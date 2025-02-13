@@ -11,6 +11,10 @@ public class WorkerDto {
     private List<Shift> assignedShifts;
     @JsonProperty("workLoad")
     private float workLoad;
+    @JsonProperty("desiredVacationDays")
+    private List<Integer> desiredVacationDays;    
+    @JsonProperty("vacationDays")
+    private List<Integer> vacationDays;
 
     public WorkerDto() {}
 
@@ -32,6 +36,14 @@ public class WorkerDto {
 
     public float getWorkLoad() {
         return workLoad;
+    }
+
+    public List<Integer> getDesiredVacationDays() {
+        return desiredVacationDays;
+    }    
+    
+    public List<Integer> getVacationDays() {
+        return vacationDays;
     }
 }
 

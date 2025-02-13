@@ -15,7 +15,7 @@ public class HelperMethods {
 
     public static List<Shift> getShiftsForDay(ScheduleRequest scheduleRequest, int date) {
 
-        int dayOfWeekInt = LocalDate.of(scheduleRequest.getYear(), scheduleRequest.getMonth(), date + 1).getDayOfWeek().getValue();
+        int dayOfWeekInt = LocalDate.of(2025, scheduleRequest.getMonth(), date + 1).getDayOfWeek().getValue();
 
 
         List<Shift> dayShifts = new ArrayList<>();

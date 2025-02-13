@@ -13,7 +13,7 @@ import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.WorkerDto;
 
-public class CreateSchedule {
+public class GenerateSchedule {
     public static void main(String[] args) {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -23,13 +23,13 @@ public class CreateSchedule {
             objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequest.class));
 
             // Now pass the requests list to the createSchedule method
-            createSchedule(requests.getFirst());
+            generateSchedule(requests.getFirst());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void createSchedule(ScheduleRequest scheduleRequest) {
+    public static Schedule generateSchedule(com.graafik.model.ScheduleRequest scheduleRequest) {
 
         List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
 
@@ -45,6 +45,7 @@ public class CreateSchedule {
             System.out.println("---");
         }
             
+        return new Schedule();
 
     }
 
