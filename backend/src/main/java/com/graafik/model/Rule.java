@@ -36,6 +36,10 @@ public class Rule {
         return restDays;
     }
 
+    public int getContinuousDays() {
+        return continuousDays;
+    }
+
     public PriorityType getPriority() {
         return priority;
     }

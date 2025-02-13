@@ -86,9 +86,16 @@ public class CreateSchedule {
                 currentSchedule.getDaySchedules().add(currentDayShiftAssignments); // Add to the existing list
             }
             
-
+            for (DaySchedule day : currentSchedule.getDaySchedules()) {
+                for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
+                    //System.out.print(ShiftAssignment.getWorker().getName() +  " " + ShiftAssignment.getShift().getType() +", ");
+                }
+                //System.out.println();
+            }
+            //System.out.println("---");
+            
             // rn to not wait for all possibilities
-            if (allCombinations.size() == 5) break;
+            if (allCombinations.size() == 3) break;
 
             // if rating is fine go to next date do the whole thing again
             generateCombinationsRecursive(scheduleRequest, date + 1, currentSchedule, allCombinations);
@@ -118,7 +125,7 @@ public class CreateSchedule {
 
         for (WorkerDto worker : scheduleRequest.getWorkers()) {
             ShiftAssignment ShiftAssignment = new ShiftAssignment((currentDayShifts.get(currentDaySchedule.getAssignments().size())), worker);
-            if (!DaySchedule.containsWorker(currentDaySchedule, worker)) {
+            if (DaySchedule.containsWorker(currentDaySchedule, worker) == null) {
                 currentDaySchedule.getAssignments().add(ShiftAssignment);
                 permuteHelper(scheduleRequest, currentDayShifts, currentDaySchedule, allDaySchedulePermutations);
                 currentDaySchedule.getAssignments().removeLast();
