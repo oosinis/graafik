@@ -18,6 +18,7 @@ public class RuleValidator {
 
         int score = 0;
 
+        // look through assignments for a day
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments())  {
             WorkerDto worker = shiftAssignment.getWorker();
 
@@ -31,12 +32,11 @@ public class RuleValidator {
             int countCont = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
 
             // if too many continuous days of this shift
-            if (countCont <= -1) {
-                return -1000;
-            }
-            
+            if (countCont <= -1) return -1000;
+
             newDayScheduleDate = newDayScheduleDate - 1 - countCont;
 
+            // check if we have necessary rest days to assign this new shift
             for (int i = newDayScheduleDate; i >= 0; i--) {
 
                 DaySchedule daySchedule = currentSchedule.getDaySchedules().get(i);
@@ -62,7 +62,6 @@ public class RuleValidator {
                 }
 
             }
-
         }
         return score;
     }

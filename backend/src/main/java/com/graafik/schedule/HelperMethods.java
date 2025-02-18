@@ -2,7 +2,9 @@ package com.graafik.schedule;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Rule;
@@ -10,6 +12,8 @@ import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
+import com.graafik.model.WorkerDto;
+
 
 public class HelperMethods {
 
@@ -30,6 +34,18 @@ public class HelperMethods {
 
         return dayShifts;
     }   
+
+    // TODO: kontrolli, kas date mis on workeri listis algab nullist
+    public static Map<Shift, WorkerDto> getRequestedWorkDays(ScheduleRequest scheduleRequest, int date) {
+        Map<Shift, WorkerDto> requestedWorkDays = new HashMap<>();
+        for (WorkerDto worker : scheduleRequest.getWorkers()) {
+            for (Map.Entry<Integer, Shift> entry : worker.getRequestedWorkDays().entrySet()) {
+                if (entry.getKey() != date) continue;
+                requestedWorkDays.put(entry.getValue(), worker);
+            }
+        }
+        return requestedWorkDays;
+    }  
 
 
     // ClONING

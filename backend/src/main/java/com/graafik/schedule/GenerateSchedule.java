@@ -10,6 +10,7 @@ import com.graafik.model.WorkerDto;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GenerateSchedule {
     public static void main(String[] args) {
@@ -34,10 +35,13 @@ public class GenerateSchedule {
         
         // Print the results
         for (Schedule combination : allPossibleSchedules) {
+            int x  = 1;
             for (DaySchedule day : combination.getDaySchedules()) {
+                System.out.print(x + ": ");
                 for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
-                    System.out.print(ShiftAssignment.getWorker().getName() +  " " + ShiftAssignment.getShift().getType() +", ");
+                    System.out.print(ShiftAssignment.getWorker().getName() +  ", " + ShiftAssignment.getShift().getType() +"; ");
                 }
+                x++;
                 System.out.println();
             }
             System.out.println("---");
@@ -108,12 +112,13 @@ public class GenerateSchedule {
         List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
 
         List<Shift> currentDayShifts = HelperMethods.getShiftsForDay(scheduleRequest, date);
+        Map<Shift, WorkerDto> currentRequestedWorkDays = HelperMethods.getRequestedWorkDays(scheduleRequest, date);
 
-        permuteHelper(scheduleRequest, currentDayShifts, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations);
+        permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations, date);
         return allDaySchedulePermutations;
     }
 
-    private static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, DaySchedule currentDaySchedule, List<DaySchedule> allDaySchedulePermutations) {
+    private static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, Map<Shift, WorkerDto> currentRequestedWorkDays, DaySchedule currentDaySchedule, List<DaySchedule> allDaySchedulePermutations, int date) {
 
         // if all shifts have a worker assigned for them, return
         if (currentDaySchedule.getAssignments().size() == currentDayShifts.size()) {
@@ -123,10 +128,18 @@ public class GenerateSchedule {
         }
 
         for (WorkerDto worker : scheduleRequest.getWorkers()) {
-            ShiftAssignment ShiftAssignment = new ShiftAssignment((currentDayShifts.get(currentDaySchedule.getAssignments().size())), worker);
+
+            if (worker.getVacationDays().contains(date)) continue;
+
+            Shift shift = (currentDayShifts.get(currentDaySchedule.getAssignments().size()));
+
+            if (currentRequestedWorkDays.containsKey(shift) && !currentRequestedWorkDays.get(shift).equals(worker)) continue;
+
+            ShiftAssignment ShiftAssignment = new ShiftAssignment(shift, worker);
+
             if (DaySchedule.containsWorker(currentDaySchedule, worker) == null) {
                 currentDaySchedule.getAssignments().add(ShiftAssignment);
-                permuteHelper(scheduleRequest, currentDayShifts, currentDaySchedule, allDaySchedulePermutations);
+                permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, currentDaySchedule, allDaySchedulePermutations, date);
                 currentDaySchedule.getAssignments().removeLast();
             }
 

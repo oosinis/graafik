@@ -2,6 +2,8 @@ package com.graafik.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class WorkerDto {
     @JsonProperty("name")
@@ -14,6 +16,8 @@ public class WorkerDto {
     private List<Integer> desiredVacationDays;    
     @JsonProperty("vacationDays")
     private List<Integer> vacationDays;
+    @JsonProperty("requestedWorkDays")
+    private Map<Integer, Shift> requestedWorkDays;   
 
     public WorkerDto() {}
 
@@ -44,6 +48,24 @@ public class WorkerDto {
     public List<Integer> getVacationDays() {
         return vacationDays;
     }
+
+    public Map<Integer, Shift> getRequestedWorkDays() {
+        return requestedWorkDays;
+    }    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WorkerDto workerDto = (WorkerDto) o;
+        return Objects.equals(name, workerDto.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, assignedShifts, workLoad, desiredVacationDays, vacationDays, requestedWorkDays);
+    }
+    
     @Override
     public String toString() {
         return "WorkerDto{" +
