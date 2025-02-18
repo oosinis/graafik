@@ -2,6 +2,7 @@ package com.graafik.schedule;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +37,13 @@ public class HelperMethods {
     }   
 
     // TODO: kontrolli, kas date mis on workeri listis algab nullist
-    public static Map<Shift, WorkerDto> getRequestedWorkDays(ScheduleRequest scheduleRequest, int date) {
-        Map<Shift, WorkerDto> requestedWorkDays = new HashMap<>();
+    public static Map<Shift, List<WorkerDto>> getRequestedWorkDays(ScheduleRequest scheduleRequest, int date) {
+        Map<Shift, List<WorkerDto>> requestedWorkDays = new HashMap<>();
         for (WorkerDto worker : scheduleRequest.getWorkers()) {
             for (Map.Entry<Integer, Shift> entry : worker.getRequestedWorkDays().entrySet()) {
                 if (entry.getKey() != date) continue;
-                requestedWorkDays.put(entry.getValue(), worker);
+                if (requestedWorkDays.containsKey(entry.getValue()))requestedWorkDays.get(entry.getValue()).add(worker);
+                else requestedWorkDays.put(entry.getValue(), new ArrayList<>(Arrays.asList(worker)));
             }
         }
         return requestedWorkDays;
