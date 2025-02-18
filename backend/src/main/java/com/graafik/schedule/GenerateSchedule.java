@@ -136,7 +136,7 @@ public class GenerateSchedule {
 
             // if this has request, add to this worker
             if (currentRequestedWorkDays.containsKey(shift) && !currentRequestedWorkDays.get(shift).contains(worker)) continue;
-
+            if (!worker.getAssignedShifts().contains(shift)) continue;
             ShiftAssignment ShiftAssignment = new ShiftAssignment(shift, worker);
 
             if (DaySchedule.containsWorker(currentDaySchedule, worker) == null) {
