@@ -17,7 +17,7 @@ public class WorkerDto {
     @JsonProperty("vacationDays")
     private List<Integer> vacationDays;
     @JsonProperty("requestedWorkDays")
-    private Map<Integer, Shift> requestedWorkDays;   
+    private Map<Integer, Shift> requestedWorkDays; 
 
     public WorkerDto() {}
 

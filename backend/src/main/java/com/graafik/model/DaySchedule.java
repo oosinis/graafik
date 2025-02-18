@@ -5,6 +5,7 @@ import java.util.List;
 public class DaySchedule {
     private int dayOfMonth;
     private List<ShiftAssignment> assignments;
+    private int score;
 
     // No-args constructor
     public DaySchedule() {}
@@ -24,6 +25,10 @@ public class DaySchedule {
         return assignments;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     // Setters
     public void setDayOfMonth(int dayOfMonth) {
         this.dayOfMonth = dayOfMonth;
@@ -31,6 +36,14 @@ public class DaySchedule {
 
     public void setAssignments(List<ShiftAssignment> assignments) {
         this.assignments = assignments;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void addToScore(int addition) {
+        this.score = this.score + addition;
     }
 
     public static ShiftAssignment containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {

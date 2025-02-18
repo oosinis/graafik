@@ -15,19 +15,26 @@ import java.util.List;
 public class RuleValidator {
     
     public static int validator(ScheduleRequest scheduleRequest, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
-
-        int score = 0;
+        
+        currentDayShiftAssignments.setScore(0);
 
         // look through assignments for a day
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments())  {
-            WorkerDto worker = shiftAssignment.getWorker();
 
+            WorkerDto worker = shiftAssignment.getWorker();
 
             int countRest = 0;
             int countPrevWork = 0;
             Shift prevWorkShift = null;
 
+
             int newDayScheduleDate = (currentSchedule.getDaySchedules() == null) ? 0 : currentSchedule.getDaySchedules().size();
+            
+            // TODO: kui palju see score täpselt muutub
+            if (worker.getDesiredVacationDays().contains(newDayScheduleDate)) {
+                currentSchedule.addToScore(-10);
+                currentDayShiftAssignments.addToScore(-10);
+            }
 
             int countCont = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
 
@@ -63,7 +70,7 @@ public class RuleValidator {
 
             }
         }
-        return score;
+        return currentSchedule.getScore();
     }
 
     private static int checkContinuousNewAssignment(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {

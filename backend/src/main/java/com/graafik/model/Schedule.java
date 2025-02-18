@@ -6,6 +6,7 @@ public class Schedule {
     private int month;
     private int year;
     private List<DaySchedule> daySchedules;
+    private int score;
 
     // No-args constructor
     public Schedule() {}
@@ -19,6 +20,10 @@ public class Schedule {
         return year;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     public List<DaySchedule> getDaySchedules() {
         return daySchedules;
     }
@@ -30,6 +35,14 @@ public class Schedule {
 
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void addToScore(int addition) {
+        this.score = this.score + addition;
     }
 
     public void setDaySchedules(List<DaySchedule> daySchedules) {

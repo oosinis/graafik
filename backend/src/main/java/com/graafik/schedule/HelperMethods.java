@@ -55,6 +55,7 @@ public class HelperMethods {
     Schedule cloned = new Schedule();
     cloned.setMonth(original.getMonth());
     cloned.setYear(original.getYear());
+    cloned.setScore(original.getScore());
 
     if (original.getDaySchedules() != null) {
         List<DaySchedule> clonedDaySchedules = new ArrayList<>();
@@ -76,5 +77,6 @@ public class HelperMethods {
 
         return cloned;
     }
+    
     
 }

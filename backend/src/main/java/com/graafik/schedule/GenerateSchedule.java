@@ -35,6 +35,7 @@ public class GenerateSchedule {
         
         // Print the results
         for (Schedule combination : allPossibleSchedules) {
+            System.out.println("\n NEW SCHEDULE score: " + combination.getScore());
             int x  = 1;
             for (DaySchedule day : combination.getDaySchedules()) {
                 System.out.print(x + ": ");
@@ -82,12 +83,15 @@ public class GenerateSchedule {
         // go through all the generated possible assignments for the current date
         for (DaySchedule currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
 
-            if (RuleValidator.validator(scheduleRequest, currentSchedule, currentDayShiftAssignments) < -50) continue;
+            int currentScore = RuleValidator.validator(scheduleRequest, currentSchedule, currentDayShiftAssignments);
+            if (currentScore < -50) continue;
             if (currentSchedule.getDaySchedules() == null) {
-                currentSchedule.setDaySchedules(new ArrayList<>(List.of(currentDayShiftAssignments))); // Create a mutable list
+                currentSchedule.setDaySchedules(new ArrayList<>(List.of(currentDayShiftAssignments)));
             } else {
                 currentSchedule.getDaySchedules().add(currentDayShiftAssignments); // Add to the existing list
             }
+
+            currentSchedule.setScore(currentScore);
             
             for (DaySchedule day : currentSchedule.getDaySchedules()) {
                 for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
@@ -98,13 +102,14 @@ public class GenerateSchedule {
             //System.out.println("---");
             
             // rn to not wait for all possibilities
-            if (allCombinations.size() == 3) break;
+            if (allCombinations.size() == 6) break;
 
             // if rating is fine go to next date do the whole thing again
             generateCombinationsRecursive(scheduleRequest, date + 1, currentSchedule, allCombinations);
 
             // recursion done, remove last assignments list that was added and try with the next one
-            currentSchedule.getDaySchedules().removeLast();
+            DaySchedule lastDaySchedule = currentSchedule.getDaySchedules().removeLast();
+            currentSchedule.addToScore(- lastDaySchedule.getScore());
         }
     }
 
