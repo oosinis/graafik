@@ -49,6 +49,25 @@ public class HelperMethods {
         return requestedWorkDays;
     }  
 
+    public static void initWorkerHours(Schedule currentSchedule, List<WorkerDto> workers) {
+        currentSchedule.setWorkerHours(new HashMap<>());
+        for (WorkerDto worker : workers) {
+            currentSchedule.getWorkerHours().put(worker, 0);
+        }
+    }
+
+    public static void addToWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+        for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
+            currentSchedule.changeWorkerHours(shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker());
+        }
+    }
+
+    public static void substractFromWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+        for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
+            currentSchedule.changeWorkerHours(-shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker());
+        }
+    }
+
 
     // ClONING
     public static Schedule cloneSchedule(Schedule original) {
@@ -56,6 +75,7 @@ public class HelperMethods {
     cloned.setMonth(original.getMonth());
     cloned.setYear(original.getYear());
     cloned.setScore(original.getScore());
+    cloned.setWorkerHours(new HashMap<>(original.getWorkerHours()));
 
     if (original.getDaySchedules() != null) {
         List<DaySchedule> clonedDaySchedules = new ArrayList<>();

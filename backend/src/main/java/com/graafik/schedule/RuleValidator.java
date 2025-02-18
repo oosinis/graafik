@@ -9,6 +9,7 @@ import com.graafik.model.ShiftAssignment;
 import com.graafik.model.WorkerDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 
@@ -26,25 +27,17 @@ public class RuleValidator {
             int countRest = 0;
             int countPrevWork = 0;
             Shift prevWorkShift = null;
-
-
             int newDayScheduleDate = (currentSchedule.getDaySchedules() == null) ? 0 : currentSchedule.getDaySchedules().size();
             
-            // TODO: kui palju see score täpselt muutub
-            if (worker.getDesiredVacationDays().contains(newDayScheduleDate)) {
-                currentSchedule.addToScore(-10);
-                currentDayShiftAssignments.addToScore(-10);
-            }
+            checkDesiredVacationDays(worker, newDayScheduleDate, currentSchedule, currentDayShiftAssignments);
 
             int countCont = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
 
             // if too many continuous days of this shift
             if (countCont <= -1) return -1000;
 
-            newDayScheduleDate = newDayScheduleDate - 1 - countCont;
-
             // check if we have necessary rest days to assign this new shift
-            for (int i = newDayScheduleDate; i >= 0; i--) {
+            for (int i = newDayScheduleDate - 1 - countCont; i >= 0; i--) {
 
                 DaySchedule daySchedule = currentSchedule.getDaySchedules().get(i);
                 ShiftAssignment previousShiftAssignment = DaySchedule.containsWorker(daySchedule, worker);
@@ -126,4 +119,19 @@ public class RuleValidator {
         }
         return countCont;
     }
+
+    public static void checkDesiredVacationDays(WorkerDto worker, int date, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+        // TODO: kui palju see score täpselt muutub
+        if (worker.getDesiredVacationDays().contains(date)) {
+            currentSchedule.addToScore(-10);
+            currentDayShiftAssignments.addToScore(-10);
+        }
+    }
+
+    public static boolean initialValidator(Map<Shift, List<WorkerDto>> currentRequestedWorkDays, Shift shift, WorkerDto worker) {
+        if (!worker.getAssignedShifts().contains(shift)) return false;
+        if (currentRequestedWorkDays.containsKey(shift) && !currentRequestedWorkDays.get(shift).contains(worker)) return false;
+        return true;
+    }
+
 }

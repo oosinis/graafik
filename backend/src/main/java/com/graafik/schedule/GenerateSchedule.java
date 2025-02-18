@@ -1,5 +1,10 @@
 package com.graafik.schedule;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
@@ -7,10 +12,6 @@ import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.WorkerDto;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class GenerateSchedule {
     public static void main(String[] args) {
@@ -45,6 +46,13 @@ public class GenerateSchedule {
                 x++;
                 System.out.println();
             }
+
+            System.out.println();
+            combination.getWorkerHours().forEach((worker, hours) -> {
+                System.out.println(worker + ": " + hours);
+            });
+            System.out.println();
+
             System.out.println("---");
         }
             
@@ -85,11 +93,18 @@ public class GenerateSchedule {
 
             int currentScore = RuleValidator.validator(scheduleRequest, currentSchedule, currentDayShiftAssignments);
             if (currentScore < -50) continue;
+
             if (currentSchedule.getDaySchedules() == null) {
+                // kui schedule alles tühi
                 currentSchedule.setDaySchedules(new ArrayList<>(List.of(currentDayShiftAssignments)));
-            } else {
-                currentSchedule.getDaySchedules().add(currentDayShiftAssignments); // Add to the existing list
+                HelperMethods.initWorkerHours(currentSchedule, scheduleRequest.getWorkers());
+            } 
+            else {
+                // kui juba schedulis midagi olems
+                currentSchedule.getDaySchedules().add(currentDayShiftAssignments);
             }
+
+            HelperMethods.addToWorkerHours(currentSchedule, currentDayShiftAssignments);
 
             currentSchedule.setScore(currentScore);
             
@@ -109,6 +124,7 @@ public class GenerateSchedule {
 
             // recursion done, remove last assignments list that was added and try with the next one
             DaySchedule lastDaySchedule = currentSchedule.getDaySchedules().removeLast();
+            HelperMethods.substractFromWorkerHours(currentSchedule, lastDaySchedule);
             currentSchedule.addToScore(- lastDaySchedule.getScore());
         }
     }
@@ -139,9 +155,8 @@ public class GenerateSchedule {
 
             Shift shift = (currentDayShifts.get(currentDaySchedule.getAssignments().size()));
 
-            // if this has request, add to this worker
-            if (currentRequestedWorkDays.containsKey(shift) && !currentRequestedWorkDays.get(shift).contains(worker)) continue;
-            if (!worker.getAssignedShifts().contains(shift)) continue;
+            if (!RuleValidator.initialValidator(currentRequestedWorkDays, shift, worker)) continue;
+
             ShiftAssignment ShiftAssignment = new ShiftAssignment(shift, worker);
 
             if (DaySchedule.containsWorker(currentDaySchedule, worker) == null) {

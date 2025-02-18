@@ -1,12 +1,14 @@
 package com.graafik.model;
 
 import java.util.List;
+import java.util.Map;
 
 public class Schedule {
     private int month;
     private int year;
     private List<DaySchedule> daySchedules;
     private int score;
+    private Map<WorkerDto, Integer> workerHours;
 
     // No-args constructor
     public Schedule() {}
@@ -47,6 +49,18 @@ public class Schedule {
 
     public void setDaySchedules(List<DaySchedule> daySchedules) {
         this.daySchedules = daySchedules;
+    }
+
+    public Map<WorkerDto, Integer> getWorkerHours() {
+        return workerHours;
+    }
+
+    public void setWorkerHours(Map<WorkerDto, Integer> workerHours) {
+        this.workerHours = workerHours;
+    }
+
+    public void changeWorkerHours(int x, WorkerDto worker) {
+        this.workerHours.put(worker, this.workerHours.get(worker) + x);
     }
 
     @Override

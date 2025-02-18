@@ -34,7 +34,7 @@
             ]
           }
         ],
-        "workLoad": 0.0,
+        "workLoad": 1.0,
         "desiredVacationDays": [0],
         "vacationDays": [],
         "requestedWorkDays": {
@@ -70,7 +70,7 @@
             ]
           }
         ],
-        "workLoad": 0.0,
+        "workLoad": 1.0,
         "desiredVacationDays": [0],
         "vacationDays": [],
         "requestedWorkDays": {}
@@ -105,7 +105,7 @@
             ]
           }
         ],
-        "workLoad": 0.0,
+        "workLoad": 1.0,
         "desiredVacationDays": [0],
         "vacationDays": [],
         "requestedWorkDays": {}
@@ -140,7 +140,7 @@
             ]
           }
         ],
-        "workLoad": 0.0,
+        "workLoad": 1.0,
         "desiredVacationDays": [0],
         "vacationDays": [],
         "requestedWorkDays": {}      
