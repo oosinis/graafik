@@ -35,4 +35,28 @@ public class Schedule {
     public void setDaySchedules(List<DaySchedule> daySchedules) {
         this.daySchedules = daySchedules;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Schedule{");
+        sb.append("month=").append(month);
+        sb.append(", year=").append(year);
+        sb.append(", daySchedules=");
+
+        if (daySchedules == null || daySchedules.isEmpty()) {
+            sb.append("[]");
+        } else {
+            sb.append("\n[\n");
+            for (DaySchedule daySchedule : daySchedules) {
+                sb.append(daySchedule.toString()).append(", \n");
+            }
+            sb.setLength(sb.length() - 2); // Remove the last comma and space
+            sb.append("\n]\n");
+        }
+
+        sb.append("}");
+        return sb.toString();
+}
+
 }

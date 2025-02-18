@@ -1,10 +1,5 @@
 package com.graafik.schedule;
 
-import java.io.File;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
@@ -12,13 +7,17 @@ import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.WorkerDto;
+import java.io.File;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenerateSchedule {
     public static void main(String[] args) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            File jsonFile = new File("backend/src/main/java/com/graafik/data/db/schedulerequest.json");
+            File jsonFile = new File("graafik/backend/src/main/java/com/graafik/data/db/schedulerequest.json");
             List<ScheduleRequest> requests = objectMapper.readValue(jsonFile, 
             objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequest.class));
 
@@ -65,7 +64,7 @@ public class GenerateSchedule {
     private static void generateCombinationsRecursive(ScheduleRequest scheduleRequest, int date,
                                                       Schedule currentSchedule, List<Schedule> allCombinations) {
 
-        int daysInMonth = YearMonth.of(2025, scheduleRequest.getMonth()).lengthOfMonth();
+        int daysInMonth = 5;//YearMonth.of(2025, scheduleRequest.getMonth()).lengthOfMonth();
 
         if (date == daysInMonth) {
             // All days processed, add the combination

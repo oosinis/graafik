@@ -34,6 +34,10 @@ public class DaySchedule {
     }
 
     public static ShiftAssignment containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {
+        System.out.println("WORKER: " + worker.getName());
+        for (ShiftAssignment shiftAssignment : ShiftAssignments.getAssignments()) {
+            System.out.println("workershit: " + shiftAssignment.getWorker().getName());
+        }
         for (ShiftAssignment shiftAssignment : ShiftAssignments.getAssignments()) {
             if (shiftAssignment.getWorker().equals(worker)) {
                 return shiftAssignment;
@@ -41,4 +45,27 @@ public class DaySchedule {
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("DaySchedule{");
+        sb.append("dayOfMonth=").append(dayOfMonth);
+        sb.append(", assignments=");
+    
+        if (assignments == null || assignments.isEmpty()) {
+            sb.append("[]");
+        } else {
+            sb.append("[\n");
+            for (ShiftAssignment assignment : assignments) {
+                sb.append(assignment.toString()).append(",\n ");
+            }
+            sb.setLength(sb.length() - 2); // Remove the last comma and space
+            sb.append("\n]\n");
+        }
+    
+        sb.append("}");
+        return sb.toString();
+    }
+    
 }

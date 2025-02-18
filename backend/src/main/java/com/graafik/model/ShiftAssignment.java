@@ -28,4 +28,12 @@ public class ShiftAssignment {
     public void setWorker(WorkerDto worker) {
         this.worker = worker;
     }
+    @Override
+    public String toString() {
+        return "ShiftAssignment{" +
+               "shift=" + (shift != null ? shift.toString() : "null") +
+               ", worker=" + (worker != null ? worker.toString() : "null") +
+               '}';
+    }
+    
 }

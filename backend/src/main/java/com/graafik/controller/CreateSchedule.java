@@ -16,7 +16,7 @@ import com.graafik.services.ScheduleService;
 @CrossOrigin(origins = "http://localhost:3000")
 public class CreateSchedule {
 
-    ScheduleService service;
+    ScheduleService service = new ScheduleService();
 
     @PostMapping("/create-schedule")
     public ResponseEntity<Schedule> processSchedule(@RequestBody ScheduleRequest scheduleRequest) {

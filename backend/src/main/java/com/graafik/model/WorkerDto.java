@@ -1,8 +1,7 @@
 package com.graafik.model;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 public class WorkerDto {
     @JsonProperty("name")
@@ -45,5 +44,12 @@ public class WorkerDto {
     public List<Integer> getVacationDays() {
         return vacationDays;
     }
+    @Override
+    public String toString() {
+        return "WorkerDto{" +
+               "name='" + name + '\'' +
+               '}';
+    }
+    
 }
 

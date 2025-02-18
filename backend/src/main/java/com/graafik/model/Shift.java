@@ -1,8 +1,7 @@
 package com.graafik.model;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 public class Shift {
 
@@ -42,4 +41,12 @@ public class Shift {
     public void setRules(List<Rule> rules) {
         this.rules = rules;
     }
+    @Override
+    public String toString() {
+        return "Shift{" +
+               "type='" + type + '\'' +
+               ", duration=" + duration +
+               '}';
+    }
+    
 }
