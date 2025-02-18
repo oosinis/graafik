@@ -34,10 +34,6 @@ public class DaySchedule {
     }
 
     public static ShiftAssignment containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {
-        System.out.println("WORKER: " + worker.getName());
-        for (ShiftAssignment shiftAssignment : ShiftAssignments.getAssignments()) {
-            System.out.println("workershit: " + shiftAssignment.getWorker().getName());
-        }
         for (ShiftAssignment shiftAssignment : ShiftAssignments.getAssignments()) {
             if (shiftAssignment.getWorker().equals(worker)) {
                 return shiftAssignment;

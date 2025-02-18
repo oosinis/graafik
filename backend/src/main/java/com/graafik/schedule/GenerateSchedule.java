@@ -8,7 +8,6 @@ import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.WorkerDto;
 import java.io.File;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class GenerateSchedule {
     private static void generateCombinationsRecursive(ScheduleRequest scheduleRequest, int date,
                                                       Schedule currentSchedule, List<Schedule> allCombinations) {
 
-        int daysInMonth = 5;//YearMonth.of(2025, scheduleRequest.getMonth()).lengthOfMonth();
+        int daysInMonth = 4; //YearMonth.of(2025, scheduleRequest.getMonth()).lengthOfMonth();
 
         if (date == daysInMonth) {
             // All days processed, add the combination
