@@ -1,5 +1,9 @@
 package com.graafik.schedule;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Rule;
 import com.graafik.model.Schedule;
@@ -7,9 +11,6 @@ import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.WorkerDto;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 
 
@@ -30,6 +31,7 @@ public class RuleValidator {
             int newDayScheduleDate = (currentSchedule.getDaySchedules() == null) ? 0 : currentSchedule.getDaySchedules().size();
             
             checkDesiredVacationDays(worker, newDayScheduleDate, currentSchedule, currentDayShiftAssignments);
+            checkWorkerHours(shiftAssignment, currentSchedule, currentDayShiftAssignments);
 
             int countCont = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
 
@@ -63,7 +65,7 @@ public class RuleValidator {
 
             }
         }
-        return currentSchedule.getScore();
+        return currentDayShiftAssignments.getScore();
     }
 
     private static int checkContinuousNewAssignment(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
@@ -123,8 +125,19 @@ public class RuleValidator {
     public static void checkDesiredVacationDays(WorkerDto worker, int date, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         // TODO: kui palju see score täpselt muutub
         if (worker.getDesiredVacationDays().contains(date)) {
-            currentSchedule.addToScore(-10);
             currentDayShiftAssignments.addToScore(-10);
+        }
+    }
+
+    public static void checkWorkerHours(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+        WorkerDto worker = shiftAssignment.getWorker();
+        Shift shift = shiftAssignment.getShift();
+        int workerCurrentHours = currentSchedule.getWorkerHours().get(worker);
+
+        // TODO: Adjust score impact calculation if needed
+        if (workerCurrentHours - shift.getDuration() < -2) {
+            int penalty = ((workerCurrentHours - shift.getDuration()) * 2);            
+            currentDayShiftAssignments.addToScore(penalty);
         }
     }
 

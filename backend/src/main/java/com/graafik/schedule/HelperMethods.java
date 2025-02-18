@@ -49,10 +49,10 @@ public class HelperMethods {
         return requestedWorkDays;
     }  
 
-    public static void initWorkerHours(Schedule currentSchedule, List<WorkerDto> workers) {
+    public static void initWorkerHours(Schedule currentSchedule, ScheduleRequest scheduleRequest) {
         currentSchedule.setWorkerHours(new HashMap<>());
-        for (WorkerDto worker : workers) {
-            currentSchedule.getWorkerHours().put(worker, 0);
+        for (WorkerDto worker : scheduleRequest.getWorkers()) {
+            currentSchedule.getWorkerHours().put(worker, (int) (worker.getWorkLoad() * scheduleRequest.getFullTimeHours()));
         }
     }
 

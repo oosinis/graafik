@@ -1,6 +1,6 @@
 [{
     "month": 2,
-    "fullTimeHours": 160,
+    "fullTimeHours": 20,
 
 
     "workers": [
@@ -34,7 +34,7 @@
             ]
           }
         ],
-        "workLoad": 1.0,
+        "workLoad": 0.75,
         "desiredVacationDays": [0],
         "vacationDays": [],
         "requestedWorkDays": {

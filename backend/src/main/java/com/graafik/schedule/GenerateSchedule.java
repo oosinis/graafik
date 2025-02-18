@@ -66,8 +66,12 @@ public class GenerateSchedule {
 
         List<Schedule> allCombinations = new ArrayList<>();
 
+        Schedule schedule = new Schedule();
+
+        HelperMethods.initWorkerHours(schedule, scheduleRequest);
+
         // Recursively generate all combinations
-        generateCombinationsRecursive(scheduleRequest, 0, new Schedule(), allCombinations);
+        generateCombinationsRecursive(scheduleRequest, 0, schedule, allCombinations);
 
         return allCombinations;
 
@@ -91,20 +95,20 @@ public class GenerateSchedule {
         // go through all the generated possible assignments for the current date
         for (DaySchedule currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
 
-            int currentScore = RuleValidator.validator(scheduleRequest, currentSchedule, currentDayShiftAssignments);
+            int currentScore = currentSchedule.getScore() + RuleValidator.validator(scheduleRequest, currentSchedule, currentDayShiftAssignments);
             if (currentScore < -50) continue;
 
             if (currentSchedule.getDaySchedules() == null) {
                 // kui schedule alles tühi
                 currentSchedule.setDaySchedules(new ArrayList<>(List.of(currentDayShiftAssignments)));
-                HelperMethods.initWorkerHours(currentSchedule, scheduleRequest.getWorkers());
+                
             } 
             else {
                 // kui juba schedulis midagi olems
                 currentSchedule.getDaySchedules().add(currentDayShiftAssignments);
             }
 
-            HelperMethods.addToWorkerHours(currentSchedule, currentDayShiftAssignments);
+            HelperMethods.substractFromWorkerHours(currentSchedule, currentDayShiftAssignments);
 
             currentSchedule.setScore(currentScore);
             
@@ -124,7 +128,7 @@ public class GenerateSchedule {
 
             // recursion done, remove last assignments list that was added and try with the next one
             DaySchedule lastDaySchedule = currentSchedule.getDaySchedules().removeLast();
-            HelperMethods.substractFromWorkerHours(currentSchedule, lastDaySchedule);
+            HelperMethods.addToWorkerHours(currentSchedule, lastDaySchedule);
             currentSchedule.addToScore(- lastDaySchedule.getScore());
         }
     }
