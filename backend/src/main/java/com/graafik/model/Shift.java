@@ -13,8 +13,8 @@ public class Shift {
     private int duration;
 
     @JsonProperty("rules")
-    
     List<Rule> rules;
+
     public Shift() {}
 
     // Getters
@@ -61,6 +61,7 @@ public class Shift {
         return "Shift{" +
                "type='" + type + '\'' +
                ", duration=" + duration +
+               ", rules=" + rules +
                '}';
     }
     
