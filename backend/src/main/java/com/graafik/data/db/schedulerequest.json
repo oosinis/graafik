@@ -1,181 +1,190 @@
 [{
-    "month": 2,
-    "fullTimeHours": 20,
+  "month": 3,
+  "fullTimeHours": 168,
 
-
-    "workers": [
-      {
-        "name": "John Doe",
-        "assignedShifts": [
-          {
-            "type": "Night",
-            "duration": 10,
-            "rules": [
-              {
-                "daysApplied": [1, 2,3,4, 5, 6,7],
-                "perDay": 1,
-                "restDays": 2,
-                "continuousDays": 3,
-                "priority": "Low"
-              }
-            ]
-          },
-          {
-            "type": "Afternoon",
-            "duration": 7,
-            "rules": [
-              {
-                "daysApplied": [1, 2,3,4, 5,6,7],
-                "perDay": 1,
-                "restDays": 1,
-                "continuousDays": 2,
-                "priority": "Medium"
-              }
-            ]
-          }
-        ],
-        "workLoad": 0.75,
-        "desiredVacationDays": [0],
-        "vacationDays": [],
-        "requestedWorkDays": {
-          "1": {
-            "type": "Night",
-            "duration": 10,
-            "rules": [
-              {
-                "daysApplied": [1, 2,3,4, 5, 6,7],
-                "perDay": 1,
-                "restDays": 2,
-                "continuousDays": 3,
-                "priority": "Low"
-              }
-            ]
-          }
+  "workers": [
+    {
+      "name": "Maarika",
+      "assignedShifts": [
+        {
+          "type": "12h",
+          "duration": 12,
+          "rules": [
+            {
+              "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+              "perDay": 1,
+              "restDays": 3,
+              "continuousDays": 3,
+              "priority": "High"
+            },
+            {
+              "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+              "perDay": 1,
+              "restDays": 2,
+              "continuousDays": 2,
+              "priority": "High"
+            }
+          ]
         }
-      },
-      {
-        "name": "Jane Smith",
-        "assignedShifts": [
-          {
-            "type": "Afternoon",
-            "duration": 7,
-            "rules": [
-              {
-                "daysApplied": [1, 2,3,4, 5,6,7],
-                "perDay": 1,
-                "restDays": 1,
-                "continuousDays": 2,
-                "priority": "Medium"
-              }
-            ]
-          }
-        ],
-        "workLoad": 1.0,
-        "desiredVacationDays": [0],
-        "vacationDays": [],
-        "requestedWorkDays": {}
-      },
-      {
-        "name": "Mikk",
-        "assignedShifts": [
-          {
-            "type": "Night",
-            "duration": 10,
-            "rules": [
-              {
-                "daysApplied": [1, 2,3,4, 5, 6,7],
-                "perDay": 1,
-                "restDays": 2,
-                "continuousDays": 3,
-                "priority": "Low"
-              }
-            ]
-          },
-          {
-            "type": "Afternoon",
-            "duration": 7,
-            "rules": [
-              {
-                "daysApplied": [1, 2,3,4, 5,6,7],
-                "perDay": 1,
-                "restDays": 1,
-                "continuousDays": 2,
-                "priority": "Medium"
-              }
-            ]
-          }
-        ],
-        "workLoad": 1.0,
-        "desiredVacationDays": [0],
-        "vacationDays": [],
-        "requestedWorkDays": {}
-      },
-      {
-        "name": "Jaan",
-        "assignedShifts": [
-          {
-            "type": "Night",
-            "duration": 10,
-            "rules": [
-              {
-                "daysApplied": [1, 2,3,4, 5, 6,7],
-                "perDay": 1,
-                "restDays": 2,
-                "continuousDays": 3,
-                "priority": "Low"
-              }
-            ]
-          },
-          {
-            "type": "Afternoon",
-            "duration": 7,
-            "rules": [
-              {
-                "daysApplied": [1, 2,3,4, 5,6,7],
-                "perDay": 1,
-                "restDays": 1,
-                "continuousDays": 2,
-                "priority": "Medium"
-              }
-            ]
-          }
-        ],
-        "workLoad": 1.0,
-        "desiredVacationDays": [0],
-        "vacationDays": [],
-        "requestedWorkDays": {}      
-      }
-    ]
-    ,
+      ],
+      "workLoad": 1.0,
+      "desiredVacationDays": [],
+      "vacationDays": [],
+      "requestedWorkDays": {}
+    },
+    {
+      "name": "Liina",
+      "assignedShifts": [
+        {
+          "type": "12h",
+          "duration": 12,
+          "rules": [
+            {
+              "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+              "perDay": 1,
+              "restDays": 3,
+              "continuousDays": 3,
+              "priority": "High"
+            },
+            {
+              "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+              "perDay": 1,
+              "restDays": 2,
+              "continuousDays": 2,
+              "priority": "High"
+            }
+          ]
+        }
+      ],
+      "workLoad": 1.0,
+      "desiredVacationDays": [],
+      "vacationDays": [],
+      "requestedWorkDays": {}
+    },
+    {
+      "name": "Rita",
+      "assignedShifts": [
+        {
+          "type": "24h",
+          "duration": 24,
+          "rules": [
+            {
+              "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+              "perDay": 1,
+              "restDays": 3,
+              "continuousDays": 1,
+              "priority": "High"
+            }
+          ]
+        }
+      ],
+      "workLoad": 1.0,
+      "desiredVacationDays": [],
+      "vacationDays": [],
+      "requestedWorkDays": {}
+    },
+    {
+      "name": "Ingrid",
+      "assignedShifts": [
+        {
+          "type": "24h",
+          "duration": 24,
+          "rules": [
+            {
+              "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+              "perDay": 1,
+              "restDays": 3,
+              "continuousDays": 1,
+              "priority": "High"
+            }
+          ]
+        }
+      ],
+      "workLoad": 1.0,
+      "desiredVacationDays": [],
+      "vacationDays": [],
+      "requestedWorkDays": {}
+    },
+    {
+      "name": "Monika",
+      "assignedShifts": [
+        {
+          "type": "24h",
+          "duration": 24,
+          "rules": [
+            {
+              "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+              "perDay": 1,
+              "restDays": 3,
+              "continuousDays": 1,
+              "priority": "High"
+            }
+          ]
+        }
+      ],
+      "workLoad": 1.0,
+      "desiredVacationDays": [],
+      "vacationDays": [],
+      "requestedWorkDays": {}
+    },
+    {
+      "name": "Tiiu",
+      "assignedShifts": [
+        {
+          "type": "24h",
+          "duration": 24,
+          "rules": [
+            {
+              "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+              "perDay": 1,
+              "restDays": 3,
+              "continuousDays": 1,
+              "priority": "High"
+            }
+          ]
+        }
+      ],
+      "workLoad": 1.0,
+      "desiredVacationDays": [],
+      "vacationDays": [],
+      "requestedWorkDays": {}
+    }
+  ],
 
-
-    "shifts": [
-      {
-        "type": "Night",
-        "duration": 10,
-        "rules": [
-          {
-            "daysApplied": [1, 2,3,4, 5, 6,7],
-            "perDay": 1,
-            "restDays": 2,
-            "continuousDays": 3,
-            "priority": "Low"
-          }
-        ]
-      },
-      {
-        "type": "Afternoon",
-        "duration": 7,
-        "rules": [
-          {
-            "daysApplied": [1, 2,3,4, 5,6,7],
-            "perDay": 1,
-            "restDays": 1,
-            "continuousDays": 2,
-            "priority": "Medium"
-          }
-        ]
-      }
-    ]
-  }
+  "shifts": [
+    {
+      "type": "24h",
+      "duration": 24,
+      "rules": [
+        {
+          "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+          "perDay": 1,
+          "restDays": 3,
+          "continuousDays": 1,
+          "priority": "High"
+        }
+      ]
+    },
+    {
+      "type": "12h",
+      "duration": 12,
+      "rules": [
+        {
+          "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+          "perDay": 1,
+          "restDays": 3,
+          "continuousDays": 3,
+          "priority": "High"
+        },
+        {
+          "daysApplied": [1, 2, 3, 4, 5, 6, 7],
+          "perDay": 1,
+          "restDays": 2,
+          "continuousDays": 2,
+          "priority": "High"
+        }
+      ]
+    }
+  ]
+}
 ]

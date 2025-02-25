@@ -1,6 +1,7 @@
 package com.graafik.schedule;
 
 import java.io.File;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class GenerateSchedule {
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            File jsonFile = new File("graafik/backend/src/main/java/com/graafik/data/db/schedulerequest.json");
+            File jsonFile = new File("backend/src/main/java/com/graafik/data/db/schedulerequest.json");
             List<ScheduleRequest> requests = objectMapper.readValue(jsonFile, 
             objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequest.class));
 
@@ -80,7 +81,7 @@ public class GenerateSchedule {
     private static void generateCombinationsRecursive(ScheduleRequest scheduleRequest, int date,
                                                       Schedule currentSchedule, List<Schedule> allCombinations) {
 
-        int daysInMonth = 4; //YearMonth.of(2025, scheduleRequest.getMonth()).lengthOfMonth();
+        int daysInMonth = 5; //YearMonth.of(2025, scheduleRequest.getMonth()).lengthOfMonth();
 
         if (date == daysInMonth) {
             // All days processed, add the combination
@@ -121,7 +122,7 @@ public class GenerateSchedule {
             //System.out.println("---");
             
             // rn to not wait for all possibilities
-            if (allCombinations.size() == 6) break;
+            if (allCombinations.size() == 1) break;
 
             // if rating is fine go to next date do the whole thing again
             generateCombinationsRecursive(scheduleRequest, date + 1, currentSchedule, allCombinations);
