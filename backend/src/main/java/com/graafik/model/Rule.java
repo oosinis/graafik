@@ -1,7 +1,8 @@
 package com.graafik.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Rule {
     @JsonProperty("daysApplied")
@@ -63,13 +64,25 @@ public class Rule {
     // Enum for priority
     public enum PriorityType {
         /// Unbreakable rule
-        Critical,
+        critical,
         /// Can break if very needed
-        High,
+        high,
         /// Can break
-        Medium,
+        medium,
         /// Nice to have
-        Low
+        low
+    }
+
+    // Manually implemented toString() method
+    @Override
+    public String toString() {
+        return "Rule{" +
+                "daysApplied=" + daysApplied +
+                ", perDay=" + perDay +
+                ", restDays=" + restDays +
+                ", continuousDays=" + continuousDays +
+                ", priority=" + priority +
+                '}';
     }
 
     

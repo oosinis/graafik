@@ -3,7 +3,7 @@ export interface Rule {
   perDay: number;
   restDays: number;
   continuousDays: number;
-  priority: 'Low' | 'Medium' | 'High' | 'Critical';
+  priority: 'low' | 'medium' | 'high' | 'critical';
 }
   
   
