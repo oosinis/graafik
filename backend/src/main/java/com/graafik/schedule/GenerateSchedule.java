@@ -155,7 +155,8 @@ public class GenerateSchedule {
         for (WorkerDto worker : scheduleRequest.getWorkers()) {
 
             // skip vacation days
-            if (worker.getVacationDays().contains(date)) continue;
+            // +1 bc the dates start from 1
+            if (worker.getVacationDays().contains(date + 1)) continue;
 
             Shift shift = (currentDayShifts.get(currentDaySchedule.getAssignments().size()));
 

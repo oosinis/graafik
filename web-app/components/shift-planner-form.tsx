@@ -85,9 +85,23 @@ export function ShiftPlannerForm() {
     setWorkers(newWorkers.length ? newWorkers : [{ ...defaultWorker }])
   }
 
+  // Replace the updateWorker function with this more type-safe version:
   const updateWorker = (index: number, field: keyof Worker, value: any) => {
     const newWorkers = [...workers]
-    newWorkers[index][field] = value
+
+    // Type guard to ensure we're only updating valid properties
+    if (field === "name") {
+      newWorkers[index].name = value as string
+    } else if (field === "workLoad") {
+      newWorkers[index].workLoad = Number(value)
+    } else if (field === "assignedShifts") {
+      newWorkers[index].assignedShifts = value as Shift[]
+    } else if (field === "desiredVacationDays" || field === "vacationDays") {
+      newWorkers[index][field] = value as number[]
+    } else if (field === "requestedWorkDays") {
+      newWorkers[index].requestedWorkDays = value as Record<number, Shift>
+    }
+
     setWorkers(newWorkers)
   }
 
@@ -187,6 +201,7 @@ export function ShiftPlannerForm() {
       // Ensure daysApplied is handled correctly
       newShifts[shiftIndex].rules[ruleIndex][field] = value as number[]
     } else {
+
       newShifts[shiftIndex].rules[ruleIndex][field] = value
     }
     setShifts(newShifts)
