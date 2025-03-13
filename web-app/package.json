@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build || true",
-    "export": "next export",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "next build && next export"
+    "deploy": "npm run build"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.3",
