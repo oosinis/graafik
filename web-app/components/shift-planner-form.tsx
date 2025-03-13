@@ -200,9 +200,6 @@ export function ShiftPlannerForm() {
     } else if (field === "daysApplied") {
       // Ensure daysApplied is handled correctly
       newShifts[shiftIndex].rules[ruleIndex][field] = value as number[]
-    } else {
-
-      newShifts[shiftIndex].rules[ruleIndex][field] = value
     }
     setShifts(newShifts)
   }
