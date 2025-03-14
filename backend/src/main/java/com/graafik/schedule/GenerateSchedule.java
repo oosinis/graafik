@@ -121,7 +121,7 @@ public class GenerateSchedule {
             //System.out.println("---");
             
             // rn to not wait for all possibilities
-            if (allCombinations.size() == 1) break;
+            if (allCombinations.size() == 3) break;
 
             // if rating is fine go to next date do the whole thing again
             generateCombinationsRecursive(scheduleRequest, date + 1, currentSchedule, allCombinations);

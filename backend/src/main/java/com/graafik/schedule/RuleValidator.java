@@ -38,6 +38,8 @@ public class RuleValidator {
             // if too many continuous days of this shift
             if (countCont <= -1) return -1000;
 
+            else currentDayShiftAssignments.addToScore(countCont);
+
             // check if we have necessary rest days to assign this new shift
             for (int i = newDayScheduleDate - 1 - countCont; i >= 0; i--) {
 
@@ -73,27 +75,30 @@ public class RuleValidator {
         List<Rule> rules = shiftAssignment.getShift().getRules();
         WorkerDto worker = shiftAssignment.getWorker();
 
-        for (int i = date; i >= 0; i--) {
+        //TODO adjust additional score to match how much staff
+        boolean additionalScore = false;
 
+        for (int i = date; i >= 0; i--) {
             DaySchedule daySchedule = currentSchedule.getDaySchedules().get(i);
             ShiftAssignment previousShiftAssignment = DaySchedule.containsWorker(daySchedule, worker);
-            if (previousShiftAssignment == null) return countCont;
+            if (previousShiftAssignment == null) return additionalScore ? 2 : 0;
 
             if (previousShiftAssignment.getShift() == shiftAssignment.getShift()) {
                 countCont++;
                 List<Rule> standingRules = new ArrayList<>();
                 for (Rule rule : rules) {
                     if (rule.getContinuousDays() > countCont) standingRules.add(rule);
+                    if (rule.getContinuousDays() == countCont + 1) additionalScore = true;
                 }
 
                 if (standingRules.isEmpty()) {
                     return -1;
-                }
-                else rules = standingRules;
-            } else return countCont;
+                } else rules = standingRules;
+            } else return additionalScore ? 2 : 0;
         }
-        return countCont;
+        return additionalScore ? 2 : 0; 
     }
+
 
     private static int checkContinuous(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
         int countCont = 0;
