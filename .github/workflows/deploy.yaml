@@ -24,7 +24,10 @@ jobs:
           java-version: '23'
 
       - name: Build with Maven
-        run: mvn clean package
+        run: |
+          cd backend
+          mvn clean package
+
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
@@ -36,4 +39,4 @@ jobs:
           region: ${{ secrets.AWS_REGION }}
           version_label: "backend-${{ github.run_number }}"
           version_description: "Deployed from GitHub Actions"
-          deployment_package: "backend/target/*.jar"
+          deployment_package: backend/target/*.jar
