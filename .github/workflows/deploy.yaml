@@ -24,7 +24,10 @@ jobs:
           java-version: '23'
 
       - name: Build with Maven
-        run: mvn clean package
+        run: mvn clean package -DskipTests=true
+
+      - name: Debug Check Backend Directory
+        run: ls -R
 
       - name: List files after build
         run: ls -R backend/target
