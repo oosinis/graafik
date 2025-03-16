@@ -11,7 +11,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend  # ✅ This already sets the directory
+        working-directory: backend
 
     steps:
       - name: Checkout Repository
@@ -24,7 +24,7 @@ jobs:
           java-version: '23'
 
       - name: Build with Maven
-        run: mvn clean package  # ✅ Removed "cd backend"
+        run: mvn clean package
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
@@ -36,4 +36,4 @@ jobs:
           region: ${{ secrets.AWS_REGION }}
           version_label: "backend-${{ github.run_number }}"
           version_description: "Deployed from GitHub Actions"
-          deployment_package: target/*.jar  # ✅ Removed extra "backend/"
+          deployment_package: backend/target/*.jar
