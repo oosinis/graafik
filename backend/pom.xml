@@ -12,7 +12,7 @@
 
     <groupId>com.backend</groupId>
     <artifactId>graafik</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>Graafik</name>
     <description>Graafiku backend</description>
 
