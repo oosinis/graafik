@@ -36,4 +36,5 @@ jobs:
           region: ${{ secrets.AWS_REGION }}
           version_label: "backend-${{ github.run_number }}"
           version_description: "Deployed from GitHub Actions"
-          deployment_package: target/*.jar
+          deployment_package: target/graafik-0.0.1.jar
+
