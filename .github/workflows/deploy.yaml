@@ -26,6 +26,10 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
+      - name: List files after build
+        run: ls -R backend/target
+
+
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
@@ -36,5 +40,5 @@ jobs:
           region: ${{ secrets.AWS_REGION }}
           version_label: "backend-${{ github.run_number }}"
           version_description: "Deployed from GitHub Actions"
-          deployment_package: target/graafik-0.0.1.jar
+          deployment_package: backend/target/graafik-0.0.1.jar
 
