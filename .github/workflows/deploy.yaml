@@ -30,7 +30,7 @@ jobs:
         run: ls -R
 
       - name: List files after build
-        run: ls -R backend/target
+        run: ls -R target
 
 
       - name: Deploy to Elastic Beanstalk
