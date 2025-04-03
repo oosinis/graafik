@@ -97,7 +97,7 @@ public class GenerateSchedule {
         for (DaySchedule currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
 
             int currentScore = currentSchedule.getScore() + RuleValidator.validator(scheduleRequest, currentSchedule, currentDayShiftAssignments);
-            if (currentScore < -50) continue;
+            //if (currentScore < -50) continue;
 
             if (currentSchedule.getDaySchedules() == null) {
                 // kui schedule alles tühi
