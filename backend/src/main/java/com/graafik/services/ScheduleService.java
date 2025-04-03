@@ -24,6 +24,7 @@ public class ScheduleService {
 
         }
         System.out.println("VALMIS");
-        return schedules.get(0);
+        if (schedules.size() > 0) return schedules.get(0);
+        else return new Schedule();
     }
 }
