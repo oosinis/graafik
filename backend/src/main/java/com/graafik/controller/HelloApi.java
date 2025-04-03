@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloApi {
     @GetMapping("/")
     public String home() {
-        return "Welcome to the Graafik API!";
+        return "Welcome to the Grafik API!";
     }
 }
