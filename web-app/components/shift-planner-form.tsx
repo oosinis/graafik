@@ -227,7 +227,7 @@ export function ShiftPlannerForm() {
   const sendScheduleRequest = async (scheduleRequest: ScheduleRequest) => {
     setIsLoading(true)
     try {
-      const response = await fetch("https://api.grafikapp.com.com/api/create-schedule", {
+      const response = await fetch("https://api.grafikapp.com/api/create-schedule", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
