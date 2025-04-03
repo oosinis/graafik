@@ -13,7 +13,7 @@ import com.graafik.services.ScheduleService;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class CreateSchedule {
 
     ScheduleService service = new ScheduleService();
