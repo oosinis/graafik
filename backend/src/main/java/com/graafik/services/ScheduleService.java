@@ -24,6 +24,6 @@ public class ScheduleService {
 
         }
         System.out.println("VALMIS");
-        return schedules.get(0);
+        return new Schec;
     }
 }

@@ -227,14 +227,20 @@ export function ShiftPlannerForm() {
   const sendScheduleRequest = async (scheduleRequest: ScheduleRequest) => {
     setIsLoading(true)
     try {
+
+
+
+    
       const response = await fetch("https://api.grafikapp.com/api/create-schedule", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(scheduleRequest),
-      })
-
+      });
+      console.log("Request Payload:", JSON.stringify(scheduleRequest, null, 2));
+      const responseBody = await response.text();
+      console.log("Response Body:", responseBody);
       if (!response.ok) {
         throw new Error("Failed to generate schedule: " + response.text() + "\nResponse Status:" + response.status + "\nResponse Headers:" + response.headers)
       }
