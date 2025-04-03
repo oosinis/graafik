@@ -236,7 +236,7 @@ export function ShiftPlannerForm() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to generate schedule: " + response.text)
+        throw new Error("Failed to generate schedule: " + response.text() + "\nResponse Status:" + response.status + "\nResponse Headers:" + response.headers)
       }
 
       const data = await response.json()
