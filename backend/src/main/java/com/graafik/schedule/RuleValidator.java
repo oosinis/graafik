@@ -63,7 +63,7 @@ public class RuleValidator {
                                  if (rule.getRestDays() <= countRest) continue;
                                  else return -4000;
                             }
-                        } return -1000;
+                        } return -5000;
                     }
 
                 }
