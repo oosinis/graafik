@@ -59,7 +59,7 @@ public class RuleValidator {
                     }
                     else {
                         for (Rule rule : prevWorkShift.getRules()) {
-                            if (rule.getContinuousDays() > countCont && rule.getRestDays() <= countRest) continue;
+                            if (rule.getContinuousDays() > countCont && rule.getRestDays() < countRest) continue;
                         } return -1000;
                     }
 
