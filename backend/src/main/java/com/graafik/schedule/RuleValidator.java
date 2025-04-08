@@ -36,7 +36,7 @@ public class RuleValidator {
             int countCont = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
 
             // if too many continuous days of this shift
-            if (countCont <= -1) return -1000;
+            if (countCont <= -1) return -2000;
 
             else currentDayShiftAssignments.addToScore(countCont);
 
@@ -55,7 +55,7 @@ public class RuleValidator {
                     prevWorkShift = previousShiftAssignment.getShift();
                     countPrevWork = checkContinuous(previousShiftAssignment, currentSchedule, currentDayShiftAssignments, i);
                     if (countPrevWork == -1) {
-                        return -1000;
+                        return -3000;
                     }
                     else {
                         for (Rule rule : prevWorkShift.getRules()) {
