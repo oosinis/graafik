@@ -79,6 +79,7 @@ public class RuleValidator {
         WorkerDto worker = shiftAssignment.getWorker();
 
         //TODO adjust additional score to match how much staff
+        // TODO return dditional score if exact amount
         boolean additionalScore = false;
 
         for (int i = date; i >= 0; i--) {
@@ -97,9 +98,9 @@ public class RuleValidator {
                 if (standingRules.isEmpty()) {
                     return -1;
                 } else rules = standingRules;
-            } else return additionalScore ? 2 : 0;
+            } else return countCont;
         }
-        return additionalScore ? 2 : 0; 
+        return countCont; 
     }
 
 
