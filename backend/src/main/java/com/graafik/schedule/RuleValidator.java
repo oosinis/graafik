@@ -102,7 +102,7 @@ public class RuleValidator {
                 List<Rule> standingRules = new ArrayList<>();
                 for (Rule rule : rules) {
                     if (rule.getContinuousDays() > countCont) standingRules.add(rule);
-                    if (rule.getContinuousDays() == countCont + 1) additionalScore = 2;
+                    if (rule.getContinuousDays() == countCont + 2) additionalScore = 2;
                 }
 
                 if (standingRules.isEmpty()) {
