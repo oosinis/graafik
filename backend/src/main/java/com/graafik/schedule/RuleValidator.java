@@ -90,7 +90,7 @@ public class RuleValidator {
             DaySchedule daySchedule = currentSchedule.getDaySchedules().get(i);
             ShiftAssignment previousShiftAssignment = DaySchedule.containsWorker(daySchedule, worker);
             if (previousShiftAssignment == null) {
-                currentSchedule.addToScore(additionalScore ? 2: 3);
+                currentSchedule.addToScore(30);
                 return countCont;
             }
 
@@ -106,11 +106,11 @@ public class RuleValidator {
                     return -1;
                 } else rules = standingRules;
             } else {
-                currentSchedule.addToScore(additionalScore ? 2: 2);
+                currentSchedule.addToScore(20);
                 return countCont;
             }
         }
-        currentSchedule.addToScore(additionalScore ? 2: 1);
+        currentSchedule.addToScore(10);
         return countCont; 
     }
 
