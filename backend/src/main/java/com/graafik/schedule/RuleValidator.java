@@ -40,14 +40,10 @@ public class RuleValidator {
             checkWorkerHours(shiftAssignment, currentSchedule, currentDayShiftAssignments);
 
             // check how mny days in a row the current assignment is
-            Object[] result = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
-
-            int countCont = (int) result[0];
+            int countCont = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
 
             // if too many continuous days of this shift
             if (countCont <= -1) return -2000;
-
-            currentSchedule.addToScore((int) result[1]);
 
             // check if we have necessary rest days to assign this new shift
             for (int i = newDayScheduleDate - 1 - countCont; i >= 0; i--) {
@@ -82,7 +78,7 @@ public class RuleValidator {
         return currentDayShiftAssignments.getScore();
     }
 
-    private static Object[] checkContinuousNewAssignment(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
+    private static int checkContinuousNewAssignment(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
         WorkerDto worker = shiftAssignment.getWorker();
@@ -94,7 +90,8 @@ public class RuleValidator {
             DaySchedule daySchedule = currentSchedule.getDaySchedules().get(i);
             ShiftAssignment previousShiftAssignment = DaySchedule.containsWorker(daySchedule, worker);
             if (previousShiftAssignment == null) {
-                return new Object[] { countCont, additionalScore };
+                currentDayShiftAssignments.addToScore(additionalScore);
+                return countCont;
             }
 
             if (previousShiftAssignment.getShift() == shiftAssignment.getShift()) {
@@ -102,20 +99,19 @@ public class RuleValidator {
                 List<Rule> standingRules = new ArrayList<>();
                 for (Rule rule : rules) {
                     if (rule.getContinuousDays() > countCont) standingRules.add(rule);
-                    if (rule.getContinuousDays() == countCont + 2) additionalScore = 2;
+                    if (rule.getContinuousDays() == countCont + 1) additionalScore = 2;
                 }
 
                 if (standingRules.isEmpty()) {
-                    return new Object[] { -1, additionalScore };
-
+                    return -1;
                 } else rules = standingRules;
             } else {
-                return new Object[] { countCont, additionalScore };
-
+                currentDayShiftAssignments.addToScore(additionalScore);
+                return countCont;
             }
         }
-        return new Object[] { countCont, additionalScore };
-
+        currentDayShiftAssignments.addToScore(additionalScore);
+        return countCont; 
     }
 
 
