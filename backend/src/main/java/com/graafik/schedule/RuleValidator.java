@@ -16,6 +16,13 @@ import com.graafik.model.WorkerDto;
 
 public class RuleValidator {
     
+    /**
+     * 
+     * @param scheduleRequest 
+     * @param currentSchedule the schedule that has already been checked and saved
+     * @param currentDayShiftAssignments new assignments to be checked now
+     * @return the score of the new assignments
+     */
     public static int validator(ScheduleRequest scheduleRequest, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         
         currentDayShiftAssignments.setScore(0);
@@ -58,7 +65,7 @@ public class RuleValidator {
                 } 
                 else {
                     prevWorkShift = previousShiftAssignment.getShift();
-                    countPrevWork = checkContinuous(previousShiftAssignment, currentSchedule, currentDayShiftAssignments, i);
+                    countPrevWork = checkContinuous(previousShiftAssignment, currentSchedule, i);
                     if (countPrevWork == -1) {
                         return -3000;
                     }
@@ -78,6 +85,14 @@ public class RuleValidator {
         return currentDayShiftAssignments.getScore();
     }
 
+    /**
+     * check the continuous assignments of the new shift
+     * @param shiftAssignment assignment of shift and worker
+     * @param currentSchedule the schedule tht' already been checked and saved
+     * @param currentDayShiftAssignments the new assignments we re currently checking, here just to chnge the score if the continuous shifts are the exact required amount
+     * @param date
+     * @return the nr of continuous shifts, if -1 then there are too many
+     */
     private static int checkContinuousNewAssignment(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
@@ -115,7 +130,14 @@ public class RuleValidator {
     }
 
 
-    private static int checkContinuous(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
+    /**
+     * check how many of the previously assigned hift in a row to know the required rest time
+     * @param shiftAssignment
+     * @param currentSchedule
+     * @param date
+     * @return
+     */
+    private static int checkContinuous(ShiftAssignment shiftAssignment, Schedule currentSchedule, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
         WorkerDto worker = shiftAssignment.getWorker();
