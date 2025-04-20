@@ -69,6 +69,9 @@ public class GenerateSchedule {
 
         Schedule schedule = new Schedule();
 
+        schedule.setMonth(scheduleRequest.getMonth());
+        schedule.setYear(2025);
+
         HelperMethods.initWorkerHours(schedule, scheduleRequest);
 
         // Recursively generate all combinations
@@ -81,7 +84,7 @@ public class GenerateSchedule {
     private static void generateCombinationsRecursive(ScheduleRequest scheduleRequest, int date,
                                                       Schedule currentSchedule, List<Schedule> allCombinations) {
 
-        int daysInMonth = YearMonth.of(2025, scheduleRequest.getMonth()).lengthOfMonth();
+        int daysInMonth = YearMonth.of(2025, currentSchedule.getMonth()).lengthOfMonth();
 
         if (date == daysInMonth) {
             // All days processed, add the combination
