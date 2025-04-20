@@ -25,20 +25,25 @@ public class RuleValidator {
 
             WorkerDto worker = shiftAssignment.getWorker();
 
+            // rest days in  row
             int countRest = 0;
+
+            // continuous days of work before previous rest
             int countPrevWork = 0;
+            // and the shift tht they were working
             Shift prevWorkShift = null;
+
+            // date of the currentsly observable day
             int newDayScheduleDate = (currentSchedule.getDaySchedules() == null) ? 0 : currentSchedule.getDaySchedules().size();
             
             checkDesiredVacationDays(worker, newDayScheduleDate, currentSchedule, currentDayShiftAssignments);
             checkWorkerHours(shiftAssignment, currentSchedule, currentDayShiftAssignments);
 
+            // check how mny days in a row the current assignment is
             int countCont = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
 
             // if too many continuous days of this shift
             if (countCont <= -1) return -2000;
-
-            else currentDayShiftAssignments.addToScore(countCont);
 
             // check if we have necessary rest days to assign this new shift
             for (int i = newDayScheduleDate - 1 - countCont; i >= 0; i--) {
@@ -79,7 +84,6 @@ public class RuleValidator {
         WorkerDto worker = shiftAssignment.getWorker();
 
         //TODO adjust additional score to match how much staff
-        // TODO return dditional score if exact amount
         boolean additionalScore = false;
 
         for (int i = date; i >= 0; i--) {
