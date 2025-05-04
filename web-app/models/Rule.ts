@@ -1,9 +1,7 @@
 export interface Rule {
-  daysApplied: number[];
-  perDay: number;
-  restDays: number;
-  continuousDays: number;
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: "low" | "medium" | "high"
+  daysApplied: number[]
+  perDay: number
+  restDays: number
+  continuousDays: number
 }
-  
-  

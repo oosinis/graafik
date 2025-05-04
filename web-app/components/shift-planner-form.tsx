@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,64 +11,52 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import type { Shift } from "@/models/Shift"
 import type { Worker } from "@/models/Worker"
-import type { ScheduleRequest } from "@/models/ScheduleRequest"
 import type { Rule } from "@/models/Rule"
-
-// Define the Rule type explicitly to match your interface
-type PriorityType = "low" | "medium" | "high" | "critical"
+import type { ScheduleRequest } from "@/models/ScheduleRequest"
+import { useRouter } from "next/navigation"
 
 const months = [
-  { name: "January", value: 1 },
-  { name: "February", value: 2 },
-  { name: "March", value: 3 },
-  { name: "April", value: 4 },
-  { name: "May", value: 5 },
-  { name: "June", value: 6 },
-  { name: "July", value: 7 },
+  { name: "Jaanuar", value: 1 },
+  { name: "Veebruar", value: 2 },
+  { name: "Märts", value: 3 },
+  { name: "Aprill", value: 4 },
+  { name: "Mai", value: 5 },
+  { name: "Juuni", value: 6 },
+  { name: "Juuli", value: 7 },
   { name: "August", value: 8 },
   { name: "September", value: 9 },
-  { name: "October", value: 10 },
+  { name: "Oktoober", value: 10 },
   { name: "November", value: 11 },
-  { name: "December", value: 12 },
+  { name: "Detsember", value: 12 },
 ]
 
 const daysOfWeek = [
-  { name: "Mon", value: 1 },
-  { name: "Tue", value: 2 },
-  { name: "Wed", value: 3 },
-  { name: "Thu", value: 4 },
-  { name: "Fri", value: 5 },
-  { name: "Sat", value: 6 },
-  { name: "Sun", value: 7 },
+  { name: "E", value: 1 },
+  { name: "T", value: 2 },
+  { name: "K", value: 3 },
+  { name: "N", value: 4 },
+  { name: "R", value: 5 },
+  { name: "L", value: 6 },
+  { name: "P", value: 7 },
 ]
 
-const priorities: { value: PriorityType; label: string }[] = [
-  { value: "low", label: "Low" },
-  { value: "medium", label: "Medium" },
-  { value: "high", label: "High" },
-  { value: "critical", label: "Critical" },
+const priorities = [
+  { value: "low", label: "Madal" },
+  { value: "medium", label: "Keskmine" },
+  { value: "high", label: "Kõrge" },
 ]
 
 const isClient = typeof window !== "undefined"
 
-// Default worker with all required properties
-const defaultWorker: Worker = {
-  name: "",
-  assignedShifts: [],
-  workLoad: 0,
-  desiredVacationDays: [],
-  vacationDays: [],
-  requestedWorkDays: {},
-}
-
 export function ShiftPlannerForm() {
-  const [workers, setWorkers] = useState<Worker[]>([{ ...defaultWorker }])
-  const [shifts, setShifts] = useState<Shift[]>([{ type: "", duration: 0, rules: [] }])
+  const [workers, setWorkers] = useState<Worker[]>([{ name: "", assignedShifts: [] }])
+  const [shifts, setShifts] = useState<Shift[]>([{ type: "", length: 0, rules: [] }])
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
   const [fullTimeMonthlyHours, setFullTimeMonthlyHours] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
   const [isClientState, setIsClient] = useState(false)
   const { toast } = useToast()
+  const router = useRouter()
 
   useEffect(() => {
     if (isClient) {
@@ -77,31 +65,17 @@ export function ShiftPlannerForm() {
   }, [])
 
   const addWorker = () => {
-    setWorkers([...workers, { ...defaultWorker }])
+    setWorkers([...workers, { name: "", assignedShifts: [] }])
   }
 
   const removeWorker = (index: number) => {
     const newWorkers = workers.filter((_, i) => i !== index)
-    setWorkers(newWorkers.length ? newWorkers : [{ ...defaultWorker }])
+    setWorkers(newWorkers.length ? newWorkers : [{ name: "", assignedShifts: [] }])
   }
 
-  // Replace the updateWorker function with this more type-safe version:
   const updateWorker = (index: number, field: keyof Worker, value: any) => {
     const newWorkers = [...workers]
-
-    // Type guard to ensure we're only updating valid properties
-    if (field === "name") {
-      newWorkers[index].name = value as string
-    } else if (field === "workLoad") {
-      newWorkers[index].workLoad = Number(value)
-    } else if (field === "assignedShifts") {
-      newWorkers[index].assignedShifts = value as Shift[]
-    } else if (field === "desiredVacationDays" || field === "vacationDays") {
-      newWorkers[index][field] = value as number[]
-    } else if (field === "requestedWorkDays") {
-      newWorkers[index].requestedWorkDays = value as Record<number, Shift>
-    }
-
+    newWorkers[index][field] = value
     setWorkers(newWorkers)
   }
 
@@ -117,70 +91,34 @@ export function ShiftPlannerForm() {
     setWorkers(newWorkers)
   }
 
-  const toggleVacationDay = (workerIndex: number, day: number, isDesired = false) => {
-    const newWorkers = [...workers]
-    const field = isDesired ? "desiredVacationDays" : "vacationDays"
-    const currentDays = [...newWorkers[workerIndex][field]]
-
-    if (currentDays.includes(day)) {
-      newWorkers[workerIndex][field] = currentDays.filter((d) => d !== day)
-    } else {
-      newWorkers[workerIndex][field] = [...currentDays, day]
-    }
-
-    setWorkers(newWorkers)
-  }
-
-  const setRequestedWorkDay = (workerIndex: number, day: number, shift: Shift | null) => {
-    const newWorkers = [...workers]
-    const requestedWorkDays = { ...newWorkers[workerIndex].requestedWorkDays }
-
-    if (shift) {
-      requestedWorkDays[day] = shift
-    } else {
-      delete requestedWorkDays[day]
-    }
-
-    newWorkers[workerIndex].requestedWorkDays = requestedWorkDays
-    setWorkers(newWorkers)
-  }
-
   const addShift = () => {
-    setShifts([...shifts, { type: "", duration: 0, rules: [] }])
+    setShifts([...shifts, { type: "", length: 0, rules: [] }])
   }
 
   const removeShift = (index: number) => {
     const newShifts = shifts.filter((_, i) => i !== index)
-    setShifts(newShifts.length ? newShifts : [{ type: "", duration: 0, rules: [] }])
+    setShifts(newShifts.length ? newShifts : [{ type: "", length: 0, rules: [] }])
   }
 
   const updateShift = (index: number, field: keyof Shift, value: string | number) => {
     const newShifts = [...shifts]
-
-    if (field === "duration") {
-      newShifts[index].duration = Number(value)
+    if (field === "length") {
+      newShifts[index][field] = Number(value)
     } else {
-      newShifts[index].type = value as string
+      newShifts[index][field] = value
     }
-
     setShifts(newShifts)
   }
 
-  const addRule = () => {
-    // If no shifts exist yet, don't add a rule
-    if (shifts.length === 0 || shifts[0].type === "") return
-
-    // Create a new rule for the first shift by default with a properly typed priority
-    const newRule: Rule = {
-      priority: "medium" as PriorityType,
-      daysApplied: [] as number[],
+  const addRule = (shiftIndex: number) => {
+    const newShifts = [...shifts]
+    newShifts[shiftIndex].rules.push({
+      priority: "medium",
+      daysApplied: [],
       perDay: 0,
       restDays: 0,
       continuousDays: 0,
-    }
-
-    const newShifts = [...shifts]
-    newShifts[0].rules = [...(newShifts[0].rules || []), newRule]
+    })
     setShifts(newShifts)
   }
 
@@ -194,19 +132,15 @@ export function ShiftPlannerForm() {
     const newShifts = [...shifts]
     if (field === "perDay" || field === "restDays" || field === "continuousDays") {
       newShifts[shiftIndex].rules[ruleIndex][field] = Number(value)
-    } else if (field === "priority") {
-      // Ensure priority is one of the allowed values
-      newShifts[shiftIndex].rules[ruleIndex][field] = value as PriorityType
-    } else if (field === "daysApplied") {
-      // Ensure daysApplied is handled correctly
-      newShifts[shiftIndex].rules[ruleIndex][field] = value as number[]
+    } else {
+      newShifts[shiftIndex].rules[ruleIndex][field] = value
     }
     setShifts(newShifts)
   }
 
   const toggleDayForRule = (shiftIndex: number, ruleIndex: number, day: number) => {
     const newShifts = [...shifts]
-    const currentDays = [...(newShifts[shiftIndex].rules[ruleIndex].daysApplied || [])]
+    const currentDays = newShifts[shiftIndex].rules[ruleIndex].daysApplied
     if (currentDays.includes(day)) {
       newShifts[shiftIndex].rules[ruleIndex].daysApplied = currentDays.filter((d) => d !== day)
     } else {
@@ -219,48 +153,49 @@ export function ShiftPlannerForm() {
     return {
       workers,
       shifts,
-      month: selectedMonth || 0,
-      fullTimeHours: Number.parseInt(fullTimeMonthlyHours, 10) || 0,
+      selectedMonth: selectedMonth || 0,
+      fullTimeMonthlyHours: Number.parseInt(fullTimeMonthlyHours, 10) || 0,
     }
   }
 
   const sendScheduleRequest = async (scheduleRequest: ScheduleRequest) => {
     setIsLoading(true)
     try {
-
-
-
-    
-      const response = await fetch("https://api.grafikapp.com/api/create-schedule", {
+      const response = await fetch("/api/generate-schedule", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(scheduleRequest),
-      });
-      console.log("Request Payload:", JSON.stringify(scheduleRequest, null, 2));
-      const responseBody = await response.text();
-      console.log("Response Body:", responseBody);
+      })
+
       if (!response.ok) {
-        throw new Error("Failed to generate schedule: " + response.text() + "\nResponse Status:" + response.status + "\nResponse Headers:" + response.headers)
+        throw new Error("Failed to generate schedule")
       }
 
       const data = await response.json()
       toast({
-        title: "Schedule generated successfully",
-        description: "Your schedule has been created and saved.",
+        title: "Graafik edukalt genereeritud",
+        description: "Teie graafik on loodud ja salvestatud.",
       })
-      return data
+      router.push(`/schedule?year=${new Date().getFullYear()}&month=${scheduleRequest.selectedMonth}`)
     } catch (error) {
       console.error("Error generating schedule:", error)
       toast({
-        title: "Error generating schedule",
-        description: "There was a problem generating your schedule. Please try again.",
+        title: "Viga graafiku genereerimisel",
+        description: "Graafiku genereerimisel tekkis probleem. Palun proovige uuesti.",
         variant: "destructive",
       })
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleViewSchedule = () => {
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = currentDate.getMonth() + 1 // JavaScript months are 0-indexed
+    router.push(`/schedule?year=${currentYear}&month=${currentMonth}`)
   }
 
   if (!isClient) {
@@ -270,7 +205,7 @@ export function ShiftPlannerForm() {
   return isClient ? (
     <Card className="w-full max-w-3xl">
       <CardHeader>
-        <CardTitle>Worker Shift Planner</CardTitle>
+        <CardTitle>Vahetuste Planeerija</CardTitle>
       </CardHeader>
       <CardContent>
         <form
@@ -283,13 +218,13 @@ export function ShiftPlannerForm() {
         >
           <div className="space-y-2 flex flex-wrap items-end gap-4">
             <div className="flex-1">
-              <Label htmlFor="month">Select Month</Label>
+              <Label htmlFor="month">Vali kuu</Label>
               <Select
                 value={selectedMonth ? selectedMonth.toString() : undefined}
                 onValueChange={(value) => setSelectedMonth(Number.parseInt(value, 10))}
               >
                 <SelectTrigger id="month">
-                  <SelectValue placeholder="Select a month" />
+                  <SelectValue placeholder="Vali kuu" />
                 </SelectTrigger>
                 <SelectContent>
                   {months.map((month) => (
@@ -301,49 +236,154 @@ export function ShiftPlannerForm() {
               </Select>
             </div>
             <div className="flex-1">
-              <Label htmlFor="fullTimeHours">Full time monthly hours</Label>
+              <Label htmlFor="fullTimeHours">Täistööaja tunnid kuus</Label>
               <Input
                 id="fullTimeHours"
                 type="number"
                 value={fullTimeMonthlyHours}
                 onChange={(e) => setFullTimeMonthlyHours(e.target.value)}
-                placeholder="Enter hours"
+                placeholder="Sisesta tunnid"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Shifts</Label>
-            <div className="space-y-2">
-              {shifts.map((shift, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <Input
-                    value={shift.type}
-                    onChange={(e) => updateShift(index, "type", e.target.value)}
-                    placeholder="Shift type"
-                  />
-                  <Input
-                    type="number"
-                    value={shift.duration}
-                    onChange={(e) => updateShift(index, "duration", e.target.value)}
-                    placeholder="Length (hours)"
-                    min="1"
-                    max="24"
-                  />
-                  <Button type="button" variant="outline" size="icon" onClick={() => removeShift(index)}>
-                    <X className="h-4 w-4" />
-                    <span className="sr-only">Remove shift</span>
-                  </Button>
-                </div>
+            <Label>Vahetused</Label>
+            <div className="space-y-4">
+              {shifts.map((shift, shiftIndex) => (
+                <Card key={shiftIndex} className="p-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex-1">
+                        <Label htmlFor={`shift-type-${shiftIndex}`}>Vahetuse tüüp</Label>
+                        <Input
+                          id={`shift-type-${shiftIndex}`}
+                          value={shift.type}
+                          onChange={(e) => updateShift(shiftIndex, "type", e.target.value)}
+                          placeholder="Sisesta vahetuse tüüp"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <Label htmlFor={`shift-length-${shiftIndex}`}>Vahetuse pikkus (tundides)</Label>
+                        <Input
+                          id={`shift-length-${shiftIndex}`}
+                          type="number"
+                          value={shift.length}
+                          onChange={(e) => updateShift(shiftIndex, "length", e.target.value)}
+                          placeholder="Sisesta vahetuse pikkus"
+                          min="1"
+                          max="24"
+                        />
+                      </div>
+                      <Button type="button" variant="outline" size="icon" onClick={() => removeShift(shiftIndex)}>
+                        <X className="h-4 w-4" />
+                        <span className="sr-only">Eemalda vahetus</span>
+                      </Button>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <Label>Reeglid</Label>
+                        <Button type="button" variant="outline" size="sm" onClick={() => addRule(shiftIndex)}>
+                          <Plus className="mr-2 h-4 w-4" /> Lisa reegel
+                        </Button>
+                      </div>
+                      {shift.rules.map((rule, ruleIndex) => (
+                        <Card key={ruleIndex} className="p-4">
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor={`rule-priority-${shiftIndex}-${ruleIndex}`}>Prioriteet</Label>
+                              <Select
+                                value={rule.priority}
+                                onValueChange={(value) => updateRule(shiftIndex, ruleIndex, "priority", value)}
+                              >
+                                <SelectTrigger id={`rule-priority-${shiftIndex}-${ruleIndex}`}>
+                                  <SelectValue placeholder="Vali prioriteet" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {priorities.map((priority) => (
+                                    <SelectItem key={priority.value} value={priority.value}>
+                                      {priority.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label className="mb-2 block">Rakendatavad päevad</Label>
+                              <div className="flex flex-wrap gap-2">
+                                {daysOfWeek.map((day) => (
+                                  <div key={day.value} className="flex items-center space-x-2">
+                                    <Checkbox
+                                      id={`${shiftIndex}-${ruleIndex}-${day.name}`}
+                                      checked={rule.daysApplied.includes(day.value)}
+                                      onCheckedChange={() => toggleDayForRule(shiftIndex, ruleIndex, day.value)}
+                                    />
+                                    <Label htmlFor={`${shiftIndex}-${ruleIndex}-${day.name}`}>{day.name}</Label>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="flex-1">
+                                <Label htmlFor={`rule-perday-${shiftIndex}-${ruleIndex}`}>Vahetusi päevas</Label>
+                                <Input
+                                  id={`rule-perday-${shiftIndex}-${ruleIndex}`}
+                                  type="number"
+                                  value={rule.perDay}
+                                  onChange={(e) => updateRule(shiftIndex, ruleIndex, "perDay", e.target.value)}
+                                  placeholder="Sisesta vahetuste arv"
+                                  min="1"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <Label htmlFor={`rule-restdays-${shiftIndex}-${ruleIndex}`}>Puhkepäevad pärast</Label>
+                                <Input
+                                  id={`rule-restdays-${shiftIndex}-${ruleIndex}`}
+                                  type="number"
+                                  value={rule.restDays}
+                                  onChange={(e) => updateRule(shiftIndex, ruleIndex, "restDays", e.target.value)}
+                                  placeholder="Sisesta puhkepäevade arv"
+                                  min="0"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <Label htmlFor={`rule-continuousdays-${shiftIndex}-${ruleIndex}`}>
+                                  Järjestikused päevad
+                                </Label>
+                                <Input
+                                  id={`rule-continuousdays-${shiftIndex}-${ruleIndex}`}
+                                  type="number"
+                                  value={rule.continuousDays}
+                                  onChange={(e) => updateRule(shiftIndex, ruleIndex, "continuousDays", e.target.value)}
+                                  placeholder="Sisesta päevade arv"
+                                  min="0"
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={() => removeRule(shiftIndex, ruleIndex)}
+                              >
+                                <X className="h-4 w-4" />
+                                <span className="sr-only">Eemalda reegel</span>
+                              </Button>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
               ))}
             </div>
             <Button type="button" variant="outline" size="sm" className="mt-2" onClick={addShift}>
-              <Plus className="mr-2 h-4 w-4" /> Add Shift
+              <Plus className="mr-2 h-4 w-4" /> Lisa vahetus
             </Button>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="workers">Worker List</Label>
+            <Label htmlFor="workers">Töötajate nimekiri</Label>
             <div className="space-y-4">
               {workers.map((worker, index) => (
                 <Card key={index} className="p-4">
@@ -353,23 +393,15 @@ export function ShiftPlannerForm() {
                         id={`worker-${index}`}
                         value={worker.name}
                         onChange={(e) => updateWorker(index, "name", e.target.value)}
-                        placeholder={`Worker ${index + 1}`}
-                      />
-                      <Input
-                        id={`workload-${index}`}
-                        type="number"
-                        value={worker.workLoad}
-                        onChange={(e) => updateWorker(index, "workLoad", Number(e.target.value))}
-                        placeholder="Workload %"
-                        className="w-32"
+                        placeholder={`Töötaja ${index + 1}`}
                       />
                       <Button type="button" variant="outline" size="icon" onClick={() => removeWorker(index)}>
                         <X className="h-4 w-4" />
-                        <span className="sr-only">Remove worker</span>
+                        <span className="sr-only">Eemalda töötaja</span>
                       </Button>
                     </div>
                     <div>
-                      <Label className="mb-2 block">Assigned Shifts</Label>
+                      <Label className="mb-2 block">Määratud vahetused</Label>
                       <div className="flex flex-wrap gap-2">
                         {shifts
                           .filter((shift) => shift.type.trim() !== "")
@@ -385,213 +417,25 @@ export function ShiftPlannerForm() {
                           ))}
                       </div>
                     </div>
-
-                    <div>
-                      <Label className="mb-2 block">Desired Vacation Days</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedMonth &&
-                          Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-                            <div key={`desired-${day}`} className="flex items-center">
-                              <Checkbox
-                                id={`desired-${index}-${day}`}
-                                checked={worker.desiredVacationDays.includes(day)}
-                                onCheckedChange={() => toggleVacationDay(index, day, true)}
-                              />
-                              <Label htmlFor={`desired-${index}-${day}`} className="ml-1 mr-2">
-                                {day}
-                              </Label>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="mb-2 block">Vacation Days</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedMonth &&
-                          Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-                            <div key={`vacation-${day}`} className="flex items-center">
-                              <Checkbox
-                                id={`vacation-${index}-${day}`}
-                                checked={worker.vacationDays.includes(day)}
-                                onCheckedChange={() => toggleVacationDay(index, day, false)}
-                              />
-                              <Label htmlFor={`vacation-${index}-${day}`} className="ml-1 mr-2">
-                                {day}
-                              </Label>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label className="mb-2 block">Requested Work Days</Label>
-                      <div className="grid grid-cols-7 gap-2">
-                        {selectedMonth &&
-                          Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-                            <div key={`requested-${day}`} className="border p-2 rounded">
-                              <div className="text-center font-medium mb-1">{day}</div>
-                              <Select
-                                value={worker.requestedWorkDays[day]?.type || "none"}
-                                onValueChange={(value) => {
-                                  if (value === "none") {
-                                    setRequestedWorkDay(index, day, null)
-                                  } else {
-                                    const shift = shifts.find((s) => s.type === value) || null
-                                    setRequestedWorkDay(index, day, shift)
-                                  }
-                                }}
-                              >
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Select shift" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="none">None</SelectItem>
-                                  {shifts
-                                    .filter((shift) => shift.type.trim() !== "")
-                                    .map((shift) => (
-                                      <SelectItem key={shift.type} value={shift.type}>
-                                        {shift.type}
-                                      </SelectItem>
-                                    ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
                   </div>
                 </Card>
               ))}
             </div>
             <Button type="button" variant="outline" size="sm" className="mt-2" onClick={addWorker}>
-              <Plus className="mr-2 h-4 w-4" /> Add Worker
+              <Plus className="mr-2 h-4 w-4" /> Lisa töötaja
             </Button>
           </div>
 
-          <div className="space-y-2">
-            <Label>Scheduling Rules</Label>
-            <div className="space-y-4">
-              {shifts
-                .filter((shift) => shift.type.trim() !== "")
-                .map((shift, shiftIndex) => (
-                  <Card key={shiftIndex} className="p-4">
-                    <div className="space-y-4">
-                      <div className="font-medium">{shift.type} Shift Rules</div>
-
-                      {shift.rules && shift.rules.length > 0 ? (
-                        shift.rules.map((rule, ruleIndex) => (
-                          <div key={ruleIndex} className="border p-3 rounded-md space-y-3">
-                            <div className="flex items-center space-x-2">
-                              <Select
-                                value={rule.priority}
-                                onValueChange={(value: PriorityType) =>
-                                  updateRule(shiftIndex, ruleIndex, "priority", value)
-                                }
-                              >
-                                <SelectTrigger className="w-[200px]">
-                                  <SelectValue placeholder="Select priority" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {priorities.map((priority) => (
-                                    <SelectItem key={priority.value} value={priority.value}>
-                                      {priority.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div>
-                              <Label className="mb-2 block">Days Applied</Label>
-                              <div className="flex flex-wrap gap-2">
-                                {daysOfWeek.map((day) => (
-                                  <div key={day.value} className="flex items-center space-x-2">
-                                    <Checkbox
-                                      id={`${shiftIndex}-${ruleIndex}-${day.name}`}
-                                      checked={rule.daysApplied?.includes(day.value)}
-                                      onCheckedChange={() => toggleDayForRule(shiftIndex, ruleIndex, day.value)}
-                                    />
-                                    <Label htmlFor={`${shiftIndex}-${ruleIndex}-${day.name}`}>{day.name}</Label>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Input
-                                type="number"
-                                value={rule.perDay}
-                                onChange={(e) => updateRule(shiftIndex, ruleIndex, "perDay", e.target.value)}
-                                placeholder="Shifts per day"
-                                min="1"
-                                className="w-[120px]"
-                              />
-                              <Input
-                                type="number"
-                                value={rule.restDays}
-                                onChange={(e) => updateRule(shiftIndex, ruleIndex, "restDays", e.target.value)}
-                                placeholder="Rest days after"
-                                min="0"
-                                className="w-[120px]"
-                              />
-                              <Input
-                                type="number"
-                                value={rule.continuousDays}
-                                onChange={(e) => updateRule(shiftIndex, ruleIndex, "continuousDays", e.target.value)}
-                                placeholder="Continuous days"
-                                min="0"
-                                className="w-[120px]"
-                              />
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="icon"
-                                onClick={() => removeRule(shiftIndex, ruleIndex)}
-                              >
-                                <X className="h-4 w-4" />
-                                <span className="sr-only">Remove rule</span>
-                              </Button>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-sm text-muted-foreground">No rules added for this shift.</div>
-                      )}
-
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const newShifts = [...shifts]
-                          if (!newShifts[shiftIndex].rules) newShifts[shiftIndex].rules = []
-
-                          // Create a properly typed rule
-                          const newRule: Rule = {
-                            priority: "medium" as PriorityType,
-                            daysApplied: [] as number[],
-                            perDay: 0,
-                            restDays: 0,
-                            continuousDays: 0,
-                          }
-
-                          newShifts[shiftIndex].rules.push(newRule)
-                          setShifts(newShifts)
-                        }}
-                      >
-                        <Plus className="mr-2 h-4 w-4" /> Add Rule to {shift.type}
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-            </div>
+          <div className="flex space-x-4">
+            <Button type="submit" className="flex-1" disabled={isLoading}>
+              {isLoading ? "Genereerimine..." : "Genereeri graafik"}
+            </Button>
+            <Button type="button" variant="outline" onClick={handleViewSchedule}>
+              Vaata graafikut
+            </Button>
           </div>
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Generating..." : "Generate Schedule"}
-          </Button>
         </form>
       </CardContent>
     </Card>
   ) : null
 }
-

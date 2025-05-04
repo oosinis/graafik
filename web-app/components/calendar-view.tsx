@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import type { ScheduleResponse } from "@/models/ScheduleResponse"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
-import { ScrollArea, ScrollBar } from "./ui/scroll-area"
 
 const monthNames = [
   "Jaanuar",
@@ -55,7 +55,7 @@ export function CalendarView({ schedule }: { schedule: ScheduleResponse }) {
     schedule.daySchedules.forEach((day) => {
       const assignment = day.assignments.find((a) => a.worker.name === worker)
       if (assignment) {
-        totalHours += assignment.shift.duration
+        totalHours += assignment.shift.length
       }
     })
     return totalHours

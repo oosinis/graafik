@@ -5,5 +5,5 @@ export interface ScheduleResponse {
   year: number
   daySchedules: DaySchedule[]
   score: number
-  workerHours: Record<string, number>
+  workerHours: Record<string, number> // Map<WorkerDto, Integer> in Java
 }

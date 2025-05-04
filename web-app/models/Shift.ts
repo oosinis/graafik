@@ -1,9 +1,13 @@
-import { Rule } from "./Rule"
-
 export interface Shift {
-    type: string
-    duration: number
-    rules: Rule[]
-  }
-  
-  
+  type: string
+  length: number
+  rules?: Rule[]
+}
+
+export interface Rule {
+  priority: "low" | "medium" | "high"
+  daysApplied: number[]
+  perDay: number
+  restDays: number
+  continuousDays: number
+}

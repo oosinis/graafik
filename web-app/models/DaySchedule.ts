@@ -1,4 +1,4 @@
-import { ShiftAssignment } from "./ShiftAssignment"
+import type { ShiftAssignment } from "./ShiftAssignment"
 
 export interface DaySchedule {
   dayOfMonth: number

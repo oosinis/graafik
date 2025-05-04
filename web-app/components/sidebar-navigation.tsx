@@ -31,7 +31,7 @@ export function SidebarNavigation() {
     },
     {
       name: "Graafiku Ülevaade",
-      href: "/schedule-grid",
+      href: "/schedule",
       icon: Calendar,
     },
     {

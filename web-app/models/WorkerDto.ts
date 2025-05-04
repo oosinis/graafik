@@ -1,4 +1,3 @@
 export interface WorkerDto {
-    name: string
-  }
-  
+  name: string
+}

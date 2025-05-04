@@ -5,6 +5,7 @@ import { Rule } from "./Rule";
 export interface ScheduleRequest {
   workers: Worker[];
   shifts: Shift[];
-  month: number;
-  fullTimeHours: number;
+  rules: Rule[];
+  selectedMonth: number;
+  fullTimeMonthlyHours: number;
 }
