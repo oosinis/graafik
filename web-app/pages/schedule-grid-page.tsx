@@ -17,7 +17,11 @@ export default function ScheduleGridPage() {
   return (
     <div className="max-w-full mx-auto">
       <PageHeader title="Töögraafiku Ülevaade" />
-      <ScheduleGridView year={currentDate.year} month={currentDate.month} onMonthChange={handleMonthChange} />
+      <ScheduleGridView
+        year={currentDate.year}
+        month={currentDate.month}
+        onMonthChange={handleMonthChange}
+      />
     </div>
   )
 }
