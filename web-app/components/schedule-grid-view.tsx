@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
 import { ShiftDetailsCard } from "@/components/shift-details-card";
 import { MonthNavigation } from "@/components/month-navigation";
+import { DayNavigation } from "@/components/day-navigation";
 import { ViewModeToggle } from "@/components/view-mode-toggle";
 import type { ScheduleResponse } from "@/models/ScheduleResponse";
 import type { WorkerDto } from "@/models/WorkerDto";
@@ -18,181 +18,214 @@ interface ScheduleGridViewProps {
   onMonthChange: (year: number, month: number) => void;
 }
 
-const monthNames = [
-  "Jaanuar", "Veebruar", "Märts", "Aprill", "Mai", "Juuni",
-  "Juuli", "August", "September", "Oktoober", "November", "Detsember"
+// Mutable month names array
+const monthNames: string[] = [
+  "Jaanuar","Veebruar","Märts","Aprill",
+  "Mai","Juuni","Juuli","August",
+  "September","Oktoober","November","Detsember"
 ];
 
-const shiftTypes = ["Hommik", "Päev", "Õhtu", "Öö"];
+const shiftTypes = ["Hommik","Päev","Õhtu","Öö"] as const;
+type ShiftType = typeof shiftTypes[number];
 
-const shiftAbbreviations: Record<string, string> = {
-  Hommik: "H",
-  Päev: "P",
-  Õhtu: "Õ",
-  Öö: "Ö"
+const shiftAbbrev: Record<ShiftType,string> = {
+  Hommik:"H", Päev:"P", Õhtu:"Õ", Öö:"Ö"
 };
 
-const shiftColors: Record<string, string> = {
-  Hommik: "bg-orange-200",
-  Päev: "bg-teal-200",
-  Õhtu: "bg-pink-200",
-  Öö: "bg-purple-200"
+const shiftColors: Record<ShiftType,string> = {
+  Hommik:"bg-orange-200",
+  Päev:"bg-teal-200",
+  Õhtu:"bg-pink-200",
+  Öö:"bg-purple-200"
 };
 
-const groupedRoles: Record<string, string[]> = {
-  Vahetusevanem: ["Sander Saar", "Mirjam Laane"],
-  Ettekandjad: ["Gregor Ojamets", "Jürgen Kask"],
-  Kokad: ["Andres Allik", "Liis Lepp"]
+const groupedRoles: Record<string,string[]> = {
+  Vahetusevanem:["Sander Saar","Mirjam Laane"],
+  Ettekandjad:["Gregor Ojamets","Jürgen Kask"],
+  Kokad:["Andres Allik","Liis Lepp"]
 };
 
-export function ScheduleGridView({ year, month, onMonthChange }: ScheduleGridViewProps) {
-  const [viewMode, setViewMode] = useState<"monthly" | "weekly" | "daily">("monthly");
+export function ScheduleGridView({
+  year, month, onMonthChange
+}: ScheduleGridViewProps) {
+  // modes & data
+  const [viewMode, setViewMode] = useState<"monthly"|"weekly"|"daily">("monthly");
+  const [schedule, setSchedule] = useState<ScheduleResponse|null>(null);
+  const [currentWeekStart, setCurrentWeekStart] = useState<number>(1);
+  const [currentDate, setCurrentDate] = useState<Date>(
+    () => new Date(year, month-1, 1)
+  );
   const [selectedShift, setSelectedShift] = useState<{
-    day: number;
-    worker: string;
-    shift: string;
-    fte: string;
-  } | null>(null);
+    day:number;worker:string;shift:ShiftType;fte:string
+  }|null>(null);
 
-  const [schedule, setSchedule] = useState<ScheduleResponse | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>("All");
-  const [selectedShiftType, setSelectedShiftType] = useState<string>("All");
+  const [selectedShiftType, setSelectedShiftType] = useState<ShiftType|"All">("All");
 
+  // regenerate mock when year/month changes
   useEffect(() => {
-    const mock = generateMockSchedule(year, month);
-    setSchedule(mock);
-  }, [year, month]);
+    setSchedule(generateMockSchedule(year,month));
+    setCurrentWeekStart(1);
+    setSelectedShift(null);
+    setCurrentDate(new Date(year,month-1,1));
+  }, [year,month]);
 
-  const generateMockSchedule = (year: number, month: number): ScheduleResponse => {
-    const daysInMonth = new Date(year, month, 0).getDate();
-    const workers: WorkerDto[] = Object.values(groupedRoles).flat().map(name => ({ name }));
-    const workerHours: Record<string, number> = {};
-
-    workers.forEach(w => {
-      workerHours[w.name] = Math.floor(Math.random() * 40) + 140;
+  function generateMockSchedule(y:number,m:number):ScheduleResponse {
+    const days = new Date(y,m,0).getDate();
+    const workers:WorkerDto[] = Object.values(groupedRoles).flat().map(n=>({name:n}));
+    const workerHours:Record<string,number> = {};
+    workers.forEach(w=>workerHours[w.name]=140+Math.floor(Math.random()*40));
+    const daySchedules:DaySchedule[] = Array.from({length:days},(_,i)=>{
+      const assignments:ShiftAssignment[] = shiftTypes.map((type,idx)=>({
+        shift:{type,length:8},
+        worker:workers[(i+idx)%workers.length]
+      }));
+      return {dayOfMonth:i+1,assignments,score:0};
     });
+    return {year:y,month:m,daySchedules,workerHours,score:0};
+  }
 
-    const daySchedules: DaySchedule[] = Array.from({ length: daysInMonth }, (_, i) => {
-      const assignments: ShiftAssignment[] = [];
-      shiftTypes.forEach((type, index) => {
-        const workerIndex = (i + index) % workers.length;
-        assignments.push({
-          shift: { type, length: 8 },
-          worker: workers[workerIndex]
-        });
-      });
-      return { dayOfMonth: i + 1, assignments, score: 0 };
-    });
+  const daysInMonth = new Date(year,month,0).getDate();
 
-    return { year, month, daySchedules, workerHours, score: 0 };
-  };
-
-  const getShiftForWorkerOnDay = (worker: string, day: number): string | null => {
-    const scheduleForDay = schedule?.daySchedules.find(d => d.dayOfMonth === day);
-    const shift = scheduleForDay?.assignments.find(a => a.worker.name === worker)?.shift.type;
-    return shift ?? null;
-  };
-
-  const getWorkerHours = (worker: string) => schedule?.workerHours[worker] ?? 0;
-
-  const daysInMonth = new Date(year, month, 0).getDate();
-
-  const getVisibleDays = (): number[] => {
-    if (viewMode === "weekly") {
-      const weekStart = Math.floor(new Date().getDate() / 7) * 7;
-      return Array.from({ length: 7 }, (_, i) => weekStart + i + 1).filter(day => day <= daysInMonth);
+  // visible days based on mode
+  const visibleDays = useMemo<number[]>(()=>{
+    if(viewMode==="daily"){
+      return [currentDate.getDate()];
     }
-    if (viewMode === "daily") {
-      return [new Date().getDate()];
+    if(viewMode==="weekly"){
+      const end = Math.min(currentWeekStart+6,daysInMonth);
+      return Array.from({length:end-currentWeekStart+1},(_,i)=>currentWeekStart+i);
     }
-    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  };
+    return Array.from({length:daysInMonth},(_,i)=>i+1);
+  },[viewMode,currentWeekStart,daysInMonth,currentDate]);
 
-  const days = getVisibleDays();
+  // helper: find shift
+  function shiftFor(worker:string,day:number):ShiftType|null {
+    const rec = schedule
+      ?.daySchedules
+      .find(d=>d.dayOfMonth===day)
+      ?.assignments
+      .find(a=>a.worker.name===worker)
+      ?.shift.type;
+    return rec && shiftTypes.includes(rec as ShiftType) ? rec as ShiftType : null;
+  }
 
-  const filteredGroupedRoles = Object.entries(groupedRoles).reduce((acc, [role, workers]) => {
-    if (selectedRole === "All" || selectedRole === role) acc[role] = workers;
+  // week navigation
+  const prevWeek=()=>setCurrentWeekStart(s=>Math.max(1,s-7));
+  const nextWeek=()=>setCurrentWeekStart(s=>s+7<=daysInMonth?s+7:s);
+
+  // filter roles & workers by selections
+  const filteredRoles = Object.entries(groupedRoles).reduce((acc,[role,workers])=>{
+    if(selectedRole!=="All"&&selectedRole!==role) return acc;
+    const keep = workers.filter(w=>
+      visibleDays.some(d=>{
+        const s=shiftFor(w,d);
+        return !!s&&(selectedShiftType==="All"||s===selectedShiftType);
+      })
+    );
+    if(keep.length) acc[role]=keep;
     return acc;
-  }, {} as Record<string, string[]>);
+  },{} as Record<string,string[]>);
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full space-y-4">
+      {/* top bar */}
+      <div className="flex justify-between items-center">
         <MonthNavigation
-          month={month}
-          year={year}
-          monthNames={monthNames}
-          onPrevious={() => onMonthChange(month === 1 ? year - 1 : year, month === 1 ? 12 : month - 1)}
-          onNext={() => onMonthChange(month === 12 ? year + 1 : year, month === 12 ? 1 : month + 1)}
+          month={month} year={year} monthNames={monthNames}
+          onPrevious={()=>onMonthChange(month===1?year-1:year,month===1?12:month-1)}
+          onNext={()=>onMonthChange(month===12?year+1:year,month===12?1:month+1)}
         />
-        <div className="flex gap-2">
-          <Button variant="outline" className="flex items-center">
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
-          <Button className="bg-purple-600 text-white">Publish</Button>
-        </div>
-      </div>
-
-      <div className="flex justify-between items-center mb-4">
-        <ViewModeToggle viewMode={viewMode} onViewModeChange={setViewMode} />
-        <div className="flex gap-4">
-          <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)} className="border p-2 rounded shadow-sm">
+        <div className="flex items-center space-x-6">
+          <ViewModeToggle viewMode={viewMode} onViewModeChange={setViewMode}/>
+          <select
+            value={selectedRole}
+            onChange={e=>setSelectedRole(e.target.value)}
+            className="border p-2 rounded shadow-sm"
+          >
             <option value="All">All Roles</option>
-            {Object.keys(groupedRoles).map(role => (
-              <option key={role} value={role}>{role}</option>
+            {Object.keys(groupedRoles).map(r=>(
+              <option key={r} value={r}>{r}</option>
             ))}
           </select>
-          <select value={selectedShiftType} onChange={(e) => setSelectedShiftType(e.target.value)} className="border p-2 rounded shadow-sm">
+          <select
+            value={selectedShiftType}
+            onChange={e=>setSelectedShiftType(e.target.value as ShiftType|"All")}
+            className="border p-2 rounded shadow-sm"
+          >
             <option value="All">All Shifts</option>
-            {shiftTypes.map(shift => (
-              <option key={shift} value={shift}>{shift}</option>
+            {shiftTypes.map(s=>(
+              <option key={s} value={s}>{s}</option>
             ))}
           </select>
         </div>
       </div>
 
+      {/* weekly controls */}
+      {viewMode==="weekly" && (
+        <div className="flex justify-end gap-2">
+          <Button onClick={prevWeek} disabled={currentWeekStart===1}>
+            Eelmine nädal
+          </Button>
+          <span className="font-medium">
+            {visibleDays[0]}–{visibleDays[visibleDays.length-1]}
+          </span>
+          <Button onClick={nextWeek} disabled={currentWeekStart+6>=daysInMonth}>
+            Järgmine nädal
+          </Button>
+        </div>
+      )}
+
+      {/* daily navigation */}
+      {viewMode==="daily" && (
+        <DayNavigation
+          date={currentDate}
+          onPrevious={()=>setCurrentDate(d=>{d.setDate(d.getDate()-1); return new Date(d);} )}
+          onNext={()=>setCurrentDate(d=>{d.setDate(d.getDate()+1); return new Date(d);} )}
+        />
+      )}
+
+      {/* grid */}
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">
           <thead>
             <tr>
-              <th className="border bg-gray-50 w-40 sticky left-0 z-10 p-2">Worker</th>
-              {days.map(day => (
-                <th key={day} className="border bg-gray-50 p-2 text-center">{day}</th>
+              <th className="sticky left-0 bg-gray-50 border p-2 w-40">Töötaja</th>
+              {visibleDays.map(d=>(
+                <th key={d} className="border p-2 text-center">{d}</th>
               ))}
-              <th className="border bg-gray-50 w-28 text-center">Tunnid</th>
+              <th className="border p-2 w-24 text-center">Tunnid</th>
             </tr>
           </thead>
           <tbody>
-            {Object.entries(filteredGroupedRoles).map(([role, workers]) => (
+            {Object.entries(filteredRoles).map(([role,workers])=>(
               <React.Fragment key={role}>
-                <tr className="bg-purple-100 font-semibold text-left text-sm">
-                  <td colSpan={days.length + 2} className="border px-4 py-2 sticky left-0 z-0">{role}</td>
+                <tr>
+                  <td
+                    colSpan={visibleDays.length+2}
+                    className="bg-purple-100 font-semibold text-left p-2"
+                  >{role}</td>
                 </tr>
-                {workers.map(worker => (
+                {workers.map(worker=>(
                   <tr key={worker}>
-                    <td className="border p-2 bg-white sticky left-0 z-10">
-                      <div className="font-medium">{worker}</div>
-                      <div className="text-xs text-gray-500">FTE 1.0</div>
+                    <td className="sticky left-0 bg-white border p-2 font-medium">
+                      {worker}
                     </td>
-                    {days.map(day => {
-                      const shift = getShiftForWorkerOnDay(worker, day);
-                      const show = !selectedShiftType || selectedShiftType === "All" || shift === selectedShiftType;
+                    {visibleDays.map(day=>{
+                      const sft = shiftFor(worker,day);
+                      const show = !!sft&&(selectedShiftType==="All"||sft===selectedShiftType);
                       return (
-                        <td key={day} className="border p-1 bg-white text-center">
-                          {shift && show ? (
-                            <div
-                              className={`p-2 rounded text-sm ${shiftColors[shift]}`}
-                              onClick={() => setSelectedShift({ day, worker, shift, fte: "1.0" })}
-                            >
-                              {shiftAbbreviations[shift]}
-                            </div>
-                          ) : "-"}
+                        <td
+                          key={day}
+                          className={`border p-1 text-center ${show?shiftColors[sft!]:""}`}
+                          onClick={()=>sft&&setSelectedShift({day,worker,shift:sft,fte:"1.0"})}
+                        >
+                          {show?shiftAbbrev[sft!]:""}
                         </td>
                       );
                     })}
-                    <td className="border p-2 text-center bg-white font-medium">
-                      {getWorkerHours(worker)}/180
+                    <td className="border p-2 text-center">
+                      {schedule?.workerHours[worker]??0}/180
                     </td>
                   </tr>
                 ))}
@@ -202,20 +235,24 @@ export function ScheduleGridView({ year, month, onMonthChange }: ScheduleGridVie
         </table>
       </div>
 
+      {/* shift details modal */}
       {selectedShift && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setSelectedShift(null)}>
-          <div className="relative" onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={()=>setSelectedShift(null)}
+        >
+          <div onClick={e=>e.stopPropagation()}>
             <ShiftDetailsCard
-              day={`Day ${selectedShift.day}`}
-              date={`${selectedShift.day} ${monthNames[month - 1]}`}
-              shiftType={selectedShift.shift}
-              startTime="09:00"
-              endTime="17:00"
-              hours={8}
-              worker={selectedShift.worker}
-              department="Intensiivosakond"
-              fte={selectedShift.fte}
-              onEdit={() => console.log("Edit shift", selectedShift)}
+              day       = {`Day ${selectedShift.day}`}
+              date      = {`${selectedShift.day} ${monthNames[month-1]}`}
+              shiftType = {selectedShift.shift}
+              startTime = "09:00"
+              endTime   = "17:00"
+              hours     = {8}
+              worker    = {selectedShift.worker}
+              department= "Intensiivosakond"
+              fte       = {selectedShift.fte}
+              onEdit    = {()=>console.log("edit",selectedShift)}
             />
           </div>
         </div>
