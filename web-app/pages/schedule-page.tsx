@@ -7,8 +7,9 @@ import { ScheduleGridView } from "@/components/schedule-grid-view"
 export default function SchedulePage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const yearParam = searchParams.get("year")
-  const monthParam = searchParams.get("month")
+  
+  const yearParam = searchParams?.get("year")
+  const monthParam = searchParams?.get("month")
 
   const year = yearParam ? Number.parseInt(yearParam, 10) : new Date().getFullYear()
   const month = monthParam ? Number.parseInt(monthParam, 10) : new Date().getMonth() + 1
