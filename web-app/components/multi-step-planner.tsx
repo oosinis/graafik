@@ -68,13 +68,13 @@ export function MultiStepPlanner() {
     },
   ]
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (currentStep === "month-hours") {
       setCurrentStep("shifts-rules")
     } else if (currentStep === "shifts-rules") {
       setCurrentStep("assign-employees")
     } else {
-      // Generate schedule and navigate to view
+      await generateSchedule();
       const monthIndex = months.indexOf(month) + 1
       router.push(`/schedule?year=${year}&month=${monthIndex}`)
     }
@@ -88,8 +88,31 @@ export function MultiStepPlanner() {
     }
   }
 
-  // Rest of the component remains the same
-  // ...
+  const generateSchedule = async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const requestBody = {
+      workers,
+      shifts,
+      month: months.indexOf(month) + 1,
+      fullTimeHours: Number(fullTimeHours),
+    };
+
+    const response = await fetch(`${apiUrl}/create-schedule`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      alert("Failed to generate schedule");
+      return;
+    }
+
+    const data = await response.json();
+    // handle data if needed
+  };
 
   return (
     <div className="flex">
