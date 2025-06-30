@@ -15,14 +15,14 @@
               "perDay": 1,
               "restDays": 3,
               "continuousDays": 3,
-              "priority": "High"
+              "priority": "high"
             },
             {
               "daysApplied": [1, 2, 3, 4, 5, 6, 7],
               "perDay": 1,
               "restDays": 2,
               "continuousDays": 2,
-              "priority": "High"
+              "priority": "high"
             }
           ]
         }
@@ -44,14 +44,14 @@
               "perDay": 1,
               "restDays": 3,
               "continuousDays": 3,
-              "priority": "High"
+              "priority": "high"
             },
             {
               "daysApplied": [1, 2, 3, 4, 5, 6, 7],
               "perDay": 1,
               "restDays": 2,
               "continuousDays": 2,
-              "priority": "High"
+              "priority": "high"
             }
           ]
         }
