@@ -1,5 +1,13 @@
-import DashboardPage from "@/pages/dashboard-page"
+// web-app/app/page.tsx
+"use client";
 
-export default function Home() {
-  return <DashboardPage />
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export default function RootRedirect() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/login");
+  }, [router]);
+  return null;
 }
