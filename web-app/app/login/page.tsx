@@ -15,8 +15,7 @@ export default function LoginPage() {
         <CardContent className="space-y-4">
           <Button
             onClick={() => {
-              window.location.href = "/api/auth/logout";
-              window.location.href = "/api/auth/login?prompt=login";
+              window.location.href = "/auth/login";
             }}
           >
             Login
@@ -24,8 +23,8 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter>
           <p className="text-sm text-gray-600">
-            Don’t have an account?{" "}
-            <Link href="/api/auth/login" className="text-purple-600 hover:underline">
+            Don't have an account?{" "}
+            <Link href="/auth/login" className="text-purple-600 hover:underline">
               Sign up
             </Link>
           </p>
