@@ -10,6 +10,7 @@ import com.graafik.schedule.GenerateSchedule;
 
 
 public class ScheduleService {
+    private UserRepository userRepository;
     public Schedule Generate(ScheduleRequest scheduleRequest) {
         for (Shift shift : scheduleRequest.getShifts()) {
             System.out.println(shift.toString());            
@@ -21,7 +22,7 @@ public class ScheduleService {
         List<Schedule> schedules = GenerateSchedule.generateSchedule(scheduleRequest);
         for (Schedule schedule : schedules) {
             System.out.println(schedule.toString());
-
+            userRepository.save(schedule)
         }
         System.out.println("VALMIS");
         if (schedules.size() > 0) return schedules.get(0);
