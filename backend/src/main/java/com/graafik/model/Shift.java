@@ -1,10 +1,13 @@
 package com.graafik.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Shift {
+
+    public int id;
 
     @JsonProperty("type")
     private String type;
@@ -18,6 +21,11 @@ public class Shift {
     public Shift() {}
 
     // Getters
+
+    public int getId() {
+        return id;
+    }
+
     public String getType() {
         return type;
     }

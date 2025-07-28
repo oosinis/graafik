@@ -10,7 +10,7 @@ public class WorkerDto {
     @JsonProperty("name")
     private String name;
     @JsonProperty("assignedShifts")
-    private List<Shift> assignedShifts;
+    private List<Integer> assignedShifts;
     @JsonProperty("workLoad")
     private float workLoad;
     @JsonProperty("desiredVacationDays")
@@ -32,11 +32,11 @@ public class WorkerDto {
         this.name = name;
     }
 
-    public List<Shift> getAssignedShifts() {
+    public List<Integer> getAssignedShifts() {
         return assignedShifts;
     }
 
-    public void setAssignedShifts(List<Shift> assignedShifts) {
+    public void setAssignedShifts(List<Integer> assignedShifts) {
         this.assignedShifts = assignedShifts;
     }
 

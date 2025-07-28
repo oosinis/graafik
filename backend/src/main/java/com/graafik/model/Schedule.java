@@ -4,16 +4,19 @@ import java.util.List;
 import java.util.Map;
 
 public class Schedule {
+    private int id;
     private int month;
     private int year;
     private List<DaySchedule> daySchedules;
     private int score;
     private Map<WorkerDto, Integer> workerHours;
 
-    // No-args constructor
     public Schedule() {}
 
-    // Getters
+    public int getId() {
+        return id;
+    }
+
     public int getMonth() {
         return month;
     }
@@ -30,7 +33,6 @@ public class Schedule {
         return daySchedules;
     }
 
-    // Setters
     public void setMonth(int month) {
         this.month = month;
     }
