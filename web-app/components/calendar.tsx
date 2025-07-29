@@ -10,7 +10,7 @@ const months = [
     "July", "August", "September", "October", "November", "December",
   ]
 
-  export function Calendar() {
+  export function Calendar({ scheduleMarkings }) {
     const today = new Date()
     const [currentDate, setCurrentDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
   
@@ -70,14 +70,22 @@ const months = [
           ))}
         </div>
   
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-2 p-auto">
           {calendarDays.map((day, index) => (
             <div
-              key={index}
-              className={`h-14 flex items-center justify-center rounded border ${day ? "bg-white" : "bg-transparent"}`}
-            >
-              {day && <span>{day}</span>}
-            </div>
+            key={index}
+            className={`h-24 flex flex-col items-center justify-start p-1 rounded border text-sm ${day ? "bg-white" : "bg-transparent"}`}
+          >
+            {day && <span className="mb-1 font-medium">{day}</span>}
+            <select className="w-full px-1 py-1 text-xs rounded border">
+              <option value=""></option>
+              {scheduleMarkings.map((marking) => (
+                <option key={marking.name} value={marking.name}>
+                  {marking.name}
+                </option>
+              ))}
+            </select>
+          </div>          
           ))}
         </div>
       </div>

@@ -46,6 +46,11 @@ export function MultiStepPlanner() {
     { id: "3", name: "Õhtune", active: false },
   ]
 
+  const timeOffTypes = [
+    { id: "1", name: "Sick day"},
+    { id: "2", name: "Day off"}
+  ]
+
   const rules = [
     { id: "1", name: "Tööpäevadel", active: true },
     { id: "2", name: "Reedeti", active: false },
@@ -503,7 +508,9 @@ export function MultiStepPlanner() {
                     </div>
                     <div>
                     <h2 className="text-m font-bold">Schedule requests</h2>
-                      <Calendar></Calendar>
+                      <Calendar 
+                      scheduleMarkings = {shifts.concat(timeOffTypes)}
+                      ></Calendar>
                     </div>
                     </div>
                   )}
