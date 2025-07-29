@@ -1,4 +1,4 @@
-package com.backend.graafik.entity;
+package com.graafik.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
