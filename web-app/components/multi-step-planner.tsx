@@ -19,6 +19,7 @@ export function MultiStepPlanner() {
   const [activeShift, setActiveShift] = useState<string>("Hommikune")
   const [activeRule, setActiveRule] = useState<string>("Tööpäevadel")
   const router = useRouter()
+  const [openStates, setOpenStates] = useState<Record<string, boolean>>({})
 
   const months = [
     "January",
@@ -119,6 +120,13 @@ export function MultiStepPlanner() {
     const data = await response.json();
     // handle data if needed
   };
+
+  const toggleWorker = (id: string) => {
+    setOpenStates((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }))
+  }  
 
   return (
     <div className="flex">
@@ -470,21 +478,22 @@ export function MultiStepPlanner() {
 
                 {workers.map((worker) => (
                   <Card key={worker.id} className="p-6 mb-4 bg-gray-50">
-                    <div className="flex justify-between mb-4">
+                    <div className="flex justify-between mb-4" onClick={() => toggleWorker(worker.id)}>
                     <h3 className="text-lg font-medium">{worker.name}</h3>
-                    {/* Make this the collaps button */}
-                    {/* <Button variant="ghost" size="icon">
-                      <X className="h-5 w-5" />
-                    </Button> */}
+                    <span>{openStates[worker.id] ? "-" : "+"}</span>
                   </div>
-                  <div>
-                  <h2 className="text-m font-bold">Select vacation</h2>
-                      <DateRangePicker></DateRangePicker>
-                  </div>
-                  <div>
-                  <h2 className="text-m font-bold">Schedule requests</h2>
-                    <Calendar></Calendar>
-                  </div>
+                  {openStates[worker.id] && (
+                    <div>
+                      <div>
+                    <h2 className="text-m font-bold">Select vacation</h2>
+                        <DateRangePicker></DateRangePicker>
+                    </div>
+                    <div>
+                    <h2 className="text-m font-bold">Schedule requests</h2>
+                      <Calendar></Calendar>
+                    </div>
+                    </div>
+                  )}
                   </Card>
                 ))}
             </Card>
