@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Pencil, Plus, X } from "lucide-react"
 import { useRouter } from "next/navigation"
-
-type Step = "month-hours" | "shifts-rules" | "assign-employees"
+import { Calendar } from "@/components/calendar"
+import { DateRangePicker } from "@/components/date-range-picker"
+ 
+type Step = "month-hours" | "shifts-rules" | "assign-employees" | "employee-details"
 
 export function MultiStepPlanner() {
   const [currentStep, setCurrentStep] = useState<Step>("month-hours")
@@ -73,6 +75,8 @@ export function MultiStepPlanner() {
       setCurrentStep("shifts-rules")
     } else if (currentStep === "shifts-rules") {
       setCurrentStep("assign-employees")
+    } else if(currentStep === "assign-employees"){
+      setCurrentStep("employee-details")
     } else {
       await generateSchedule();
       const monthIndex = months.indexOf(month) + 1
@@ -85,6 +89,8 @@ export function MultiStepPlanner() {
       setCurrentStep("month-hours")
     } else if (currentStep === "assign-employees") {
       setCurrentStep("shifts-rules")
+    } else if (currentStep === "employee-details"){
+      setCurrentStep("assign-employees")
     }
   }
 
@@ -141,6 +147,15 @@ export function MultiStepPlanner() {
             <span className={currentStep === "assign-employees" ? "text-purple-600" : "text-gray-500"}>
               Assign Employees
             </span>
+          </div>
+          <div className="w-0.5 h-5 bg-gray-200 ml-1.5"></div>
+          <div className="flex items-center space-x-3 py-2">
+            <div
+              className={`w-3 h-3 rounded-full ${currentStep === "employee-details" ? "bg-purple-600" : "bg-gray-300"}`}
+            ></div> 
+             <span className={currentStep === "employee-details" ? "text-purple-600" : "text-gray-500"}>
+              Employee Details
+            </span> 
           </div>
         </div>
       </div>
@@ -399,7 +414,7 @@ export function MultiStepPlanner() {
                     Back
                   </Button>
                   <Button onClick={handleContinue} className="bg-purple-600 hover:bg-purple-700">
-                    Generate Schedule
+                    Continue
                   </Button>
                 </div>
               </div>
@@ -434,6 +449,49 @@ export function MultiStepPlanner() {
             </Card>
           </div>
         )}
+
+        {/* Employee Details */}
+        {currentStep === "employee-details" && (
+          <div>
+            <div className="bg-gray-100 rounded-lg p-6 mb-6">
+              <h2 className="text-xl text-gray-500 font-medium mb-2">Employee Details</h2>
+              <p className="text-gray-500">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laboriosam at delectus incidunt doloribus. Mollitia optio ut modi inventore! Corporis quam, consequuntur alias velit aut mollitia totam error dignissimos repellendus? Error.</p>
+            </div>
+
+            <Card className="p-6">
+                <div className="flex space-x-2">
+                  <Button variant="outline" onClick={handleBack}>
+                    Back
+                  </Button>
+                  <Button onClick={handleContinue} className="bg-purple-600 hover:bg-purple-700">
+                    Generate schedule
+                  </Button>
+                </div>
+
+                {workers.map((worker) => (
+                  <Card key={worker.id} className="p-6 mb-4 bg-gray-50">
+                    <div className="flex justify-between mb-4">
+                    <h3 className="text-lg font-medium">{worker.name}</h3>
+                    {/* Make this the collaps button */}
+                    {/* <Button variant="ghost" size="icon">
+                      <X className="h-5 w-5" />
+                    </Button> */}
+                  </div>
+                  <div>
+                  <h2 className="text-m font-bold">Select vacation</h2>
+                      <DateRangePicker></DateRangePicker>
+                  </div>
+                  <div>
+                  <h2 className="text-m font-bold">Schedule requests</h2>
+                    <Calendar></Calendar>
+                  </div>
+                  </Card>
+                ))}
+            </Card>
+          </div>
+        )
+
+        }
       </div>
     </div>
   )
