@@ -8,6 +8,8 @@ import { Pencil, Plus, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Calendar } from "@/components/calendar"
 import { DateRangePicker } from "@/components/date-range-picker"
+import { addDays } from "date-fns"
+
  
 type Step = "month-hours" | "shifts-rules" | "assign-employees" | "employee-details"
 
@@ -50,10 +52,11 @@ export function MultiStepPlanner() {
     { id: "3", name: "Puhkepäevadel", active: false },
   ]
 
-  const workers = [
+  const [workers, setWorkers] = useState([
     {
       id: "1",
       name: "John Doe",
+      vacationRange: { startDate: null, endDate: null },
       shifts: [
         { type: "Hommikune vahetus", active: true },
         { type: "Päevane vahetus", active: true },
@@ -63,13 +66,14 @@ export function MultiStepPlanner() {
     {
       id: "2",
       name: "Jane Smith",
+      vacationRange: { startDate: null, endDate: null },
       shifts: [
         { type: "Hommikune vahetus", active: false },
         { type: "Päevane vahetus", active: true },
         { type: "Õhtune vahetus", active: false },
       ],
     },
-  ]
+  ])
 
   const handleContinue = async () => {
     if (currentStep === "month-hours") {
@@ -116,9 +120,6 @@ export function MultiStepPlanner() {
       alert("Failed to generate schedule");
       return;
     }
-
-    const data = await response.json();
-    // handle data if needed
   };
 
   const toggleWorker = (id: string) => {
@@ -486,7 +487,19 @@ export function MultiStepPlanner() {
                     <div>
                       <div>
                     <h2 className="text-m font-bold">Select vacation</h2>
-                        <DateRangePicker></DateRangePicker>
+                    <DateRangePicker 
+                      range={{
+                              startDate: worker.vacationRange.startDate || new Date(),
+                              endDate: worker.vacationRange.endDate || addDays(new Date(), 7),
+                            }} 
+                        onChange={(newRange) => {
+                          setWorkers((prev) =>
+                            prev.map((w) =>
+                              w.id === worker.id ? { ...w, vacationRange: newRange } : w
+                            )
+                          )
+                        }}
+                        />
                     </div>
                     <div>
                     <h2 className="text-m font-bold">Schedule requests</h2>
