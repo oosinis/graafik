@@ -1,3 +1,5 @@
+package com.graafik.services;
+
 import java.util.List;
 
 import com.graafik.model.Rule;
@@ -25,7 +27,7 @@ public class ScheduleService {
             userRepository.save(schedule);
         }
         System.out.println("VALMIS");
-        if (schedules.size() > 0) return schedules.get(0);
+        if (!schedules.isEmpty()) return schedules.get(0);
         else return new Schedule();
     }
 }

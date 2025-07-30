@@ -1,23 +1,27 @@
 package com.graafik.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-public class Shift {
 
-    @JsonProperty("type")
+@Entity
+@Table(name = "shifts")
+public class Shift extends BaseEntity {
+
+    @Column(nullable = false)
     private String type;
 
-    @JsonProperty("duration")
+    @Column(nullable = false)
     private int duration;
 
-    @JsonProperty("rules")
-    List<Rule> rules;
+    @ElementCollection
+    @CollectionTable(name = "shift_rules", joinColumns = @JoinColumn(name = "shift_id"))
+    private List<Rule> rules;
 
     public Shift() {}
 
-    // Getters
+    // Getter
     public String getType() {
         return type;
     }

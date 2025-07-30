@@ -2,10 +2,21 @@ package com.graafik.model;
 
 import java.util.List;
 
-public class DaySchedule {
+import jakarta.persistence.*;
+
+
+@Entity
+@Table(name = "day_schedules")
+public class DaySchedule extends BaseEntity {
+    
+    @Column(nullable = false)
     private int dayOfMonth;
-    private List<ShiftAssignment> assignments;
+
     private int score;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "day_schedule_id")
+    private List<ShiftAssignment> assignments;
 
     // No-args constructor
     public DaySchedule() {}
@@ -46,7 +57,7 @@ public class DaySchedule {
         this.score = this.score + addition;
     }
 
-    public static ShiftAssignment containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {
+    public static ShiftAssignment containsWorker(DaySchedule ShiftAssignments, Worker worker) {
         for (ShiftAssignment shiftAssignment : ShiftAssignments.getAssignments()) {
             if (shiftAssignment.getWorker().equals(worker)) {
                 return shiftAssignment;

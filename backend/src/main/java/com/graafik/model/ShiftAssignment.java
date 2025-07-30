@@ -1,12 +1,21 @@
 package com.graafik.model;
 
-public class ShiftAssignment {
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "shift_assignments")
+public class ShiftAssignment extends BaseEntity {
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "shift_id", nullable = false)
     private Shift shift;
-    private WorkerDto worker;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "worker_id", nullable = false)
+    private Worker worker;
 
 
-    // Parameterized constructor
-    public ShiftAssignment(Shift shift, WorkerDto worker) {
+    public ShiftAssignment(Shift shift, Worker worker) {
         this.shift = shift;
         this.worker = worker;
     }
@@ -16,7 +25,7 @@ public class ShiftAssignment {
         return shift;
     }
 
-    public WorkerDto getWorker() {
+    public Worker getWorker() {
         return worker;
     }
 
@@ -25,7 +34,7 @@ public class ShiftAssignment {
         this.shift = shift;
     }
 
-    public void setWorker(WorkerDto worker) {
+    public void setWorker(Worker worker) {
         this.worker = worker;
     }
     @Override

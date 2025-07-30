@@ -2,15 +2,36 @@ package com.graafik.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
-public class Schedule {
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+
+@Entity
+@Table(name = "schedules")
+public class Schedule extends BaseEntity {
     private int month;
     private int year;
-    private List<DaySchedule> daySchedules;
     private int score;
-    private Map<WorkerDto, Integer> workerHours;
 
-    // No-args constructor
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "schedule_id")
+    private List<DaySchedule> daySchedules;
+
+    @ElementCollection
+    @CollectionTable(name = "schedule_worker_hours", joinColumns = @JoinColumn(name = "schedule_id"))
+    @MapKeyColumn(name = "worker_id")
+    @Column(name = "hours")
+    private Map<UUID, Integer> workerHours;
+
     public Schedule() {}
 
     // Getters
@@ -51,16 +72,16 @@ public class Schedule {
         this.daySchedules = daySchedules;
     }
 
-    public Map<WorkerDto, Integer> getWorkerHours() {
+    public Map<UUID, Integer> getWorkerHours() {
         return workerHours;
     }
 
-    public void setWorkerHours(Map<WorkerDto, Integer> workerHours) {
+    public void setWorkerHours(Map<UUID, Integer> workerHours) {
         this.workerHours = workerHours;
     }
 
-    public void changeWorkerHours(int x, WorkerDto worker) {
-        this.workerHours.put(worker, this.workerHours.get(worker) + x);
+    public void changeWorkerHours(int x, UUID workerId) {
+        this.workerHours.put(workerId, this.workerHours.get(workerId) + x);
     }
 
     @Override

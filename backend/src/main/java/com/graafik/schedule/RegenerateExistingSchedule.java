@@ -10,7 +10,7 @@ import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
-import com.graafik.model.WorkerDto;
+import com.graafik.model.Worker;
 
 public class RegenerateExistingSchedule {
 
@@ -26,7 +26,7 @@ public class RegenerateExistingSchedule {
 
             ScheduleRequest scheduleRequest = scheduleRequests.get(0);
 
-            WorkerDto workerDto = scheduleRequest.getWorkers().get(0);
+            Worker workerDto = scheduleRequest.getWorkers().get(0);
 
             List<Schedule> schedules = regenerateSchedule(scheduleRequest, schedule, 0, 0, workerDto);
         } catch (Exception e) {
@@ -43,7 +43,7 @@ public class RegenerateExistingSchedule {
      * @param missingWorker worker to be removed
      * @return list of new schedules with new scores
      */
-    public static List<Schedule> regenerateSchedule(ScheduleRequest scheduleRequest, Schedule currentSchedule, int startDate, int endDate, WorkerDto missingWorker) {
+    public static List<Schedule> regenerateSchedule(ScheduleRequest scheduleRequest, Schedule currentSchedule, int startDate, int endDate, Worker missingWorker) {
 
         List<Shift> missingShifts = new ArrayList<>();
         for (int date = startDate - 1; date < endDate; date++) {
@@ -56,7 +56,7 @@ public class RegenerateExistingSchedule {
             if (toRemove != null) {
                 missingShifts.add(toRemove.getShift());
                 assignments.remove(toRemove);
-                currentSchedule.changeWorkerHours(toRemove.getShift().getDuration(), missingWorker);
+                currentSchedule.changeWorkerHours(toRemove.getShift().getDuration(), missingWorker.getId());
             } else missingShifts.add(null);
         }
 
@@ -81,12 +81,12 @@ public class RegenerateExistingSchedule {
      * @param missingShift mising shift from the date
      * @return new schedules wth the missing shift added to current date (different worker for each schedule in list)
      */
-    public static List<Schedule> generateNewScheduleForDate(ScheduleRequest scheduleRequest, List<Schedule> partialSchedules, int date, WorkerDto missingWorker, Shift missingShift) {
+    public static List<Schedule> generateNewScheduleForDate(ScheduleRequest scheduleRequest, List<Schedule> partialSchedules, int date, Worker missingWorker, Shift missingShift) {
     
         List<Schedule> newPartialSchedules = new ArrayList<>();
         for (Schedule currentSchedule : partialSchedules) {
 
-            for (WorkerDto worker : scheduleRequest.getWorkers()) {
+            for (Worker worker : scheduleRequest.getWorkers()) {
 
                 if (worker == missingWorker || worker.getVacationDays().contains(date + 1) || worker.getSickDays().contains(date + 1)) continue;
                 if (!RuleValidator.initialValidator(HelperMethods.getRequestedWorkDays(scheduleRequest, date), missingShift, worker)) continue;
@@ -95,7 +95,7 @@ public class RegenerateExistingSchedule {
                 
                 clonedSchedule.setScore(RuleValidator.singleAssignmentValidator(scheduleRequest, clonedSchedule, new ShiftAssignment(missingShift, worker), date));
 
-                clonedSchedule.changeWorkerHours(- missingShift.getDuration(), worker);
+                clonedSchedule.changeWorkerHours(- missingShift.getDuration(), worker.getId());
 
                 clonedSchedule.getDaySchedules().get(date).getAssignments().add(new ShiftAssignment(missingShift, worker));
 

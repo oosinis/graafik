@@ -2,27 +2,21 @@ package com.graafik.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class ScheduleRequest extends BaseEntity {
 
-public class ScheduleRequest {
+    private List<Worker> workers;
 
-    @JsonProperty("workers")
-    private List<WorkerDto> workers;
-
-    @JsonProperty("shifts")
     private List<Shift> shifts;
 
-    @JsonProperty("month")
     private int month;
 
-    @JsonProperty("fullTimeHours")
     private int fullTimeHours;
 
     // Constructor with all fields
     public ScheduleRequest() {}
 
     // Getters
-    public List<WorkerDto> getWorkers() {
+    public List<Worker> getWorkers() {
         return workers;
     }
 
@@ -39,7 +33,7 @@ public class ScheduleRequest {
     }
 
     // Setters
-    public void setWorkers(List<WorkerDto> workers) {
+    public void setWorkers(List<Worker> workers) {
         this.workers = workers;
     }
 

@@ -5,6 +5,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graafik.model.DaySchedule;
@@ -12,7 +13,7 @@ import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
-import com.graafik.model.WorkerDto;
+import com.graafik.model.Worker;
 
 public class GenerateSchedule {
     public static void main(String[] args) {
@@ -168,7 +169,7 @@ public class GenerateSchedule {
         List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
 
         List<Shift> currentDayShifts = HelperMethods.getShiftsForDay(scheduleRequest, date);
-        Map<Shift, List<WorkerDto>> currentRequestedWorkDays = HelperMethods.getRequestedWorkDays(scheduleRequest, date);
+        Map<UUID, List<Worker>> currentRequestedWorkDays = HelperMethods.getRequestedWorkDays(scheduleRequest, date);
 
         HelperMethods.permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations, date);
         return allDaySchedulePermutations;

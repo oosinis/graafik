@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Rule;
@@ -13,7 +15,7 @@ import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
-import com.graafik.model.WorkerDto;
+import com.graafik.model.Worker;
 
 
 public class HelperMethods {
@@ -36,12 +38,12 @@ public class HelperMethods {
     }   
 
     // TODO: kontrolli, kas date mis on workeri listis algab nullist
-    public static Map<Shift, List<WorkerDto>> getRequestedWorkDays(ScheduleRequest scheduleRequest, int date) {
-        Map<Shift, List<WorkerDto>> requestedWorkDays = new HashMap<>();
-        for (WorkerDto worker : scheduleRequest.getWorkers()) {
-            for (Map.Entry<Integer, Shift> entry : worker.getRequestedWorkDays().entrySet()) {
+    public static Map<UUID, List<Worker>> getRequestedWorkDays(ScheduleRequest scheduleRequest, int date) {
+        Map<UUID, List<Worker>> requestedWorkDays = new HashMap<>();
+        for (Worker worker : scheduleRequest.getWorkers()) {
+            for (Map.Entry<Integer, UUID> entry : worker.getRequestedWorkDays().entrySet()) {
                 if (entry.getKey() != date) continue;
-                if (requestedWorkDays.containsKey(entry.getValue()))requestedWorkDays.get(entry.getValue()).add(worker);
+                if (requestedWorkDays.containsKey(entry.getValue())) requestedWorkDays.get(entry.getValue()).add(worker);
                 else requestedWorkDays.put(entry.getValue(), new ArrayList<>(Arrays.asList(worker)));
             }
         }
@@ -50,20 +52,20 @@ public class HelperMethods {
 
     public static void initWorkerHours(Schedule currentSchedule, ScheduleRequest scheduleRequest) {
         currentSchedule.setWorkerHours(new HashMap<>());
-        for (WorkerDto worker : scheduleRequest.getWorkers()) {
-            currentSchedule.getWorkerHours().put(worker, (int) (worker.getWorkLoad() * scheduleRequest.getFullTimeHours()));
+        for (Worker worker : scheduleRequest.getWorkers()) {
+            currentSchedule.getWorkerHours().put(worker.getId(), (int) (worker.getWorkLoad() * scheduleRequest.getFullTimeHours()));
         }
     }
 
     public static void addToWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
-            currentSchedule.changeWorkerHours(shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker());
+            currentSchedule.changeWorkerHours(shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker().getId());
         }
     }
 
     public static void substractFromWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
-            currentSchedule.changeWorkerHours(-shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker());
+            currentSchedule.changeWorkerHours(-shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker().getId());
         }
     }
 
@@ -106,7 +108,7 @@ public class HelperMethods {
      * @param allDaySchedulePermutations
      * @param date
      */
-    public static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, Map<Shift, List<WorkerDto>> currentRequestedWorkDays, DaySchedule currentDaySchedule, List<DaySchedule> allDaySchedulePermutations, int date) {
+    public static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, Map<UUID, List<Worker>> currentRequestedWorkDays, DaySchedule currentDaySchedule, List<DaySchedule> allDaySchedulePermutations, int date) {
 
         // if all shifts have a worker assigned for them, return
         if (currentDaySchedule.getAssignments().size() == currentDayShifts.size()) {
@@ -115,7 +117,7 @@ public class HelperMethods {
             return;
         }
 
-        for (WorkerDto worker : scheduleRequest.getWorkers()) {
+        for (Worker worker : scheduleRequest.getWorkers()) {
 
             // skip vacation days
             // +1 bc the dates start from 1
