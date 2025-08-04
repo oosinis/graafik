@@ -7,13 +7,7 @@ import { Card } from "@/components/ui/card"
 import { Pencil, Plus, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-type Step = "month-hours" | "shifts-rules" | "assign-employees"
-
 export function MultiStepPlanner() {
-  const [currentStep, setCurrentStep] = useState<Step>("month-hours")
-  const [year, setYear] = useState<string>("2025")
-  const [month, setMonth] = useState<string>("March")
-  const [fullTimeHours, setFullTimeHours] = useState<string>("170")
   const [activeShift, setActiveShift] = useState<string>("Hommikune")
   const [activeRule, setActiveRule] = useState<string>("Tööpäevadel")
   const router = useRouter()
@@ -32,9 +26,6 @@ export function MultiStepPlanner() {
     "November",
     "December",
   ]
-
-  const years = ["2023", "2024", "2025", "2026"]
-
   const shifts = [
     { id: "1", name: "Päevane", active: false },
     { id: "2", name: "Hommikune", active: true },
@@ -68,25 +59,7 @@ export function MultiStepPlanner() {
     },
   ]
 
-  const handleContinue = async () => {
-    if (currentStep === "month-hours") {
-      setCurrentStep("shifts-rules")
-    } else if (currentStep === "shifts-rules") {
-      setCurrentStep("assign-employees")
-    } else {
-      await generateSchedule();
-      const monthIndex = months.indexOf(month) + 1
-      router.push(`/schedule?year=${year}&month=${monthIndex}`)
-    }
-  }
 
-  const handleBack = () => {
-    if (currentStep === "shifts-rules") {
-      setCurrentStep("month-hours")
-    } else if (currentStep === "assign-employees") {
-      setCurrentStep("shifts-rules")
-    }
-  }
 
   const generateSchedule = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -110,121 +83,13 @@ export function MultiStepPlanner() {
       return;
     }
 
-    const data = await response.json();
-    // handle data if needed
   };
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white rounded-lg p-6 mr-6">
-        <h2 className="text-lg font-medium mb-6">Worker Shift Planner</h2>
-        <div className="flex flex-col space-y-1">
-          <div className="flex items-center space-x-3 py-2">
-            <div
-              className={`w-3 h-3 rounded-full ${currentStep === "month-hours" ? "bg-purple-600" : "bg-gray-300"}`}
-            ></div>
-            <span className={currentStep === "month-hours" ? "text-purple-600" : "text-gray-500"}>Month & Hours</span>
-          </div>
-          <div className="w-0.5 h-5 bg-gray-200 ml-1.5"></div>
-          <div className="flex items-center space-x-3 py-2">
-            <div
-              className={`w-3 h-3 rounded-full ${currentStep === "shifts-rules" ? "bg-purple-600" : "bg-gray-300"}`}
-            ></div>
-            <span className={currentStep === "shifts-rules" ? "text-purple-600" : "text-gray-500"}>Shifts & Rules</span>
-          </div>
-          <div className="w-0.5 h-5 bg-gray-200 ml-1.5"></div>
-          <div className="flex items-center space-x-3 py-2">
-            <div
-              className={`w-3 h-3 rounded-full ${currentStep === "assign-employees" ? "bg-purple-600" : "bg-gray-300"}`}
-            ></div>
-            <span className={currentStep === "assign-employees" ? "text-purple-600" : "text-gray-500"}>
-              Assign Employees
-            </span>
-          </div>
-        </div>
-      </div>
 
       {/* Main content */}
       <div className="flex-1">
-        {/* Month & Hours Step */}
-        {currentStep === "month-hours" && (
-          <div>
-            <div className="bg-gray-100 rounded-lg p-6 mb-6">
-              <h2 className="text-xl text-gray-500 font-medium mb-2">Month & Hours</h2>
-              <p className="text-gray-500">Choose the year and month, add the full-time working hours of the month</p>
-            </div>
-
-            <Card className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold">Month & Hours</h2>
-                  <button className="text-purple-600 mt-1">Retrieve data from last month</button>
-                </div>
-                <Button onClick={handleContinue} className="bg-purple-600 hover:bg-purple-700">
-                  Continue
-                </Button>
-              </div>
-
-              <p className="text-gray-500 mb-4">
-                Choose the year and month, add the full-time working hours of the month
-              </p>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Select month</label>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <select
-                      className="w-full p-2 border rounded-md"
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                    >
-                      {years.map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <select
-                      className="w-full p-2 border rounded-md"
-                      value={month}
-                      onChange={(e) => setMonth(e.target.value)}
-                    >
-                      {months.map((m) => (
-                        <option key={m} value={m}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Full-time monthly hours</label>
-                <Input
-                  type="number"
-                  value={fullTimeHours}
-                  onChange={(e) => setFullTimeHours(e.target.value)}
-                  className="max-w-xs"
-                />
-              </div>
-            </Card>
-
-            <div className="mt-6 bg-gray-100 rounded-lg p-6">
-              <h2 className="text-xl text-gray-500 font-medium mb-2">Shifts & Rules</h2>
-              <p className="text-gray-500">Create shifts and rules for specific months, assign shifts to employees.</p>
-            </div>
-
-            <div className="mt-6 bg-gray-100 rounded-lg p-6">
-              <h2 className="text-xl text-gray-500 font-medium mb-2">Assign Employees</h2>
-              <p className="text-gray-500">Assign employees to shifts</p>
-            </div>
-          </div>
-        )}
-
         {/* Shifts & Rules Step */}
         {currentStep === "shifts-rules" && (
           <div>
