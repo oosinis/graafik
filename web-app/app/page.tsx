@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0";
 
-const NAMESPACE = "https://grafikapp.dev/claims"; // Make sure this matches your Auth0 custom claim
+const NAMESPACE = "https://grafikapp.dev/claims";
 
 export default function RootRedirect() {
   const router = useRouter();
@@ -18,13 +18,15 @@ export default function RootRedirect() {
     console.log("Roles:", user?.[`${NAMESPACE}/roles`]);
 
     if (user) {
-      // Check if user has required role (Admin or Manager)
+      router.replace("/dashboard");
+
+      /* // Check if user has required role (Admin or Manager)
       const roles = user[`${NAMESPACE}/roles`];
       const hasRequiredRole = roles?.includes("Admin") || roles?.includes("Manager");
       
       if (hasRequiredRole) {
         router.replace("/dashboard");
-      } 
+      }  */
       
     } else {
       router.replace("/login");

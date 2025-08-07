@@ -4,7 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import React from "react"
 import { ConditionalSidebar } from "@/components/ConditionalSidebar"
-import { UserProvider } from "@auth0/nextjs-auth0/client"
+import { Auth0Provider } from "@auth0/nextjs-auth0"
 
 
 const inter = Inter({ subsets: ["latin"] })
