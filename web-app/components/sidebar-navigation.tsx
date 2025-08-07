@@ -9,7 +9,8 @@ import { useUserRoles } from '@/hooks/useUserRoles';
 
 export function SidebarNavigation() {
   const pathname = usePathname()
-  const { user, isLoading } = useUser()
+  const { user, isLoading: userLoading } = useUser()
+  const { hasAnyRole, isLoading: rolesLoading } = useUserRoles()
 
   const navItems = [
     {
@@ -44,7 +45,13 @@ export function SidebarNavigation() {
     },
   ]
 
-  if (isLoading) return null
+  // Don't render while loading or if user doesn't exist
+  if (userLoading || rolesLoading || !user) return null
+
+  // Only show sidebar if user has Admin or Manager role
+  if (!hasAnyRole(['Admin', 'Manager'])) {
+    return null
+  }
 
   return (
     <nav className="w-48 bg-gray-800 text-white p-4 h-full">
