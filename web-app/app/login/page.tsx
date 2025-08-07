@@ -1,3 +1,4 @@
+// web-app/app/login/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -14,7 +15,7 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: real auth call…
+    // … authenticate …
     router.push("/dashboard");
   };
 
@@ -57,7 +58,10 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
-            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700">
+            <Button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700"
+            >
               Continue
             </Button>
             <p className="text-center text-sm text-gray-600">

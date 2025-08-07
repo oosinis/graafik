@@ -1,68 +1,58 @@
-"use client"
+// web‑app/components/sidebar‑navigation.tsx
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { LayoutDashboard, PenTool, Users, Clock, Calendar } from "lucide-react"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import {
+  LayoutDashboard,
+  Calendar,
+  ListChecks,
+  Users,
+} from "lucide-react";
 
-export function SidebarNavigation() {
-  const pathname = usePathname()
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}
 
-  const navItems = [
-    {
-      name: "Töölaud",
-      href: "/",
-      icon: LayoutDashboard,
-    },
-    {
-      name: "Planeerija",
-      href: "/generator",
-      icon: PenTool,
-    },
-    {
-      name: "Töötajad",
-      href: "/workers",
-      icon: Users,
-    },
-    {
-      name: "Vahetused",
-      href: "/shifts",
-      icon: Clock,
-    },
-    {
-      name: "Graafiku Ülevaade",
-      href: "/schedule",
-      icon: Calendar,
-    },
-    {
-      name: "Graafikute Ajalugu",
-      href: "/schedule-history",
-      icon: Calendar,
-    },
-  ]
+const navItems: NavItem[] = [
+  { label: "Dashboard",  href: "/dashboard", icon: LayoutDashboard },
+  { label: "Schedule",   href: "/schedule",  icon: Calendar         },
+  { label: "Shifts",     href: "/shifts",    icon: ListChecks       },
+  { label: "Employees",  href: "/employees", icon: Users            },
+];
+
+export default function SidebarNavigation() {
+  const pathname = usePathname() || "";
 
   return (
-    <nav className="w-48 bg-gray-800 text-white p-4 h-full">
-      <h1 className="text-xl font-bold mb-6">Graafiku Planeerija</h1>
-      <ul className="space-y-2">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href
+    <nav className="w-64 bg-white border-r">
+      <div className="h-16 flex items-center justify-center border-b">
+        <h1 className="text-xl font-bold">Graafik</h1>
+      </div>
+      <ul className="mt-4 space-y-1">
+        {navItems.map(({ label, href, icon: Icon }) => {
+          const isActive = pathname === href || pathname.startsWith(href + "/");
           return (
-            <li key={item.href}>
+            <li key={href}>
               <Link
-                href={item.href}
+                href={href}
                 className={cn(
-                  "flex items-center space-x-2 py-2 px-3 rounded transition-colors duration-200",
-                  isActive ? "bg-gray-700 text-white" : "hover:text-gray-300 hover:bg-gray-700",
+                  "flex items-center px-4 py-2 text-sm font-medium rounded-r-lg transition-colors",
+                  isActive
+                    ? "bg-purple-100 text-purple-700"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 )}
               >
-                <item.icon size={18} />
-                <span className="text-sm">{item.name}</span>
+                <Icon className="mr-3 h-5 w-5" />
+                {label}
               </Link>
             </li>
-          )
+          );
         })}
       </ul>
     </nav>
-  )
+  );
 }
