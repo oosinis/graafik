@@ -7,35 +7,19 @@ export async function middleware(request: NextRequest) {
   const session = await auth0.getSession(request);
   const { pathname } = request.nextUrl;
 
+  // Public paths that don't require authentication
   const publicPaths = ["/login", "/unauthorized", "/api/auth", "/"];
   if (publicPaths.some((path) => pathname.startsWith(path))) {
     return res;
   }
 
   const user = session?.user;
-  const roles: string[] = user?.["https://grafikapp.dev/claims/roles"] || [];
   const isLoggedIn = !!user;
 
+  // Only check if user is logged in, not roles
   if (!isLoggedIn) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-
-  /* const roleProtectedRoutes: { pattern: RegExp; allowedRoles: string[] }[] = [
-    { pattern: /^\/admin/, allowedRoles: ["admin"] },
-    { pattern: /^\/generator/, allowedRoles: ["planner", "admin"] },
-    { pattern: /^\/workers/, allowedRoles: ["admin"] },
-    { pattern: /^\/shifts/, allowedRoles: ["planner", "admin"] },
-    { pattern: /^\/schedule-history/, allowedRoles: ["admin"] },
-  ];
-
-  for (const route of roleProtectedRoutes) {
-    if (route.pattern.test(pathname)) {
-      const isAllowed = roles.some((role) => route.allowedRoles.includes(role));
-      if (!isAllowed) {
-        return NextResponse.redirect(new URL("/unauthorized", request.url));
-      }
-    }
-  } */
 
   return res;
 }
