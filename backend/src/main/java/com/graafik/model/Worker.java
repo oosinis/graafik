@@ -3,7 +3,7 @@ package com.graafik.model;
 import java.util.HashMap;
 import java.util.List;
 
-public class Worker extends BaseEntity {
+public class Worker {
 
     int employeeId;
     String name;

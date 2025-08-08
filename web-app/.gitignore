@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Front‑end lockfiles & modules
+node_modules/
+.next/
+pnpm-lock.yaml
+# (or yarn.lock / package-lock.json if you use npm or Yarn)

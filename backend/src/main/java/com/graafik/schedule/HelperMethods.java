@@ -22,6 +22,7 @@ public class HelperMethods {
 
         int dayOfWeekInt = LocalDate.of(2025, scheduleRequest.getMonth(), date + 1).getDayOfWeek().getValue();
 
+
         List<Shift> dayShifts = new ArrayList<>();
         for (Shift shift : scheduleRequest.getShifts()) {
             for (Rule rule : shift.getRules()) {
@@ -95,46 +96,6 @@ public class HelperMethods {
         }
 
         return cloned;
-    }
-
-    /**
-     * 
-     * @param scheduleRequest
-     * @param currentDayShifts
-     * @param currentRequestedWorkDays
-     * @param currentDaySchedule
-     * @param allDaySchedulePermutations
-     * @param date
-     */
-    public static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, Map<Shift, List<WorkerDto>> currentRequestedWorkDays, DaySchedule currentDaySchedule, List<DaySchedule> allDaySchedulePermutations, int date) {
-
-        // if all shifts have a worker assigned for them, return
-        if (currentDaySchedule.getAssignments().size() == currentDayShifts.size()) {
-            DaySchedule clonedDaySchedule = HelperMethods.cloneDaySchedule(currentDaySchedule);
-            allDaySchedulePermutations.add(clonedDaySchedule);
-            return;
-        }
-
-        for (WorkerDto worker : scheduleRequest.getWorkers()) {
-
-            // skip vacation days
-            // +1 bc the dates start from 1
-            if (worker.getVacationDays().contains(date + 1)) continue;
-            if (worker.getSickDays().contains(date + 1)) continue;
-
-            Shift shift = (currentDayShifts.get(currentDaySchedule.getAssignments().size()));
-
-            if (!RuleValidator.initialValidator(currentRequestedWorkDays, shift, worker)) continue;
-
-            ShiftAssignment ShiftAssignment = new ShiftAssignment(shift, worker);
-
-            if (DaySchedule.containsWorker(currentDaySchedule, worker) == null) {
-                currentDaySchedule.getAssignments().add(ShiftAssignment);
-                permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, currentDaySchedule, allDaySchedulePermutations, date);
-                currentDaySchedule.getAssignments().removeLast();
-            }
-
-        }
     }
     
     

@@ -1,43 +1,35 @@
 "use client";
 
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+import DashboardDisplay from "@/components/dashboard-display";
 
-// Mock data for establishments
-const establishments = [
-  { id: "1", name: "Restoran Mere" },
-  { id: "2", name: "Restoran Mets" },
-  { id: "3", name: "Restoran Linn" },
-  { id: "4", name: "Restoran Järv" },
-];
+export default function DashboardRoute() {
+  const today = new Date();
 
-export default function DashboardPage() {
-  const router = useRouter();
+  // mock data
+  const upcomingShifts = [
+    { id: "1", worker: "Sander Saar",   role: "Vahetusevanem", start: "08:00", end: "14:00", color: "bg-pink-200" },
+    { id: "2", worker: "Mirjam Laane",  role: "Vahetusevanem", start: "09:00", end: "15:00", color: "bg-purple-200" },
+    // …add more…
+  ];
 
-  const handleEstablishmentClick = (id: string) => {
-    const year = new Date().getFullYear();
-    const month = new Date().getMonth() + 1;
-    router.push(`/schedule/${year}/${month}?establishment=${id}`);
-  };
+  const activeWorkers = [
+    { id: "1", name: "Sander Saar",   role: "Vahetusevanem", time: "08:00–14:00" },
+    { id: "2", name: "Mirjam Laane",  role: "Vahetusevanem", time: "09:00–15:00" },
+    // …add more…
+  ];
+
+  const notifications = [
+    { id: "1", message: "Mirjam Laane has updated her availability", time: "2h ago" },
+    { id: "2", message: "New shift assigned to Sander Saar",      time: "5h ago" },
+    // …add more…
+  ];
 
   return (
-    <div className="max-w-5xl mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Ettevõtte Nimi OÜ</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {establishments.map((establishment) => (
-          <Card
-            key={establishment.id}
-            className="hover:bg-accent cursor-pointer transition-colors"
-            onClick={() => handleEstablishmentClick(establishment.id)}
-          >
-            <CardHeader>
-              <CardTitle className="text-xl text-center">
-                {establishment.name}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-    </div>
+    <DashboardDisplay
+      date={today}
+      upcomingShifts={upcomingShifts}
+      activeWorkers={activeWorkers}
+      notifications={notifications}
+    />
   );
 }

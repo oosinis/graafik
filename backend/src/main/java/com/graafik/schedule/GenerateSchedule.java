@@ -30,25 +30,13 @@ public class GenerateSchedule {
         }
     }
 
-
-    /**
-     * 
-     * @param scheduleRequest
-     * @return
-     */
-    public static List<Schedule> generateSchedule(ScheduleRequest scheduleRequest) {
+    public static List<Schedule> generateSchedule(com.graafik.model.ScheduleRequest scheduleRequest) {
 
         List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
 
         
-        printSchedules(allPossibleSchedules);
-            
-        return allPossibleSchedules;
-
-    }
-
-    public static void printSchedules(List<Schedule> schedules) {
-        for (Schedule combination : schedules) {
+        // Print the results
+        for (Schedule combination : allPossibleSchedules) {
             System.out.println("\n NEW SCHEDULE score: " + combination.getScore());
             int x  = 1;
             for (DaySchedule day : combination.getDaySchedules()) {
@@ -68,13 +56,11 @@ public class GenerateSchedule {
 
             System.out.println("---");
         }
+            
+        return allPossibleSchedules;
+
     }
 
-    /**
-     * 
-     * @param scheduleRequest
-     * @return
-     */
     public static List<Schedule> generateAllPossibleSchedules(ScheduleRequest scheduleRequest) {
 
         // get a list of shifts for every day of the month
@@ -95,13 +81,6 @@ public class GenerateSchedule {
 
     }
 
-    /**
-     * 
-     * @param scheduleRequest
-     * @param date
-     * @param currentSchedule
-     * @param allCombinations
-     */
     private static void generateCombinationsRecursive(ScheduleRequest scheduleRequest, int date,
                                                       Schedule currentSchedule, List<Schedule> allCombinations) {
 
@@ -120,7 +99,7 @@ public class GenerateSchedule {
         // go through all the generated possible assignments for the current date
         for (DaySchedule currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
 
-            int currentScore = currentSchedule.getScore() + RuleValidator.dayAssignmentsValidator(scheduleRequest, currentSchedule, currentDayShiftAssignments);
+            int currentScore = currentSchedule.getScore() + RuleValidator.validator(scheduleRequest, currentSchedule, currentDayShiftAssignments);
             if (currentScore < -50) continue;
 
             if (currentSchedule.getDaySchedules() == null) {
@@ -158,22 +137,44 @@ public class GenerateSchedule {
         }
     }
 
-    /**
-     * 
-     * @param scheduleRequest
-     * @param date
-     * @return
-     */
     public static List<DaySchedule> getPermutations(ScheduleRequest scheduleRequest, int date) {
         List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
 
         List<Shift> currentDayShifts = HelperMethods.getShiftsForDay(scheduleRequest, date);
         Map<Shift, List<WorkerDto>> currentRequestedWorkDays = HelperMethods.getRequestedWorkDays(scheduleRequest, date);
 
-        HelperMethods.permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations, date);
+        permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations, date);
         return allDaySchedulePermutations;
     }
 
-    
+    private static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, Map<Shift, List<WorkerDto>> currentRequestedWorkDays, DaySchedule currentDaySchedule, List<DaySchedule> allDaySchedulePermutations, int date) {
+
+        // if all shifts have a worker assigned for them, return
+        if (currentDaySchedule.getAssignments().size() == currentDayShifts.size()) {
+            DaySchedule clonedDaySchedule = HelperMethods.cloneDaySchedule(currentDaySchedule);
+            allDaySchedulePermutations.add(clonedDaySchedule);
+            return;
+        }
+
+        for (WorkerDto worker : scheduleRequest.getWorkers()) {
+
+            // skip vacation days
+            // +1 bc the dates start from 1
+            if (worker.getVacationDays().contains(date + 1)) continue;
+
+            Shift shift = (currentDayShifts.get(currentDaySchedule.getAssignments().size()));
+
+            if (!RuleValidator.initialValidator(currentRequestedWorkDays, shift, worker)) continue;
+
+            ShiftAssignment ShiftAssignment = new ShiftAssignment(shift, worker);
+
+            if (DaySchedule.containsWorker(currentDaySchedule, worker) == null) {
+                currentDaySchedule.getAssignments().add(ShiftAssignment);
+                permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, currentDaySchedule, allDaySchedulePermutations, date);
+                currentDaySchedule.getAssignments().removeLast();
+            }
+
+        }
+    }
 
 }
