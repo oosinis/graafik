@@ -23,7 +23,7 @@ public class RuleValidator {
      * @param currentDayShiftAssignments new assignments to be checked now
      * @return the score of the new assignments
      */
-    public static int validator(ScheduleRequest scheduleRequest, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+    public static int dayAssignmentsValidator(ScheduleRequest scheduleRequest, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         
         currentDayShiftAssignments.setScore(0);
 
@@ -40,7 +40,7 @@ public class RuleValidator {
             // and the shift tht they were working
             Shift prevWorkShift = null;
 
-            // date of the currentsly observable day
+            // date of the currently observable day
             int newDayScheduleDate = (currentSchedule.getDaySchedules() == null) ? 0 : currentSchedule.getDaySchedules().size();
             
             checkDesiredVacationDays(worker, newDayScheduleDate, currentSchedule, currentDayShiftAssignments);
@@ -71,11 +71,14 @@ public class RuleValidator {
                     }
                     else {
                         for (Rule rule : prevWorkShift.getRules()) {
-                            if (rule.getContinuousDays() > countCont) {
+                            if (rule.getContinuousDays() == countCont) {
                                  if (rule.getRestDays() <= countRest) continue;
                                  else return -4000;
                             }
-                        } return -5000;
+                            else if (rule.getContinuousDays() < countCont) {
+                                return -5000;
+                            }
+                        } 
                     }
 
                 }
@@ -188,5 +191,124 @@ public class RuleValidator {
         if (currentRequestedWorkDays.containsKey(shift) && !currentRequestedWorkDays.get(shift).contains(worker)) return false;
         return true;
     }
+
+    /**
+     *  Validate only one shiftassignment for schedule
+     *  returns different scores for different mjor mistakes for easier testing
+     * @param scheduleRequest 
+     * @param currentSchedule
+     * @param shiftAssignment
+     * @param date
+     * @return score of this addition
+     */
+    public static int singleAssignmentValidator(ScheduleRequest scheduleRequest, Schedule currentSchedule, ShiftAssignment shiftAssignment, int date) {
+
+        Shift shift = shiftAssignment.getShift();
+        WorkerDto worker = shiftAssignment.getWorker();
+        int score = 0;
+
+        // rest days in  row
+        int countRest = 0;
+
+        // continuous days of work before previous rest
+        int countPrevWork = 0;
+        // and the shift tht they were working
+        Shift prevWorkShift = null;
+
+
+        // check worker hours
+        int newHours = currentSchedule.getWorkerHours().get(worker) - shift.getDuration();
+        if (newHours < -2) score -= newHours * 2;
+        // check desired vacation
+        if (worker.getDesiredVacationDays().contains(date)) score -= 10;
+
+        int countCont = checkContinuousNewAssignmentSingleShift(shiftAssignment, currentSchedule, date);
+
+        if (countCont <= -1) {
+            return score - 2000;
+        }
+
+        for (int i = date - 1 - countCont; i >= 0; i--) {
+
+            DaySchedule daySchedule = currentSchedule.getDaySchedules().get(i);
+            ShiftAssignment previousShiftAssignment = DaySchedule.containsWorker(daySchedule, worker);
+            
+            // if the worker has nothing asigned on the previous day
+            if (previousShiftAssignment == null) {
+                countRest++;
+                continue;
+            } 
+            else {
+                prevWorkShift = previousShiftAssignment.getShift();
+                countPrevWork = checkContinuous(previousShiftAssignment, currentSchedule, i);
+                if (countPrevWork == -1) {
+                    score -= 3000;
+                    break;
+                }
+                else {
+                    for (Rule rule : prevWorkShift.getRules()) {
+                        if (rule.getContinuousDays() == countCont) {
+                                if (rule.getRestDays() <= countRest) continue;
+                                else score -= 4000;
+                                break;
+                        } 
+                        else if (rule.getContinuousDays() < countCont) {
+                            score -= 5000;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return score;
+    }
+
+
+    // TODO make new system so all validation is through one function
+
+    /**
+     * Check continuous days and rest for only one addition
+     * @param shiftAssignment
+     * @param currentSchedule
+     * @param date
+     * @return
+     */
+    private static int checkContinuousNewAssignmentSingleShift(ShiftAssignment shiftAssignment, Schedule currentSchedule, int date) {
+        int countCont = 0;
+        List<Rule> rules = shiftAssignment.getShift().getRules();
+        WorkerDto worker = shiftAssignment.getWorker();
+
+        //TODO adjust additional score to match how much staff
+        int additionalScore = 0;
+
+        for (int i = date; i >= 0; i--) {
+            DaySchedule daySchedule = currentSchedule.getDaySchedules().get(i);
+            ShiftAssignment previousShiftAssignment = DaySchedule.containsWorker(daySchedule, worker);
+            if (previousShiftAssignment == null) {
+                currentSchedule.addToScore(additionalScore);
+                return countCont;
+            }
+
+            if (previousShiftAssignment.getShift() == shiftAssignment.getShift()) {
+                countCont++;
+                List<Rule> standingRules = new ArrayList<>();
+                for (Rule rule : rules) {
+                    if (rule.getContinuousDays() > countCont) standingRules.add(rule);
+                    if (rule.getContinuousDays() == countCont + 1) additionalScore = 2;
+                }
+
+                if (standingRules.isEmpty()) {
+                    return -1;
+                } else rules = standingRules;
+            } else {
+                currentSchedule.addToScore(additionalScore);
+                return countCont;
+            }
+        }
+        currentSchedule.addToScore(additionalScore);
+        return countCont; 
+    }
+
 
 }

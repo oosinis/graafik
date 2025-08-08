@@ -1,6 +1,3 @@
-// web‑app/app/shifts/page.tsx
-"use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
@@ -85,3 +82,14 @@ export default function ShiftsPage() {
     </div>
   );
 }
+// import { ShiftOverview } from "@/components/shift-overview"
+// import { PageHeader } from "@/components/page-header"
+
+// export default function ShiftsRoute() {
+//   return (
+//     <div className="max-w-4xl mx-auto">
+//       <PageHeader title="Vahetuste Ülevaade" />
+//       <ShiftOverview />
+//     </div>
+//   )
+// }

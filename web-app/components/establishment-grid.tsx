@@ -1,31 +1,27 @@
-"use client"
+import React from "react";
 
-import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+type Establishment = {
+  id: string;
+  name: string;
+};
 
-interface Establishment {
-  id: string
-  name: string
-}
+type Props = {
+  establishments: Establishment[];
+  onEstablishmentClick: (id: string) => void;
+};
 
-interface EstablishmentGridProps {
-  establishments: Establishment[]
-  onEstablishmentClick: (id: string) => void
-}
-
-export function EstablishmentGrid({ establishments, onEstablishmentClick }: EstablishmentGridProps) {
+export function EstablishmentGrid({ establishments, onEstablishmentClick }: Props) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {establishments.map((establishment) => (
-        <Card
-          key={establishment.id}
-          className="hover:bg-accent cursor-pointer transition-colors"
-          onClick={() => onEstablishmentClick(establishment.id)}
+    <div className="grid grid-cols-2 gap-4">
+      {establishments.map((est) => (
+        <button
+          key={est.id}
+          className="p-4 border rounded hover:bg-gray-100"
+          onClick={() => onEstablishmentClick(est.id)}
         >
-          <CardHeader>
-            <CardTitle className="text-xl text-center">{establishment.name}</CardTitle>
-          </CardHeader>
-        </Card>
+          {est.name}
+        </button>
       ))}
     </div>
-  )
+  );
 }
