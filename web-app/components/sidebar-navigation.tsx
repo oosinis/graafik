@@ -4,9 +4,13 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutDashboard, PenTool, Users, Clock, Calendar } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useUser } from "@auth0/nextjs-auth0"
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 export function SidebarNavigation() {
   const pathname = usePathname()
+  const { user, isLoading: userLoading } = useUser()
+  const { hasAnyRole, isLoading: rolesLoading } = useUserRoles()
 
   const navItems = [
     {
@@ -40,6 +44,14 @@ export function SidebarNavigation() {
       icon: Calendar,
     },
   ]
+
+  // Don't render while loading or if user doesn't exist
+  if (userLoading || rolesLoading || !user) return null
+
+  // Only show sidebar if user has Admin or Manager role
+  if (!hasAnyRole(['Admin', 'Manager'])) {
+    return null
+  }
 
   return (
     <nav className="w-48 bg-gray-800 text-white p-4 h-full">
