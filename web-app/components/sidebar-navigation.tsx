@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useUser } from "@auth0/nextjs-auth0"
+import { useUserRoles } from '@/hooks/useUserRoles';
 import {
   LayoutDashboard,
   Calendar,
@@ -17,15 +19,26 @@ interface NavItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
-const navItems: NavItem[] = [
-  { label: "Dashboard",  href: "/dashboard", icon: LayoutDashboard },
-  { label: "Schedule",   href: "/schedule",  icon: Calendar         },
-  { label: "Shifts",     href: "/shifts",    icon: ListChecks       },
-  { label: "Employees",  href: "/employees", icon: Users            },
-];
+export function SidebarNavigation() {
+  const { user, isLoading: userLoading } = useUser()
+  const { hasAnyRole, isLoading: rolesLoading } = useUserRoles()
 
-export default function SidebarNavigation() {
+  const navItems: NavItem[] = [
+    { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { label: "Schedule", href: "/schedule", icon: Calendar },
+    { label: "Shifts", href: "/shifts", icon: ListChecks },
+    { label: "Employees", href: "/employees", icon: Users },
+  ];
+
   const pathname = usePathname() || "";
+
+  // Don't render while loading or if user doesn't exist
+  if (userLoading || rolesLoading || !user) return null
+
+  // Only show sidebar if user has Admin or Manager role
+  if (!hasAnyRole(['Admin', 'Manager'])) {
+    return null
+  }
 
   return (
     <nav className="w-64 bg-white border-r">

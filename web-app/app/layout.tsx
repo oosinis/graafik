@@ -5,6 +5,8 @@ import "./globals.css";
 import React from "react";
 import { ConditionalSidebar } from "@/components/ConditionalSidebar";
 import { EmployeesProvider } from "@/lib/context/EmployeesContext";
+import { Auth0Provider } from "@auth0/nextjs-auth0"
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,14 +26,18 @@ export default function RootLayout({
         className={inter.className}
         suppressHydrationWarning
       >
-        <div className="flex h-screen">
-          <ConditionalSidebar />
+        <Auth0Provider>
+
+          <div className="flex h-screen">
+            <ConditionalSidebar />
             <main className="flex-1 p-8 overflow-auto">
-          <EmployeesProvider>
-            {children}
-         </EmployeesProvider>
-        </main>
-        </div>
+              <EmployeesProvider>
+                {children}
+              </EmployeesProvider>
+            </main>
+          </div>
+        </Auth0Provider>
+
       </body>
     </html>
   );
