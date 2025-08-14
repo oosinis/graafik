@@ -34,3 +34,6 @@ build/
 
 backend/target/
 
+# Node modules at repo root (stop tracking previously committed modules)
+node_modules/
+
