@@ -25,7 +25,7 @@ export function SidebarNavigation() {
       icon: Users,
     },
     {
-      name: "Vahetused",
+      name: "Shifts",
       href: "/shifts",
       icon: Clock,
     },
