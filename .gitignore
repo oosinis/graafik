@@ -1,3 +1,7 @@
+# Added for shifts-view cleanup
+web-app/ts-errors.txt
+web-app/tsc-config-dump.json
+web-app/package-lock.json
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar

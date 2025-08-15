@@ -1,4 +1,5 @@
 import type { WorkerRole } from "./Worker"
+import type { Rule } from "./Rule"
 
 export interface Shift {
   id: string
@@ -11,10 +12,4 @@ export interface Shift {
   createdAt?: string
 }
 
-export interface Rule {
-  priority: "low" | "medium" | "high"
-  daysApplied: number[]
-  perDay: number
-  restDays: number
-  continuousDays: number
-}
+// Rule interface now sourced from models/Rule.ts to avoid duplication
