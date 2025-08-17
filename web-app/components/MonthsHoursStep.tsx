@@ -4,28 +4,29 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+]
+
 
 export function MonthsHoursStep(){
-    const [fullTimeHours, setFullTimeHours] = useState<string>("170")
-    const [year, setYear] = useState<string>("2025")
-    const [month, setMonth] = useState<string>("March")
-      
-    const years = ["2023", "2024", "2025", "2026"]
 
-    const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ]
+    const [fullTimeHours, setFullTimeHours] = useState<string>("170")
+    const [year, setYear] = useState<number>(new Date().getFullYear())
+    const [month, setMonth] = useState<string>(months[new Date().getMonth()])
+      
+    const years = [new Date().getFullYear(), new Date().getFullYear() + 1]
 
     return(
             <div>
@@ -49,7 +50,7 @@ export function MonthsHoursStep(){
                       <select
                         className="w-full p-2 border rounded-md"
                         value={year}
-                        onChange={(e) => setYear(e.target.value)}
+                        onChange={(e) => setYear(parseInt(e.target.value))}
                       >
                         {years.map((y) => (
                           <option key={y} value={y}>

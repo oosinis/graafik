@@ -1,4 +1,4 @@
-import { MonthsHoursStep } from "@/components/monthsHoursStep"
+import { MonthsHoursStep } from "@/components/MonthsHoursStep"
 import { ShiftDetailsStep } from "@/components/ShiftDetailsStep"
 import { RuleDetailsStep } from "@/components/RuleDetailsStep"
 import { AssignEmployeesStep } from "@/components/AssignEmployeesStep"
