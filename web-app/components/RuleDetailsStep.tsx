@@ -7,26 +7,26 @@ import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 
 export function RuleDetailsStep(){
-    const [activeRule, setActiveRule] = useState<string>("Tööpäevadel")
+    const [activeRule, setActiveRule] = useState<string>()
     
     const rules = [
-        { id: "1", name: "Tööpäevadel", active: true },
-        { id: "2", name: "Reedeti", active: false },
-        { id: "3", name: "Puhkepäevadel", active: false },
+        { id: "1", name: "Work days"},
+        { id: "2", name: "Fridays"},
+        { id: "3", name: "Vacation days"},
       ]
     return(
-        <Card className="p-6">
+        <Card className="p-6 mb-6">
             <div className="mb-6">
                 <h3 className="text-xl font-bold mb-4">Rules</h3>
                 <div className="flex space-x-2 mb-4">
                   {rules.map((rule) => (
                     <Button
                       key={rule.id}
-                      variant={rule.active ? "default" : "outline"}
-                      className={rule.active ? "bg-purple-600 hover:bg-purple-700" : ""}
+                      variant="outline"
+                      className={rule.name == activeRule ? "bg-purple-600 hover:bg-purple-700 text-white" : ""}
                       onClick={() => setActiveRule(rule.name)}
                     >
-                      {rule.name} <Pencil className="ml-2 h-4 w-4" />
+                      {rule.name} 
                     </Button>
                   ))}
                   <Button variant="outline">
