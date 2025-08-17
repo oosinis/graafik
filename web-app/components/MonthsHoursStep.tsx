@@ -29,7 +29,7 @@ export function MonthsHoursStep(){
     const years = [new Date().getFullYear(), new Date().getFullYear() + 1]
 
     return(
-            <div>
+            <div className="mb-6">
               <Card className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div>

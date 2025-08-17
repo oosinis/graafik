@@ -11,9 +11,9 @@ export function ShiftDetailsStep(){
     const [activeShift, setActiveShift] = useState<string>("Hommikune")
 
     const shifts = [
-        { id: "1", name: "Päevane", active: false },
-        { id: "2", name: "Hommikune", active: true },
-        { id: "3", name: "Õhtune", active: false },
+        { id: "1", name: "Day", active: false },
+        { id: "2", name: "Morning", active: true },
+        { id: "3", name: "Evening", active: false },
       ]
       
     return(
