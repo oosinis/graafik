@@ -8,16 +8,19 @@ import { Input } from "@/components/ui/input"
 
 
 export function ShiftDetailsStep(){
-    const [activeShift, setActiveShift] = useState<string>("Hommikune")
+    const [activeShift, setActiveShift] = useState<string>('Morning')
+    const [hour, setHour] = useState<number>(8)
+    const [minutes, setMinutes] = useState<number>(0)
+
 
     const shifts = [
-        { id: "1", name: "Day", active: false },
-        { id: "2", name: "Morning", active: true },
-        { id: "3", name: "Evening", active: false },
+        { id: "1", name: "Day"},
+        { id: "2", name: "Morning"},
+        { id: "3", name: "Evening"},
       ]
       
     return(
-        <div>
+        <div className="mb-6">
             <Card className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <div>
@@ -34,11 +37,11 @@ export function ShiftDetailsStep(){
                 {shifts.map((shift) => (
                   <Button
                     key={shift.id}
-                    variant={shift.active ? "default" : "outline"}
-                    className={shift.active ? "bg-purple-600 hover:bg-purple-700" : ""}
+                    variant="outline"
+                    className={shift.name == activeShift ? "bg-purple-600 hover:bg-purple-700 text-white" : ""}
                     onClick={() => setActiveShift(shift.name)}
                   >
-                    {shift.name} <Pencil className="ml-2 h-4 w-4" />
+                    {shift.name} 
                   </Button>
                 ))}
                 <Button variant="outline">
@@ -54,9 +57,20 @@ export function ShiftDetailsStep(){
                 <div>
                   <label className="block text-sm font-medium mb-2">Shift Length</label>
                   <div className="flex items-center space-x-2">
-                    <Input type="number" value="08" className="w-16" />
+                    <Input type="number" value={hour} className="w-16" 
+                    onChange={(e) => {
+                      const n = e.currentTarget.valueAsNumber; 
+                      setHour(Number.isNaN(n) ? 0 : n);        
+                    }}/>
                     <span>h</span>
-                    <Input type="number" value="30" className="w-16" />
+                    <Input type="number" value={minutes} className="w-16" 
+                    onChange={(e) => {
+                      const n = e.currentTarget.valueAsNumber; 
+                      if (!Number.isNaN(n)) {
+                        setMinutes(Math.min(59, Math.max(0, n)));
+                      }
+                    }                    
+                    }/>
                     <span>min</span>
                   </div>
                 </div>
