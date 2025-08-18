@@ -19,12 +19,15 @@ const months = [
   "December",
 ]
 
+type Props = {
+  fullTimeHours: string;
+  onFullTimeHoursChange: (value: string) => void;
+  month: string;
+  onMonthChange: (value: string) => void;
+};
 
-export function MonthsHoursStep(){
-
-    const [fullTimeHours, setFullTimeHours] = useState<string>("170")
+export function MonthsHoursStep({ fullTimeHours, onFullTimeHoursChange, month, onMonthChange }: Props) {
     const [year, setYear] = useState<number>(new Date().getFullYear())
-    const [month, setMonth] = useState<string>(months[new Date().getMonth()])
       
     const years = [new Date().getFullYear(), new Date().getFullYear() + 1]
 
@@ -63,7 +66,7 @@ export function MonthsHoursStep(){
                       <select
                         className="w-full p-2 border rounded-md"
                         value={month}
-                        onChange={(e) => setMonth(e.target.value)}
+                        onChange={(e) => onMonthChange(e.target.value)}
                       >
                         {months.map((m) => (
                           <option key={m} value={m}>
@@ -80,7 +83,7 @@ export function MonthsHoursStep(){
                   <Input
                     type="number"
                     value={fullTimeHours}
-                    onChange={(e) => setFullTimeHours(e.target.value)}
+                    onChange={(e) => onFullTimeHoursChange(e.currentTarget.value)}
                     className="max-w-xs"
                   />
                 </div>
