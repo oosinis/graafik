@@ -4,7 +4,6 @@ import { useState } from "react"
 
 import { MonthsHoursStep } from "@/components/MonthsHoursStep"
 import { ShiftDetailsStep } from "@/components/ShiftDetailsStep"
-import { RuleDetailsStep } from "@/components/RuleDetailsStep"
 import { AssignEmployeesStep } from "@/components/AssignEmployeesStep"
 import { PageHeader } from "@/components/page-header"
 
@@ -84,7 +83,6 @@ export default function GeneratorRoute() {
       activeShiftId={activeShiftId}
       onSelectShift={setActiveShiftId}
        onUpdateShift={updateShift}/>
-      <RuleDetailsStep />
       <AssignEmployeesStep />
     </div>
   )

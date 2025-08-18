@@ -3,6 +3,8 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { RuleDetailsStep } from "@/components/RuleDetailsStep"
+
 
 type Shift = {
   id: string
@@ -104,6 +106,7 @@ export function ShiftDetailsStep({shifts,
             </div>
           </div>
         )}
+              <RuleDetailsStep />
             </Card>
         </div>
     )
