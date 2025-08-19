@@ -8,9 +8,11 @@ interface ShiftsContextValue {
   addShift: (input: Omit<Shift, "id" | "createdAt" | "length" | "rules"> & { rules?: Shift["rules"] }) => Shift;
 }
 
-const ShiftsContext = createContext<ShiftsContextValue | undefined>(undefined);
+// Internal context object kept private to avoid naming confusion when using the provider.
+const ShiftsContextInternal = createContext<ShiftsContextValue | undefined>(undefined);
 
-export function ShiftsProvider({ children }: { children: ReactNode }) {
+// Single public component name: <ShiftsContext> wraps children in the provider.
+export function ShiftsContext({ children }: { children: ReactNode }) {
   const [shifts, setShifts] = useState<Shift[]>(() => mockShifts);
 
   const addShift = useCallback<ShiftsContextValue["addShift"]>((input) => {
@@ -29,7 +31,7 @@ export function ShiftsProvider({ children }: { children: ReactNode }) {
     return shift;
   }, []);
 
-  return <ShiftsContext.Provider value={{ shifts, addShift }}>{children}</ShiftsContext.Provider>;
+  return <ShiftsContextInternal.Provider value={{ shifts, addShift }}>{children}</ShiftsContextInternal.Provider>;
 }
 
 function computeLength(start: string, end: string) {
@@ -41,7 +43,7 @@ function computeLength(start: string, end: string) {
 }
 
 export function useShifts() {
-  const ctx = useContext(ShiftsContext);
-  if (!ctx) throw new Error("useShifts must be used within ShiftsProvider");
+  const ctx = useContext(ShiftsContextInternal);
+  if (!ctx) throw new Error("useShifts must be used within <ShiftsContext> provider");
   return ctx;
 }
