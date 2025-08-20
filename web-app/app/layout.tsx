@@ -1,8 +1,10 @@
+// web-app/app/layout.tsx
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { SidebarNavigation } from "@/components/sidebar-navigation"
-import type React from "react"
+import React from "react"
+import { ConditionalSidebar } from "@/components/ConditionalSidebar"
+
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,7 +22,7 @@ export default function RootLayout({
     <html lang="et">
       <body className={inter.className}>
         <div className="flex h-screen">
-          <SidebarNavigation />
+          <ConditionalSidebar />
           <main className="flex-1 p-8 overflow-auto">{children}</main>
         </div>
       </body>

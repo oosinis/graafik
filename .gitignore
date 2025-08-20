@@ -38,3 +38,8 @@ build/
 
 backend/target/
 
+# Node modules & lockfiles (avoid committing installs)
+node_modules/
+web-app/node_modules/
+package-lock.json
+

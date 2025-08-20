@@ -8,8 +8,8 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
     | "outline"
     | "success"
     | "warning"
-    | "destructive"
-    | "purple";
+  | "destructive"
+  | "purple";
 }
 
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(

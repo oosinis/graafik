@@ -4,9 +4,14 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutDashboard, PenTool, Users, Clock, Calendar } from "lucide-react"
 import { cn } from "@/lib/utils"
+// Auth features temporarily disabled (Auth0 package not installed)
 
 export function SidebarNavigation() {
   const pathname = usePathname()
+  const user = null
+  const userLoading = false
+  const rolesLoading = false
+  const hasAnyRole = (_: string[]) => true
 
   const navItems = [
     {
@@ -40,6 +45,9 @@ export function SidebarNavigation() {
       icon: Calendar,
     },
   ]
+
+  // Don't render while loading or if user doesn't exist
+  if (userLoading || rolesLoading) return null
 
   return (
     <nav className="w-48 bg-gray-800 text-white p-4 h-full">

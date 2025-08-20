@@ -9,8 +9,8 @@ export const mockWorkers: Worker[] = [
     email: "jan.tamm@example.com",
     phone: "+3725551001",
     assignedShifts: [
-      { id: "s1", type: "Morning", start: "08:00", end: "16:00", length: 8, roles: ["Chef"] },
-      { id: "s2", type: "Evening", start: "16:00", end: "00:00", length: 8, roles: ["Chef", "Waiter"] },
+  { id: "s1", type: "Morning", start: "08:00", end: "16:00", length: 8, roles: ["Chef"] },
+  { id: "s2", type: "Evening", start: "16:00", end: "00:00", length: 8, roles: ["Chef", "Waiter"] },
     ],
   },
   {

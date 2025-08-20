@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkers } from "@/lib/context/WorkersContext";
 import type { WorkerRole, WorkerStatus } from "@/models/Worker";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 const roles: WorkerRole[] = ["Chef", "Manager", "Waiter", "Cleaner", "Other"];
 const statuses: WorkerStatus[] = ["active", "leave", "inactive"];
@@ -46,7 +46,7 @@ export function EmployeeForm() {
           id: `temp-${Date.now()}-${idx}`,
           type,
           start: "00:00",
-            end: "00:00",
+          end: "00:00",
           length: 0,
           roles: [form.role as WorkerRole],
         }));
