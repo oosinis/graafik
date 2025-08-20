@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { RuleDetailsStep } from "@/components/RuleDetailsStep"
-import type { Props } from "@/type"
+import { Props } from "@/types/types"
 
 export function ShiftDetailsStep({shifts,
   activeShiftId,
