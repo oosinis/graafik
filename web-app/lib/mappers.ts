@@ -1,4 +1,5 @@
-import { Shift, WorkerFE } from "@/types/types";
+import { Worker } from "@/models/Worker";
+import { Shift } from '@/models/Shift'
 
 export function mapShiftToBE(s: Shift) {
     return {
@@ -14,7 +15,7 @@ export function mapShiftToBE(s: Shift) {
     };
   }
   
-  export function mapWorkerToBE(w: WorkerFE, shiftById: Map<string, Shift>) {
+  export function mapWorkerToBE(w: Worker, shiftById: Map<string, Shift>) {
     const toBeShift = (id?: string | null) => {
       if (!id) return null;
       const s = shiftById.get(id);
@@ -30,7 +31,7 @@ export function mapShiftToBE(s: Shift) {
   
     return {
       name: w.name,
-      assignedShifts: w.assignedShiftIds.map(id => toBeShift(id)).filter(Boolean),
+      assignedShifts: w.assignedShifts.map(s => toBeShift(s.id)).filter(Boolean),
       workLoad: w.workLoad,
       desiredVacationDays: w.desiredVacationDays,
       vacationDays: w.vacationDays,

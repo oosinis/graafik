@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { Rule, PriorityType } from "@/types"
+import { Rule } from "@/models/Rule"
 
 type Props = {
   shiftId: string
@@ -13,7 +13,7 @@ type Props = {
   onSelectRule: (ruleId: string) => void
   onUpdateRule: (shiftId: string, ruleId: string, patch: Partial<Rule>) => void
   onToggleDay: (shiftId: string, ruleId: string, day: number) => void
-  onSetPriority: (shiftId: string, ruleId: string, p: PriorityType) => void
+  onSetPriority: (shiftId: string, ruleId: string, p: Rule["priority"]) => void
 }
 
 const dayLabels = ["Mo","Tu","We","Th","Fr","Sa","Su"]
@@ -81,7 +81,7 @@ export function RuleDetailsStep({
             <div>
               <label className="block text-sm font-medium mb-2">Priority</label>
               <div className="flex space-x-2">
-                {(["low","medium","high","critical"] as PriorityType[]).map(p => (
+                {(["low","medium","high","critical"] as Rule["priority"][]).map(p => (
                   <Button
                     key={p}
                     size="sm"

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { RuleDetailsStep } from "@/app/generator/RuleDetailsStep"
-import { Props } from "@/types/types"
+import { Props } from "@/models/Props"
 
 export function ShiftDetailsStep({shifts,
   activeShiftId,
@@ -94,7 +94,7 @@ export function ShiftDetailsStep({shifts,
         )}
               <RuleDetailsStep
               shiftId={active.id}
-              rules={active.rules}
+              rules={active.rules ?? []}
               activeRuleId={rulesProps.activeRuleId}
               onSelectRule={rulesProps.onSelectRule}
               onUpdateRule={rulesProps.updateRule}

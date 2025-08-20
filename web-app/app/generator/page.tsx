@@ -5,7 +5,9 @@ import { MonthsHoursStep } from "@/app/generator/MonthsHoursStep"
 import { ShiftDetailsStep } from "@/app/generator/ShiftDetailsStep"
 import { AssignEmployeesStep } from "@/app/generator/AssignEmployeesStep"
 import { PageHeader } from "@/components/page-header"
-import type { Shift, Rule, PriorityType, WorkerFE } from "@/types/types"
+import { Worker } from '@/models/Worker'
+import { Shift } from '@/models/Shift'
+import { Rule } from '@/models/Rule'
 import { mapShiftToBE, mapWorkerToBE } from "@/lib/mappers";
 import { Button } from "@/components/ui/button"
 
@@ -16,19 +18,26 @@ export default function GeneratorRoute() {
   const [month, setMonth] = useState(months[new Date().getMonth()])
 
   const [shifts, setShifts] = useState<Shift[]>([
-    {
-      id: "1",
-      type: "Day",
-      durationInMinutes: 480,
-      rules: [
-        { id: "r1", name: "Work days", daysApplied: [1,2,3,4,5], perDay: 3, restDays: 2, continuousDays: 5, priority: "medium" },
-      ],
-    },
+    { id: "1", type: "Day",     durationInMinutes: 480, rules: [] },
     { id: "2", type: "Morning", durationInMinutes: 480, rules: [] },
     { id: "3", type: "Evening", durationInMinutes: 480, rules: [] },
   ])
   const [activeShiftId, setActiveShiftId] = useState<string>(shifts[0]?.id ?? "")
   const [activeRuleId, setActiveRuleId] = useState<string>("")
+  const [workers, setWorkers] = useState<Worker[]>([
+    {
+      id: "w1",
+      name: "John Doe",
+      role: "Waiter",
+      status: "active",
+      assignedShifts: [],            
+      workLoad: 1,
+      desiredVacationDays: [],
+      vacationDays: [],
+      requestedWorkDays: {},
+      sickDays: [],
+    },
+  ])
 
   useEffect(() => {
     const activeShift = shifts.find(s => s.id === activeShiftId)
@@ -60,46 +69,25 @@ export default function GeneratorRoute() {
       })
     )
   }
-  function setRulePriority(shiftId: string, ruleId: string, p: PriorityType) {
+  function setRulePriority(shiftId: string, ruleId: string, p: Rule['priority']) {
     updateRule(shiftId, ruleId, { priority: p })
   }
-
-  const [workers, setWorkers] = useState<WorkerFE[]>([
-    {
-      id: "w1",
-      name: "John Doe",
-      assignedShiftIds: ["1","2"],
-      workLoad: 1.0, // 100%
-      desiredVacationDays: [],
-      vacationDays: [],
-      requestedWorkDays: {}, // e.g., { 5: "2", 12: "1" }
-      sickDays: [],
-    },
-    {
-      id: "w2",
-      name: "Jane Smith",
-      assignedShiftIds: ["1"],
-      workLoad: 0.8,
-      desiredVacationDays: [10,11],
-      vacationDays: [],
-      requestedWorkDays: {},
-      sickDays: [],
-    },
-  ])
+  
+  
 
   function toggleAssignedShift(workerId: string, shiftId: string) {
     setWorkers(prev =>
-      prev.map(w =>
-        w.id !== workerId
-          ? w
-          : {
-              ...w,
-              assignedShiftIds: w.assignedShiftIds.includes(shiftId)
-                ? w.assignedShiftIds.filter(id => id !== shiftId)
-                : [...w.assignedShiftIds, shiftId],
-            }
-      )
-    )
+           prev.map(w => {
+             if (w.id !== workerId) return w
+             const exists = (w.assignedShifts ?? []).some(sh => sh.id === shiftId)
+             if (exists) {
+               return { ...w, assignedShifts: w.assignedShifts.filter(sh => sh.id !== shiftId) }
+             }
+             const shiftObj = shifts.find(s => s.id === shiftId)
+             if (!shiftObj) return w
+             return { ...w, assignedShifts: [...w.assignedShifts, shiftObj] }
+           })
+         )
   }
   function setWorkLoad(workerId: string, value: number) {
     setWorkers(prev => prev.map(w => (w.id === workerId ? { ...w, workLoad: value } : w)))

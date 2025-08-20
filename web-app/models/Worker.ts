@@ -11,4 +11,9 @@ export interface Worker {
   email?: string
   phone?: string
   assignedShifts: Shift[]
+  workLoad: number;                    
+  desiredVacationDays: number[];      
+  vacationDays: number[];              
+  requestedWorkDays: Record<number, string | null>;
+  sickDays: number[];
 }

@@ -4,12 +4,13 @@ import { useMemo, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import type { Shift, WorkerFE } from "@/types/types"
+import { Shift } from '@/models/Shift'
+import { Worker } from "@/models/Worker"
 
 type Props = {
   monthName: string
   shifts: Shift[]
-  workers: WorkerFE[]
+  workers: Worker[]
   onToggleAssignedShift: (workerId: string, shiftId: string) => void
   onSetWorkLoad: (workerId: string, value: number) => void
   onToggleDesiredVacationDay: (workerId: string, day: number) => void
@@ -95,7 +96,7 @@ export function AssignEmployeesStep({
               <label className="block text-sm font-medium mb-2">Assigned Shifts</label>
               <div className="flex flex-wrap gap-2">
                 {shifts.map(s => {
-                  const on = activeWorker.assignedShiftIds.includes(s.id)
+                  const on = activeWorker.assignedShifts.includes(s)
                   return (
                     <Button
                       key={s.id}
