@@ -20,6 +20,7 @@ export type Props = {
   activeShiftId: string
   onSelectShift: (id: string) => void
   onUpdateShift: (id: string, patch: Partial<Shift>) => void
+  rulesProps: RulesProps
 }
 
 export type RulesProps = {

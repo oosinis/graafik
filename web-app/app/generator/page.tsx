@@ -6,6 +6,7 @@ import { ShiftDetailsStep } from "@/components/ShiftDetailsStep"
 import { AssignEmployeesStep } from "@/components/AssignEmployeesStep"
 import { PageHeader } from "@/components/page-header"
 import type { Shift, Rule, PriorityType, WorkerFE } from "@/types/types"
+import { mapShiftToBE, mapWorkerToBE } from "@/lib/mappers";
 import { Button } from "@/components/ui/button"
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
@@ -14,7 +15,6 @@ export default function GeneratorRoute() {
   const [fullTimeHours, setFullTimeHours] = useState("170")
   const [month, setMonth] = useState(months[new Date().getMonth()])
 
-  // ---- Shifts (as before) ----
   const [shifts, setShifts] = useState<Shift[]>([
     {
       id: "1",
@@ -64,7 +64,6 @@ export default function GeneratorRoute() {
     updateRule(shiftId, ruleId, { priority: p })
   }
 
-  // ---- Workers (new) ----
   const [workers, setWorkers] = useState<WorkerFE[]>([
     {
       id: "w1",
@@ -88,7 +87,6 @@ export default function GeneratorRoute() {
     },
   ])
 
-  // ---- Worker callbacks ----
   function toggleAssignedShift(workerId: string, shiftId: string) {
     setWorkers(prev =>
       prev.map(w =>
@@ -147,69 +145,45 @@ export default function GeneratorRoute() {
     )
   }
 
-  // ---- Submit: map FE -> BE ----
   const generateSchedule = async () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-
-    // Map Shift list for BE
-    const beShifts = shifts.map(s => ({
-      type: s.type,
-      duration: s.durationInMinutes,
-      rules: s.rules.map(r => ({
-        daysApplied: r.daysApplied,
-        perDay: r.perDay,
-        restDays: r.restDays,
-        continuousDays: r.continuousDays,
-        priority: r.priority,
-      })),
-    }))
-
-    // Map Workers for BE
-    const shiftById = new Map(shifts.map(s => [s.id, s]))
-    const toBeShift = (id?: string | null) =>
-      id ? { type: shiftById.get(id)!.type, duration: shiftById.get(id)!.durationInMinutes, rules: shiftById.get(id)!.rules.map(r => ({
-        daysApplied: r.daysApplied, perDay: r.perDay, restDays: r.restDays, continuousDays: r.continuousDays, priority: r.priority,
-      })) } : null
-
-    const beWorkers = workers.map(w => {
-      const assignedShifts = w.assignedShiftIds.map(id => toBeShift(id)!)
-      const requestedWorkDaysEntries = Object.entries(w.requestedWorkDays)
-        .filter(([, sid]) => !!sid)
-        .map(([day, sid]) => [Number(day), toBeShift(sid as string)!] as const)
-
-      // build a Map-like object for Jackson: day -> Shift
-      const requestedWorkDays: Record<number, any> = {}
-      requestedWorkDaysEntries.forEach(([day, shiftObj]) => { requestedWorkDays[day] = shiftObj })
-
-      return {
-        name: w.name,
-        assignedShifts,
-        workLoad: w.workLoad,
-        desiredVacationDays: w.desiredVacationDays,
-        vacationDays: w.vacationDays,
-        requestedWorkDays,
-        sickDays: w.sickDays,
-      }
-    })
-
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) {
+      console.error("Missing NEXT_PUBLIC_API_URL");
+      return;
+    }
+  
+    const beShifts = shifts.map(mapShiftToBE);
+  
+    const shiftById = new Map(shifts.map(s => [s.id, s]));
+    const beWorkers = workers.map(w => mapWorkerToBE(w, shiftById));
+  
     const requestBody = {
       workers: beWorkers,
       shifts: beShifts,
       month: months.indexOf(month) + 1,
       fullTimeHours: Number(fullTimeHours),
+    };
+  
+    try {
+      const res = await fetch(`${apiUrl}/create-schedule`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+  
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(text || `Request failed: ${res.status}`);
+      }
+  
+      const data = await res.json();
+      console.log("BE response:", data);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to generate schedule");
     }
-
-    const res = await fetch(`${apiUrl}/create-schedule`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    })
-    if (!res.ok) {
-      alert("Failed to generate schedule")
-      return
-    }
-    console.log("BE response:", await res.json())
-  }
+  };
+  
 
   return (
     <div className="max-w-6xl mx-auto">
