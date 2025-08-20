@@ -4,31 +4,17 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { RuleDetailsStep } from "@/components/RuleDetailsStep"
-
-
-type Shift = {
-  id: string
-  type: string
-  durationInMinutes: number
-}
-
-type Props = {
-  shifts: Shift[]
-  activeShiftId: string
-  onSelectShift: (id: string) => void
-  onUpdateShift: (id: string, patch: Partial<Shift>) => void
-}
+import type { Props } from "@/type"
 
 export function ShiftDetailsStep({shifts,
   activeShiftId,
   onSelectShift,
-  onUpdateShift,} : Props){
+  onUpdateShift,
+  rulesProps} : Props){
     const active = shifts.find(s => s.id === activeShiftId)
-
-  const hours = active ? Math.floor(active.durationInMinutes / 60) : 0
-  const minutes = active ? active.durationInMinutes % 60 : 0
-
-  const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n))
+    const hours = active ? Math.floor(active.durationInMinutes / 60) : 0
+    const minutes = active ? active.durationInMinutes % 60 : 0
+    const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n))
       
     return(
         <div className="mb-6">
@@ -106,7 +92,14 @@ export function ShiftDetailsStep({shifts,
             </div>
           </div>
         )}
-              <RuleDetailsStep />
+              <RuleDetailsStep
+              shiftId={active.id}
+              rules={active.rules}
+              activeRuleId={rulesProps.activeRuleId}
+              onSelectRule={rulesProps.onSelectRule}
+              onUpdateRule={rulesProps.updateRule}
+              onToggleDay={rulesProps.toggleRuleDay}
+              onSetPriority={rulesProps.setRulePriority} />
             </Card>
         </div>
     )
