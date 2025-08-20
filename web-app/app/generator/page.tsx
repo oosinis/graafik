@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { MonthsHoursStep } from "@/components/MonthsHoursStep"
-import { ShiftDetailsStep } from "@/components/ShiftDetailsStep"
-import { AssignEmployeesStep } from "@/components/AssignEmployeesStep"
+import { MonthsHoursStep } from "@/app/generator/MonthsHoursStep"
+import { ShiftDetailsStep } from "@/app/generator/ShiftDetailsStep"
+import { AssignEmployeesStep } from "@/app/generator/AssignEmployeesStep"
 import { PageHeader } from "@/components/page-header"
 import type { Shift, Rule, PriorityType, WorkerFE } from "@/types/types"
 import { mapShiftToBE, mapWorkerToBE } from "@/lib/mappers";

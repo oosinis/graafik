@@ -3,7 +3,7 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { RuleDetailsStep } from "@/components/RuleDetailsStep"
+import { RuleDetailsStep } from "@/app/generator/RuleDetailsStep"
 import { Props } from "@/types/types"
 
 export function ShiftDetailsStep({shifts,
