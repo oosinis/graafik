@@ -1,7 +1,6 @@
-'use client';
+"use client";
 
-// Auth0 temporarily disabled; stub implementation
-const useUser = () => ({ user: null as any, isLoading: false });
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';

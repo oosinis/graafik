@@ -1,6 +1,5 @@
 // hooks/useUserRoles.ts
-// Auth0 dependency currently not installed; placeholder implementation
-const useUser = () => ({ user: null as any, isLoading: false })
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState, useEffect } from 'react';
 
 interface UseUserRolesReturn {
