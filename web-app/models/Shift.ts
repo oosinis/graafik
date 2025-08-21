@@ -12,4 +12,6 @@ export interface Shift {
   createdAt?: string
 }
 
+
 // Rule interface now sourced from models/Rule.ts to avoid duplication
+
