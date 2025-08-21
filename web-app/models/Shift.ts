@@ -1,13 +1,8 @@
-export interface Shift {
-  type: string
-  length: number
-  rules?: Rule[]
-}
+import { Rule } from '@/models/Rule'
 
-export interface Rule {
-  priority: "low" | "medium" | "high"
-  daysApplied: number[]
-  perDay: number
-  restDays: number
-  continuousDays: number
+export interface Shift {
+  id: string
+  type: string
+  durationInMinutes: number
+  rules?: Rule[]
 }
