@@ -1,5 +1,5 @@
 // hooks/useUserRoles.ts
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@auth0/nextjs-auth0';
 import { useState, useEffect } from 'react';
 
 interface UseUserRolesReturn {

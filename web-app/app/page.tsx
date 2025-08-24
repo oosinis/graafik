@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-// Auth0 temporarily disabled; stub hook
-const useUser = () => ({ user: null as any, isLoading: false });
+import { useUser } from "@auth0/nextjs-auth0";
 
 const NAMESPACE = "https://grafikapp.dev/claims";
 

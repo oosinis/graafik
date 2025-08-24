@@ -1,10 +1,11 @@
+import { auth0 } from "./lib/auth0"; 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+
 export async function middleware(request: NextRequest) {
-  // Auth0 disabled: simple pass-through middleware
-  const res = NextResponse.next();
-  const session: any = null;
+  const res = await auth0.middleware(request);
+  const session = await auth0.getSession(request);
   const { pathname } = request.nextUrl;
 
   // Public paths that don't require authentication

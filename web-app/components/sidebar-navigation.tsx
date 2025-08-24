@@ -46,9 +46,14 @@ export function SidebarNavigation() {
     },
   ]
 
-  // Don't render while loading or if user doesn't exist
-  if (userLoading || rolesLoading) return null
+    // Don't render while loading or if user doesn't exist
+  if (userLoading || rolesLoading || !user) return null
 
+  // Only show sidebar if user has Admin or Manager role
+  if (!hasAnyRole(['Admin', 'Manager'])) {
+    return null
+  }
+  
   return (
     <nav className="w-48 bg-gray-800 text-white p-4 h-full">
       <h1 className="text-xl font-bold mb-6">Graafiku Planeerija</h1>
