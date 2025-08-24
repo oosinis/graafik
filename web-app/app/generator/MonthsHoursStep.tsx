@@ -4,31 +4,35 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+]
 
-export function MonthsHoursStep(){
-    const [fullTimeHours, setFullTimeHours] = useState<string>("170")
-    const [year, setYear] = useState<string>("2025")
-    const [month, setMonth] = useState<string>("March")
+type Props = {
+  fullTimeHours: string;
+  onFullTimeHoursChange: (value: string) => void;
+  month: string;
+  onMonthChange: (value: string) => void;
+};
+
+export function MonthsHoursStep({ fullTimeHours, onFullTimeHoursChange, month, onMonthChange }: Props) {
+    const [year, setYear] = useState<number>(new Date().getFullYear())
       
-    const years = ["2023", "2024", "2025", "2026"]
-
-    const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ]
+    const years = [new Date().getFullYear(), new Date().getFullYear() + 1]
 
     return(
-            <div>
+            <div className="mb-6">
               <Card className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <div>
@@ -49,7 +53,7 @@ export function MonthsHoursStep(){
                       <select
                         className="w-full p-2 border rounded-md"
                         value={year}
-                        onChange={(e) => setYear(e.target.value)}
+                        onChange={(e) => setYear(parseInt(e.target.value))}
                       >
                         {years.map((y) => (
                           <option key={y} value={y}>
@@ -62,7 +66,7 @@ export function MonthsHoursStep(){
                       <select
                         className="w-full p-2 border rounded-md"
                         value={month}
-                        onChange={(e) => setMonth(e.target.value)}
+                        onChange={(e) => onMonthChange(e.target.value)}
                       >
                         {months.map((m) => (
                           <option key={m} value={m}>
@@ -79,7 +83,7 @@ export function MonthsHoursStep(){
                   <Input
                     type="number"
                     value={fullTimeHours}
-                    onChange={(e) => setFullTimeHours(e.target.value)}
+                    onChange={(e) => onFullTimeHoursChange(e.currentTarget.value)}
                     className="max-w-xs"
                   />
                 </div>
