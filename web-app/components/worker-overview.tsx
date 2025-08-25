@@ -87,26 +87,26 @@ export function WorkerOverview() {
               </TableRow>
             )}
             {filtered.map((worker) => {
-                const meta = statusMeta[worker.status]
-                return (
-                  <TableRow key={worker.id}>
-                    <TableCell className="font-medium">{worker.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="purple">{worker.role}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={meta.variant}>{meta.label}</Badge>
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {worker.assignedShifts.map((s) => s.type).join(", ") || "—"}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell text-xs text-zinc-600 dark:text-zinc-300">
-                      {worker.email && <div>{worker.email}</div>}
-                      {worker.phone && <div>{worker.phone}</div>}
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
+              const meta = statusMeta[worker.status]
+              return (
+                <TableRow key={worker.id}>
+                  <TableCell className="font-medium">{worker.name}</TableCell>
+                  <TableCell>
+                    <Badge variant="purple">{worker.role}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={meta.variant}>{meta.label}</Badge>
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {worker.assignedShifts.map((s) => s.type).join(", ") || "—"}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell text-xs text-zinc-600 dark:text-zinc-300">
+                    {worker.email && <div>{worker.email}</div>}
+                    {worker.phone && <div>{worker.phone}</div>}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </CardContent>

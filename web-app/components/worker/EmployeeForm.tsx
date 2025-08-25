@@ -42,7 +42,14 @@ export function EmployeeForm() {
         .split(",")
         .map(s => s.trim())
         .filter(Boolean)
-        .map(type => ({ type, length: 0 }));
+        .map((type, idx) => ({
+          id: `temp-${Date.now()}-${idx}`,
+          type,
+          start: "00:00",
+          end: "00:00",
+          length: 0,
+          roles: [form.role as WorkerRole],
+        }));
       addWorker({
         name: form.name.trim(),
         role: form.role as WorkerRole,

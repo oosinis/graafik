@@ -1,8 +1,14 @@
+import { MonthsHoursStep } from "@/components/MonthsHoursStep"
+import { ShiftDetailsStep } from "@/components/ShiftDetailsStep"
+import { RuleDetailsStep } from "@/components/RuleDetailsStep"
+import { AssignEmployeesStep } from "@/components/AssignEmployeesStep"
+=======
 "use client"
 
 import { useEffect, useState } from "react"
 import { MonthsHoursStep } from "@/app/generator/MonthsHoursStep"
 import { ShiftDetailsStep } from "@/app/generator/ShiftDetailsStep"
+import { RuleDetailsStep } from "@/components/RuleDetailsStep"        
 import { AssignEmployeesStep } from "@/app/generator/AssignEmployeesStep"
 import { PageHeader } from "@/components/page-header"
 import { Worker } from '@/models/Worker'

@@ -1,3 +1,5 @@
+package com.graafik.services;
+
 import java.util.List;
 
 import com.graafik.model.Rule;

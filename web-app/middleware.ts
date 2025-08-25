@@ -1,6 +1,7 @@
-import { auth0 } from "./lib/auth0";
+import { auth0 } from "./lib/auth0"; 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+
 
 export async function middleware(request: NextRequest) {
   const res = await auth0.middleware(request);

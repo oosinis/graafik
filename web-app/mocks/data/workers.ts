@@ -1,4 +1,4 @@
-import type { Worker } from "@/models/Worker"
+import type { Worker } from "@/models/Worker";
 
 export const mockWorkers: Worker[] = [
   {
@@ -9,8 +9,8 @@ export const mockWorkers: Worker[] = [
     email: "jan.tamm@example.com",
     phone: "+3725551001",
     assignedShifts: [
-      { type: "Morning", length: 8 },
-      { type: "Evening", length: 8 },
+  { id: "s1", type: "Morning", start: "08:00", end: "16:00", length: 8, roles: ["Chef"] },
+  { id: "s2", type: "Evening", start: "16:00", end: "00:00", length: 8, roles: ["Chef", "Waiter"] },
     ],
   },
   {
@@ -20,7 +20,9 @@ export const mockWorkers: Worker[] = [
     status: "leave",
     email: "mari.forest@example.com",
     phone: "+3725551002",
-    assignedShifts: [{ type: "Night", length: 10 }],
+    assignedShifts: [
+      { id: "s3", type: "Night", start: "00:00", end: "10:00", length: 10, roles: ["Waiter"] },
+    ],
   },
   {
     id: "w3",
@@ -30,12 +32,12 @@ export const mockWorkers: Worker[] = [
     email: "peter.birch@example.com",
     phone: "+3725551003",
     assignedShifts: [
-      { type: "Day", length: 6 },
-      { type: "Evening", length: 8 },
+      { id: "s4", type: "Day", start: "10:00", end: "16:00", length: 6, roles: ["Waiter"] },
+      { id: "s5", type: "Evening", start: "16:00", end: "00:00", length: 8, roles: ["Waiter"] },
     ],
   },
-]
+];
 
 export function fetchMockWorkers(delayMs = 250): Promise<Worker[]> {
-  return new Promise((resolve) => setTimeout(() => resolve(mockWorkers), delayMs))
+  return new Promise((resolve) => setTimeout(() => resolve(mockWorkers), delayMs));
 }

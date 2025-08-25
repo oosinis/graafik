@@ -77,7 +77,14 @@ export function ScheduleGridView({
     workers.forEach(w=>workerHours[w.name]=140+Math.floor(Math.random()*40));
     const daySchedules:DaySchedule[] = Array.from({length:days},(_,i)=>{
       const assignments:ShiftAssignment[] = shiftTypes.map((type,idx)=>({
-        shift:{type,length:8},
+        shift:{
+          id:`${y}-${m}-${i+1}-${type}`,
+          type,
+          start: type==="Hommik"?"08:00":type==="Päev"?"10:00":type==="Õhtu"?"14:00":"22:00",
+          end:   type==="Hommik"?"16:00":type==="Päev"?"18:00":type==="Õhtu"?"22:00":"06:00",
+          length:8,
+          roles:[],
+        },
         worker:workers[(i+idx)%workers.length]
       }));
       return {dayOfMonth:i+1,assignments,score:0};
