@@ -15,17 +15,17 @@ export function SidebarNavigation() {
 
   const navItems = [
     {
-      name: "Töölaud",
+      name: "Dashboard",
       href: "/",
       icon: LayoutDashboard,
     },
     {
-      name: "Planeerija",
+      name: "Generator",
       href: "/generator",
       icon: PenTool,
     },
     {
-      name: "Töötajad",
+      name: "Workers",
       href: "/workers",
       icon: Users,
     },
@@ -35,12 +35,12 @@ export function SidebarNavigation() {
       icon: Clock,
     },
     {
-      name: "Graafiku Ülevaade",
+      name: "Schedule",
       href: "/schedule",
       icon: Calendar,
     },
     {
-      name: "Graafikute Ajalugu",
+      name: "Schedule history",
       href: "/schedule-history",
       icon: Calendar,
     },
