@@ -8,10 +8,6 @@ import { cn } from "@/lib/utils"
 
 export function SidebarNavigation() {
   const pathname = usePathname()
-  const user = null
-  const userLoading = false
-  const rolesLoading = false
-  const hasAnyRole = (_: string[]) => true
 
   const navItems = [
     {
@@ -45,14 +41,6 @@ export function SidebarNavigation() {
       icon: Calendar,
     },
   ]
-
-    // Don't render while loading or if user doesn't exist
-  if (userLoading || rolesLoading || !user) return null
-
-  // Only show sidebar if user has Admin or Manager role
-  if (!hasAnyRole(['Admin', 'Manager'])) {
-    return null
-  }
   
   return (
     <nav className="w-48 bg-gray-800 text-white p-4 h-full">
