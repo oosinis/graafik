@@ -44,7 +44,7 @@ export function SidebarNavigation() {
   
   return (
     <nav className="w-48 bg-gray-800 text-white p-4 h-full">
-      <h1 className="text-xl font-bold mb-6">Graafiku Planeerija</h1>
+      <h1 className="text-xl font-bold mb-6">Schedule planner</h1>
       <ul className="space-y-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href
