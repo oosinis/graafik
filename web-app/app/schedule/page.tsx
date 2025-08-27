@@ -20,7 +20,7 @@ export default function ScheduleRoute() {
 
   return (
     <div className="max-w-full mx-auto">
-      <PageHeader title="Töögraafiku Ülevaade" />
+      <PageHeader title="Schedule overview" />
       <div className="test">
       <ScheduleGridView year={year} month={month} onMonthChange={handleMonthChange} />
       </div>

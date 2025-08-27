@@ -10,7 +10,7 @@ interface DayNavigationProps {
 }
 
 export function DayNavigation({ date, onPrevious, onNext }: DayNavigationProps) {
-  const label = date.toLocaleDateString("et-EE", {
+  const label = date.toLocaleDateString("en-US", {
     weekday: "long",
     day: "numeric",
     month: "long",

@@ -1,4 +1,3 @@
-import type { WorkerRole } from "./Worker"
 import type { Rule } from "./Rule"
 
 export interface Shift {
