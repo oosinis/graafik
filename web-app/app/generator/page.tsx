@@ -175,7 +175,7 @@ export default function GeneratorRoute() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <PageHeader title="Graafiku Generaator" description="Loo uus töögraafik" />
+      <PageHeader title="Schedule generator" description="Create a new work schedule" />
 
       <MonthsHoursStep
         fullTimeHours={fullTimeHours}
