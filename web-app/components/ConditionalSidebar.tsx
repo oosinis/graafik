@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { SidebarNavigation } from "./sidebar-navigation";
+import { SidebarNavigation } from "./SidebarNavigation";
 
 export function ConditionalSidebar() {
   const pathname = usePathname() || "";

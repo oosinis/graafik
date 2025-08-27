@@ -1,9 +1,10 @@
-import { MonthsHoursStep } from "@/components/MonthsHoursStep"
+"use client"
+
+/* import { MonthsHoursStep } from "@/components/MonthsHoursStep"
 import { ShiftDetailsStep } from "@/components/ShiftDetailsStep"
 import { RuleDetailsStep } from "@/components/RuleDetailsStep"
 import { AssignEmployeesStep } from "@/components/AssignEmployeesStep"
-=======
-"use client"
+======= */
 
 import { useEffect, useState } from "react"
 import { MonthsHoursStep } from "@/app/generator/MonthsHoursStep"

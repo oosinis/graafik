@@ -4,28 +4,25 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutDashboard, PenTool, Users, Clock, Calendar } from "lucide-react"
 import { cn } from "@/lib/utils"
+import styles from "@/components/styles/SidebarNavigation.module.css";
 // Auth features temporarily disabled (Auth0 package not installed)
 
 export function SidebarNavigation() {
   const pathname = usePathname()
-  const user = null
-  const userLoading = false
-  const rolesLoading = false
-  const hasAnyRole = (_: string[]) => true
 
   const navItems = [
     {
-      name: "Töölaud",
+      name: "Dashboard",
       href: "/",
       icon: LayoutDashboard,
     },
     {
-      name: "Planeerija",
+      name: "Generator",
       href: "/generator",
       icon: PenTool,
     },
     {
-      name: "Töötajad",
+      name: "Workers",
       href: "/workers",
       icon: Users,
     },
@@ -35,39 +32,28 @@ export function SidebarNavigation() {
       icon: Clock,
     },
     {
-      name: "Graafiku Ülevaade",
+      name: "Schedule",
       href: "/schedule",
       icon: Calendar,
     },
     {
-      name: "Graafikute Ajalugu",
+      name: "Schedule history",
       href: "/schedule-history",
       icon: Calendar,
     },
   ]
-
-    // Don't render while loading or if user doesn't exist
-  if (userLoading || rolesLoading || !user) return null
-
-  // Only show sidebar if user has Admin or Manager role
-  if (!hasAnyRole(['Admin', 'Manager'])) {
-    return null
-  }
   
   return (
-    <nav className="w-48 bg-gray-800 text-white p-4 h-full">
-      <h1 className="text-xl font-bold mb-6">Graafiku Planeerija</h1>
-      <ul className="space-y-2">
+    <nav className={styles.nav}>
+      <h1 className={styles.title} hidden>Schedule planner</h1>
+      <ul className={styles.list}>
         {navItems.map((item) => {
           const isActive = pathname === item.href
           return (
-            <li key={item.href}>
+            <li key={item.href} className={styles.item}>
               <Link
                 href={item.href}
-                className={cn(
-                  "flex items-center space-x-2 py-2 px-3 rounded transition-colors duration-200",
-                  isActive ? "bg-gray-700 text-white" : "hover:text-gray-300 hover:bg-gray-700",
-                )}
+                className={cn(styles.link, { [styles.active]: isActive })}
               >
                 <item.icon size={18} />
                 <span className="text-sm">{item.name}</span>
