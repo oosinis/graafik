@@ -93,6 +93,9 @@ export function ScheduleGridView({
   }
 
   const daysInMonth = new Date(year,month,0).getDate();
+  
+  const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n)
+
 
   // visible days based on mode
   const visibleDays = useMemo<number[]>(()=>{
@@ -187,8 +190,8 @@ export function ScheduleGridView({
       {viewMode==="daily" && (
         <DayNavigation
           date={currentDate}
-          onPrevious={()=>setCurrentDate(d=>{d.setDate(d.getDate()-1); return new Date(d);} )}
-          onNext={()=>setCurrentDate(d=>{d.setDate(d.getDate()+1); return new Date(d);} )}
+          onPrevious={() => setCurrentDate(d => addDays(d, -1))}
+          onNext={() => setCurrentDate(d => addDays(d,  +1))}
         />
       )}
 
