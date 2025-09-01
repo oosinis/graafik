@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+// kasutan rn ühes kohas
+// pm saaks mujal ka, siis vähem tabeleid
 @Converter
 public class IntegerListConverter implements AttributeConverter<List<Integer>, String> {
 
