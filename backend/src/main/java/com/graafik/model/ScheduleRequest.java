@@ -12,10 +12,8 @@ public class ScheduleRequest extends BaseEntity {
 
     private int fullTimeHours;
 
-    // Constructor with all fields
     public ScheduleRequest() {}
 
-    // Getters
     public List<Worker> getWorkers() {
         return workers;
     }
@@ -32,7 +30,6 @@ public class ScheduleRequest extends BaseEntity {
         return fullTimeHours;
     }
 
-    // Setters
     public void setWorkers(List<Worker> workers) {
         this.workers = workers;
     }

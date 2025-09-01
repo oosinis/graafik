@@ -1,6 +1,9 @@
 package com.graafik.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "shift_assignments")
@@ -20,7 +23,6 @@ public class ShiftAssignment extends BaseEntity {
         this.worker = worker;
     }
 
-    // Getters
     public Shift getShift() {
         return shift;
     }
@@ -29,7 +31,6 @@ public class ShiftAssignment extends BaseEntity {
         return worker;
     }
 
-    // Setters
     public void setShift(Shift shift) {
         this.shift = shift;
     }

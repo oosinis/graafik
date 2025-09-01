@@ -34,7 +34,6 @@ public class Schedule extends BaseEntity {
 
     public Schedule() {}
 
-    // Getters
     public int getMonth() {
         return month;
     }
@@ -51,7 +50,6 @@ public class Schedule extends BaseEntity {
         return daySchedules;
     }
 
-    // Setters
     public void setMonth(int month) {
         this.month = month;
     }
@@ -99,7 +97,7 @@ public class Schedule extends BaseEntity {
             for (DaySchedule daySchedule : daySchedules) {
                 sb.append(daySchedule.toString()).append(", \n");
             }
-            sb.setLength(sb.length() - 2); // Remove the last comma and space
+            sb.setLength(sb.length() - 2);
             sb.append("\n]\n");
         }
 

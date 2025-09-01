@@ -24,7 +24,6 @@ public class GenerateSchedule {
             List<ScheduleRequest> requests = objectMapper.readValue(jsonFile, 
             objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequest.class));
 
-            // Now pass the requests list to the createSchedule method
             generateSchedule(requests.getFirst());
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,6 +1,8 @@
 package com.graafik.services;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -21,5 +23,17 @@ public class WorkerService {
 
     public Worker saveWorker(Worker worker) {
         return workerRepository.save(worker);
+    }
+
+    public Optional<Worker> getWorkerById(UUID id) {
+        return workerRepository.findById(id);
+    }
+
+    public boolean deleteWorker(UUID id) {
+        if (workerRepository.existsById(id)) {
+            workerRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

@@ -1,8 +1,14 @@
 package com.graafik.model;
 
-import jakarta.persistence.*;
 import java.util.List;
 import java.util.Objects;
+
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
 
 
 @Entity
@@ -21,7 +27,6 @@ public class Shift extends BaseEntity {
 
     public Shift() {}
 
-    // Getter
     public String getType() {
         return type;
     }
@@ -34,7 +39,6 @@ public class Shift extends BaseEntity {
         return rules;
     }
 
-    // Setters
     public void setType(String type) {
         this.type = type;
     }

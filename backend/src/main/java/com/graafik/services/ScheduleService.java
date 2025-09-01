@@ -1,20 +1,21 @@
 package com.graafik.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.graafik.model.Rule;
 import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
-import com.graafik.model.Shift;
 import com.graafik.model.Worker;
 import com.graafik.repositories.ScheduleRepository;
 import com.graafik.schedule.GenerateSchedule;
 import com.graafik.schedule.RegenerateExistingSchedule;
 
 @Service
+@Transactional
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
@@ -23,32 +24,32 @@ public class ScheduleService {
         this.scheduleRepository = scheduleRepository;
     }
 
-    public Schedule Generate(ScheduleRequest scheduleRequest) {
-        for (Shift shift : scheduleRequest.getShifts()) {
-            System.out.println(shift.toString());
-            for (Rule rule : shift.getRules()) {
-                System.out.println(rule.toString());
-            }
-        }
-
-        List<Schedule> schedules = GenerateSchedule.generateSchedule(scheduleRequest);
-        for (Schedule schedule : schedules) {
-            System.out.println(schedule.toString());
-            scheduleRepository.save(schedule);
-        }
-        System.out.println("VALMIS");
-        if (!schedules.isEmpty()) return schedules.get(0);
-        else return new Schedule();
+    public Schedule createSchedule(ScheduleRequest request) {
+        return GenerateSchedule.generateSchedule(request).get(0);
     }
 
-    public List<Schedule> regenerateSchedule(UUID scheduleId, int startDate, int endDate, Worker missingWorker, ScheduleRequest scheduleRequest) {
-        Schedule currentSchedule = scheduleRepository.findById(scheduleId)
-            .orElseThrow(() -> new RuntimeException("Schedule not found"));
+    @Transactional(readOnly = true)
+    public List<Schedule> getAllSchedules() {
+        return scheduleRepository.findAll();
+    }
 
-        List<Schedule> newSchedules = RegenerateExistingSchedule.regenerateSchedule(scheduleRequest, currentSchedule, startDate, endDate, missingWorker);
+    @Transactional(readOnly = true)
+    public Optional<Schedule> getScheduleById(UUID id) {
+        return scheduleRepository.findById(id);
+    }
 
-        scheduleRepository.saveAll(newSchedules);
+    public Optional<Schedule> updateSchedule(ScheduleRequest scheduleRequest, Schedule currentSchedule, int startDate, int endDate, Worker missingWorker) {
+        List<Schedule> schedules = RegenerateExistingSchedule.regenerateSchedule(scheduleRequest, currentSchedule, startDate, endDate, missingWorker);
+        if (schedules == null || schedules.isEmpty()) return Optional.empty();
+        Schedule saved = scheduleRepository.save(schedules.get(0));
+        return Optional.of(saved);
+    }
 
-        return newSchedules;
+    public boolean deleteSchedule(UUID id) {
+        if (scheduleRepository.existsById(id)) {
+            scheduleRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

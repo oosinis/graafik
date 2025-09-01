@@ -20,9 +20,9 @@ public class CreateSchedule {
 
     @PostMapping("/create-schedule")
     public ResponseEntity<Schedule> processSchedule(@RequestBody ScheduleRequest scheduleRequest) {
-        var result = service.Generate(scheduleRequest);
-        System.out.println("Received ScheduleRequest: " + scheduleRequest.getMonth());
-        return ResponseEntity.ok(result);
+        //var result = service.createSchedule(scheduleRequest);
+        //System.out.println("Received ScheduleRequest: " + scheduleRequest.getMonth());
+        return null;//ResponseEntity.ok(result);
     }
 
 }

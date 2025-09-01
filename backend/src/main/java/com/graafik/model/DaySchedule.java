@@ -2,7 +2,12 @@ package com.graafik.model;
 
 import java.util.List;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 
 @Entity
@@ -18,16 +23,13 @@ public class DaySchedule extends BaseEntity {
     @JoinColumn(name = "day_schedule_id")
     private List<ShiftAssignment> assignments;
 
-    // No-args constructor
     public DaySchedule() {}
 
-    // Parameterized constructor
     public DaySchedule(int dayOfMonth, List<ShiftAssignment> assignments) {
         this.dayOfMonth = dayOfMonth;
         this.assignments = assignments;
     }
 
-    // Getters
     public int getDayOfMonth() {
         return dayOfMonth;
     }
@@ -40,7 +42,6 @@ public class DaySchedule extends BaseEntity {
         return score;
     }
 
-    // Setters
     public void setDayOfMonth(int dayOfMonth) {
         this.dayOfMonth = dayOfMonth;
     }
@@ -80,7 +81,7 @@ public class DaySchedule extends BaseEntity {
             for (ShiftAssignment assignment : assignments) {
                 sb.append(assignment.toString()).append(",\n ");
             }
-            sb.setLength(sb.length() - 2); // Remove the last comma and space
+            sb.setLength(sb.length() - 2);
             sb.append("\n]\n");
         }
     
