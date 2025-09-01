@@ -42,7 +42,7 @@ public class ScheduleController {
     public ResponseEntity<Schedule> getScheduleById(@PathVariable UUID id) {
         return scheduleService.getScheduleById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build()); // ??????????????
     }
 
     @PutMapping("/{id}")

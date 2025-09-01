@@ -38,6 +38,8 @@ public class ScheduleService {
         return scheduleRepository.findById(id);
     }
 
+    // rn saves the new schedule by default
+    // should display multiple schedules to the user save the one they choose
     public Optional<Schedule> updateSchedule(ScheduleRequest scheduleRequest, Schedule currentSchedule, int startDate, int endDate, Worker missingWorker) {
         List<Schedule> schedules = RegenerateExistingSchedule.regenerateSchedule(scheduleRequest, currentSchedule, startDate, endDate, missingWorker);
         if (schedules == null || schedules.isEmpty()) return Optional.empty();
