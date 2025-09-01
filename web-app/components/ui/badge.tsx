@@ -1,5 +1,5 @@
-import * as React from "react"
-import clsx from "clsx"
+import * as React from "react";
+import clsx from "clsx";
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?:
@@ -8,8 +8,8 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
     | "outline"
     | "success"
     | "warning"
-    | "destructive"
-    | "purple"
+  | "destructive"
+  | "purple";
 }
 
 export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
@@ -38,7 +38,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
         )}
         {...props}
       />
-    )
+    );
   }
-)
-Badge.displayName = "Badge"
+);
+Badge.displayName = "Badge";

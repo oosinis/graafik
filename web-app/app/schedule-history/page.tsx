@@ -15,18 +15,18 @@ const availableSchedules = [
 ]
 
 const monthNames = [
-  "Jaanuar",
-  "Veebruar",
-  "Märts",
-  "Aprill",
-  "Mai",
-  "Juuni",
-  "Juuli",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
   "August",
   "September",
-  "Oktoober",
+  "October",
   "November",
-  "Detsember",
+  "December",
 ]
 export default function ScheduleHistoryRoute() {
 const [selectedYear, setSelectedYear] = useState<number | null>(null)
@@ -44,10 +44,10 @@ const [selectedYear, setSelectedYear] = useState<number | null>(null)
 
   return (
     <div className="max-w-4xl mx-auto">
-      <PageHeader title="Graafikute Ajalugu" />
+      <PageHeader title="Schedule history" />
       <div className="mb-4">
         <label htmlFor="year-select" className="mr-2">
-          Filtreeri aasta järgi:
+          Filter by year:
         </label>
         <select
           id="year-select"
@@ -55,7 +55,7 @@ const [selectedYear, setSelectedYear] = useState<number | null>(null)
           onChange={(e) => setSelectedYear(e.target.value ? Number(e.target.value) : null)}
           className="border rounded p-1"
         >
-          <option value="">Kõik aastad</option>
+          <option value="">All years</option>
           {years.map((year) => (
             <option key={year} value={year}>
               {year}
@@ -65,7 +65,7 @@ const [selectedYear, setSelectedYear] = useState<number | null>(null)
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Saadaval Graafikud</CardTitle>
+          <CardTitle>Available schedules</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4">

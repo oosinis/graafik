@@ -1,8 +1,9 @@
-import { Rule } from '@/models/Rule'
+import type { Rule } from "./Rule"
 
 export interface Shift {
   id: string
   type: string
   durationInMinutes: number
-  rules?: Rule[]
+  rules: Rule[]
+  createdAt?: string
 }

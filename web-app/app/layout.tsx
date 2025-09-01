@@ -23,10 +23,10 @@ export default function RootLayout({
     <html lang="et">
       <body className={inter.className}>
         <Auth0Provider>
-          <div className="flex h-screen">
-            <ConditionalSidebar />
-            <main className="flex-1 p-8 overflow-auto">{children}</main>
-          </div>
+        <div className="flex h-screen">
+          <ConditionalSidebar />
+          <main className="flex-1 p-8 overflow-auto">{children}</main>
+        </div>
         </Auth0Provider>
       </body>
     </html>

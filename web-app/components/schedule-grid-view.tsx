@@ -10,6 +10,7 @@ import type { ScheduleResponse } from "@/models/ScheduleResponse";
 import type { WorkerDto } from "@/models/WorkerDto";
 import type { ShiftAssignment } from "@/models/ShiftAssignment";
 import type { DaySchedule } from "@/models/DaySchedule";
+import { Rule } from '@/models/Rule';
 import React from "react";
 
 interface ScheduleGridViewProps {
@@ -20,29 +21,29 @@ interface ScheduleGridViewProps {
 
 // Mutable month names array
 const monthNames: string[] = [
-  "Jaanuar","Veebruar","Märts","Aprill",
-  "Mai","Juuni","Juuli","August",
-  "September","Oktoober","November","Detsember"
+  "January","February","March","April",
+  "May","June","July","August",
+  "September","October","November","December"
 ];
 
-const shiftTypes = ["Hommik","Päev","Õhtu","Öö"] as const;
+const shiftTypes = ["Morning","Day","Evening","Night"] as const;
 type ShiftType = typeof shiftTypes[number];
 
 const shiftAbbrev: Record<ShiftType,string> = {
-  Hommik:"H", Päev:"P", Õhtu:"Õ", Öö:"Ö"
+  Morning:"M", Day:"D", Evening:"E", Night:"N"
 };
 
 const shiftColors: Record<ShiftType,string> = {
-  Hommik:"bg-orange-200",
-  Päev:"bg-teal-200",
-  Õhtu:"bg-pink-200",
-  Öö:"bg-purple-200"
+  Morning:"bg-orange-200",
+  Day:"bg-teal-200",
+  Evening:"bg-pink-200",
+  Night:"bg-purple-200"
 };
 
 const groupedRoles: Record<string,string[]> = {
-  Vahetusevanem:["Sander Saar","Mirjam Laane"],
-  Ettekandjad:["Gregor Ojamets","Jürgen Kask"],
-  Kokad:["Andres Allik","Liis Lepp"]
+  Manager:["Sander Saar","Mirjam Laane"],
+  Waitor:["Gregor Ojamets","Jürgen Kask"],
+  Chef:["Andres Allik","Liis Lepp"]
 };
 
 export function ScheduleGridView({
@@ -77,7 +78,13 @@ export function ScheduleGridView({
     workers.forEach(w=>workerHours[w.name]=140+Math.floor(Math.random()*40));
     const daySchedules:DaySchedule[] = Array.from({length:days},(_,i)=>{
       const assignments:ShiftAssignment[] = shiftTypes.map((type,idx)=>({
-        shift:{type,length:8},
+        shift:{
+          id:`${y}-${m}-${i+1}-${type}`,
+          type,
+          durationInMinutes: 480,     // or compute based on start/end
+          rules: [] as Rule[],
+          createdAt: new Date().toISOString()
+        },
         worker:workers[(i+idx)%workers.length]
       }));
       return {dayOfMonth:i+1,assignments,score:0};
@@ -86,6 +93,9 @@ export function ScheduleGridView({
   }
 
   const daysInMonth = new Date(year,month,0).getDate();
+  
+  const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n)
+
 
   // visible days based on mode
   const visibleDays = useMemo<number[]>(()=>{
@@ -165,13 +175,13 @@ export function ScheduleGridView({
       {viewMode==="weekly" && (
         <div className="flex justify-end gap-2">
           <Button onClick={prevWeek} disabled={currentWeekStart===1}>
-            Eelmine nädal
+            last week
           </Button>
           <span className="font-medium">
             {visibleDays[0]}–{visibleDays[visibleDays.length-1]}
           </span>
           <Button onClick={nextWeek} disabled={currentWeekStart+6>=daysInMonth}>
-            Järgmine nädal
+            Next week
           </Button>
         </div>
       )}
@@ -180,8 +190,8 @@ export function ScheduleGridView({
       {viewMode==="daily" && (
         <DayNavigation
           date={currentDate}
-          onPrevious={()=>setCurrentDate(d=>{d.setDate(d.getDate()-1); return new Date(d);} )}
-          onNext={()=>setCurrentDate(d=>{d.setDate(d.getDate()+1); return new Date(d);} )}
+          onPrevious={() => setCurrentDate(d => addDays(d, -1))}
+          onNext={() => setCurrentDate(d => addDays(d,  +1))}
         />
       )}
 
@@ -190,11 +200,11 @@ export function ScheduleGridView({
         <table className="min-w-full border-collapse">
           <thead>
             <tr>
-              <th className="sticky left-0 bg-gray-50 border p-2 w-40">Töötaja</th>
+              <th className="sticky left-0 bg-gray-50 border p-2 w-40">Employees</th>
               {visibleDays.map(d=>(
                 <th key={d} className="border p-2 text-center">{d}</th>
               ))}
-              <th className="border p-2 w-24 text-center">Tunnid</th>
+              <th className="border p-2 w-24 text-center">Hours</th>
             </tr>
           </thead>
           <tbody>
@@ -250,7 +260,7 @@ export function ScheduleGridView({
               endTime   = "17:00"
               hours     = {8}
               worker    = {selectedShift.worker}
-              department= "Intensiivosakond"
+              department= "Intensive unit"
               fte       = {selectedShift.fte}
               onEdit    = {()=>console.log("edit",selectedShift)}
             />
