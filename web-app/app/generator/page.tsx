@@ -133,6 +133,10 @@ export default function GeneratorRoute() {
     setShifts(prev => [...prev, shift])
   }
 
+  const deleteShift = (shiftId: string) => {
+    setShifts(prev => prev.filter(s => s.id !== shiftId))
+  }
+
   const generateSchedule = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (!apiUrl) {
@@ -188,6 +192,7 @@ export default function GeneratorRoute() {
         shifts={shifts}
         activeShiftId={activeShiftId}
         onAddShift={onAddShift}
+        onDeleteShift={deleteShift}
         onSelectShift={setActiveShiftId}
         onUpdateShift={updateShift}
         rulesProps={{

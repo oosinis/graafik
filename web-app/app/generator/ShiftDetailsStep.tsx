@@ -1,5 +1,5 @@
 "use client"
-//TODO: the adding module is gone when navigating between the shift buttons
+
 import { useState, useMemo } from 'react'
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -17,7 +17,7 @@ function makeId() {
 export function ShiftDetailsStep({
   shifts,
   onAddShift,
-  //onDeleteShift,
+  onDeleteShift,
   activeShiftId,
   onSelectShift,
   onUpdateShift,
@@ -86,12 +86,7 @@ export function ShiftDetailsStep({
     }
     onSelectShift(id); 
   };
-  
 
-  //TODO: delete shift
-  const deleteShift = () => {
-
-  }
 
   return (
     <div className="mb-6">
@@ -232,6 +227,13 @@ export function ShiftDetailsStep({
                   />
                   <span>min</span>
                 </div>
+              </div>
+              <div>
+                <Button
+                className="bg-purple-600 hover:bg-purple-700"
+                onClick={() => onDeleteShift?.(active.id)}>
+                  Delete
+                </Button>
               </div>
             </div>
 

@@ -4,6 +4,7 @@ import { Rule } from '@/models/Rule'
 export type Props = {
     shifts: Shift[]
     activeShiftId: string
+    onDeleteShift: (id: string) => void
     onAddShift: (shift: Shift) => void
     onSelectShift: (id: string) => void
     onUpdateShift: (id: string, patch: Partial<Shift>) => void
