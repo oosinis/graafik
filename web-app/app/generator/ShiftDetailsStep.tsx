@@ -17,7 +17,7 @@ function makeId() {
 export function ShiftDetailsStep({
   shifts,
   onAddShift,
-  onDeleteShift,
+  //onDeleteShift,
   activeShiftId,
   onSelectShift,
   onUpdateShift,
@@ -38,6 +38,7 @@ export function ShiftDetailsStep({
   const minutes = active ? active.durationInMinutes % 60 : 0
   
   const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n))
+
 
   const resetDraft = () => {
     setNewTitle("")
@@ -78,6 +79,15 @@ export function ShiftDetailsStep({
     onSelectShift("")
   }
 
+  const handleSelectShift = (id: string) => {
+    if (adding) {
+      setAdding(false);
+      resetDraft();
+    }
+    onSelectShift(id); 
+  };
+  
+
   //TODO: delete shift
   const deleteShift = () => {
 
@@ -108,7 +118,7 @@ export function ShiftDetailsStep({
                   key={s.id}
                   variant={isActive ? "default" : "outline"}
                   className={isActive ? "bg-purple-600 hover:bg-purple-700" : ""}
-                  onClick={() => onSelectShift(s.id)}
+                  onClick={() => handleSelectShift(s.id)}
                 >
                   {s.type}
                 </Button>
