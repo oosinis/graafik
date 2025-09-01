@@ -17,11 +17,7 @@ export default function GeneratorRoute() {
   const [fullTimeHours, setFullTimeHours] = useState("170")
   const [month, setMonth] = useState(months[new Date().getMonth()])
 
-  const [shifts, setShifts] = useState<Shift[]>([
-    { id: "1", type: "Day",     durationInMinutes: 480, rules: [] },
-    { id: "2", type: "Morning", durationInMinutes: 480, rules: [] },
-    { id: "3", type: "Evening", durationInMinutes: 480, rules: [] },
-  ])
+  const [shifts, setShifts] = useState<Shift[]>([])
   const [activeShiftId, setActiveShiftId] = useState<string>(shifts[0]?.id ?? "")
   const [activeRuleId, setActiveRuleId] = useState<string>("")
   const [workers, setWorkers] = useState<Worker[]>([
@@ -133,6 +129,10 @@ export default function GeneratorRoute() {
     )
   }
 
+  const onAddShift = (shift: Shift) => {
+    setShifts(prev => [...prev, shift])
+  }
+
   const generateSchedule = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (!apiUrl) {
@@ -187,6 +187,7 @@ export default function GeneratorRoute() {
       <ShiftDetailsStep
         shifts={shifts}
         activeShiftId={activeShiftId}
+        onAddShift={onAddShift}
         onSelectShift={setActiveShiftId}
         onUpdateShift={updateShift}
         rulesProps={{
