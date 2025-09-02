@@ -1,16 +1,20 @@
 package com.graafik.model;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.UuidGenerator;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 @MappedSuperclass
 public abstract class BaseEntity {
 
     @Id
-    @GeneratedValue
     @UuidGenerator
     @Column(updatable = false, nullable = false)
     private UUID id;
@@ -21,7 +25,6 @@ public abstract class BaseEntity {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
-    // Getters and setters
     public UUID getId() {
         return id;
     }
@@ -34,7 +37,6 @@ public abstract class BaseEntity {
         return modifiedAt;
     }
 
-    // JPA lifecycle callbacks to set timestamps
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

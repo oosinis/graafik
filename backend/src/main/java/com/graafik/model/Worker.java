@@ -1,52 +1,50 @@
 package com.graafik.model;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "workers")
 public class Worker extends BaseEntity {
+    
+    @Column(nullable = false)
+    private String name;
 
-    int employeeId;
-    String name;
-    int workLoadHours;
-    double workLoad;
-    Integer quarterBalance;
-    Integer lastMonthBalance;
-    int lastMonthLastDayHours;
-    List<Integer> vacationDays;
-    List<Integer> desiredVacationDays;
-    HashMap<Integer, Shift> desiredWorkDays;
-    List<Integer> sickLeaveDays;
-    List<Integer> trainingDays;
-    int numOf24hShifts;
-    Integer initialBalance;
+    private float workLoad;
 
-    public Worker(int employeeId, String name, int workLoadHours, double workLoad, Integer quarterBalance, int lastMonthLastDayHours, List<Integer> vacationDays, List<Integer> desiredVacationDays, HashMap<Integer, Shift> desiredWorkDays, List<Integer> sickLeaveDays, List<Integer> trainingDays) {
-        this.employeeId = employeeId;
-        this.name = name;
-        this.workLoadHours = workLoadHours;
-        this.workLoad = workLoad;
-        this.quarterBalance = quarterBalance;
-        this.lastMonthBalance = quarterBalance;
-        this.lastMonthLastDayHours = lastMonthLastDayHours;
-        this.vacationDays = vacationDays;
-        this.desiredVacationDays = desiredVacationDays;
-        this.desiredWorkDays = desiredWorkDays;
-        this.sickLeaveDays = sickLeaveDays;
-        this.trainingDays = trainingDays;
+    @ElementCollection
+    @CollectionTable(name = "worker_assigned_shift_ids", joinColumns = @JoinColumn(name = "worker_id"))
+    @Column(name = "shift_id")
+    private List<UUID> assignedShifts;
 
-        if (workLoad == 1.0) this.numOf24hShifts = 5;
-        else this.numOf24hShifts = 4;
+    @ElementCollection
+    @CollectionTable(name = "worker_desired_vacation_days", joinColumns = @JoinColumn(name = "worker_id"))
+    @Column(name = "day")
+    private List<Integer> desiredVacationDays;
+    
+    
+    @ElementCollection
+    @CollectionTable(name = "worker_vacation_days", joinColumns = @JoinColumn(name = "worker_id"))
+    @Column(name = "day")
+    private List<Integer> vacationDays;
 
-        this.initialBalance = quarterBalance;
-    }
+    @ElementCollection
+    @CollectionTable(name = "worker_sick_days", joinColumns = @JoinColumn(name = "worker_id"))
+    @Column(name = "day")
+    private List<Integer> sickDays;
 
-    public int getEmployeeId() {
-        return employeeId;
-    }
 
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
+    @ElementCollection
+    @CollectionTable(name = "worker_requested_work_days", joinColumns = @JoinColumn(name = "worker_id"))
+    @MapKeyColumn(name = "day")
+    @Column(name = "shift_id")
+    private Map<Integer, UUID> requestedWorkDays;
+
+    public Worker() {}
 
     public String getName() {
         return name;
@@ -56,106 +54,57 @@ public class Worker extends BaseEntity {
         this.name = name;
     }
 
-    public int getWorkLoadHours() {
-        return workLoadHours;
+    public List<UUID> getAssignedShifts() {
+        return assignedShifts;
     }
 
-    public void setWorkLoadHours(int workLoadHours) {
-        this.workLoadHours = workLoadHours;
+    public void setAssignedShifts(List<UUID> assignedShifts) {
+        this.assignedShifts = assignedShifts;
     }
 
-    public double getWorkLoad() {
+    public float getWorkLoad() {
         return workLoad;
-    }
-
-    public void setWorkLoad(double workLoad) {
-        this.workLoad = workLoad;
-    }
-
-    public Integer getQuarterBalance() {
-        return quarterBalance;
-    }
-
-    public void setQuarterBalance(Integer quarterBalance) {
-        this.quarterBalance = quarterBalance;
-    }
-
-    public Integer getLastMonthBalance() {
-        return lastMonthBalance;
-    }
-
-    public void setLastMonthBalance(Integer lastMonthBalance) {
-        this.lastMonthBalance = lastMonthBalance;
-    }
-
-    public int getLastMonthLastDayHours() {
-        return lastMonthLastDayHours;
-    }
-
-    public void setLastMonthLastDayHours(int lastMonthLastDayHours) {
-        this.lastMonthLastDayHours = lastMonthLastDayHours;
-    }
-
-    public List<Integer> getVacationDays() {
-        return vacationDays;
-    }
-
-    public void setVacationDays(List<Integer> vacationDays) {
-        this.vacationDays = vacationDays;
     }
 
     public List<Integer> getDesiredVacationDays() {
         return desiredVacationDays;
+    }    
+    
+    public List<Integer> getVacationDays() {
+        return vacationDays;
     }
 
-    public void setDesiredVacationDays(List<Integer> desiredVacationDays) {
-        this.desiredVacationDays = desiredVacationDays;
+    public Map<Integer, UUID> getRequestedWorkDays() {
+        return requestedWorkDays;
+    }    
+
+    public void addSickDays(int newDay) {
+        this.sickDays.add(newDay);
     }
 
-    public HashMap<Integer, Shift> getDesiredWorkDays() {
-        return desiredWorkDays;
-    }
-
-    public void setDesiredWorkDays(HashMap<Integer, Shift> desiredWorkDays) {
-        this.desiredWorkDays = desiredWorkDays;
-    }
-
-    public List<Integer> getSickLeaveDays() {
-        return sickLeaveDays;
-    }
-
-    public void setSickLeaveDays(List<Integer> sickLeaveDays) {
-        this.sickLeaveDays = sickLeaveDays;
-    }
-
-    public List<Integer> getTrainingDays() {
-        return trainingDays;
-    }
-
-    public void setTrainingDays(List<Integer> trainingDays) {
-        this.trainingDays = trainingDays;
-    }
-
-    public double getPercentageWorked() {
-        return workLoadHours + quarterBalance;
-    }
-
-    public int getNumOf24hShifts() {
-        return numOf24hShifts;
-    }
-
-    public void setNumOf24hShifts(int numOf24hShifts) {
-        this.numOf24hShifts = numOf24hShifts;
-    }
-
-    public Integer getInitialBalance() {
-        return initialBalance;
+    public List<Integer> getSickDays() {
+        return sickDays;
     }
 
     @Override
-    public String toString() {
-        return "Töötaja{" +
-                "nimi='" + name + '\'' +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Worker workerDto = (Worker) o;
+        return Objects.equals(name, workerDto.name);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, assignedShifts, workLoad, desiredVacationDays, vacationDays, requestedWorkDays, sickDays);
+    }
+    
+    @Override
+    public String toString() {
+        return "WorkerDto{" +
+               "name='" + name + '\'' +
+               '}';
+    }
+    
 }
+

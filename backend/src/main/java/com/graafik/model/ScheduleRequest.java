@@ -1,28 +1,37 @@
 package com.graafik.model;
-
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
-public class ScheduleRequest {
+@Entity
+@Table(name = "schedule_requests")
+public class ScheduleRequest extends BaseEntity {
 
-    @JsonProperty("workers")
-    private List<WorkerDto> workers;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "schedule_request_workers",
+        joinColumns = @JoinColumn(name = "schedule_request_id"),
+        inverseJoinColumns = @JoinColumn(name = "worker_id")
+    )
+    private List<Worker> workers;
 
-    @JsonProperty("shifts")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "schedule_request_id")
     private List<Shift> shifts;
 
-    @JsonProperty("month")
     private int month;
 
-    @JsonProperty("fullTimeHours")
     private int fullTimeHours;
 
-    // Constructor with all fields
     public ScheduleRequest() {}
 
-    // Getters
-    public List<WorkerDto> getWorkers() {
+    public List<Worker> getWorkers() {
         return workers;
     }
 
@@ -38,8 +47,7 @@ public class ScheduleRequest {
         return fullTimeHours;
     }
 
-    // Setters
-    public void setWorkers(List<WorkerDto> workers) {
+    public void setWorkers(List<Worker> workers) {
         this.workers = workers;
     }
 

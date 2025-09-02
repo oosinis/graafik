@@ -2,21 +2,34 @@ package com.graafik.model;
 
 import java.util.List;
 
-public class DaySchedule {
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+
+@Entity
+@Table(name = "day_schedules")
+public class DaySchedule extends BaseEntity {
+    
+    @Column(nullable = false)
     private int dayOfMonth;
-    private List<ShiftAssignment> assignments;
+
     private int score;
 
-    // No-args constructor
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "day_schedule_id")
+    private List<ShiftAssignment> assignments;
+
     public DaySchedule() {}
 
-    // Parameterized constructor
     public DaySchedule(int dayOfMonth, List<ShiftAssignment> assignments) {
         this.dayOfMonth = dayOfMonth;
         this.assignments = assignments;
     }
 
-    // Getters
     public int getDayOfMonth() {
         return dayOfMonth;
     }
@@ -29,7 +42,6 @@ public class DaySchedule {
         return score;
     }
 
-    // Setters
     public void setDayOfMonth(int dayOfMonth) {
         this.dayOfMonth = dayOfMonth;
     }
@@ -46,7 +58,7 @@ public class DaySchedule {
         this.score = this.score + addition;
     }
 
-    public static ShiftAssignment containsWorker(DaySchedule ShiftAssignments, WorkerDto worker) {
+    public static ShiftAssignment containsWorker(DaySchedule ShiftAssignments, Worker worker) {
         for (ShiftAssignment shiftAssignment : ShiftAssignments.getAssignments()) {
             if (shiftAssignment.getWorker().equals(worker)) {
                 return shiftAssignment;
@@ -69,7 +81,7 @@ public class DaySchedule {
             for (ShiftAssignment assignment : assignments) {
                 sb.append(assignment.toString()).append(",\n ");
             }
-            sb.setLength(sb.length() - 2); // Remove the last comma and space
+            sb.setLength(sb.length() - 2);
             sb.append("\n]\n");
         }
     

@@ -1,11 +1,10 @@
 package com.graafik.repositories;
-import java.util.UUID;
 
+import com.graafik.model.Shift;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.graafik.model.Schedule;
+import java.util.UUID;
 
 @Repository
-public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
+public interface ShiftRepository extends JpaRepository<Shift, UUID> {
 }

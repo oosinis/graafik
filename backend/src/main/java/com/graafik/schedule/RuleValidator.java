@@ -3,6 +3,7 @@ package com.graafik.schedule;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Rule;
@@ -10,7 +11,7 @@ import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
-import com.graafik.model.WorkerDto;
+import com.graafik.model.Worker;
 
 
 
@@ -30,7 +31,7 @@ public class RuleValidator {
         // look through assignments for a day
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments())  {
 
-            WorkerDto worker = shiftAssignment.getWorker();
+            Worker worker = shiftAssignment.getWorker();
 
             // rest days in  row
             int countRest = 0;
@@ -99,7 +100,7 @@ public class RuleValidator {
     private static int checkContinuousNewAssignment(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
-        WorkerDto worker = shiftAssignment.getWorker();
+        Worker worker = shiftAssignment.getWorker();
 
         //TODO adjust additional score to match how much staff
         int additionalScore = 0;
@@ -143,7 +144,7 @@ public class RuleValidator {
     private static int checkContinuous(ShiftAssignment shiftAssignment, Schedule currentSchedule, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
-        WorkerDto worker = shiftAssignment.getWorker();
+        Worker worker = shiftAssignment.getWorker();
 
         for (int i = date; i >= 0; i--) {
 
@@ -167,7 +168,7 @@ public class RuleValidator {
         return countCont;
     }
 
-    public static void checkDesiredVacationDays(WorkerDto worker, int date, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+    public static void checkDesiredVacationDays(Worker worker, int date, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         // TODO: kui palju see score täpselt muutub
         if (worker.getDesiredVacationDays().contains(date)) {
             currentDayShiftAssignments.addToScore(-10);
@@ -175,9 +176,9 @@ public class RuleValidator {
     }
 
     public static void checkWorkerHours(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
-        WorkerDto worker = shiftAssignment.getWorker();
+        Worker worker = shiftAssignment.getWorker();
         Shift shift = shiftAssignment.getShift();
-        int workerCurrentHours = currentSchedule.getWorkerHours().get(worker);
+        int workerCurrentHours = currentSchedule.getWorkerHours().get(worker.getId());
 
         // TODO: Adjust score impact calculation if needed
         if (workerCurrentHours - shift.getDuration() < -2) {
@@ -186,10 +187,8 @@ public class RuleValidator {
         }
     }
 
-    public static boolean initialValidator(Map<Shift, List<WorkerDto>> currentRequestedWorkDays, Shift shift, WorkerDto worker) {
-        if (!worker.getAssignedShifts().contains(shift)) return false;
-        if (currentRequestedWorkDays.containsKey(shift) && !currentRequestedWorkDays.get(shift).contains(worker)) return false;
-        return true;
+    public static boolean initialValidator(Map<UUID, List<Worker>> currentRequestedWorkDays, Shift shift, Worker worker) {
+        return worker.getAssignedShifts().contains(shift.getId()) || !(currentRequestedWorkDays.containsKey(shift.getId()) && !currentRequestedWorkDays.get(shift.getId()).contains(worker));
     }
 
     /**
@@ -204,7 +203,7 @@ public class RuleValidator {
     public static int singleAssignmentValidator(ScheduleRequest scheduleRequest, Schedule currentSchedule, ShiftAssignment shiftAssignment, int date) {
 
         Shift shift = shiftAssignment.getShift();
-        WorkerDto worker = shiftAssignment.getWorker();
+        Worker worker = shiftAssignment.getWorker();
         int score = 0;
 
         // rest days in  row
@@ -217,7 +216,7 @@ public class RuleValidator {
 
 
         // check worker hours
-        int newHours = currentSchedule.getWorkerHours().get(worker) - shift.getDuration();
+        int newHours = currentSchedule.getWorkerHours().get(worker.getId()) - shift.getDuration();
         if (newHours < -2) score -= newHours * 2;
         // check desired vacation
         if (worker.getDesiredVacationDays().contains(date)) score -= 10;
@@ -277,7 +276,7 @@ public class RuleValidator {
     private static int checkContinuousNewAssignmentSingleShift(ShiftAssignment shiftAssignment, Schedule currentSchedule, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
-        WorkerDto worker = shiftAssignment.getWorker();
+        Worker worker = shiftAssignment.getWorker();
 
         //TODO adjust additional score to match how much staff
         int additionalScore = 0;
