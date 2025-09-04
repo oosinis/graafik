@@ -1,20 +1,11 @@
 "use client"
 
-import { useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Rule } from "@/models/Rule"
-
-type Props = {
-  shiftId: string
-  rules: Rule[]
-  activeRuleId: string
-  onSelectRule: (ruleId: string) => void
-  onUpdateRule: (shiftId: string, ruleId: string, patch: Partial<Rule>) => void
-  onToggleDay: (shiftId: string, ruleId: string, day: number) => void
-  onSetPriority: (shiftId: string, ruleId: string, p: Rule["priority"]) => void
-}
+import { RulesProps } from "@/models/Props";
 
 const dayLabels = ["Mo","Tu","We","Th","Fr","Sa","Su"]
 
@@ -26,31 +17,54 @@ export function RuleDetailsStep({
   onUpdateRule,
   onToggleDay,
   onSetPriority,
-}: Props){
+  onAddRule,  
+  onDeleteRule,
+}: RulesProps){
+
+  const [adding, setAdding] = useState(false)
+  const [draftName, setDraftName] = useState("")
+  const resetDraft = () => setDraftName("")
     
-    // ensure an active rule if available
   useEffect(() => {
     if (!activeRuleId && rules[0]?.id) onSelectRule(rules[0].id)
+    if (activeRuleId && !rules.some(r => r.id === activeRuleId)) {
+      onSelectRule(rules[0]?.id ?? "")
+    }
   }, [activeRuleId, rules, onSelectRule])
 
-  const active = rules.find(r => r.id === activeRuleId)
-  if (!active && rules.length === 0) {
-    return (
-      <Card className="p-6 bg-gray-50">
-        <p className="text-gray-500">No rules for this shift.</p>
-      </Card>
-    )
+  const active = useMemo(
+    () => rules.find(r => r.id === activeRuleId) ?? null,
+    [rules, activeRuleId]
+  )
+
+  const saveRule = () => {
+    const name = draftName.trim()
+    if (!name) return
+    // provide defaults; parent will assign the id
+    onAddRule(shiftId!, {
+      name,
+      priority: "medium",
+      daysApplied: [],
+      perDay: 1,
+      restDays: 0,
+      continuousDays: 1,
+    })
+    setAdding(false)
+    resetDraft()
   }
 
     return(
       <Card className="p-6 bg-gray-50">
-      <div className="mb-4">
+      <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-bold">Rules</h3>
+        <Button className="bg-purple-600 hover:bg-purple-700" onClick={saveRule}>
+          + Add rule
+        </Button>
       </div>
 
-      {rules.length > 0 && (
+      {rules.length > 0 ? (
         <div className="flex gap-2 mb-4 flex-wrap">
-          {rules.map((r) => {
+          {rules.map(r => {
             const isActive = r.id === activeRuleId
             return (
               <Button
@@ -64,6 +78,8 @@ export function RuleDetailsStep({
             )
           })}
         </div>
+      ) : (
+        <p className="text-gray-500 mb-4">No rules for this shift.</p>
       )}
 
       {active && (
@@ -74,7 +90,7 @@ export function RuleDetailsStep({
               <Input
                 className="max-w-md"
                 value={active.name}
-                onChange={(e) => onUpdateRule(shiftId, active.id, { name: e.currentTarget.value })}
+                onChange={(e) => onUpdateRule(shiftId!, active.id, { name: e.currentTarget.value })}
               />
             </div>
 
@@ -87,7 +103,7 @@ export function RuleDetailsStep({
                     size="sm"
                     variant={active.priority === p ? "default" : "outline"}
                     className={active.priority === p ? "bg-purple-600 hover:bg-purple-700" : ""}
-                    onClick={() => onSetPriority(shiftId, active.id, p)}
+                    onClick={() => onSetPriority(shiftId!, active.id, p)}
                   >
                     {p}
                   </Button>
@@ -100,7 +116,7 @@ export function RuleDetailsStep({
             <label className="block text-sm font-medium mb-2">Days Applied</label>
             <div className="flex gap-2 flex-wrap">
               {dayLabels.map((label, idx) => {
-                const dayNum = idx + 1 // 1..7
+                const dayNum = idx + 1
                 const on = active.daysApplied.includes(dayNum)
                 return (
                   <Button
@@ -108,7 +124,7 @@ export function RuleDetailsStep({
                     size="sm"
                     variant={on ? "default" : "outline"}
                     className={on ? "bg-purple-600 hover:bg-purple-700" : ""}
-                    onClick={() => onToggleDay(shiftId, active.id, dayNum)}
+                    onClick={() => onToggleDay(shiftId!, active.id, dayNum)}
                   >
                     {label}
                   </Button>
@@ -126,7 +142,7 @@ export function RuleDetailsStep({
                 min={0}
                 onChange={(e) => {
                   const n = e.currentTarget.valueAsNumber
-                  if (!Number.isNaN(n)) onUpdateRule(shiftId, active.id, { perDay: n })
+                  if (!Number.isNaN(n)) onUpdateRule(shiftId!, active.id, { perDay: n })
                 }}
               />
             </div>
@@ -138,7 +154,7 @@ export function RuleDetailsStep({
                 min={0}
                 onChange={(e) => {
                   const n = e.currentTarget.valueAsNumber
-                  if (!Number.isNaN(n)) onUpdateRule(shiftId, active.id, { restDays: n })
+                  if (!Number.isNaN(n)) onUpdateRule(shiftId!, active.id, { restDays: n })
                 }}
               />
             </div>
@@ -150,10 +166,16 @@ export function RuleDetailsStep({
                 min={0}
                 onChange={(e) => {
                   const n = e.currentTarget.valueAsNumber
-                  if (!Number.isNaN(n)) onUpdateRule(shiftId, active.id, { continuousDays: n })
+                  if (!Number.isNaN(n)) onUpdateRule(shiftId!, active.id, { continuousDays: n })
                 }}
               />
             </div>
+          </div>
+
+          <div className="mt-4">
+            <Button variant="destructive" onClick={() => onDeleteRule(shiftId!, active.id)}>
+              Delete rule
+            </Button>
           </div>
         </>
       )}

@@ -8,13 +8,8 @@ import { RuleDetailsStep } from "@/app/generator/RuleDetailsStep"
 import { Props } from "@/models/Props"
 import { Shift } from '@/models/Shift'
 
-function makeId() {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `shift_${Math.random().toString(36).slice(2)}`
-}
-
 export function ShiftDetailsStep({
+  makeId,
   shifts,
   onAddShift,
   onDeleteShift,
@@ -86,7 +81,6 @@ export function ShiftDetailsStep({
     }
     onSelectShift(id); 
   };
-
 
   return (
     <div className="mb-6">
@@ -242,9 +236,11 @@ export function ShiftDetailsStep({
               rules={active.rules}
               activeRuleId={rulesProps.activeRuleId}
               onSelectRule={rulesProps.onSelectRule}
-              onUpdateRule={rulesProps.updateRule}
-              onToggleDay={rulesProps.toggleRuleDay}
-              onSetPriority={rulesProps.setRulePriority}
+              onUpdateRule={rulesProps.onUpdateRule}
+              onToggleDay={rulesProps.onToggleDay}
+              onSetPriority={rulesProps.onSetPriority}
+              onAddRule={rulesProps.onAddRule}         
+              onDeleteRule={rulesProps.onDeleteRule}
             />
           </>
         )}
