@@ -11,11 +11,11 @@ export function SidebarNavigation() {
   const pathname = usePathname()
 
   const navItems = [
-    {
+    /*{
       name: "Dashboard",
       href: "/",
       icon: LayoutDashboard,
-    },
+    },*/
     {
       name: "Generator",
       href: "/generator",
@@ -36,11 +36,11 @@ export function SidebarNavigation() {
       href: "/schedule",
       icon: Calendar,
     },
-    {
+   /* {
       name: "Schedule history",
       href: "/schedule-history",
       icon: Calendar,
-    },
+    },*/
   ]
   
   return (
