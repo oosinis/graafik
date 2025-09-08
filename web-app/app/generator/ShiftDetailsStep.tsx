@@ -71,7 +71,7 @@ export function ShiftDetailsStep({
     onAddShift(shift)
     setAdding(false)
     resetDraft()
-    onSelectShift("")
+    onSelectShift(shift.id)
   }
 
   const handleSelectShift = (id: string) => {

@@ -28,6 +28,7 @@ export default function GeneratorRoute() {
   const [shifts, setShifts] = useState<Shift[]>([])
   const [activeShiftId, setActiveShiftId] = useState<string>(shifts[0]?.id ?? "")
   const [activeRuleId, setActiveRuleId] = useState<string>("")
+  const [activeWorkerId, setActiveWorkerId] = useState<string>("")
   const [workers, setWorkers] = useState<Worker[]>([
     {
       id: "w1",
@@ -109,6 +110,10 @@ export default function GeneratorRoute() {
   
 
   //Assing employees things
+  const onAddWorker = (worker: Worker) => {
+    setWorkers(prev => [...prev, worker])
+  }
+
   function toggleAssignedShift(workerId: string, shiftId: string) {
     setWorkers(prev =>
            prev.map(w => {
@@ -242,6 +247,11 @@ export default function GeneratorRoute() {
         monthName={month}
         shifts={shifts}
         workers={workers}
+        activeWorkerId={activeWorkerId}
+        onAddWorker={onAddWorker}
+        onDeleteWorker={deleteWorker}
+        onSelectWorker={setActiveWorkerId}
+        onUpdateWorker={updateWorker}
         onToggleAssignedShift={toggleAssignedShift}
         onSetWorkLoad={setWorkLoad}
         onToggleDesiredVacationDay={toggleDesiredVacationDay}

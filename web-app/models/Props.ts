@@ -1,5 +1,6 @@
 import { Shift } from '@/models/Shift'
 import { Rule } from '@/models/Rule'
+import { Worker } from '@/models/Worker'
 
 export type Props = {
     makeId: () => string
@@ -22,4 +23,20 @@ export type Props = {
     onDeleteRule: (shiftId: string, ruleId: string) => void;
     onToggleDay: (shiftId: string, ruleId: string, day: number) => void
     onSetPriority: (shiftId: string, ruleId: string, p: Rule['priority']) => void
+  }
+
+  export type WorkerProps = {
+    monthName: string
+    shifts: Shift[]
+    workers: Worker[]
+    activeWorkerId: string
+    onAddWorker: (worker: Worker) => void
+    onDeleteWorker: (id: string) => void
+    onSelectWorker: (id: string) => void
+    onUpdateWorker: (id: string, patch: Partial<Worker>) => void
+    onToggleAssignedShift: (workerId: string, shiftId: string) => void
+    onSetWorkLoad: (workerId: string, value: number) => void
+    onToggleDesiredVacationDay: (workerId: string, day: number) => void
+    onToggleVacationDay: (workerId: string, day: number) => void
+    onSetRequestedWorkDay: (workerId: string, day: number, shiftId: string | null) => void
   }
