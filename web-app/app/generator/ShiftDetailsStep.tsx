@@ -222,13 +222,6 @@ export function ShiftDetailsStep({
                   <span>min</span>
                 </div>
               </div>
-              <div>
-                <Button
-                className="bg-purple-600 hover:bg-purple-700"
-                onClick={() => onDeleteShift?.(active.id)}>
-                  Delete
-                </Button>
-              </div>
             </div>
 
             <RuleDetailsStep
@@ -242,6 +235,13 @@ export function ShiftDetailsStep({
               onAddRule={rulesProps.onAddRule}         
               onDeleteRule={rulesProps.onDeleteRule}
             />
+            <div>
+                <Button
+                variant="destructive"
+                onClick={() => onDeleteShift?.(active.id)}>
+                  Delete shift
+                </Button>
+              </div>
           </>
         )}
       </Card>

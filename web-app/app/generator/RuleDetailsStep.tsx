@@ -23,7 +23,19 @@ export function RuleDetailsStep({
 
   const [adding, setAdding] = useState(false)
   const [draftName, setDraftName] = useState("")
-  const resetDraft = () => setDraftName("")
+  const [draftPriority, setDraftPriority] = useState<Rule["priority"] | null>(null)
+  const [draftPerDay, setDraftPerDay] = useState<number | "">("")
+  const [draftRestDays, setDraftRestDays] = useState<number | "">("")
+  const [draftContinuousDays, setDraftContinuousDays] = useState<number | "">("")
+  const [draftDaysApplied, setDraftDaysApplied] = useState<number[]>([])
+  const resetDraft = () => {
+    setDraftName("")
+    setDraftPriority(null)
+    setDraftPerDay("")
+    setDraftRestDays("")
+    setDraftContinuousDays("")
+    setDraftDaysApplied([])
+  }
     
   useEffect(() => {
     if (!activeRuleId && rules[0]?.id) onSelectRule(rules[0].id)
@@ -32,22 +44,34 @@ export function RuleDetailsStep({
     }
   }, [activeRuleId, rules, onSelectRule])
 
+  
   const active = useMemo(
     () => rules.find(r => r.id === activeRuleId) ?? null,
     [rules, activeRuleId]
   )
 
-  const saveRule = () => {
-    const name = draftName.trim()
-    if (!name) return
-    // provide defaults; parent will assign the id
+  const toggleDraftDay = (d: number) =>
+    setDraftDaysApplied(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d])
+
+  const canSaveDraft =
+    draftName.trim().length > 0 &&
+    draftPriority !== null &&
+    typeof draftPerDay === "number" &&
+    !Number.isNaN(draftPerDay) &&
+    typeof draftRestDays === "number" &&
+    !Number.isNaN(draftRestDays) &&
+    typeof draftContinuousDays === "number" &&
+    !Number.isNaN(draftContinuousDays)
+
+  const saveDraft = () => {
+    if (!canSaveDraft) return
     onAddRule(shiftId!, {
-      name,
-      priority: "medium",
-      daysApplied: [],
-      perDay: 1,
-      restDays: 0,
-      continuousDays: 1,
+      name: draftName.trim(),
+      priority: draftPriority!,                     
+      perDay: draftPerDay as number,
+      restDays: draftRestDays as number,
+      continuousDays: draftContinuousDays as number,
+      daysApplied: [...draftDaysApplied].sort((a,b)=>a-b),
     })
     setAdding(false)
     resetDraft()
@@ -57,12 +81,26 @@ export function RuleDetailsStep({
       <Card className="p-6 bg-gray-50">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-bold">Rules</h3>
-        <Button className="bg-purple-600 hover:bg-purple-700" onClick={saveRule}>
-          + Add rule
-        </Button>
+        {!adding ? (
+          <Button
+            className="bg-purple-600 hover:bg-purple-700"
+            onClick={() => { resetDraft(); setAdding(true) }}
+          >
+            + Add rule
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button className="bg-purple-600 hover:bg-purple-700" onClick={saveDraft} disabled={!canSaveDraft}>
+              Save
+            </Button>
+            <Button variant="outline" onClick={() => { setAdding(false); resetDraft() }}>
+              Cancel
+            </Button>
+          </div>
+        )}
       </div>
 
-      {rules.length > 0 ? (
+      {rules.length > 0 && (
         <div className="flex gap-2 mb-4 flex-wrap">
           {rules.map(r => {
             const isActive = r.id === activeRuleId
@@ -71,18 +109,113 @@ export function RuleDetailsStep({
                 key={r.id}
                 variant={isActive ? "default" : "outline"}
                 className={isActive ? "bg-purple-600 hover:bg-purple-700" : ""}
-                onClick={() => onSelectRule(r.id)}
+                onClick={() => !adding && onSelectRule(r.id)}
+                disabled={adding}
               >
                 {r.name}
               </Button>
             )
           })}
         </div>
-      ) : (
-        <p className="text-gray-500 mb-4">No rules for this shift.</p>
+      )}
+      {rules.length === 0 && !adding && <p className="text-gray-500 mb-4">No rules for this shift.</p>}
+
+{/* When adding is true show the form*/}
+      {adding && (
+        <div className="space-y-5 mb-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">Rule Title</label>
+            <Input
+              placeholder="e.g. Max 1 shift per day"
+              value={draftName}
+              onChange={e => setDraftName(e.currentTarget.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Priority</label>
+            <div className="flex flex-wrap gap-2">
+              {(["low","medium","high","critical"] as Rule["priority"][]).map(p => {
+                const selected = draftPriority === p
+                return (
+                  <Button
+                    key={p}
+                    size="sm"
+                    variant={selected ? "default" : "outline"}
+                    className={selected ? "bg-purple-600 hover:bg-purple-700" : ""}
+                    onClick={() => setDraftPriority(p)}
+                  >
+                    {p}
+                  </Button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">Days Applied</label>
+            <div className="flex gap-2 flex-wrap">
+              {dayLabels.map((label, idx) => {
+                const d = idx + 1
+                const on = draftDaysApplied.includes(d)
+                return (
+                  <Button
+                    key={d}
+                    size="sm"
+                    variant={on ? "default" : "outline"}
+                    className={on ? "bg-purple-600 hover:bg-purple-700" : ""}
+                    onClick={() => toggleDraftDay(d)}
+                  >
+                    {label}
+                  </Button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Shifts Per Day</label>
+              <Input
+                type="number"
+                min={0}
+                value={draftPerDay}
+                onChange={e => {
+                  const v = e.currentTarget.value
+                  setDraftPerDay(v === "" ? "" : e.currentTarget.valueAsNumber)
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Off-Days After</label>
+              <Input
+                type="number"
+                min={0}
+                value={draftRestDays}
+                onChange={e => {
+                  const v = e.currentTarget.value
+                  setDraftRestDays(v === "" ? "" : e.currentTarget.valueAsNumber)
+                }}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Continuous Days</label>
+              <Input
+                type="number"
+                min={0}
+                value={draftContinuousDays}
+                onChange={e => {
+                  const v = e.currentTarget.value
+                  setDraftContinuousDays(v === "" ? "" : e.currentTarget.valueAsNumber)
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
 
-      {active && (
+{/* Editing existing rule
+ */}      {active && !adding && (
         <>
           <div className="flex justify-between mb-4">
             <div>
