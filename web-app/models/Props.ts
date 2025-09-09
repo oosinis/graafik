@@ -26,6 +26,7 @@ export type Props = {
   }
 
   export type WorkerProps = {
+    makeId: () => string
     monthName: string
     shifts: Shift[]
     workers: Worker[]

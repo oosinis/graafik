@@ -29,20 +29,7 @@ export default function GeneratorRoute() {
   const [activeShiftId, setActiveShiftId] = useState<string>(shifts[0]?.id ?? "")
   const [activeRuleId, setActiveRuleId] = useState<string>("")
   const [activeWorkerId, setActiveWorkerId] = useState<string>("")
-  const [workers, setWorkers] = useState<Worker[]>([
-    {
-      id: "w1",
-      name: "John Doe",
-      role: "Waiter",
-      status: "active",
-      assignedShifts: [],            
-      workLoad: 1,
-      desiredVacationDays: [],
-      vacationDays: [],
-      requestedWorkDays: {},
-      sickDays: [],
-    },
-  ])
+  const [workers, setWorkers] = useState<Worker[]>([  ])
 
   //Shift things
   useEffect(() => {
@@ -110,24 +97,31 @@ export default function GeneratorRoute() {
   
 
   //Assing employees things
-  const onAddWorker = (worker: Worker) => {
+  const addWorker = (worker: Worker) => {
     setWorkers(prev => [...prev, worker])
+  }
+
+  const deleteWorker = (workerId: string) => {
+    setWorkers(prev => prev.filter(s => s.id !== workerId))
+  }
+
+  function updateWorker(id: string, patch: Partial<Worker>) {
+    setWorkers(prev => prev.map(s => (s.id === id ? { ...s, ...patch } : s)))
   }
 
   function toggleAssignedShift(workerId: string, shiftId: string) {
     setWorkers(prev =>
-           prev.map(w => {
-             if (w.id !== workerId) return w
-             const exists = (w.assignedShifts ?? []).some(sh => sh.id === shiftId)
-             if (exists) {
-               return { ...w, assignedShifts: w.assignedShifts.filter(sh => sh.id !== shiftId) }
-             }
-             const shiftObj = shifts.find(s => s.id === shiftId)
-             if (!shiftObj) return w
-             return { ...w, assignedShifts: [...w.assignedShifts, shiftObj] }
-           })
-         )
+      prev.map(w => {
+        if (w.id !== workerId) return w
+        const current = w.assignedShifts ?? []
+        const has = current.some(s => s.id === shiftId)
+        return has
+          ? { ...w, assignedShifts: current.filter(s => s.id !== shiftId) }
+          : { ...w, assignedShifts: [...current, shifts.find(s => s.id === shiftId)!] }
+      })
+    )
   }
+
   function setWorkLoad(workerId: string, value: number) {
     setWorkers(prev => prev.map(w => (w.id === workerId ? { ...w, workLoad: value } : w)))
   }
@@ -244,11 +238,12 @@ export default function GeneratorRoute() {
       />
 
       <AssignEmployeesStep
+        makeId={makeId}
         monthName={month}
         shifts={shifts}
         workers={workers}
         activeWorkerId={activeWorkerId}
-        onAddWorker={onAddWorker}
+        onAddWorker={addWorker}
         onDeleteWorker={deleteWorker}
         onSelectWorker={setActiveWorkerId}
         onUpdateWorker={updateWorker}
