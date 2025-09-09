@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState} from "react"
+import { useRouter } from "next/navigation"
 import { MonthsHoursStep } from "@/app/generator/MonthsHoursStep"
 import { ShiftDetailsStep } from "@/app/generator/ShiftDetailsStep"
 import { AssignEmployeesStep } from "@/app/generator/AssignEmployeesStep"
@@ -19,8 +20,6 @@ const makeId = ():string => {
     : `id_${Math.random().toString(36).slice(2)}`)
 }
 
-
-
 export default function GeneratorRoute() {
   const [fullTimeHours, setFullTimeHours] = useState("170")
   const [month, setMonth] = useState(months[new Date().getMonth()])
@@ -30,6 +29,8 @@ export default function GeneratorRoute() {
   const [activeRuleId, setActiveRuleId] = useState<string>("")
   const [activeWorkerId, setActiveWorkerId] = useState<string>("")
   const [workers, setWorkers] = useState<Worker[]>([  ])
+
+  const router = useRouter()
 
   //Shift things
   useEffect(() => {
@@ -199,6 +200,8 @@ export default function GeneratorRoute() {
   
       const data = await res.json();
       console.log("BE response:", data);
+      //routimine just genereeritud graafikule
+      router.push(`/schedule?month=${month}`)
     } catch (err) {
       console.error(err);
       alert("Failed to generate schedule");
