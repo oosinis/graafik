@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 
@@ -27,10 +26,7 @@ type Props = {
 };
 
 export function MonthsHoursStep({ fullTimeHours, onFullTimeHoursChange, month, onMonthChange }: Props) {
-    const [year, setYear] = useState<number>(new Date().getFullYear())
       
-    const years = [new Date().getFullYear(), new Date().getFullYear() + 1]
-
     return(
             <div className="mb-6">
               <Card className="p-6">
@@ -45,23 +41,10 @@ export function MonthsHoursStep({ fullTimeHours, onFullTimeHoursChange, month, o
                 <p className="text-gray-500 mb-4">
                   Choose the year and month, add the full-time working hours of the month
                 </p>
-  
-                <div className="mb-6">
-                  <label className="block text-sm font-medium mb-2">Select month</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <select
-                        className="w-full p-2 border rounded-md"
-                        value={year}
-                        onChange={(e) => setYear(parseInt(e.target.value))}
-                      >
-                        {years.map((y) => (
-                          <option key={y} value={y}>
-                            {y}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                <div className="flex mb-6">
+                <div>
+                  <label className="flex text-sm font-medium mb-2">Select month</label>
+                  <div className="pr-6">
                     <div>
                       <select
                         className="w-full p-2 border rounded-md"
@@ -79,14 +62,16 @@ export function MonthsHoursStep({ fullTimeHours, onFullTimeHoursChange, month, o
                 </div>
   
                 <div>
-                  <label className="block text-sm font-medium mb-2">Full-time monthly hours</label>
+                  <label className="flex text-sm font-medium mb-2">Full-time monthly hours</label>
                   <Input
                     type="number"
                     value={fullTimeHours}
                     onChange={(e) => onFullTimeHoursChange(e.currentTarget.value)}
                     className="max-w-xs"
                   />
+                </div>  
                 </div>
+                
               </Card>
   
             </div>

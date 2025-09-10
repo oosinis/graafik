@@ -15,7 +15,7 @@ export default function ScheduleRoute() {
   const month = monthParam ? Number.parseInt(monthParam, 10) : new Date().getMonth() + 1
 
   const handleMonthChange = (newYear: number, newMonth: number) => {
-    router.push(`/schedule?year=${newYear}&month=${newMonth}`)
+    router.push(`/schedule?month=${newMonth}`)
   }
 
   return (
