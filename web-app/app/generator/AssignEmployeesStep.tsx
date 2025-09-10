@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Worker } from "@/models/Worker"
 import { WorkerProps } from '@/models/Props'
+import { v4 as uuidv4 } from 'uuid';
+
 
 export function AssignEmployeesStep({
-  makeId,
   monthName,
   shifts,
   workers,
@@ -68,7 +69,7 @@ export function AssignEmployeesStep({
   
     const assigned = shifts.filter(s => draftAssignedIds.has(s.id))
     const worker: Worker = {
-      id: makeId(),
+      id: uuidv4().toString(),
       name: draftName.trim(),
       role: draftRole.trim(),        
       email: undefined,

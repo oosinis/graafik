@@ -41,7 +41,7 @@ public class Worker extends BaseEntity {
     @ElementCollection
     @CollectionTable(name = "worker_requested_work_days", joinColumns = @JoinColumn(name = "worker_id"))
     @MapKeyColumn(name = "day")
-    @Column(name = "shift_id")
+    @Column(name = "shift_id", nullable = true)
     private Map<Integer, UUID> requestedWorkDays;
 
     public Worker() {}

@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input"
 import { RuleDetailsStep } from "@/app/generator/RuleDetailsStep"
 import { Props } from "@/models/Props"
 import { Shift } from '@/models/Shift'
+import { v4 as uuidv4 } from "uuid";
 
 export function ShiftDetailsStep({
-  makeId,
   shifts,
   onAddShift,
   onDeleteShift,
@@ -61,7 +61,7 @@ export function ShiftDetailsStep({
     if (!title || total <= 0) return
 
     const shift: Shift = {
-      id: makeId(),
+      id: uuidv4().toString(), 
       type: title,
       durationInMinutes: total,
       rules: [],

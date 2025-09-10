@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/schedules")
-@CrossOrigin(origins = "*")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
