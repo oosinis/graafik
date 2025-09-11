@@ -174,20 +174,15 @@ export default function GeneratorRoute() {
       return;
     }
   
-    const beShifts = shifts.map(mapShiftToBE);
-  
-    const shiftById = new Map(shifts.map(s => [s.id, s]));
-    const beWorkers = workers.map(w => mapWorkerToBE(w, shiftById));
-  
     const requestBody = {
-      workers: beWorkers,
-      shifts: beShifts,
+      workers: workers,
+      shifts: shifts,
       month: months.indexOf(month) + 1,
       fullTimeHours: Number(fullTimeHours),
     };
   
     try {
-      const res = await fetch(`${apiUrl}/create-schedule`, {
+      const res = await fetch(`${apiUrl}/schedules`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),

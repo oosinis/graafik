@@ -9,24 +9,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "schedule_requests")
-public class ScheduleRequest extends BaseEntity {
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-        name = "schedule_request_workers",
-        joinColumns = @JoinColumn(name = "schedule_request_id"),
-        inverseJoinColumns = @JoinColumn(name = "worker_id")
-    )
+public class ScheduleRequest {
     private List<Worker> workers;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "schedule_request_id")
     private List<Shift> shifts;
-
     private int month;
-
     private int fullTimeHours;
 
     public ScheduleRequest() {}
