@@ -28,7 +28,7 @@ export function AssignEmployeesStep({
   const [draftName, setDraftName] = useState("")
   const [draftRole, setDraftRole] = useState("")  // free text
   const [draftWorkload, setDraftWorkload] = useState<number | "">("")
-  const [draftAssignedIds, setDraftAssignedIds] = useState<Set<string>>(new Set())
+  const [draftAssignedShiftIds, setDraftAssignedShiftIds] = useState<string[]>([])
   const [draftDesiredDays, setDraftDesiredDays] = useState<number[]>([])
   const [draftApprovedDays, setDraftApprovedDays] = useState<number[]>([])
   const [draftRequested, setDraftRequested] = useState<Record<number, string | null>>({})
@@ -47,7 +47,7 @@ export function AssignEmployeesStep({
     setDraftName("")
     setDraftRole("")             
     setDraftWorkload("")
-    setDraftAssignedIds(new Set())
+    setDraftAssignedShiftIds([])
     setDraftDesiredDays([])
     setDraftApprovedDays([])
     setDraftRequested({})
@@ -67,14 +67,13 @@ export function AssignEmployeesStep({
 
   const saveNewWorker = () => {
   
-    const assigned = shifts.filter(s => draftAssignedIds.has(s.id))
     const worker: Worker = {
       id: uuidv4().toString(),
       name: draftName.trim(),
       role: draftRole.trim(),        
       email: undefined,
       phone: undefined,
-      assignedShifts: assigned,
+      assignedShifts: draftAssignedShiftIds,
       workLoad: draftWorkload as number,
       desiredVacationDays: [...draftDesiredDays].sort((a,b)=>a-b),
       vacationDays: [...draftApprovedDays].sort((a,b)=>a-b),
@@ -97,12 +96,11 @@ export function AssignEmployeesStep({
   }
 
   const toggleDraftAssigned = (shiftId: string) => {
-    setDraftAssignedIds(prev => {
-      const next = new Set(prev)
-      if (next.has(shiftId)) next.delete(shiftId)
-      else next.add(shiftId)
-      return next
-    })
+    setDraftAssignedShiftIds(prev => 
+      prev.includes(shiftId)
+        ? prev.filter(id => id !== shiftId)
+        : [...prev, shiftId]
+    )
   }
 
   const toggleNumInArray = (arr: number[], v: number) =>
@@ -112,6 +110,8 @@ export function AssignEmployeesStep({
     () => workers.find(w => w.id === activeWorkerId) ?? null,
     [workers, activeWorkerId]
   )
+
+  const labelForShift = (id: string) => shifts.find(s => s.id === id)?.type ?? id
 
   return (
     <Card className="p-6">
@@ -200,7 +200,7 @@ export function AssignEmployeesStep({
               <span className="text-sm text-gray-500">No shifts yet. Add shifts first.</span>
             )}
             {shifts.map(s => {
-              const on = draftAssignedIds.has(s.id)
+              const on = draftAssignedShiftIds.includes(s.id)
               return (
                 <Button
                   key={s.id}
@@ -208,7 +208,7 @@ export function AssignEmployeesStep({
                   className={on ? "bg-purple-600 hover:bg-purple-700" : ""}
                   onClick={() => toggleDraftAssigned(s.id)}
                 >
-                  {s.type}
+                  {labelForShift(s.id)}
                 </Button>
               )
             })}
@@ -241,7 +241,7 @@ export function AssignEmployeesStep({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
               const currentShiftId = draftRequested[day] ?? ""
-              const assignedForDraft = shifts.filter(s => draftAssignedIds.has(s.id))
+              const assignedForDraft = shifts.filter(s => draftAssignedShiftIds.includes(s.id))
 
               return (
                 <div key={day} className="flex items-center gap-2">
@@ -340,7 +340,7 @@ export function AssignEmployeesStep({
             <label className="block text-sm font-medium mb-2">Assigned Shifts</label>
             <div className="flex flex-wrap gap-2">
               {shifts.map(s => {
-                const on = (activeWorker.assignedShifts ?? []).some(as => as.id === s.id)
+                const on = (activeWorker.assignedShifts ?? []).some(id => id === s.id)
                 return (
                   <Button
                     key={s.id}
@@ -392,9 +392,9 @@ export function AssignEmployeesStep({
                     onChange={e => onSetRequestedWorkDay(activeWorker.id, day, e.target.value || null)}
                   >
                     <option value="">—</option>
-                    {updateAssignedShifts.map(s => (
-                      <option key={s.id} value={s.id}>
-                        {s.type}
+                    {updateAssignedShifts.map(id => (
+                      <option key={id} value={id}>
+                        {labelForShift(id)}
                       </option>
                     ))}
                   </select>
