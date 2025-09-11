@@ -1,4 +1,3 @@
-import { Shift } from "./Shift"
 
 export type WorkerStatus = "active" | "inactive" | "leave"
 
@@ -9,7 +8,7 @@ export interface Worker {
     //email ja tel nr tulevad ka hiljem
   email?: string
   phone?: string
-  assignedShifts: Shift[]
+  assignedShifts: string[]
   workLoad: number;                    
   desiredVacationDays: number[];      
   vacationDays: number[];              

@@ -9,7 +9,6 @@ import { PageHeader } from "@/components/page-header"
 import { Worker } from '@/models/Worker'
 import { Shift } from '@/models/Shift'
 import { Rule } from '@/models/Rule'
-import { mapShiftToBE, mapWorkerToBE } from "@/lib/mappers";
 import { Button } from "@/components/ui/button"
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
@@ -111,16 +110,16 @@ export default function GeneratorRoute() {
   }
 
   function toggleAssignedShift(workerId: string, shiftId: string) {
-    setWorkers(prev =>
-      prev.map(w => {
-        if (w.id !== workerId) return w
-        const current = w.assignedShifts ?? []
-        const has = current.some(s => s.id === shiftId)
-        return has
-          ? { ...w, assignedShifts: current.filter(s => s.id !== shiftId) }
-          : { ...w, assignedShifts: [...current, shifts.find(s => s.id === shiftId)!] }
-      })
-    )
+    setWorkers(prev => prev.map(w => {
+      if (w.id !== workerId) return w
+      const has = (w.assignedShifts ?? []).includes(shiftId)
+      return {
+        ...w,
+        assignedShifts: has
+          ? w.assignedShifts.filter(id => id !== shiftId)
+          : [...(w.assignedShifts ?? []), shiftId],
+      }
+    }))
   }
 
   function setWorkLoad(workerId: string, value: number) {
@@ -173,15 +172,10 @@ export default function GeneratorRoute() {
       console.error("Missing NEXT_PUBLIC_API_URL");
       return;
     }
-  
-    const beShifts = shifts.map(mapShiftToBE);
-  
-    const shiftById = new Map(shifts.map(s => [s.id, s]));
-    const beWorkers = workers.map(w => mapWorkerToBE(w, shiftById));
-  
+    
     const requestBody = {
-      workers: beWorkers,
-      shifts: beShifts,
+      workers: workers,
+      shifts: shifts,
       month: months.indexOf(month) + 1,
       fullTimeHours: Number(fullTimeHours),
     };
