@@ -1,6 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState} from "react"
+import { useRouter } from "next/navigation"
 import { MonthsHoursStep } from "@/app/generator/MonthsHoursStep"
 import { ShiftDetailsStep } from "@/app/generator/ShiftDetailsStep"
 import { AssignEmployeesStep } from "@/app/generator/AssignEmployeesStep"
@@ -13,48 +14,68 @@ import { Button } from "@/components/ui/button"
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 
+const makeId = ():string => {
+  return (typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `id_${Math.random().toString(36).slice(2)}`)
+}
+
 export default function GeneratorRoute() {
   const [fullTimeHours, setFullTimeHours] = useState("170")
   const [month, setMonth] = useState(months[new Date().getMonth()])
 
-  const [shifts, setShifts] = useState<Shift[]>([
-    { id: "1", type: "Day",     durationInMinutes: 480, rules: [] },
-    { id: "2", type: "Morning", durationInMinutes: 480, rules: [] },
-    { id: "3", type: "Evening", durationInMinutes: 480, rules: [] },
-  ])
+  const [shifts, setShifts] = useState<Shift[]>([])
   const [activeShiftId, setActiveShiftId] = useState<string>(shifts[0]?.id ?? "")
   const [activeRuleId, setActiveRuleId] = useState<string>("")
-  const [workers, setWorkers] = useState<Worker[]>([
-    {
-      id: "w1",
-      name: "John Doe",
-      role: "Waiter",
-      status: "active",
-      assignedShifts: [],            
-      workLoad: 1,
-      desiredVacationDays: [],
-      vacationDays: [],
-      requestedWorkDays: {},
-      sickDays: [],
-    },
-  ])
+  const [activeWorkerId, setActiveWorkerId] = useState<string>("")
+  const [workers, setWorkers] = useState<Worker[]>([  ])
 
+  const router = useRouter()
+
+  //Shift things
   useEffect(() => {
     const activeShift = shifts.find(s => s.id === activeShiftId)
     setActiveRuleId(activeShift?.rules[0]?.id ?? "")
   }, [activeShiftId, shifts])
 
+  const onAddShift = (shift: Shift) => {
+    setShifts(prev => [...prev, shift])
+  }
+
+  const deleteShift = (shiftId: string) => {
+    setShifts(prev => prev.filter(s => s.id !== shiftId))
+  }
+
   function updateShift(id: string, patch: Partial<Shift>) {
     setShifts(prev => prev.map(s => (s.id === id ? { ...s, ...patch } : s)))
   }
-  function updateRule(shiftId: string, ruleId: string, patch: Partial<Rule>) {
+
+  //Rule things
+  function addRule(shiftId: string, draft: Omit<Rule, "id">){
+    const newRule: Rule = { id: makeId(), ...draft };
+  setShifts(prev =>
+    prev.map(s => (s.id === shiftId ? { ...s, rules: [...s.rules, newRule] } : s))
+  );
+  setActiveRuleId(newRule.id);
+  }
+
+  function onUpdateRule(shiftId: string, ruleId: string, patch: Partial<Rule>) {
     setShifts(prev =>
       prev.map(s =>
         s.id !== shiftId ? s : { ...s, rules: s.rules.map(r => (r.id === ruleId ? { ...r, ...patch } : r)) }
       )
     )
   }
-  function toggleRuleDay(shiftId: string, ruleId: string, day: number) {
+  function deleteRule(shiftId: string, ruleId: string) {
+    setShifts(prev =>
+      prev.map(s =>
+        s.id !== shiftId ? s : { ...s, rules: s.rules.filter(r => r.id !== ruleId) }
+      )
+    );
+    setActiveRuleId(prev => (prev === ruleId ? "" : prev));
+  }
+
+  function onToggleDay(shiftId: string, ruleId: string, day: number) {
     setShifts(prev =>
       prev.map(s => {
         if (s.id !== shiftId) return s
@@ -69,26 +90,39 @@ export default function GeneratorRoute() {
       })
     )
   }
-  function setRulePriority(shiftId: string, ruleId: string, p: Rule['priority']) {
-    updateRule(shiftId, ruleId, { priority: p })
+
+  function onSetPriority(shiftId: string, ruleId: string, p: Rule['priority']) {
+    onUpdateRule(shiftId, ruleId, { priority: p })
   }
   
   
 
+  //Assing employees things
+  const addWorker = (worker: Worker) => {
+    setWorkers(prev => [...prev, worker])
+  }
+
+  const deleteWorker = (workerId: string) => {
+    setWorkers(prev => prev.filter(s => s.id !== workerId))
+  }
+
+  function updateWorker(id: string, patch: Partial<Worker>) {
+    setWorkers(prev => prev.map(s => (s.id === id ? { ...s, ...patch } : s)))
+  }
+
   function toggleAssignedShift(workerId: string, shiftId: string) {
     setWorkers(prev =>
-           prev.map(w => {
-             if (w.id !== workerId) return w
-             const exists = (w.assignedShifts ?? []).some(sh => sh.id === shiftId)
-             if (exists) {
-               return { ...w, assignedShifts: w.assignedShifts.filter(sh => sh.id !== shiftId) }
-             }
-             const shiftObj = shifts.find(s => s.id === shiftId)
-             if (!shiftObj) return w
-             return { ...w, assignedShifts: [...w.assignedShifts, shiftObj] }
-           })
-         )
+      prev.map(w => {
+        if (w.id !== workerId) return w
+        const current = w.assignedShifts ?? []
+        const has = current.some(s => s.id === shiftId)
+        return has
+          ? { ...w, assignedShifts: current.filter(s => s.id !== shiftId) }
+          : { ...w, assignedShifts: [...current, shifts.find(s => s.id === shiftId)!] }
+      })
+    )
   }
+
   function setWorkLoad(workerId: string, value: number) {
     setWorkers(prev => prev.map(w => (w.id === workerId ? { ...w, workLoad: value } : w)))
   }
@@ -140,20 +174,15 @@ export default function GeneratorRoute() {
       return;
     }
   
-    const beShifts = shifts.map(mapShiftToBE);
-  
-    const shiftById = new Map(shifts.map(s => [s.id, s]));
-    const beWorkers = workers.map(w => mapWorkerToBE(w, shiftById));
-  
     const requestBody = {
-      workers: beWorkers,
-      shifts: beShifts,
+      workers: workers,
+      shifts: shifts,
       month: months.indexOf(month) + 1,
       fullTimeHours: Number(fullTimeHours),
     };
   
     try {
-      const res = await fetch(`${apiUrl}/create-schedule`, {
+      const res = await fetch(`${apiUrl}/schedules`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
@@ -166,6 +195,8 @@ export default function GeneratorRoute() {
   
       const data = await res.json();
       console.log("BE response:", data);
+      //routimine just genereeritud graafikule
+      router.push(`/schedule?month=${month}`)
     } catch (err) {
       console.error(err);
       alert("Failed to generate schedule");
@@ -185,23 +216,35 @@ export default function GeneratorRoute() {
       />
 
       <ShiftDetailsStep
+        makeId={makeId}
         shifts={shifts}
         activeShiftId={activeShiftId}
+        onAddShift={onAddShift}
+        onDeleteShift={deleteShift}
         onSelectShift={setActiveShiftId}
         onUpdateShift={updateShift}
         rulesProps={{
           activeRuleId,
+          rules: shifts.find(s => s.id === activeShiftId)?.rules ?? [],
           onSelectRule: setActiveRuleId,
-          updateRule,
-          toggleRuleDay,
-          setRulePriority,
+          onAddRule: addRule,
+          onDeleteRule: deleteRule,
+          onUpdateRule,
+          onToggleDay,
+          onSetPriority,
         }}
       />
 
       <AssignEmployeesStep
+        makeId={makeId}
         monthName={month}
         shifts={shifts}
         workers={workers}
+        activeWorkerId={activeWorkerId}
+        onAddWorker={addWorker}
+        onDeleteWorker={deleteWorker}
+        onSelectWorker={setActiveWorkerId}
+        onUpdateWorker={updateWorker}
         onToggleAssignedShift={toggleAssignedShift}
         onSetWorkLoad={setWorkLoad}
         onToggleDesiredVacationDay={toggleDesiredVacationDay}

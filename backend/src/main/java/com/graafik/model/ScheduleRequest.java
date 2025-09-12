@@ -4,11 +4,8 @@ import java.util.List;
 public class ScheduleRequest {
 
     private List<Worker> workers;
-
     private List<Shift> shifts;
-
     private int month;
-
     private int fullTimeHours;
 
     public ScheduleRequest() {}
