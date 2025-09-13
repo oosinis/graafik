@@ -25,7 +25,9 @@ public class ScheduleService {
     }
 
     public Schedule createSchedule(ScheduleRequest request) {
-        return GenerateSchedule.generateSchedule(request).get(0);
+        List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
+        if (schedules.size() < 1) return null;
+        return schedules.get(0);
     }
 
     @Transactional(readOnly = true)

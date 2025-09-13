@@ -5,7 +5,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "workers")
@@ -15,6 +21,8 @@ public class Worker extends BaseEntity {
     private String name;
 
     private float workLoad;
+
+    private String role;
 
     @ElementCollection
     @CollectionTable(name = "worker_assigned_shift_ids", joinColumns = @JoinColumn(name = "worker_id"))
@@ -86,6 +94,14 @@ public class Worker extends BaseEntity {
         return sickDays;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,7 +112,7 @@ public class Worker extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, assignedShifts, workLoad, desiredVacationDays, vacationDays, requestedWorkDays, sickDays);
+        return Objects.hash(name, assignedShifts, workLoad, desiredVacationDays, vacationDays, requestedWorkDays, sickDays, role);
     }
     
     @Override
