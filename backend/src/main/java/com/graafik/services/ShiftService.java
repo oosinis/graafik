@@ -25,7 +25,11 @@ public class ShiftService {
         return shiftRepository.save(shift);
     }
 
-    public Optional<Shift> getWorkerById(UUID id) {
+    public List<Shift> saveAll(List<Shift> shifts) {
+        return shiftRepository.saveAll(shifts);
+    }
+
+    public Optional<Shift> getShiftById(UUID id) {
         return shiftRepository.findById(id);
     }
 

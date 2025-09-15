@@ -40,6 +40,7 @@ public class GenerateSchedule {
 
         List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
 
+        System.out.println("ALL SCHEDULES:");
         
         printSchedules(allPossibleSchedules);
             
@@ -84,6 +85,7 @@ public class GenerateSchedule {
         Schedule schedule = new Schedule();
 
         schedule.setMonth(scheduleRequest.getMonth());
+        // TODO change to automatic
         schedule.setYear(2025);
 
         HelperMethods.initWorkerHours(schedule, scheduleRequest);
@@ -146,6 +148,7 @@ public class GenerateSchedule {
             //System.out.println("---");
             
             // rn to not wait for all possibilities
+            // TODO get all and choose the best ones
             if (allCombinations.size() == 3) break;
 
             // if rating is fine go to next date do the whole thing again
