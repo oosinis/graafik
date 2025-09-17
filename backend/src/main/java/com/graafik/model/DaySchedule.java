@@ -2,10 +2,14 @@ package com.graafik.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -21,13 +25,28 @@ public class DaySchedule extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "day_schedule_id")
+    @JsonManagedReference
     private List<ShiftAssignment> assignments;
+
+
+    @ManyToOne
+    @JoinColumn(name="schedule_id", nullable = false)
+    @JsonBackReference
+    private Schedule schedule;
 
     public DaySchedule() {}
 
     public DaySchedule(int dayOfMonth, List<ShiftAssignment> assignments) {
         this.dayOfMonth = dayOfMonth;
         this.assignments = assignments;
+    }
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule (Schedule schedule) {
+        this.schedule = schedule;
     }
 
     public int getDayOfMonth() {
