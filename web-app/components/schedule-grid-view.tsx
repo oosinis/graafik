@@ -145,7 +145,7 @@ export function ScheduleGridView({
           {/* shift-type filter (derived) */}
           <select
             value={selectedShiftType}
-            onChange={e => setSelectedShiftType(e.target.value as any)}
+            onChange={e => setSelectedShiftType(e.target.value)}
             className="border p-2 rounded shadow-sm"
           >
             <option value="All">All Shifts</option>

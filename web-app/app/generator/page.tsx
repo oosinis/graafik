@@ -115,14 +115,11 @@ export default function GeneratorRoute() {
         if (w.id !== workerId) return w
         const current = w.assignedShifts ?? []
         const has = current.includes(shiftId)
-        return {
-          ...w,
-          assignedShifts: has
-            ? current.filter(id => id !== shiftId)
-            : [...current, shiftId],
-        }
+        return has
+          ? { ...w, assignedShifts: current.filter(s => s !== shiftId) }
+          : { ...w, assignedShifts: [...current, shiftId] }
       })
-    )
+    )  
   }
   
 
