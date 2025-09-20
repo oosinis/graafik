@@ -111,17 +111,17 @@ export default function GeneratorRoute() {
   }
 
   function toggleAssignedShift(workerId: string, shiftId: string) {
-    setWorkers(prev =>
-      prev.map(w => {
-        if (w.id !== workerId) return w
-        const current = w.assignedShifts ?? []
-        const has = current.some(s => s.id === shiftId)
-        return has
-          ? { ...w, assignedShifts: current.filter(s => s.id !== shiftId) }
-          : { ...w, assignedShifts: [...current, shifts.find(s => s.id === shiftId)!] }
-      })
-    )
-  }
+  setWorkers(prev =>
+    prev.map(w => {
+      if (w.id !== workerId) return w
+      const current = w.assignedShifts ?? []
+      const has = current.includes(shiftId)
+      return has
+        ? { ...w, assignedShifts: current.filter(s => s !== shiftId) }
+        : { ...w, assignedShifts: [...current, shiftId] }
+    })
+  )
+}
 
   function setWorkLoad(workerId: string, value: number) {
     setWorkers(prev => prev.map(w => (w.id === workerId ? { ...w, workLoad: value } : w)))
