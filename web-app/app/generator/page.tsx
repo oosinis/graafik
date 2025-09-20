@@ -9,7 +9,6 @@ import { PageHeader } from "@/components/page-header"
 import { Worker } from '@/models/Worker'
 import { Shift } from '@/models/Shift'
 import { Rule } from '@/models/Rule'
-import { mapShiftToBE, mapWorkerToBE } from "@/lib/mappers";
 import { Button } from "@/components/ui/button"
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
@@ -115,13 +114,17 @@ export default function GeneratorRoute() {
       prev.map(w => {
         if (w.id !== workerId) return w
         const current = w.assignedShifts ?? []
-        const has = current.some(s => s.id === shiftId)
-        return has
-          ? { ...w, assignedShifts: current.filter(s => s.id !== shiftId) }
-          : { ...w, assignedShifts: [...current, shifts.find(s => s.id === shiftId)!] }
+        const has = current.includes(shiftId)
+        return {
+          ...w,
+          assignedShifts: has
+            ? current.filter(id => id !== shiftId)
+            : [...current, shiftId],
+        }
       })
     )
   }
+  
 
   function setWorkLoad(workerId: string, value: number) {
     setWorkers(prev => prev.map(w => (w.id === workerId ? { ...w, workLoad: value } : w)))
