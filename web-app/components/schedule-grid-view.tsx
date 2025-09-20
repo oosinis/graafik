@@ -7,164 +7,149 @@ import { MonthNavigation } from "@/components/month-navigation";
 import { DayNavigation } from "@/components/day-navigation";
 import { ViewModeToggle } from "@/components/view-mode-toggle";
 import type { ScheduleResponse } from "@/models/ScheduleResponse";
-import type { WorkerDto } from "@/models/WorkerDto";
-import type { ShiftAssignment } from "@/models/ShiftAssignment";
-import type { DaySchedule } from "@/models/DaySchedule";
-import { Rule } from '@/models/Rule';
 import React from "react";
 
 interface ScheduleGridViewProps {
   year: number;
-  month: number;
+  month: number; 
   onMonthChange: (year: number, month: number) => void;
 }
 
-// Mutable month names array
-const monthNames: string[] = [
+const monthNames = [
   "January","February","March","April",
   "May","June","July","August",
   "September","October","November","December"
 ];
-
-const shiftTypes = ["Morning","Day","Evening","Night"] as const;
-type ShiftType = typeof shiftTypes[number];
-
-const shiftAbbrev: Record<ShiftType,string> = {
-  Morning:"M", Day:"D", Evening:"E", Night:"N"
-};
-
-const shiftColors: Record<ShiftType,string> = {
-  Morning:"bg-orange-200",
-  Day:"bg-teal-200",
-  Evening:"bg-pink-200",
-  Night:"bg-purple-200"
-};
-
-const groupedRoles: Record<string,string[]> = {
-  Manager:["Sander Saar","Mirjam Laane"],
-  Waitor:["Gregor Ojamets","Jürgen Kask"],
-  Chef:["Andres Allik","Liis Lepp"]
-};
 
 export function ScheduleGridView({
   year, month, onMonthChange
 }: ScheduleGridViewProps) {
   // modes & data
   const [viewMode, setViewMode] = useState<"monthly"|"weekly"|"daily">("monthly");
-  const [schedule, setSchedule] = useState<ScheduleResponse|null>(null);
+  const [schedule, setSchedule] = useState<ScheduleResponse | null>(null);
   const [currentWeekStart, setCurrentWeekStart] = useState<number>(1);
-  const [currentDate, setCurrentDate] = useState<Date>(
-    () => new Date(year, month-1, 1)
-  );
+  const [currentDate, setCurrentDate] = useState<Date>(() => new Date(year, month - 1, 1));
+
   const [selectedShift, setSelectedShift] = useState<{
-    day:number;worker:string;shift:ShiftType;fte:string
-  }|null>(null);
+    day: number;
+    workerName: string;
+    shiftType: string;
+    fte: string;
+  } | null>(null);
 
-  const [selectedRole, setSelectedRole] = useState<string>("All");
-  const [selectedShiftType, setSelectedShiftType] = useState<ShiftType|"All">("All");
+  const [selectedShiftType, setSelectedShiftType] = useState<string | "All">("All");
 
-  // regenerate mock when year/month changes
   useEffect(() => {
-    setSchedule(generateMockSchedule(year,month));
-    setCurrentWeekStart(1);
-    setSelectedShift(null);
-    setCurrentDate(new Date(year,month-1,1));
-  }, [year,month]);
+    let cancelled = false;
 
-  function generateMockSchedule(y:number,m:number):ScheduleResponse {
-    const days = new Date(y,m,0).getDate();
-    const workers:WorkerDto[] = Object.values(groupedRoles).flat().map(n=>({name:n}));
-    const workerHours:Record<string,number> = {};
-    workers.forEach(w=>workerHours[w.name]=140+Math.floor(Math.random()*40));
-    const daySchedules:DaySchedule[] = Array.from({length:days},(_,i)=>{
-      const assignments:ShiftAssignment[] = shiftTypes.map((type,idx)=>({
-        shift:{
-          id:`${y}-${m}-${i+1}-${type}`,
-          type,
-          durationInMinutes: 480,     // or compute based on start/end
-          rules: [] as Rule[],
-          createdAt: new Date().toISOString()
-        },
-        worker:workers[(i+idx)%workers.length]
-      }));
-      return {dayOfMonth:i+1,assignments,score:0};
-    });
-    return {year:y,month:m,daySchedules,workerHours,score:0};
-  }
+    async function load() {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
+        const res = await fetch(`${apiUrl}/schedule?year=${year}&month=${month}`);
+        if (!res.ok) throw new Error(`Failed: ${res.status}`);
+        const data: ScheduleResponse = await res.json();
 
-  const daysInMonth = new Date(year,month,0).getDate();
-  
-  const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n)
+        if (!cancelled) {
+          setSchedule(data);
+          setCurrentWeekStart(1);
+          setSelectedShift(null);
+          setCurrentDate(new Date(year, month - 1, 1));
+        }
+      } catch (e) {
+        console.error(e);
+        if (!cancelled) setSchedule(null);
+      }
+    }
+
+    load();
+    return () => { cancelled = true; };
+  }, [year, month]);
+
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const addDays = (d: Date, n: number) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+
+  //load workers
+  const workerNames = useMemo(() => {
+    const set = new Set<string>();
+    schedule?.daySchedules.forEach(d =>
+      d.assignments.forEach(a => set.add(a.worker.name))
+    );
+    return Array.from(set).sort();
+  }, [schedule]);
+
+  // load shifts
+  const shiftTypes = useMemo(() => {
+    const set = new Set<string>();
+    schedule?.daySchedules.forEach(d =>
+      d.assignments.forEach(a => a.shift?.type && set.add(a.shift.type))
+    );
+    return Array.from(set).sort();
+  }, [schedule]);
+
+  //Värvid
+  const shiftColors: Record<string, string> = useMemo(() => {
+    const palette = ["bg-orange-200","bg-teal-200","bg-pink-200","bg-purple-200","bg-blue-200","bg-amber-200","bg-lime-200"];
+    const map: Record<string,string> = {};
+    shiftTypes.forEach((t, i) => { map[t] = palette[i % palette.length]; });
+    return map;
+  }, [shiftTypes]);
+
+  //Lühendid
+  const shiftAbbrev: Record<string, string> = useMemo(() => {
+    const map: Record<string,string> = {};
+    shiftTypes.forEach(t => { map[t] = (t[0] || "?").toUpperCase(); });
+    return map;
+  }, [shiftTypes]);
 
 
-  // visible days based on mode
-  const visibleDays = useMemo<number[]>(()=>{
-    if(viewMode==="daily"){
+  const visibleDays = useMemo<number[]>(() => {
+    if (viewMode === "daily") {
       return [currentDate.getDate()];
     }
-    if(viewMode==="weekly"){
-      const end = Math.min(currentWeekStart+6,daysInMonth);
-      return Array.from({length:end-currentWeekStart+1},(_,i)=>currentWeekStart+i);
+    if (viewMode === "weekly") {
+      const end = Math.min(currentWeekStart + 6, daysInMonth);
+      return Array.from({ length: end - currentWeekStart + 1 }, (_, i) => currentWeekStart + i);
     }
-    return Array.from({length:daysInMonth},(_,i)=>i+1);
-  },[viewMode,currentWeekStart,daysInMonth,currentDate]);
+    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  }, [viewMode, currentWeekStart, daysInMonth, currentDate]);
 
-  // helper: find shift
-  function shiftFor(worker:string,day:number):ShiftType|null {
-    const rec = schedule
-      ?.daySchedules
-      .find(d=>d.dayOfMonth===day)
-      ?.assignments
-      .find(a=>a.worker.name===worker)
-      ?.shift.type;
-    return rec && shiftTypes.includes(rec as ShiftType) ? rec as ShiftType : null;
+  function shiftFor(workerName: string, day: number): string | null {
+    return (
+      schedule?.daySchedules
+        .find(d => d.dayOfMonth === day)
+        ?.assignments.find(a => a.worker.name === workerName)
+        ?.shift?.type ?? null
+    );
   }
 
-  // week navigation
-  const prevWeek=()=>setCurrentWeekStart(s=>Math.max(1,s-7));
-  const nextWeek=()=>setCurrentWeekStart(s=>s+7<=daysInMonth?s+7:s);
-
-  // filter roles & workers by selections
-  const filteredRoles = Object.entries(groupedRoles).reduce((acc,[role,workers])=>{
-    if(selectedRole!=="All"&&selectedRole!==role) return acc;
-    const keep = workers.filter(w=>
-      visibleDays.some(d=>{
-        const s=shiftFor(w,d);
-        return !!s&&(selectedShiftType==="All"||s===selectedShiftType);
-      })
-    );
-    if(keep.length) acc[role]=keep;
-    return acc;
-  },{} as Record<string,string[]>);
+  // navigations
+  const prevWeek = () => setCurrentWeekStart(s => Math.max(1, s - 7));
+  const nextWeek = () => setCurrentWeekStart(s => s + 7 <= daysInMonth ? s + 7 : s);
 
   return (
     <div className="w-full space-y-4">
       {/* top bar */}
       <div className="flex justify-between items-center">
         <MonthNavigation
-          month={month} year={year} monthNames={monthNames}
-          onPrevious={()=>onMonthChange(month===1?year-1:year,month===1?12:month-1)}
-          onNext={()=>onMonthChange(month===12?year+1:year,month===12?1:month+1)}
+          month={month}
+          year={year}
+          monthNames={monthNames}
+          onPrevious={() => onMonthChange(month === 1 ? year - 1 : year, month === 1 ? 12 : month - 1)}
+          onNext={() => onMonthChange(month === 12 ? year + 1 : year, month === 12 ? 1 : month + 1)}
         />
+
         <div className="flex items-center space-x-6">
-          <ViewModeToggle viewMode={viewMode} onViewModeChange={setViewMode}/>
-          <select
-            value={selectedRole}
-            onChange={e=>setSelectedRole(e.target.value)}
-            className="border p-2 rounded shadow-sm"
-          >
-            <option value="All">All Roles</option>
-            {Object.keys(groupedRoles).map(r=>(
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
+          <ViewModeToggle viewMode={viewMode} onViewModeChange={setViewMode} />
+
+          {/* shift-type filter (derived) */}
           <select
             value={selectedShiftType}
-            onChange={e=>setSelectedShiftType(e.target.value as ShiftType|"All")}
+            onChange={e => setSelectedShiftType(e.target.value as any)}
             className="border p-2 rounded shadow-sm"
           >
             <option value="All">All Shifts</option>
-            {shiftTypes.map(s=>(
+            {shiftTypes.map(s => (
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
@@ -172,26 +157,26 @@ export function ScheduleGridView({
       </div>
 
       {/* weekly controls */}
-      {viewMode==="weekly" && (
+      {viewMode === "weekly" && (
         <div className="flex justify-end gap-2">
-          <Button onClick={prevWeek} disabled={currentWeekStart===1}>
-            last week
+          <Button onClick={prevWeek} disabled={currentWeekStart === 1}>
+            Previous week
           </Button>
           <span className="font-medium">
-            {visibleDays[0]}–{visibleDays[visibleDays.length-1]}
+            {visibleDays[0]}–{visibleDays[visibleDays.length - 1]}
           </span>
-          <Button onClick={nextWeek} disabled={currentWeekStart+6>=daysInMonth}>
+          <Button onClick={nextWeek} disabled={currentWeekStart + 6 >= daysInMonth}>
             Next week
           </Button>
         </div>
       )}
 
       {/* daily navigation */}
-      {viewMode==="daily" && (
+      {viewMode === "daily" && (
         <DayNavigation
           date={currentDate}
           onPrevious={() => setCurrentDate(d => addDays(d, -1))}
-          onNext={() => setCurrentDate(d => addDays(d,  +1))}
+          onNext={() => setCurrentDate(d => addDays(d, +1))}
         />
       )}
 
@@ -201,46 +186,52 @@ export function ScheduleGridView({
           <thead>
             <tr>
               <th className="sticky left-0 bg-gray-50 border p-2 w-40">Employees</th>
-              {visibleDays.map(d=>(
+              {visibleDays.map(d => (
                 <th key={d} className="border p-2 text-center">{d}</th>
               ))}
               <th className="border p-2 w-24 text-center">Hours</th>
             </tr>
           </thead>
           <tbody>
-            {Object.entries(filteredRoles).map(([role,workers])=>(
-              <React.Fragment key={role}>
-                <tr>
-                  <td
-                    colSpan={visibleDays.length+2}
-                    className="bg-purple-100 font-semibold text-left p-2"
-                  >{role}</td>
-                </tr>
-                {workers.map(worker=>(
-                  <tr key={worker}>
-                    <td className="sticky left-0 bg-white border p-2 font-medium">
-                      {worker}
+            {workerNames.map(workerName => (
+              <tr key={workerName}>
+                <td className="sticky left-0 bg-white border p-2 font-medium">
+                  {workerName}
+                </td>
+
+                {visibleDays.map(day => {
+                  const t = shiftFor(workerName, day);
+                  const show = !!t && (selectedShiftType === "All" || t === selectedShiftType);
+                  return (
+                    <td
+                      key={day}
+                      className={`border p-1 text-center ${show ? (shiftColors[t!] ?? "bg-gray-100") : ""}`}
+                      onClick={() =>
+                        t && setSelectedShift({ day, workerName, shiftType: t, fte: "1.0" })
+                      }
+                    >
+                      {show ? (shiftAbbrev[t!] ?? (t![0] || "?").toUpperCase()) : ""}
                     </td>
-                    {visibleDays.map(day=>{
-                      const sft = shiftFor(worker,day);
-                      const show = !!sft&&(selectedShiftType==="All"||sft===selectedShiftType);
-                      return (
-                        <td
-                          key={day}
-                          className={`border p-1 text-center ${show?shiftColors[sft!]:""}`}
-                          onClick={()=>sft&&setSelectedShift({day,worker,shift:sft,fte:"1.0"})}
-                        >
-                          {show?shiftAbbrev[sft!]:""}
-                        </td>
-                      );
-                    })}
-                    <td className="border p-2 text-center">
-                      {schedule?.workerHours[worker]??0}/180
-                    </td>
-                  </tr>
-                ))}
-              </React.Fragment>
+                  );
+                })}
+
+                <td className="border p-2 text-center">
+                  {schedule?.workerHours?.[workerName] ?? 0}/180
+                </td>
+              </tr>
             ))}
+
+            {/* Empty state */}
+            {workerNames.length === 0 && (
+              <tr>
+                <td
+                  colSpan={visibleDays.length + 2}
+                  className="text-center text-gray-500 p-6"
+                >
+                  {schedule ? "No assignments for this month." : "Loading schedule…"}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -249,20 +240,20 @@ export function ScheduleGridView({
       {selectedShift && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
-          onClick={()=>setSelectedShift(null)}
+          onClick={() => setSelectedShift(null)}
         >
-          <div onClick={e=>e.stopPropagation()}>
+          <div onClick={e => e.stopPropagation()}>
             <ShiftDetailsCard
-              day       = {`Day ${selectedShift.day}`}
-              date      = {`${selectedShift.day} ${monthNames[month-1]}`}
-              shiftType = {selectedShift.shift}
-              startTime = "09:00"
-              endTime   = "17:00"
-              hours     = {8}
-              worker    = {selectedShift.worker}
-              department= "Intensive unit"
-              fte       = {selectedShift.fte}
-              onEdit    = {()=>console.log("edit",selectedShift)}
+              day={`Day ${selectedShift.day}`}
+              date={`${selectedShift.day} ${monthNames[month - 1]}`}
+              shiftType={selectedShift.shiftType}
+              startTime="09:00"
+              endTime="17:00"
+              hours={8}
+              worker={selectedShift.workerName}
+              department="—"
+              fte={selectedShift.fte}
+              onEdit={() => console.log("edit", selectedShift)}
             />
           </div>
         </div>
