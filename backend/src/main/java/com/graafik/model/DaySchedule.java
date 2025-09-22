@@ -44,7 +44,7 @@ public class DaySchedule extends BaseEntity {
         return scheduleId;
     }
 
-    public void setSchedule (UUID scheduleId) {
+    public void setScheduleId (UUID scheduleId) {
         this.scheduleId = scheduleId;
     }
 
