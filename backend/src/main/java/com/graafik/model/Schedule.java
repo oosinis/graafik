@@ -21,19 +21,14 @@ public class Schedule extends BaseEntity {
     private int year;
     private int score;
 
-    @Transient
-    private List<DaySchedule> daySchedules;
-
-    @ElementCollection
-    @CollectionTable(name = "schedule_day_ids", joinColumns = @JoinColumn(name = "schedule_id"))
-    @Column(name = "day_schedule_id")
-    private List<UUID> dayScheduleIds;
-
     @ElementCollection
     @CollectionTable(name = "schedule_worker_hours", joinColumns = @JoinColumn(name = "schedule_id"))
     @MapKeyColumn(name = "worker_id")
     @Column(name = "hours")
     private Map<UUID, Integer> workerHours;
+
+    @Transient
+    private List<DaySchedule> daySchedules;
 
     public Schedule() {}
 
@@ -49,8 +44,12 @@ public class Schedule extends BaseEntity {
         return score;
     }
 
-    public List<DaySchedule> getDaySchedules() {
+    public List<DaySchedule> getDaySchedules() { 
         return daySchedules;
+    }
+
+    public void setDaySchedules(List<DaySchedule> daySchedules) {
+        this.daySchedules = daySchedules; 
     }
 
     public void setMonth(int month) {

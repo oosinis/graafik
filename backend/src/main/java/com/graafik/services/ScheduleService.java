@@ -14,6 +14,7 @@ import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.Worker;
 import com.graafik.repositories.ScheduleRepository;
+import com.graafik.repositories.DayScheduleRepository;
 import com.graafik.repositories.ShiftRepository;
 import com.graafik.repositories.WorkerRepository;
 import com.graafik.schedule.GenerateSchedule;
@@ -26,13 +27,16 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final ShiftRepository shiftRepository;
     private final WorkerRepository workerRepository;
+    private final DayScheduleRepository dayScheduleRepository;
 
     public ScheduleService(ScheduleRepository scheduleRepository, 
                         ShiftRepository shiftRepository, 
-                        WorkerRepository workerRepository) {
+                        WorkerRepository workerRepository,
+                        DayScheduleRepository dayScheduleRepository) {
         this.scheduleRepository = scheduleRepository;
         this.shiftRepository = shiftRepository;
         this.workerRepository = workerRepository;
+        this.dayScheduleRepository = dayScheduleRepository;
     }
 
     @Transactional
@@ -51,7 +55,8 @@ public class ScheduleService {
         List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
         if (schedules.isEmpty()) return null;
 
-        Schedule schedule = scheduleRepository.save(schedules.get(0));
+        var schedule = schedules.get(0);
+        saveScheduleWithDaySchedules(schedule);
 
         return toDTO(schedule);
     }
@@ -126,5 +131,21 @@ public class ScheduleService {
         schedule.setDayScheduleIds(daySchedules.stream().map(DaySchedule::getId).toList());
         schedule.setWorkerHours(dto.getWorkerHours());
         return schedule;
+    }
+
+    private Schedule saveScheduleWithDaySchedules(Schedule schedule) {
+        var savedSchedule = scheduleRepository.save(schedule);
+        
+        if (schedule.getDaySchedules() != null && !schedule.getDaySchedules().isEmpty()) {
+            schedule.getDaySchedules().forEach(ds -> {
+                if (ds.getScheduleId() == null) {
+                    ds.setScheduleId(savedSchedule.getId());
+                }
+            });
+            
+            dayScheduleRepository.saveAll(schedule.getDaySchedules());
+        }
+        
+        return savedSchedule;
     }
 }
