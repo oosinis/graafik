@@ -128,7 +128,6 @@ public class ScheduleService {
         schedule.setYear(dto.getYear());
         schedule.setScore(dto.getScore());
         schedule.setDaySchedules(daySchedules);
-        schedule.setDayScheduleIds(daySchedules.stream().map(DaySchedule::getId).toList());
         schedule.setWorkerHours(dto.getWorkerHours());
         return schedule;
     }

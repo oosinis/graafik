@@ -67,15 +67,7 @@ public class Schedule extends BaseEntity {
     public void addToScore(int addition) {
         this.score = this.score + addition;
     }
-
-    public void setDaySchedules(List<DaySchedule> daySchedules) {
-        this.daySchedules = daySchedules;
-    }
-
-    public void setDayScheduleIds(List<UUID> dayScheduleIds) {
-        this.dayScheduleIds = dayScheduleIds;
-    }
-
+    
     public Map<UUID, Integer> getWorkerHours() {
         return workerHours;
     }
