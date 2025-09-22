@@ -1,4 +1,4 @@
-import React from "react";
+/* import React from "react";
 import ShiftForm from "@/components/shift/ShiftForm";
 
 export default function NewShiftPage() {
@@ -8,3 +8,4 @@ export default function NewShiftPage() {
     </div>
   );
 }
+ */
