@@ -65,6 +65,8 @@ public class GenerateSchedule {
             combination.getWorkerHours().forEach((worker, hours) -> {
                 System.out.println(worker + ": " + hours);
             });
+
+            
             System.out.println();
 
             System.out.println("---");

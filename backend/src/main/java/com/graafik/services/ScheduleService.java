@@ -117,7 +117,7 @@ public class ScheduleService {
             schedule.getMonth(),
             schedule.getYear(),
             schedule.getScore(),
-            schedule.getDaySchedules().stream().map(DaySchedule::getId).toList(),
+            schedule.getDaySchedules(),
             schedule.getWorkerHours()
         );
     }
