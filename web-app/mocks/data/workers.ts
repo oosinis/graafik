@@ -1,4 +1,4 @@
-import type { Worker } from "@/models/Worker";
+/* import type { Worker } from "@/models/Worker";
 
 export const mockWorkers: Worker[] = [
   {
@@ -41,3 +41,4 @@ export const mockWorkers: Worker[] = [
 export function fetchMockWorkers(delayMs = 250): Promise<Worker[]> {
   return new Promise((resolve) => setTimeout(() => resolve(mockWorkers), delayMs));
 }
+ */
