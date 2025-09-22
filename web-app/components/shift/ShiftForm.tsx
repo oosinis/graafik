@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useShifts } from "@/lib/context/ShiftsContext";
@@ -163,3 +163,4 @@ export function ShiftForm() {
 }
 
 export default ShiftForm;
+ */

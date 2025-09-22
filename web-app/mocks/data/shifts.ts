@@ -1,4 +1,4 @@
-import type { Shift } from "@/models/Shift";
+/* import type { Shift } from "@/models/Shift";
 
 export const mockShifts: Shift[] = [
   {
@@ -54,3 +54,4 @@ export const mockShifts: Shift[] = [
 export function fetchMockShifts(delayMs = 250): Promise<Shift[]> {
   return new Promise(res => setTimeout(() => res(mockShifts), delayMs));
 }
+ */
