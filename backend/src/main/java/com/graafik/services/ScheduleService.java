@@ -36,7 +36,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Schedule createSchedule(ScheduleRequest request) {
+    public ScheduleDTO createSchedule(ScheduleRequest request) {
         
         List<Shift> managedShifts = request.getShifts().stream()
                 .map(shiftRepository::save)
@@ -51,9 +51,9 @@ public class ScheduleService {
         List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
         if (schedules.isEmpty()) return null;
 
-        Schedule schedule = schedules.get(0);
+        Schedule schedule = scheduleRepository.save(schedules.get(0));
 
-        return schedule;
+        return toDTO(schedule);
     }
 
     @Transactional
@@ -69,6 +69,8 @@ public class ScheduleService {
         return scheduleRepository.findById(id).map(this::toDTO);
     }
 
+    // rn saves the new schedule by default
+    // should display multiple schedules to the user save the one they choose
     public Optional<ScheduleDTO> updateSchedule(
             ScheduleRequest scheduleRequest,
             UUID scheduleId,
