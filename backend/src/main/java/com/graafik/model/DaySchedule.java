@@ -1,6 +1,7 @@
 package com.graafik.model;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -29,10 +30,10 @@ public class DaySchedule extends BaseEntity {
     private List<ShiftAssignment> assignments;
 
 
-    @ManyToOne
-    @JoinColumn(name="schedule_id", nullable = false)
-    @JsonBackReference
-    private Schedule schedule;
+    //@ManyToOne
+    //@JoinColumn(name="schedule_id", nullable = false)
+    //@JsonBackReference
+    //private UUID schedule;
 
     public DaySchedule() {}
 
@@ -41,13 +42,15 @@ public class DaySchedule extends BaseEntity {
         this.assignments = assignments;
     }
 
-    public Schedule getSchedule() {
+    /* 
+    public UUID getSchedule() {
         return schedule;
     }
 
-    public void setSchedule (Schedule schedule) {
+    public void setSchedule (UUID schedule) {
         this.schedule = schedule;
     }
+        */
 
     public int getDayOfMonth() {
         return dayOfMonth;

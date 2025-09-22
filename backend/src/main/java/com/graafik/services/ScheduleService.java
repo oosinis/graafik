@@ -7,11 +7,11 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.graafik.dto.ScheduleDTO;
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
-import com.graafik.model.ShiftAssignment;
 import com.graafik.model.Worker;
 import com.graafik.repositories.ScheduleRepository;
 import com.graafik.repositories.ShiftRepository;
@@ -27,7 +27,9 @@ public class ScheduleService {
     private final ShiftRepository shiftRepository;
     private final WorkerRepository workerRepository;
 
-    public ScheduleService(ScheduleRepository scheduleRepository, ShiftRepository shiftRepository, WorkerRepository workerRepository) {
+    public ScheduleService(ScheduleRepository scheduleRepository, 
+                        ShiftRepository shiftRepository, 
+                        WorkerRepository workerRepository) {
         this.scheduleRepository = scheduleRepository;
         this.shiftRepository = shiftRepository;
         this.workerRepository = workerRepository;
@@ -35,6 +37,7 @@ public class ScheduleService {
 
     @Transactional
     public Schedule createSchedule(ScheduleRequest request) {
+        
         List<Shift> managedShifts = request.getShifts().stream()
                 .map(shiftRepository::save)
                 .toList();
@@ -50,52 +53,48 @@ public class ScheduleService {
 
         Schedule schedule = schedules.get(0);
 
-        List<DaySchedule> daySchedules = schedule.getDaySchedules();
-
-        for (DaySchedule daySchedule : daySchedules) {
-            daySchedule.setSchedule(schedule);
-
-            for (ShiftAssignment assignment : daySchedule.getAssignments()) {
-                UUID shiftId = assignment.getShift().getId();
-                Shift managedShift = managedShifts.stream()
-                        .filter(s -> s.getId().equals(shiftId))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Shift not found"));
-                assignment.setShift(managedShift);
-
-                UUID workerId = assignment.getWorker().getId();
-                Worker managedWorker = managedWorkers.stream()
-                        .filter(w -> w.getId().equals(workerId))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Worker not found"));
-                assignment.setWorker(managedWorker);
-            }
-        }
-
-        schedule.setDaySchedules(daySchedules);
-
-        return scheduleRepository.save(schedule);
+        return schedule;
     }
 
-
-    @Transactional(readOnly = true)
-    public List<Schedule> getAllSchedules() {
-        return scheduleRepository.findAll();
+    @Transactional
+    public List<ScheduleDTO> getAllSchedules() {
+        return scheduleRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Schedule> getScheduleById(UUID id) {
-        return scheduleRepository.findById(id);
+    @Transactional
+    public Optional<ScheduleDTO> getScheduleById(UUID id) {
+        return scheduleRepository.findById(id).map(this::toDTO);
     }
 
-    // rn saves the new schedule by default
-    // should display multiple schedules to the user save the one they choose
-    public Optional<Schedule> updateSchedule(ScheduleRequest scheduleRequest, Schedule currentSchedule, int startDate, int endDate, Worker missingWorker) {
-        List<Schedule> schedules = RegenerateExistingSchedule.regenerateSchedule(scheduleRequest, currentSchedule, startDate, endDate, missingWorker);
+    public Optional<ScheduleDTO> updateSchedule(
+            ScheduleRequest scheduleRequest,
+            UUID scheduleId,
+            int startDate,
+            int endDate,
+            Worker missingWorker
+    ) {
+        Optional<Schedule> currentScheduleOpt = scheduleRepository.findById(scheduleId);
+        if (currentScheduleOpt.isEmpty()) return Optional.empty();
+
+        Schedule currentSchedule = currentScheduleOpt.get();
+
+        List<Schedule> schedules = RegenerateExistingSchedule.regenerateSchedule(
+                scheduleRequest,
+                currentSchedule,
+                startDate,
+                endDate,
+                missingWorker
+        );
+
         if (schedules == null || schedules.isEmpty()) return Optional.empty();
+
         Schedule saved = scheduleRepository.save(schedules.get(0));
-        return Optional.of(saved);
+        return Optional.of(toDTO(saved));
     }
+
 
     public boolean deleteSchedule(UUID id) {
         if (scheduleRepository.existsById(id)) {
@@ -103,5 +102,27 @@ public class ScheduleService {
             return true;
         }
         return false;
+    }
+
+    private ScheduleDTO toDTO(Schedule schedule) {
+        return new ScheduleDTO(
+            schedule.getId(),
+            schedule.getMonth(),
+            schedule.getYear(),
+            schedule.getScore(),
+            schedule.getDaySchedules().stream().map(DaySchedule::getId).toList(),
+            schedule.getWorkerHours()
+        );
+    }
+
+    private Schedule fromDTO(ScheduleDTO dto, List<DaySchedule> daySchedules) {
+        Schedule schedule = new Schedule();
+        schedule.setMonth(dto.getMonth());
+        schedule.setYear(dto.getYear());
+        schedule.setScore(dto.getScore());
+        schedule.setDaySchedules(daySchedules);
+        schedule.setDayScheduleIds(daySchedules.stream().map(DaySchedule::getId).toList());
+        schedule.setWorkerHours(dto.getWorkerHours());
+        return schedule;
     }
 }

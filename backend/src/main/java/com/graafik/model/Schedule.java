@@ -4,17 +4,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 
 @Entity
@@ -24,9 +21,13 @@ public class Schedule extends BaseEntity {
     private int year;
     private int score;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name ="schedule_id")
+    @Transient
     private List<DaySchedule> daySchedules;
+
+    @ElementCollection
+    @CollectionTable(name = "schedule_day_ids", joinColumns = @JoinColumn(name = "schedule_id"))
+    @Column(name = "day_schedule_id")
+    private List<UUID> dayScheduleIds;
 
     @ElementCollection
     @CollectionTable(name = "schedule_worker_hours", joinColumns = @JoinColumn(name = "schedule_id"))
@@ -70,6 +71,10 @@ public class Schedule extends BaseEntity {
 
     public void setDaySchedules(List<DaySchedule> daySchedules) {
         this.daySchedules = daySchedules;
+    }
+
+    public void setDayScheduleIds(List<UUID> dayScheduleIds) {
+        this.dayScheduleIds = dayScheduleIds;
     }
 
     public Map<UUID, Integer> getWorkerHours() {
