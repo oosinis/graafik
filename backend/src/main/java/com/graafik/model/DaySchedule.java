@@ -19,6 +19,9 @@ import jakarta.persistence.Table;
 @Table(name = "day_schedules")
 public class DaySchedule extends BaseEntity {
     
+    @Column(name = "schedule_id")
+    private UUID scheduleId;
+
     @Column(nullable = false)
     private int dayOfMonth;
 
@@ -29,12 +32,6 @@ public class DaySchedule extends BaseEntity {
     @JsonManagedReference
     private List<ShiftAssignment> assignments;
 
-
-    //@ManyToOne
-    //@JoinColumn(name="schedule_id", nullable = false)
-    //@JsonBackReference
-    //private UUID schedule;
-
     public DaySchedule() {}
 
     public DaySchedule(int dayOfMonth, List<ShiftAssignment> assignments) {
@@ -42,15 +39,14 @@ public class DaySchedule extends BaseEntity {
         this.assignments = assignments;
     }
 
-    /* 
-    public UUID getSchedule() {
-        return schedule;
+
+    public UUID getScheduleId() {
+        return scheduleId;
     }
 
-    public void setSchedule (UUID schedule) {
-        this.schedule = schedule;
+    public void setSchedule (UUID scheduleId) {
+        this.scheduleId = scheduleId;
     }
-        */
 
     public int getDayOfMonth() {
         return dayOfMonth;
