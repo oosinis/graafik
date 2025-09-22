@@ -1,38 +1,29 @@
 name: Deploy Backend to AWS Elastic Beanstalk
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Build and Test"]
+    types:
+      - completed
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: backend
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Set Up JDK
-        uses: actions/setup-java@v3
+        uses: actions/checkout@v4
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
         with:
-          distribution: 'temurin'
-          java-version: '23'
-
-      - name: Build with Maven
-        run: mvn clean package -DskipTests=true
-
-      - name: Debug Check Backend Directory
-        run: ls -R
-
-      - name: List files after build
-        run: ls -R target
-
-
+          name: backend-jar
+          path: ./artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v21
         with:
@@ -43,5 +34,4 @@ jobs:
           region: ${{ secrets.AWS_REGION }}
           version_label: "backend-${{ github.run_number }}"
           version_description: "Deployed from GitHub Actions"
-          deployment_package: backend/target/graafik-0.0.1.jar
-
+          deployment_package: ./artifacts/graafik-0.0.1.jar
