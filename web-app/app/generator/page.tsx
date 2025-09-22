@@ -121,7 +121,6 @@ export default function GeneratorRoute() {
       })
     )  
   }
-  
 
   function setWorkLoad(workerId: string, value: number) {
     setWorkers(prev => prev.map(w => (w.id === workerId ? { ...w, workLoad: value } : w)))
