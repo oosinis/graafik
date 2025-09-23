@@ -22,7 +22,7 @@ public class Worker extends BaseEntity {
 
     private float workLoad;
 
-    private String role;
+    private String workerRole;
 
     @ElementCollection
     @CollectionTable(name = "worker_assigned_shift_ids", joinColumns = @JoinColumn(name = "worker_id"))
@@ -94,12 +94,12 @@ public class Worker extends BaseEntity {
         return sickDays;
     }
 
-    public String getRole() {
-        return role;
+    public String getWorkerRole() {
+        return workerRole;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setWorkerRole(String workerRole) {
+        this.workerRole = workerRole;
     }
 
     @Override
@@ -112,7 +112,7 @@ public class Worker extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, assignedShifts, workLoad, desiredVacationDays, vacationDays, requestedWorkDays, sickDays, role);
+        return Objects.hash(name, assignedShifts, workLoad, desiredVacationDays, vacationDays, requestedWorkDays, sickDays, workerRole);
     }
     
     @Override
