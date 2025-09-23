@@ -14,6 +14,7 @@ import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.Worker;
 import com.graafik.repositories.ScheduleRepository;
+import com.graafik.repositories.ShiftAssignmentRepository;
 import com.graafik.repositories.DayScheduleRepository;
 import com.graafik.repositories.ShiftRepository;
 import com.graafik.repositories.WorkerRepository;
@@ -28,15 +29,19 @@ public class ScheduleService {
     private final ShiftRepository shiftRepository;
     private final WorkerRepository workerRepository;
     private final DayScheduleRepository dayScheduleRepository;
+    private final ShiftAssignmentRepository shiftAssignmentRepository;
+
 
     public ScheduleService(ScheduleRepository scheduleRepository, 
                         ShiftRepository shiftRepository, 
                         WorkerRepository workerRepository,
-                        DayScheduleRepository dayScheduleRepository) {
+                        DayScheduleRepository dayScheduleRepository,
+                        ShiftAssignmentRepository shiftAssignmentRepository) {
         this.scheduleRepository = scheduleRepository;
         this.shiftRepository = shiftRepository;
         this.workerRepository = workerRepository;
         this.dayScheduleRepository = dayScheduleRepository;
+        this.shiftAssignmentRepository = shiftAssignmentRepository;
     }
 
     @Transactional
@@ -56,7 +61,7 @@ public class ScheduleService {
         if (schedules.isEmpty()) return null;
 
         var schedule = schedules.get(0);
-        saveScheduleWithDaySchedules(schedule);
+        saveSchedule(schedule);
 
         return toDTO(schedule);
     }
@@ -132,7 +137,8 @@ public class ScheduleService {
         return schedule;
     }
 
-    private Schedule saveScheduleWithDaySchedules(Schedule schedule) {
+    private Schedule saveSchedule(Schedule schedule) {
+
         var savedSchedule = scheduleRepository.save(schedule);
         
         if (schedule.getDaySchedules() != null && !schedule.getDaySchedules().isEmpty()) {
@@ -140,11 +146,20 @@ public class ScheduleService {
                 if (ds.getScheduleId() == null) {
                     ds.setScheduleId(savedSchedule.getId());
                 }
+
+                var savedDaySchedule = dayScheduleRepository.save(ds);
+
+                if (ds.getAssignments() != null && !ds.getAssignments().isEmpty()) {
+                    ds.getAssignments().forEach(sa -> {
+                        if (sa.getDayScheduleId() == null) {
+                            sa.setDayScheduleId(savedDaySchedule.getId());
+                        }
+                    });
+                    shiftAssignmentRepository.saveAll(ds.getAssignments());
+                }
+
             });
-            
-            dayScheduleRepository.saveAll(schedule.getDaySchedules());
         }
-        
         return savedSchedule;
     }
 }
