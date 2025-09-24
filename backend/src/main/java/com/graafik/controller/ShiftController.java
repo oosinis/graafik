@@ -1,15 +1,19 @@
 package com.graafik.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.graafik.services.*;
-import com.graafik.model.Shift;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.graafik.model.Shift;
+import com.graafik.services.ShiftService;
 
 @RestController
 @RequestMapping("/api/shifts")
@@ -24,19 +28,19 @@ public class ShiftController {
     @GetMapping("/{id}")
     public ResponseEntity<Shift> getShiftById(@PathVariable UUID id) {
         Optional<Shift> shift = shiftService.getShiftById(id);
-        // kui seda pole olemas siis 404
-        // TODO mis frontis saab
-        if (shift.isEmpty()) ResponseEntity.notFound().build();
-        return ResponseEntity.ok(shift.get());
+        return shift
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public List<Shift> getAllShifts() {
-        return shiftService.getAllShifts();
+    public ResponseEntity<List<Shift>> getAllShifts() {
+        List<Shift> shifts = shiftService.getAllShifts();
+        return ResponseEntity.ok(shifts);
     }
 
     @PostMapping
-    public Shift createWorker(@RequestBody Shift shift) {
+    public Shift createShift(@RequestBody Shift shift) {
         return shiftService.saveShift(shift);
     }
 }

@@ -16,29 +16,27 @@ import com.graafik.model.Worker;
 import com.graafik.repositories.ScheduleRepository;
 import com.graafik.repositories.ShiftAssignmentRepository;
 import com.graafik.repositories.DayScheduleRepository;
-import com.graafik.repositories.ShiftRepository;
 import com.graafik.repositories.WorkerRepository;
 import com.graafik.schedule.GenerateSchedule;
 import com.graafik.schedule.RegenerateExistingSchedule;
-
 @Service
 @Transactional
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final ShiftRepository shiftRepository;
+    private final ShiftService shiftService;
     private final WorkerRepository workerRepository;
     private final DayScheduleRepository dayScheduleRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
 
 
     public ScheduleService(ScheduleRepository scheduleRepository, 
-                        ShiftRepository shiftRepository, 
+                        ShiftService shiftService, 
                         WorkerRepository workerRepository,
                         DayScheduleRepository dayScheduleRepository,
                         ShiftAssignmentRepository shiftAssignmentRepository) {
         this.scheduleRepository = scheduleRepository;
-        this.shiftRepository = shiftRepository;
+        this.shiftService = shiftService;
         this.workerRepository = workerRepository;
         this.dayScheduleRepository = dayScheduleRepository;
         this.shiftAssignmentRepository = shiftAssignmentRepository;
@@ -48,9 +46,10 @@ public class ScheduleService {
     public ScheduleDTO createSchedule(ScheduleRequest request) {
         
         List<Shift> managedShifts = request.getShifts().stream()
-                .map(shiftRepository::save)
-                .toList();
+            .map(shiftService::saveShift)
+            .toList();
         request.setShifts(managedShifts);
+
 
         List<Worker> managedWorkers = request.getWorkers().stream()
                 .map(workerRepository::save)
@@ -75,8 +74,13 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Optional<ScheduleDTO> getScheduleById(UUID id) {
-        return scheduleRepository.findById(id).map(this::toDTO);
+    public Optional<ScheduleDTO> getScheduleById(UUID scheduleId) {
+        return scheduleRepository.findById(scheduleId)
+                .map(schedule -> {
+                    List<DaySchedule> daySchedules = dayScheduleRepository.findByScheduleId(scheduleId);
+                    schedule.setDaySchedules(daySchedules);
+                    return toDTO(schedule);
+                });
     }
 
     // rn saves the new schedule by default

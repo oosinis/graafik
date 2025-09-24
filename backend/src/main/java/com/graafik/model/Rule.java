@@ -1,13 +1,23 @@
 package com.graafik.model;
 
-import com.graafik.converters.IntegerListConverter;
-import jakarta.persistence.*;
-
 import java.util.List;
+import java.util.UUID;
+
+import com.graafik.converters.IntegerListConverter;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "rules")
 public class Rule extends BaseEntity {
+
+    @Column(name =  "shift_id")
+    private UUID shiftId;
 
     @Convert(converter = IntegerListConverter.class)
     @Column(name = "days_applied")
@@ -21,6 +31,14 @@ public class Rule extends BaseEntity {
     private PriorityType priority;
 
     public Rule() {}
+
+    public UUID getShiftId() {
+        return shiftId;
+    }
+
+    public void setShiftId(UUID shiftId) {
+        this.shiftId = shiftId;
+    }
 
     public List<Integer> getDaysApplied() {
         return daysApplied;
