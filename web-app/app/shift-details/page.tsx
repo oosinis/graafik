@@ -1,4 +1,4 @@
-import { ShiftDetailsCard } from "@/components/shift-details-card"
+//import { ShiftDetailsCard } from "@/components/shift-details-card"
 import { PageHeader } from "@/components/page-header"
 
 export default function ShiftDetailsPage() {
@@ -6,7 +6,7 @@ export default function ShiftDetailsPage() {
     <div className="max-w-4xl mx-auto">
       <PageHeader title="Shift Details Example" />
 
-      <div className="flex flex-wrap gap-6">
+      {/* <div className="flex flex-wrap gap-6">
         <ShiftDetailsCard
           day="Monday"
           date="3 March"
@@ -45,7 +45,7 @@ export default function ShiftDetailsPage() {
           fte="1.0"
           onEdit={() => console.log("Edit shift")}
         />
-      </div>
+      </div> */}
     </div>
   )
 }

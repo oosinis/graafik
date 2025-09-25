@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { ShiftDetailsCard } from "@/components/shift-details-card";
+//import { ShiftDetailsCard } from "@/components/shift-details-card";
 import { MonthNavigation } from "@/components/month-navigation";
 import { DayNavigation } from "@/components/day-navigation";
 import { ViewModeToggle } from "@/components/view-mode-toggle";
@@ -243,7 +243,7 @@ export function ScheduleGridView({
           onClick={() => setSelectedShift(null)}
         >
           <div onClick={e => e.stopPropagation()}>
-            <ShiftDetailsCard
+            {/* <ShiftDetailsCard
               day={`Day ${selectedShift.day}`}
               date={`${selectedShift.day} ${monthNames[month - 1]}`}
               shiftType={selectedShift.shiftType}
@@ -254,7 +254,7 @@ export function ScheduleGridView({
               department="—"
               fte={selectedShift.fte}
               onEdit={() => console.log("edit", selectedShift)}
-            />
+            /> */}
           </div>
         </div>
       )}
