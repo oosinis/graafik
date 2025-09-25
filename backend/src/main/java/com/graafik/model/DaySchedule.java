@@ -1,26 +1,27 @@
 package com.graafik.model;
 
 import java.util.List;
+import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 
 @Entity
 @Table(name = "day_schedules")
 public class DaySchedule extends BaseEntity {
     
+    @Column(name = "schedule_id")
+    private UUID scheduleId;
+
     @Column(nullable = false)
     private int dayOfMonth;
 
     private int score;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "day_schedule_id")
+    @Transient
     private List<ShiftAssignment> assignments;
 
     public DaySchedule() {}
@@ -28,6 +29,15 @@ public class DaySchedule extends BaseEntity {
     public DaySchedule(int dayOfMonth, List<ShiftAssignment> assignments) {
         this.dayOfMonth = dayOfMonth;
         this.assignments = assignments;
+    }
+
+
+    public UUID getScheduleId() {
+        return scheduleId;
+    }
+
+    public void setScheduleId (UUID scheduleId) {
+        this.scheduleId = scheduleId;
     }
 
     public int getDayOfMonth() {

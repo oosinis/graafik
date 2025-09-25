@@ -1,4 +1,5 @@
 package com.graafik.repositories;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,4 +10,5 @@ import com.graafik.model.DaySchedule;
 
 @Repository
 public interface DayScheduleRepository extends JpaRepository<DaySchedule, UUID> {
+    List<DaySchedule> findByScheduleId(UUID scheduleId);
 }

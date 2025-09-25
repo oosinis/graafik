@@ -1,5 +1,8 @@
 package com.graafik.model;
 
+import java.util.UUID;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -9,6 +12,9 @@ import jakarta.persistence.Table;
 @Table(name = "shift_assignments")
 public class ShiftAssignment extends BaseEntity {
 
+    @Column(name = "day_schedule_id")
+    private UUID dayScheduleId;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "shift_id", nullable = false)
     private Shift shift;
@@ -17,10 +23,17 @@ public class ShiftAssignment extends BaseEntity {
     @JoinColumn(name = "worker_id", nullable = false)
     private Worker worker;
 
-
     public ShiftAssignment(Shift shift, Worker worker) {
         this.shift = shift;
         this.worker = worker;
+    }
+
+    public UUID getDayScheduleId() {
+        return dayScheduleId;
+    }
+
+    public void setDayScheduleId (UUID dayScheduleId) {
+        this.dayScheduleId = dayScheduleId;
     }
 
     public Shift getShift() {
@@ -38,6 +51,7 @@ public class ShiftAssignment extends BaseEntity {
     public void setWorker(Worker worker) {
         this.worker = worker;
     }
+
     @Override
     public String toString() {
         return "ShiftAssignment{" +

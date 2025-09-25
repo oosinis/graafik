@@ -1,16 +1,26 @@
 package com.graafik.controller;
 
-import com.graafik.model.Schedule;
-import com.graafik.model.ScheduleRequest;
-import com.graafik.services.ScheduleService;
-import com.graafik.services.WorkerService;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.graafik.dto.ScheduleDTO;
+import com.graafik.model.ScheduleRequest;
+import com.graafik.model.Worker;
+import com.graafik.services.ScheduleService;
+import com.graafik.services.WorkerService;
 
 @RestController
 @RequestMapping("/api/schedules")
@@ -25,35 +35,52 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<Schedule> createSchedule(@RequestBody ScheduleRequest scheduleRequest) {
-        Schedule saved = scheduleService.createSchedule(scheduleRequest);
+    public ResponseEntity<ScheduleDTO> createSchedule(@RequestBody ScheduleRequest scheduleRequest) {
+        ScheduleDTO schedule = scheduleService.createSchedule(scheduleRequest);
+        if (schedule == null) return ResponseEntity.badRequest().build();
         return ResponseEntity
-                .created(URI.create("/api/schedules/" + saved.getId()))
-                .body(saved);
+                .created(URI.create("/api/schedules/" + schedule.getId()))
+                .body(schedule);
     }
 
     @GetMapping
-    public ResponseEntity<List<Schedule>> getAllSchedules() {
-        return ResponseEntity.ok(scheduleService.getAllSchedules());
+    public ResponseEntity<List<ScheduleDTO>> getAllSchedules() {
+        List<ScheduleDTO> schedules = scheduleService.getAllSchedules();
+        return ResponseEntity.ok(schedules);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Schedule> getScheduleById(@PathVariable UUID id) {
-        return scheduleService.getScheduleById(id)
+    public ResponseEntity<ScheduleDTO> getScheduleById(@PathVariable UUID id) {
+        Optional<ScheduleDTO> scheduleOpt = scheduleService.getScheduleById(id);
+        return scheduleOpt
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build()); // ??????????????
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Schedule> updateSchedule(@PathVariable UUID id,
-                                                @RequestBody ScheduleRequest scheduleRequest,
-                                                @RequestParam int startDate,
-                                                @RequestParam int endDate,
-                                                @RequestParam UUID workerId) {
-        return scheduleService.getScheduleById(id)
-                .flatMap(current -> workerService.getWorkerById(workerId)
-                        .flatMap(worker -> scheduleService.updateSchedule(
-                                scheduleRequest, current, startDate, endDate, worker)))
+    public ResponseEntity<ScheduleDTO> updateSchedule(
+            @PathVariable UUID id,
+            @RequestBody ScheduleRequest scheduleRequest,
+            @RequestParam int startDate,
+            @RequestParam int endDate,
+            @RequestParam UUID workerId
+    ) {
+
+        Optional<Worker> workerOpt = workerService.getWorkerById(workerId);
+        if (workerOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+        Optional<ScheduleDTO> schedule = scheduleService.getScheduleById(id);
+        if (schedule.isEmpty()) return ResponseEntity.notFound().build();
+
+        Optional<ScheduleDTO> updatedOpt = scheduleService.updateSchedule(
+                scheduleRequest,
+                id,
+                startDate,
+                endDate,
+                workerOpt.get()
+        );
+
+        return updatedOpt
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -62,7 +89,9 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable UUID id) {
         boolean deleted = scheduleService.deleteSchedule(id);
-        return deleted ? ResponseEntity.noContent().build()
-                       : ResponseEntity.notFound().build();
+        // 204
+        if (deleted) return ResponseEntity.noContent().build();
+        // 404
+        return ResponseEntity.notFound().build();
     }
 }

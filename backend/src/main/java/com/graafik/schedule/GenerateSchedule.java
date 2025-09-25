@@ -40,34 +40,11 @@ public class GenerateSchedule {
 
         List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
 
-        
+        System.out.println("ALL SCHEDULES:");
         printSchedules(allPossibleSchedules);
             
         return allPossibleSchedules;
 
-    }
-
-    public static void printSchedules(List<Schedule> schedules) {
-        for (Schedule combination : schedules) {
-            System.out.println("\n NEW SCHEDULE score: " + combination.getScore());
-            int x  = 1;
-            for (DaySchedule day : combination.getDaySchedules()) {
-                System.out.print(x + ": ");
-                for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
-                    System.out.print(ShiftAssignment.getWorker().getName() +  ", " + ShiftAssignment.getShift().getType() +"; ");
-                }
-                x++;
-                System.out.println();
-            }
-
-            System.out.println();
-            combination.getWorkerHours().forEach((worker, hours) -> {
-                System.out.println(worker + ": " + hours);
-            });
-            System.out.println();
-
-            System.out.println("---");
-        }
     }
 
     /**
@@ -84,6 +61,7 @@ public class GenerateSchedule {
         Schedule schedule = new Schedule();
 
         schedule.setMonth(scheduleRequest.getMonth());
+        // TODO change to automatic
         schedule.setYear(2025);
 
         HelperMethods.initWorkerHours(schedule, scheduleRequest);
@@ -137,15 +115,8 @@ public class GenerateSchedule {
 
             currentSchedule.setScore(currentScore);
             
-            for (DaySchedule day : currentSchedule.getDaySchedules()) {
-                for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
-                    //System.out.print(ShiftAssignment.getWorker().getName() +  " " + ShiftAssignment.getShift().getType() +", ");
-                }
-                //System.out.println();
-            }
-            //System.out.println("---");
-            
             // rn to not wait for all possibilities
+            // TODO get all and choose the best ones
             if (allCombinations.size() == 3) break;
 
             // if rating is fine go to next date do the whole thing again
@@ -175,5 +146,28 @@ public class GenerateSchedule {
     }
 
     
+    
+    public static void printSchedules(List<Schedule> schedules) {
+        for (Schedule combination : schedules) {
+            System.out.println("\n NEW SCHEDULE score: " + combination.getScore());
+            int x  = 1;
+            for (DaySchedule day : combination.getDaySchedules()) {
+                System.out.print(x + ": ");
+                for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
+                    System.out.print(ShiftAssignment.getWorker().getName() +  ", " + ShiftAssignment.getShift().getType() +"; ");
+                }
+                x++;
+                System.out.println();
+            }
+
+            System.out.println();
+            combination.getWorkerHours().forEach((worker, hours) -> {
+                System.out.println("worker: " + worker + ": " + hours);
+            });
+            
+            System.out.println();
+            System.out.println("---");
+        }
+    }
 
 }

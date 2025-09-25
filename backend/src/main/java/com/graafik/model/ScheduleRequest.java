@@ -1,15 +1,8 @@
 package com.graafik.model;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
 public class ScheduleRequest {
+
     private List<Worker> workers;
     private List<Shift> shifts;
     private int month;

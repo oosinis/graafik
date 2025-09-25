@@ -62,7 +62,6 @@ public class RuleValidator {
                 // if the worker has nothing asigned on the previous day
                 if (previousShiftAssignment == null) {
                     countRest++;
-                    continue;
                 } 
                 else {
                     prevWorkShift = previousShiftAssignment.getShift();
@@ -73,7 +72,7 @@ public class RuleValidator {
                     else {
                         for (Rule rule : prevWorkShift.getRules()) {
                             if (rule.getContinuousDays() == countCont) {
-                                 if (rule.getRestDays() <= countRest) continue;
+                                 if (rule.getRestDays() <= countRest);
                                  else return -4000;
                             }
                             else if (rule.getContinuousDays() < countCont) {
@@ -235,7 +234,6 @@ public class RuleValidator {
             // if the worker has nothing asigned on the previous day
             if (previousShiftAssignment == null) {
                 countRest++;
-                continue;
             } 
             else {
                 prevWorkShift = previousShiftAssignment.getShift();

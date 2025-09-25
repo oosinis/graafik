@@ -3,12 +3,10 @@ package com.graafik.model;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 
 @Entity
@@ -21,8 +19,7 @@ public class Shift extends BaseEntity {
     @Column(nullable = false)
     private int duration;
 
-    @ElementCollection
-    @CollectionTable(name = "shift_rules", joinColumns = @JoinColumn(name = "shift_id"))
+    @Transient
     private List<Rule> rules;
 
     public Shift() {}

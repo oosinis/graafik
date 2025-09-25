@@ -4,15 +4,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 
 @Entity
@@ -22,15 +21,14 @@ public class Schedule extends BaseEntity {
     private int year;
     private int score;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "schedule_id")
-    private List<DaySchedule> daySchedules;
-
     @ElementCollection
     @CollectionTable(name = "schedule_worker_hours", joinColumns = @JoinColumn(name = "schedule_id"))
     @MapKeyColumn(name = "worker_id")
     @Column(name = "hours")
     private Map<UUID, Integer> workerHours;
+
+    @Transient
+    private List<DaySchedule> daySchedules;
 
     public Schedule() {}
 
@@ -46,8 +44,12 @@ public class Schedule extends BaseEntity {
         return score;
     }
 
-    public List<DaySchedule> getDaySchedules() {
+    public List<DaySchedule> getDaySchedules() { 
         return daySchedules;
+    }
+
+    public void setDaySchedules(List<DaySchedule> daySchedules) {
+        this.daySchedules = daySchedules; 
     }
 
     public void setMonth(int month) {
@@ -65,11 +67,7 @@ public class Schedule extends BaseEntity {
     public void addToScore(int addition) {
         this.score = this.score + addition;
     }
-
-    public void setDaySchedules(List<DaySchedule> daySchedules) {
-        this.daySchedules = daySchedules;
-    }
-
+    
     public Map<UUID, Integer> getWorkerHours() {
         return workerHours;
     }
