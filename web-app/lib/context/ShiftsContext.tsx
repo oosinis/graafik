@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import type { Shift } from "@/models/Shift";
 import { mockShifts } from "@/mocks/data/shifts";
@@ -47,3 +47,4 @@ export function useShifts() {
   if (!ctx) throw new Error("useShifts must be used within <ShiftsContext> provider");
   return ctx;
 }
+ */

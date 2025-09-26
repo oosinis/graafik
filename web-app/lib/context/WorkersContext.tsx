@@ -1,4 +1,4 @@
-"use client";
+/* "use client";
 import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import type { Worker, WorkerRole, WorkerStatus } from "@/models/Worker";
 import { mockWorkers } from "@/mocks/data/workers";
@@ -39,3 +39,4 @@ export function useWorkers() {
   if (!ctx) throw new Error("useWorkers must be used within WorkersProvider");
   return ctx;
 }
+ */
