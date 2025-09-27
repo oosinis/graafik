@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState} from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { MonthsHoursStep } from "@/app/generator/MonthsHoursStep"
 import { ShiftDetailsStep } from "@/app/generator/ShiftDetailsStep"
@@ -11,9 +11,9 @@ import { Shift } from '@/models/Shift'
 import { Rule } from '@/models/Rule'
 import { Button } from "@/components/ui/button"
 
-const months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-const makeId = ():string => {
+const makeId = (): string => {
   return (typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
     : `id_${Math.random().toString(36).slice(2)}`)
@@ -27,7 +27,7 @@ export default function GeneratorRoute() {
   const [activeShiftId, setActiveShiftId] = useState<string>(shifts[0]?.id ?? "")
   const [activeRuleId, setActiveRuleId] = useState<string>("")
   const [activeWorkerId, setActiveWorkerId] = useState<string>("")
-  const [workers, setWorkers] = useState<Worker[]>([  ])
+  const [workers, setWorkers] = useState<Worker[]>([])
 
   const router = useRouter()
 
@@ -50,12 +50,12 @@ export default function GeneratorRoute() {
   }
 
   //Rule things
-  function addRule(shiftId: string, draft: Omit<Rule, "id">){
+  function addRule(shiftId: string, draft: Omit<Rule, "id">) {
     const newRule: Rule = { id: makeId(), ...draft };
-  setShifts(prev =>
-    prev.map(s => (s.id === shiftId ? { ...s, rules: [...s.rules, newRule] } : s))
-  );
-  setActiveRuleId(newRule.id);
+    setShifts(prev =>
+      prev.map(s => (s.id === shiftId ? { ...s, rules: [...s.rules, newRule] } : s))
+    );
+    setActiveRuleId(newRule.id);
   }
 
   function onUpdateRule(shiftId: string, ruleId: string, patch: Partial<Rule>) {
@@ -93,8 +93,8 @@ export default function GeneratorRoute() {
   function onSetPriority(shiftId: string, ruleId: string, p: Rule['priority']) {
     onUpdateRule(shiftId, ruleId, { priority: p })
   }
-  
-  
+
+
 
   //Assing employees things
   const addWorker = (worker: Worker) => {
@@ -119,7 +119,7 @@ export default function GeneratorRoute() {
           ? { ...w, assignedShifts: current.filter(s => s !== shiftId) }
           : { ...w, assignedShifts: [...current, shiftId] }
       })
-    )  
+    )
   }
 
   function setWorkLoad(workerId: string, value: number) {
@@ -131,11 +131,11 @@ export default function GeneratorRoute() {
         w.id !== workerId
           ? w
           : {
-              ...w,
-              desiredVacationDays: w.desiredVacationDays.includes(day)
-                ? w.desiredVacationDays.filter(d => d !== day)
-                : [...w.desiredVacationDays, day],
-            }
+            ...w,
+            desiredVacationDays: w.desiredVacationDays.includes(day)
+              ? w.desiredVacationDays.filter(d => d !== day)
+              : [...w.desiredVacationDays, day],
+          }
       )
     )
   }
@@ -145,11 +145,11 @@ export default function GeneratorRoute() {
         w.id !== workerId
           ? w
           : {
-              ...w,
-              vacationDays: w.vacationDays.includes(day)
-                ? w.vacationDays.filter(d => d !== day)
-                : [...w.vacationDays, day],
-            }
+            ...w,
+            vacationDays: w.vacationDays.includes(day)
+              ? w.vacationDays.filter(d => d !== day)
+              : [...w.vacationDays, day],
+          }
       )
     )
   }
@@ -159,9 +159,9 @@ export default function GeneratorRoute() {
         w.id !== workerId
           ? w
           : {
-              ...w,
-              requestedWorkDays: { ...w.requestedWorkDays, [day]: shiftId },
-            }
+            ...w,
+            requestedWorkDays: { ...w.requestedWorkDays, [day]: shiftId },
+          }
       )
     )
   }
@@ -172,36 +172,39 @@ export default function GeneratorRoute() {
       console.error("Missing NEXT_PUBLIC_API_URL");
       return;
     }
-  
+
     const requestBody = {
       workers: workers,
       shifts: shifts,
       month: months.indexOf(month) + 1,
       fullTimeHours: Number(fullTimeHours),
     };
-  
+
+    console.log("Generator request body:", requestBody);
+    console.log("Workers:", workers);
+    console.log("Shifts:", shifts);
+
     try {
       const res = await fetch(`${apiUrl}/schedules`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
-  
+
       if (!res.ok) {
         const text = await res.text().catch(() => "");
         throw new Error(text || `Request failed: ${res.status}`);
       }
-  
+
       const data = await res.json();
-      console.log("BE response:", data);
-      //routimine just genereeritud graafikule
-      router.push(`/schedule?month=${month}`)
+      console.log("Generator API response:", data);
+      router.push(`/schedule/${data.id}`);
     } catch (err) {
       console.error(err);
       alert("Failed to generate schedule");
     }
   };
-  
+
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -250,12 +253,12 @@ export default function GeneratorRoute() {
         onToggleVacationDay={toggleVacationDay}
         onSetRequestedWorkDay={setRequestedWorkDay}
       />
-      <Button 
-    onClick={generateSchedule} 
-    className="mt-6 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-  >
-    Generate Schedule
-  </Button>
+      <Button
+        onClick={generateSchedule}
+        className="mt-6 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+      >
+        Generate Schedule
+      </Button>
     </div>
   )
 }

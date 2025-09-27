@@ -12,6 +12,7 @@ import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
+import com.graafik.model.ShiftAssignment;
 import com.graafik.model.Worker;
 import com.graafik.repositories.ScheduleRepository;
 import com.graafik.repositories.ShiftAssignmentRepository;
@@ -78,6 +79,24 @@ public class ScheduleService {
         return scheduleRepository.findById(scheduleId)
                 .map(schedule -> {
                     List<DaySchedule> daySchedules = dayScheduleRepository.findByScheduleId(scheduleId);
+                    daySchedules.forEach(ds -> {
+                        List<ShiftAssignment> assignments = shiftAssignmentRepository.findByDayScheduleId(ds.getId());
+                        ds.setAssignments(assignments);
+                    });
+                    schedule.setDaySchedules(daySchedules);
+                    return toDTO(schedule);
+                });
+    }
+
+    @Transactional
+    public Optional<ScheduleDTO> getLatestScheduleByMonthAndYear(int month, int year) {
+        return scheduleRepository.findFirstByMonthAndYearOrderByCreatedAtDesc(month, year)
+                .map(schedule -> {
+                    List<DaySchedule> daySchedules = dayScheduleRepository.findByScheduleId(schedule.getId());
+                    daySchedules.forEach(ds -> {
+                        List<ShiftAssignment> assignments = shiftAssignmentRepository.findByDayScheduleId(ds.getId());
+                        ds.setAssignments(assignments);
+                    });
                     schedule.setDaySchedules(daySchedules);
                     return toDTO(schedule);
                 });

@@ -23,6 +23,8 @@ public class ShiftAssignment extends BaseEntity {
     @JoinColumn(name = "worker_id", nullable = false)
     private Worker worker;
 
+    public ShiftAssignment() {}
+
     public ShiftAssignment(Shift shift, Worker worker) {
         this.shift = shift;
         this.worker = worker;

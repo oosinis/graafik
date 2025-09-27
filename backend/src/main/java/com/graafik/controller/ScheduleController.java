@@ -57,6 +57,16 @@ public class ScheduleController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/latest")
+    public ResponseEntity<ScheduleDTO> getLatestScheduleByMonthAndYear(
+            @RequestParam int month,
+            @RequestParam int year) {
+        Optional<ScheduleDTO> scheduleOpt = scheduleService.getLatestScheduleByMonthAndYear(month, year);
+        return scheduleOpt
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleDTO> updateSchedule(
             @PathVariable UUID id,

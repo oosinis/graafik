@@ -1,39 +1,18 @@
-"use client"
+// app/schedule/page.tsx
+import ScheduleGridView from "@/components/schedule-grid-view";
 
-import { Suspense } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
-import { PageHeader } from "@/components/page-header"
-import { ScheduleGridView } from "@/components/schedule-grid-view"
-
-function ScheduleContent() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-
-  const yearParam = searchParams?.get("year")
-  const monthParam = searchParams?.get("month")
-
-  const year = yearParam ? Number.parseInt(yearParam, 10) : new Date().getFullYear()
-  const month = monthParam ? Number.parseInt(monthParam, 10) : new Date().getMonth() + 1
-
-  const handleMonthChange = (newYear: number, newMonth: number) => {
-    const params = new URLSearchParams(searchParams?.toString() ?? "")
-    params.set("year", String(newYear))
-    params.set("month", String(newMonth))
-    router.push(`/schedule?month=${newMonth}`)
-  }
+export default function SchedulePage() {
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-indexed
+  const currentYear = currentDate.getFullYear();
 
   return (
-    <div className="max-w-full mx-auto">
-      <PageHeader title="Schedule overview" />
-      <ScheduleGridView year={year} month={month} onMonthChange={handleMonthChange} />
+    <div className="max-w-full mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-4">Current Schedule</h1>
+      <ScheduleGridView
+        initialMonth={currentMonth}
+        initialYear={currentYear}
+      />
     </div>
-  )
-}
-
-export default function ScheduleRoute() {
-  return (
-    <Suspense fallback={<div className="p-6">Loading schedule…</div>}>
-      <ScheduleContent />
-    </Suspense>
-  )
+  );
 }
