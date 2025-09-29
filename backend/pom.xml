@@ -59,6 +59,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- HTTP Client for Claude API -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

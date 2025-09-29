@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { MonthNavigation } from "@/components/month-navigation";
 import { DayNavigation } from "@/components/day-navigation";
 import { ViewModeToggle } from "@/components/view-mode-toggle";
+import { AIAnalysisPanel } from "@/components/ai-analysis-panel";
 import type { ScheduleResponse } from "@/models/ScheduleResponse";
 
 interface ScheduleGridViewProps {
@@ -186,6 +187,9 @@ export default function ScheduleGridView({
 
       {schedule && (
         <>
+          {/* AI Analysis Panel */}
+          <AIAnalysisPanel scheduleId={schedule.id} />
+
           {viewMode === "weekly" && (
             <div className="flex justify-end gap-2">
               <Button onClick={prevWeek} disabled={currentWeekStart === 1}>Previous week</Button>
