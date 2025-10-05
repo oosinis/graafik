@@ -49,11 +49,13 @@ public class RegenerateExistingSchedule {
 
         List<Shift> missingShifts = new ArrayList<>();
         for (int date = startDate - 1; date < endDate; date++) {
-            /*
-            Optional<DaySchedule> daySchedule = currentSchedule.getDaySchedules().stream()
-                .filter(ds -> ds.getDayOfMonth() == date)
-                .findFirst();
-                */
+            DaySchedule daySchedule = null;
+            for (DaySchedule ds : currentSchedule.getDaySchedules()) {
+                if (ds.getDayOfMonth() == date) {
+                    daySchedule = ds;
+                    break;
+                }
+            }
             List<ShiftAssignment> assignments = currentSchedule.getDaySchedules().get(date).getAssignments();
             ShiftAssignment toRemove = assignments.stream()
                 .filter(a -> a.getWorker() == missingWorker)
