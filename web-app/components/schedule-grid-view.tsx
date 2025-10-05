@@ -90,13 +90,30 @@ export default function ScheduleGridView({
   }, [scheduleId, currentDate]);
 
   // Move all useMemo hooks BEFORE the early return
-  const workerNames = useMemo(() => {
-    if (!schedule) return [];
-    const set = new Set<string>();
+  const workerNameToId = useMemo(() => {
+    if (!schedule || !schedule.workers) return {};
+    const map: Record<string, string> = {};
+
+    // Build map from the workers list
+    schedule.workers.forEach(worker => {
+      map[worker.name] = worker.id;
+    });
+
+    // Also include workers from assignments (in case there are any discrepancies)
     schedule.daySchedules.forEach(d =>
-      d.assignments?.forEach(a => set.add(a.worker.name))
+      d.assignments?.forEach(a => {
+        map[a.worker.name] = a.worker.id;
+      })
     );
-    return Array.from(set).sort();
+
+    return map;
+  }, [schedule]);
+
+  const workerNames = useMemo(() => {
+    if (!schedule || !schedule.workers) return [];
+
+    // Get all workers from the workers list (includes all workers, even those without assignments)
+    return schedule.workers.map(worker => worker.name).sort();
   }, [schedule]);
 
   const shiftTypes = useMemo(() => {
@@ -229,7 +246,7 @@ export default function ScheduleGridView({
                     </td>
                   );
                 })}
-                <td className="border p-2 text-center">{schedule.workerHours?.[workerName] ?? 0}/180</td>
+                <td className="border p-2 text-center">{schedule.workerHours?.[workerNameToId[workerName]] ?? 0}/180</td>
               </tr>
             ))}
             {workerNames.length === 0 && (
