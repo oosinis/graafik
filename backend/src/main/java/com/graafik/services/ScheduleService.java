@@ -14,9 +14,9 @@ import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.Worker;
+import com.graafik.repositories.DayScheduleRepository;
 import com.graafik.repositories.ScheduleRepository;
 import com.graafik.repositories.ShiftAssignmentRepository;
-import com.graafik.repositories.DayScheduleRepository;
 import com.graafik.repositories.WorkerRepository;
 import com.graafik.schedule.GenerateSchedule;
 import com.graafik.schedule.RegenerateExistingSchedule;
@@ -140,13 +140,21 @@ public class ScheduleService {
     }
 
     private ScheduleDTO toDTO(Schedule schedule) {
+        // Get all workers referenced in workerHours
+        // Tuleb muuta see halb lahendus
+        List<Worker> workers = schedule.getWorkerHours().keySet().stream()
+            .map(workerId -> workerRepository.findById(workerId).orElse(null))
+            .filter(worker -> worker != null)
+            .toList();
+
         return new ScheduleDTO(
             schedule.getId(),
             schedule.getMonth(),
             schedule.getYear(),
             schedule.getScore(),
             schedule.getDaySchedules(),
-            schedule.getWorkerHours()
+            schedule.getWorkerHours(),
+            workers
         );
     }
 

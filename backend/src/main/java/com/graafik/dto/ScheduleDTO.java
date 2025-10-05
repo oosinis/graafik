@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.graafik.model.DaySchedule;
+import com.graafik.model.Worker;
 
 public class ScheduleDTO {
     private UUID id;
@@ -13,16 +14,18 @@ public class ScheduleDTO {
     private int score;
     private List<DaySchedule> daySchedules;
     private Map<UUID, Integer> workerHours;
+    private List<Worker> workers;
 
     public ScheduleDTO() {}
 
-    public ScheduleDTO(UUID id, int month, int year, int score, List<DaySchedule> daySchedules, Map<UUID, Integer> workerHours) {
+    public ScheduleDTO(UUID id, int month, int year, int score, List<DaySchedule> daySchedules, Map<UUID, Integer> workerHours, List<Worker> workers) {
         this.id = id;
         this.month = month;
         this.year = year;
         this.score = score;
         this.daySchedules = daySchedules;
         this.workerHours = workerHours;
+        this.workers = workers;
     }
 
     public UUID getId() { return id; }
@@ -42,5 +45,8 @@ public class ScheduleDTO {
 
     public Map<UUID,Integer> getWorkerHours() { return workerHours; }
     public void setWorkerHours(Map<UUID,Integer> workerHours) { this.workerHours = workerHours; }
-    
+
+    public List<Worker> getWorkers() { return workers; }
+    public void setWorkers(List<Worker> workers) { this.workers = workers; }
+
 }
