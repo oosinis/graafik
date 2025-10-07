@@ -9,18 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.graafik.dto.ScheduleDTO;
 import com.graafik.error_magement.BadRequestException;
-import com.graafik.model.DaySchedule;
-import com.graafik.model.Schedule;
-import com.graafik.model.ScheduleRequest;
-import com.graafik.model.Shift;
-import com.graafik.model.ShiftAssignment;
-import com.graafik.model.Worker;
-import com.graafik.repositories.DayScheduleRepository;
-import com.graafik.repositories.ScheduleRepository;
-import com.graafik.repositories.ShiftAssignmentRepository;
-import com.graafik.repositories.WorkerRepository;
+import com.graafik.model.*;
+import com.graafik.repositories.*;
 import com.graafik.schedule.GenerateSchedule;
 import com.graafik.schedule.RegenerateExistingSchedule;
+
 @Service
 @Transactional
 public class ScheduleService {

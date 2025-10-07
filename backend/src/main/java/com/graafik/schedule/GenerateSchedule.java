@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graafik.error_magement.BadRequestException;
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;

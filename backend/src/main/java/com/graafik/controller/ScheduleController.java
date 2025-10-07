@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.graafik.dto.ScheduleDTO;
 import com.graafik.model.ScheduleRequest;
-import com.graafik.model.Shift;
 import com.graafik.model.Worker;
 import com.graafik.services.ScheduleService;
 import com.graafik.services.WorkerService;
