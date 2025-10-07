@@ -178,9 +178,8 @@ public class ScheduleService {
                     ds.setScheduleId(savedSchedule.getId());
                 }
 
-                var savedDaySchedule = dayScheduleRepository.save(ds);
-
                 if (ds.getAssignments() != null && !ds.getAssignments().isEmpty()) {
+                    var savedDaySchedule = dayScheduleRepository.save(ds);
                     ds.getAssignments().forEach(sa -> {
                         if (sa.getDayScheduleId() == null) {
                             sa.setDayScheduleId(savedDaySchedule.getId());
