@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.graafik.error_magement.BadRequestException;
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
@@ -30,31 +31,12 @@ public class GenerateSchedule {
         }
     }
 
-
     /**
      * 
      * @param scheduleRequest
      * @return
      */
     public static List<Schedule> generateSchedule(ScheduleRequest scheduleRequest) {
-
-        List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
-
-        System.out.println("ALL SCHEDULES:");
-        printSchedules(allPossibleSchedules);
-            
-        return allPossibleSchedules;
-
-    }
-
-    /**
-     * 
-     * @param scheduleRequest
-     * @return
-     */
-    public static List<Schedule> generateAllPossibleSchedules(ScheduleRequest scheduleRequest) {
-
-        // get a list of shifts for every day of the month
 
         List<Schedule> allCombinations = new ArrayList<>();
 
