@@ -38,10 +38,14 @@ public class GenerateSchedule {
      */
     public static List<Schedule> generateSchedule(ScheduleRequest scheduleRequest) {
 
+        for (Worker worker : scheduleRequest.getWorkers()) {
+            System.out.println(worker.getName() + ": " + worker.getAssignedShifts());
+        }
+
         List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
 
         System.out.println("ALL SCHEDULES:");
-        printSchedules(allPossibleSchedules);
+        //printSchedules(allPossibleSchedules);
             
         return allPossibleSchedules;
 
@@ -88,6 +92,7 @@ public class GenerateSchedule {
         if (date == daysInMonth) {
             // All days processed, add the combination
             Schedule clonedSchedule = HelperMethods.cloneSchedule(currentSchedule);
+
             allCombinations.add(clonedSchedule);
             return;
         }

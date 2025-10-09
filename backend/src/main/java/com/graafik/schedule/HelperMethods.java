@@ -59,12 +59,15 @@ public class HelperMethods {
 
     public static void addToWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
+            System.out.println("ADD: " + shiftAssignment.getShift().getDuration() + ", " + shiftAssignment.getWorker().getId());
             currentSchedule.changeWorkerHours(shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker().getId());
         }
     }
 
     public static void substractFromWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
+            System.out.println("SUBSTRACT: " + shiftAssignment.getShift().getDuration() + ", " + shiftAssignment.getWorker().getId());
+
             currentSchedule.changeWorkerHours(-shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker().getId());
         }
     }
@@ -134,6 +137,7 @@ public class HelperMethods {
                 currentDaySchedule.getAssignments().add(ShiftAssignment);
                 permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, currentDaySchedule, allDaySchedulePermutations, date);
                 currentDaySchedule.getAssignments().removeLast();
+            
             }
 
         }

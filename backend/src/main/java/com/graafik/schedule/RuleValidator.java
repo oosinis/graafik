@@ -187,7 +187,7 @@ public class RuleValidator {
     }
 
     public static boolean initialValidator(Map<UUID, List<Worker>> currentRequestedWorkDays, Shift shift, Worker worker) {
-        return worker.getAssignedShifts().contains(shift.getId()) || !(currentRequestedWorkDays.containsKey(shift.getId()) && !currentRequestedWorkDays.get(shift.getId()).contains(worker));
+        return worker.getAssignedShifts().contains(shift.getId()) || currentRequestedWorkDays.containsKey(shift.getId()) && !currentRequestedWorkDays.get(shift.getId()).contains(worker);
     }
 
     /**
