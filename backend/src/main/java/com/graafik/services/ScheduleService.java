@@ -1,5 +1,6 @@
 package com.graafik.services;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,7 +61,10 @@ public class ScheduleService {
         List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
         if (schedules.isEmpty()) return null;
 
-        var schedule = schedules.get(0);
+        Schedule schedule = schedules.stream()
+            .max(Comparator.comparingDouble(Schedule::getScore))
+            .orElse(null);
+
         saveSchedule(schedule);
 
         return toDTO(schedule);
