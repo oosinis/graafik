@@ -38,8 +38,8 @@ public class GenerateSchedule {
      */
     public static List<Schedule> generateSchedule(ScheduleRequest scheduleRequest) {
 
-        for (Worker worker : scheduleRequest.getWorkers()) {
-            System.out.println(worker.getName() + ": " + worker.getAssignedShifts());
+        for (Shift shift : scheduleRequest.getShifts()) {
+            System.out.println(shift.getType() + ": " + shift.getDuration());
         }
 
         List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
