@@ -1,7 +1,10 @@
 package com.graafik.services;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,17 +49,34 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDTO createSchedule(ScheduleRequest request) {
-        
+
+        Map<UUID, UUID> oldToNewShiftIds = new HashMap<>();
+
         List<Shift> managedShifts = request.getShifts().stream()
-            .map(shiftService::saveShift)
+            .map(shift -> {
+                UUID oldId = shift.getId();
+                Shift saved = shiftService.saveShift(shift);
+                oldToNewShiftIds.put(oldId, saved.getId());
+                return saved;
+            })
             .toList();
+
         request.setShifts(managedShifts);
 
 
-        List<Worker> managedWorkers = request.getWorkers().stream()
-                .map(workerRepository::save)
+        for (Worker worker : request.getWorkers()) {
+            List<UUID> updatedIds = worker.getAssignedShifts().stream()
+                .map(oldToNewShiftIds::get)
+                .filter(Objects::nonNull)
                 .toList();
+            worker.setAssignedShifts(updatedIds);
+        }
+
+        List<Worker> managedWorkers = request.getWorkers().stream()
+            .map(workerRepository::save)
+            .toList();
         request.setWorkers(managedWorkers);
+
 
         List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
         if (schedules.isEmpty()) return null;
@@ -69,6 +89,8 @@ public class ScheduleService {
 
         return toDTO(schedule);
     }
+
+
 
     @Transactional
     public List<ScheduleDTO> getAllSchedules() {
