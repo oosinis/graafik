@@ -283,7 +283,7 @@ export function AssignEmployeesStep({
 
     {/* EDIT EXISTING WORKER */}
     {activeWorker && !adding && (
-      <div className="space-y-6">
+      <Card className="space-y-6 p-6 rounded-lg bg-gray-50">
         {/* Top row: name, role, delete */}
         <div className="flex flex-wrap items-end gap-4">
           <div className="grow">
@@ -418,7 +418,7 @@ export function AssignEmployeesStep({
             }}          
             />
         </div>
-      </div>
+      </Card>
     )}
   </Card>
   )
