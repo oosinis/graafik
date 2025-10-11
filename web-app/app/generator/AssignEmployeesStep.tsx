@@ -116,13 +116,16 @@ export function AssignEmployeesStep({
   return (
     <Card className="p-6">
     {/* Header + Add / Save / Cancel */}
-    <div className="flex items-center justify-between mb-6">
-      <h2 className="text-2xl font-bold">Assign Employees</h2>
+    <div>
+      <h2 className="text-2xl font-bold mb-6">Assign Employees</h2>
 
+      <div className="flex flex-wrap mb-6">
       {!adding ? (
-        <Button className="bg-purple-600 hover:bg-purple-700" onClick={openAdd}>
-          + Add
-        </Button>
+          <div className="">
+            <Button className="bg-purple-600 hover:bg-purple-700" onClick={openAdd}>
+              + Add
+          </Button>
+          </div>
       ) : (
         <div className="flex gap-2">
           <Button
@@ -136,6 +139,8 @@ export function AssignEmployeesStep({
           </Button>
         </div>
       )}
+      </div>
+
     </div>
 
     {/* Worker pills */}
