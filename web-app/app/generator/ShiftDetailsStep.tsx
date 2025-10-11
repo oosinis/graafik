@@ -106,7 +106,7 @@ export function ShiftDetailsStep({
                 <Button
                   key={s.id}
                   variant={isActive ? "default" : "outline"}
-                  className={isActive ? "bg-purple-600 hover:bg-purple-700" : ""}
+                  className={isActive ? "bg-gray-300 text-black hover:bg-gray-500" : ""}
                   onClick={() => handleSelectShift(s.id)}
                 >
                   {s.type}
