@@ -1,5 +1,6 @@
 package com.graafik.services;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,10 +63,12 @@ public class ScheduleService {
             request.setShifts(managedShifts);
 
 
-            List<Worker> managedWorkers = request.getWorkers().stream()
-                    .map(workerRepository::save)
-                    .toList();
-            request.setWorkers(managedWorkers);
+
+        Schedule schedule = schedules.stream()
+            .max(Comparator.comparingDouble(Schedule::getScore))
+            .orElse(null);
+
+        saveSchedule(schedule);
 
             List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
 
@@ -200,9 +203,8 @@ public class ScheduleService {
                     ds.setScheduleId(savedSchedule.getId());
                 }
 
-                var savedDaySchedule = dayScheduleRepository.save(ds);
-
                 if (ds.getAssignments() != null && !ds.getAssignments().isEmpty()) {
+                    var savedDaySchedule = dayScheduleRepository.save(ds);
                     ds.getAssignments().forEach(sa -> {
                         if (sa.getDayScheduleId() == null) {
                             sa.setDayScheduleId(savedDaySchedule.getId());

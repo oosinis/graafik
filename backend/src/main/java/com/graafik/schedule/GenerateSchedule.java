@@ -98,7 +98,7 @@ public class GenerateSchedule {
             
             // rn to not wait for all possibilities
             // TODO get all and choose the best ones
-            if (allCombinations.size() == 3) break;
+            //if (allCombinations.size() == 3) break;
 
             // if rating is fine go to next date do the whole thing again
             generateCombinationsRecursive(scheduleRequest, date + 1, currentSchedule, allCombinations);

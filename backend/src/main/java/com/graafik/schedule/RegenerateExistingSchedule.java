@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.graafik.model.DaySchedule;
 import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Shift;
@@ -47,6 +49,13 @@ public class RegenerateExistingSchedule {
 
         List<Shift> missingShifts = new ArrayList<>();
         for (int date = startDate - 1; date < endDate; date++) {
+            DaySchedule daySchedule = null;
+            for (DaySchedule ds : currentSchedule.getDaySchedules()) {
+                if (ds.getDayOfMonth() == date) {
+                    daySchedule = ds;
+                    break;
+                }
+            }
             List<ShiftAssignment> assignments = currentSchedule.getDaySchedules().get(date).getAssignments();
             ShiftAssignment toRemove = assignments.stream()
                 .filter(a -> a.getWorker() == missingWorker)
