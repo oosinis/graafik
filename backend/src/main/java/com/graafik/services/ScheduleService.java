@@ -12,18 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.graafik.dto.ScheduleDTO;
-import com.graafik.model.DaySchedule;
-import com.graafik.model.Schedule;
-import com.graafik.model.ScheduleRequest;
-import com.graafik.model.Shift;
-import com.graafik.model.ShiftAssignment;
-import com.graafik.model.Worker;
-import com.graafik.repositories.DayScheduleRepository;
-import com.graafik.repositories.ScheduleRepository;
-import com.graafik.repositories.ShiftAssignmentRepository;
-import com.graafik.repositories.WorkerRepository;
+import com.graafik.error_magement.BadRequestException;
+import com.graafik.model.*;
+import com.graafik.repositories.*;
 import com.graafik.schedule.GenerateSchedule;
 import com.graafik.schedule.RegenerateExistingSchedule;
+
 @Service
 @Transactional
 public class ScheduleService {
@@ -49,45 +43,67 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleDTO createSchedule(ScheduleRequest request) {
+        try {
 
-        Map<UUID, UUID> oldToNewShiftIds = new HashMap<>();
+            if (request.getShifts() == null || request.getShifts().isEmpty()) {
+                throw new BadRequestException("No shifts provided for schedule creation.");
+            }
 
-        List<Shift> managedShifts = request.getShifts().stream()
-            .map(shift -> {
-                UUID oldId = shift.getId();
-                Shift saved = shiftService.saveShift(shift);
-                oldToNewShiftIds.put(oldId, saved.getId());
-                return saved;
-            })
-            .toList();
+            for (Shift shift : request.getShifts()) {
+                if (shift.getRules() == null || shift.getRules().isEmpty()) {
+                    throw new BadRequestException("Every shift must have at least one rule. Shift '" + shift.getType() + "' has none.");
+                }
+            }
 
-        request.setShifts(managedShifts);
+            if (request.getWorkers() == null || request.getWorkers().isEmpty()) {
+                throw new BadRequestException("No workers provided for schedule creation.");
+            }
 
+            Map<UUID, UUID> oldToNewShiftIds = new HashMap<>();
 
-        for (Worker worker : request.getWorkers()) {
-            List<UUID> updatedIds = worker.getAssignedShifts().stream()
-                .map(oldToNewShiftIds::get)
-                .filter(Objects::nonNull)
+            List<Shift> managedShifts = request.getShifts().stream()
+                .map(shift -> {
+                    UUID oldId = shift.getId();
+                    Shift saved = shiftService.saveShift(shift);
+                    oldToNewShiftIds.put(oldId, saved.getId());
+                    return saved;
+                })
                 .toList();
-            worker.setAssignedShifts(updatedIds);
+
+            request.setShifts(managedShifts);
+
+            for (Worker worker : request.getWorkers()) {
+                List<UUID> updatedIds = worker.getAssignedShifts().stream()
+                    .map(oldToNewShiftIds::get)
+                    .filter(Objects::nonNull)
+                    .toList();
+                worker.setAssignedShifts(updatedIds);
+            }
+
+            List<Worker> managedWorkers = request.getWorkers().stream()
+                .map(workerRepository::save)
+                .toList();
+            request.setWorkers(managedWorkers);
+
+
+            List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
+
+            if (schedules == null || schedules.isEmpty()) {
+                throw new BadRequestException("Schedule generation failed: no valid schedule produced from input data.");
+            }
+
+            Schedule schedule = schedules.stream()
+                .max(Comparator.comparingDouble(Schedule::getScore))
+                .orElse(null);
+
+            saveSchedule(schedule);
+
+            return toDTO(schedule);
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BadRequestException("Unexpected error during schedule creation: " + e.getMessage());
         }
-
-        List<Worker> managedWorkers = request.getWorkers().stream()
-            .map(workerRepository::save)
-            .toList();
-        request.setWorkers(managedWorkers);
-
-
-        List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
-        if (schedules.isEmpty()) return null;
-
-        Schedule schedule = schedules.stream()
-            .max(Comparator.comparingDouble(Schedule::getScore))
-            .orElse(null);
-
-        saveSchedule(schedule);
-
-        return toDTO(schedule);
     }
 
 
@@ -128,6 +144,7 @@ public class ScheduleService {
                 });
     }
 
+    // TODO
     // rn saves the new schedule by default
     // should display multiple schedules to the user save the one they choose
     public Optional<ScheduleDTO> updateSchedule(
@@ -150,7 +167,10 @@ public class ScheduleService {
                 missingWorker
         );
 
-        if (schedules == null || schedules.isEmpty()) return Optional.empty();
+        if (schedules == null || schedules.isEmpty()) {
+            throw new BadRequestException("Failed to regenerate schedule for given date range.");
+        }
+
 
         Schedule saved = scheduleRepository.save(schedules.get(0));
         return Optional.of(toDTO(saved));
