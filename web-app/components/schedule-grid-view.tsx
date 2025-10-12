@@ -6,6 +6,8 @@ import { MonthNavigation } from "@/components/month-navigation";
 import { DayNavigation } from "@/components/day-navigation";
 import { ViewModeToggle } from "@/components/view-mode-toggle";
 import type { ScheduleResponse } from "@/models/ScheduleResponse";
+import {ShiftDetailsCard} from '@/components/shift-details-card'; 
+
 
 interface ScheduleGridViewProps {
   scheduleId?: string;
@@ -266,7 +268,12 @@ export default function ScheduleGridView({
             onClick={() => setSelectedShift(null)}
           >
             <div onClick={e => e.stopPropagation()}>
-              {/* ShiftDetailsCard can go here */}
+              <ShiftDetailsCard 
+              day={selectedShift.day}
+              shiftType={selectedShift.shiftType}
+              worker={selectedShift.workerName}
+              fte={selectedShift.fte}
+              />
             </div>
           </div>
         )}

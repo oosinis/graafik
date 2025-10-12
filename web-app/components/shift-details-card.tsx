@@ -1,17 +1,18 @@
-/* "use client"
+ "use client"
 
 import { Pencil, Briefcase, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+//testimiseks tegin mõned väljad valikulisteks - TODO: tee korda hiljem
 interface ShiftDetailsCardProps {
-  date: string
-  day: string
+  date?: string
+  day: number
   shiftType: string
-  startTime: string
-  endTime: string
-  hours: number
+  startTime?: string
+  endTime?: string
+  hours?: number
   worker: string
-  department: string
+  department?: string
   fte: string
   onEdit?: () => void
 }
@@ -29,7 +30,7 @@ export function ShiftDetailsCard({
   onEdit,
 }: ShiftDetailsCardProps) {
   return (
-    {/* <div className="w-64 rounded-lg overflow-hidden shadow-md bg-white">
+     <div className="w-64 rounded-lg overflow-hidden shadow-md bg-white">
       <div className="bg-pink-200 h-2 w-full"></div>
 
       <div className="p-4">
@@ -67,4 +68,5 @@ export function ShiftDetailsCard({
         <div className="bg-green-200 text-xs py-1 px-2 flex-1 text-center">Afternoon</div>
         <div className="bg-orange-200 text-xs py-1 px-2 flex-1 text-center">Morning</div>
       </div>
-    </div> */
+    </div> 
+) }
