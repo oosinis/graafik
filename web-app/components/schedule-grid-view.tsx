@@ -189,15 +189,24 @@ export default function ScheduleGridView({
 
   // Get current date info even when no schedule is found
   const year = schedule?.year ?? currentDate.getFullYear();
-  const month = schedule?.month ?? currentDate.getMonth() + 1;
-  const daysInMonth = new Date(year, month, 0).getDate();
+  const apiMonthOneBased = schedule?.month ?? currentDate.getMonth() + 1;
+  const monthIndex = apiMonthOneBased - 1;
+
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
   const addDays = (d: Date, n: number) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 
-  const assignmentFor = (workerName: string, day: number) =>
-    schedule?.daySchedules
-      .find((d) => d.dayOfMonth === day)
-      ?.assignments?.find((a) => a.worker.name === workerName) ?? null;
+  const assignmentFor = (workerName: string, day: number) => {
+    const dayRec = schedule?.daySchedules.find((d) => {
+      // If API uses 1-based days, this is a no-op; if it uses 0-based, +1 fixes it.
+      const apiDay = typeof d.dayOfMonth === 'number' ? d.dayOfMonth : NaN;
+      const uiDay = apiDay >= 1 ? apiDay : apiDay + 1; // 1..31
+      return uiDay === day;
+    });
+    return (
+      dayRec?.assignments?.find((a) => a.worker.name === workerName) ?? null
+    );
+  };
 
   function getDurationMinutes(
     a: ReturnType<typeof assignmentFor>
@@ -217,18 +226,14 @@ export default function ScheduleGridView({
     <div className="w-full space-y-4">
       <div className="flex justify-between items-center">
         <MonthNavigation
-          month={month}
+          month={apiMonthOneBased}
           year={year}
           monthNames={monthNames}
           onPrevious={() =>
-            setCurrentDate(
-              (d) => new Date(d.getFullYear(), d.getMonth() - 1, 1)
-            )
+            setCurrentDate((d) => new Date(d.getFullYear(), monthIndex - 1, 1))
           }
           onNext={() =>
-            setCurrentDate(
-              (d) => new Date(d.getFullYear(), d.getMonth() + 1, 1)
-            )
+            setCurrentDate((d) => new Date(d.getFullYear(), monthIndex + 1, 1))
           }
         />
         {schedule && (
