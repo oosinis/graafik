@@ -34,7 +34,7 @@ export default function ScheduleGridView({
     day: number;
     workerName: string;
     shiftType: string;
-    fte: string;
+    duration: number;
   } | null>(null);
   const [selectedShiftType, setSelectedShiftType] = useState<string | "All">("All");
   const [noScheduleFound, setNoScheduleFound] = useState(false);
@@ -157,11 +157,10 @@ export default function ScheduleGridView({
   const daysInMonth = new Date(year, month, 0).getDate();
   const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 
-  const shiftFor = (workerName: string, day: number) =>
+  const assignmentFor = (workerName: string, day: number) =>
     schedule?.daySchedules
       .find(d => d.dayOfMonth === day)
-      ?.assignments?.find(a => a.worker.name === workerName)
-      ?.shift?.type ?? null;
+      ?.assignments?.find(a => a.worker.name === workerName) ?? null;
 
   const prevWeek = () => setCurrentWeekStart(s => Math.max(1, s - 7));
   const nextWeek = () => setCurrentWeekStart(s => s + 7 <= daysInMonth ? s + 7 : s);
@@ -236,13 +235,19 @@ export default function ScheduleGridView({
               <tr key={workerName}>
                 <td className="sticky left-0 bg-white border p-2 font-medium">{workerName}</td>
                 {visibleDays.map(day => {
-                  const t = shiftFor(workerName, day);
+                  const a = assignmentFor(workerName, day);
+                  const t = a?.shift?.type ?? null;
+                  const durationInMinutes = a?.shift?.durationInMinutes ?? 0
+
                   const show = !!t && (selectedShiftType === "All" || t === selectedShiftType);
                   return (
                     <td
                       key={day}
                       className={`border p-1 text-center ${show ? (shiftColors[t!] ?? "bg-gray-100") : ""}`}
-                      onClick={() => t && setSelectedShift({ day, workerName, shiftType: t, fte: "1.0" })}
+                      onClick={() => t && setSelectedShift({ day, 
+                        workerName, 
+                        shiftType: t, 
+                        duration: durationInMinutes})}
                     >
                       {show ? (shiftAbbrev[t!] ?? (t![0] || "?").toUpperCase()) : ""}
                     </td>
@@ -272,7 +277,7 @@ export default function ScheduleGridView({
               day={selectedShift.day}
               shiftType={selectedShift.shiftType}
               worker={selectedShift.workerName}
-              fte={selectedShift.fte}
+              duration={selectedShift.duration}
               />
             </div>
           </div>
