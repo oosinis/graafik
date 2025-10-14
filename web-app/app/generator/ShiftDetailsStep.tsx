@@ -106,7 +106,7 @@ export function ShiftDetailsStep({
                 <Button
                   key={s.id}
                   variant={isActive ? "default" : "outline"}
-                  className={isActive ? "bg-purple-600 hover:bg-purple-700" : ""}
+                  className={isActive ? "bg-gray-300 text-black hover:bg-gray-500" : ""}
                   onClick={() => handleSelectShift(s.id)}
                 >
                   {s.type}
@@ -179,7 +179,7 @@ export function ShiftDetailsStep({
 
         {!!active && !adding && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium mb-2">Shift Title</label>
                 <Input
@@ -188,7 +188,8 @@ export function ShiftDetailsStep({
                 />
               </div>
 
-              <div>
+              <div className='flex justify-between'>
+                <div>
                 <label className="block text-sm font-medium mb-2">Shift Length</label>
                 <div className="flex items-center gap-2">
                   <Input
@@ -221,7 +222,16 @@ export function ShiftDetailsStep({
                   />
                   <span>min</span>
                 </div>
+                </div>
+                <div className='flex items-center'>
+                  <Button
+                    variant="destructive"
+                    onClick={() => onDeleteShift?.(active.id)}>
+                    Delete shift
+                  </Button>
+                </div>
               </div>
+
             </div>
 
             <RuleDetailsStep
@@ -235,13 +245,7 @@ export function ShiftDetailsStep({
               onAddRule={rulesProps.onAddRule}         
               onDeleteRule={rulesProps.onDeleteRule}
             />
-            <div>
-                <Button
-                variant="destructive"
-                onClick={() => onDeleteShift?.(active.id)}>
-                  Delete shift
-                </Button>
-              </div>
+            
           </>
         )}
       </Card>
