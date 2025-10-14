@@ -108,7 +108,7 @@ export function RuleDetailsStep({
               <Button
                 key={r.id}
                 variant={isActive ? "default" : "outline"}
-                className={isActive ? "bg-purple-600 hover:bg-purple-700" : ""}
+                className={isActive ? "bg-gray-300 text-black hover:bg-gray-500" : ""}
                 onClick={() => !adding && onSelectRule(r.id)}
                 disabled={adding}
               >
