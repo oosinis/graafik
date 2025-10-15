@@ -60,26 +60,13 @@ public class ScheduleService {
                 throw new BadRequestException("No workers provided for schedule creation.");
             }
 
-            Map<UUID, UUID> oldToNewShiftIds = new HashMap<>();
-
             List<Shift> managedShifts = request.getShifts().stream()
                 .map(shift -> {
-                    UUID oldId = shift.getId();
                     Shift saved = shiftService.saveShift(shift);
-                    oldToNewShiftIds.put(oldId, saved.getId());
                     return saved;
                 })
                 .toList();
-
             request.setShifts(managedShifts);
-
-            for (Worker worker : request.getWorkers()) {
-                List<UUID> updatedIds = worker.getAssignedShifts().stream()
-                    .map(oldToNewShiftIds::get)
-                    .filter(Objects::nonNull)
-                    .toList();
-                worker.setAssignedShifts(updatedIds);
-            }
 
             List<Worker> managedWorkers = request.getWorkers().stream()
                 .map(workerRepository::save)
@@ -189,7 +176,7 @@ public class ScheduleService {
     private ScheduleDTO toDTO(Schedule schedule) {
         // Get all workers referenced in workerHours
         // Tuleb muuta see halb lahendus
-        List<Worker> workers = schedule.getWorkerHours().keySet().stream()
+        List<Worker> workers = schedule.getWorkerHoursInMinutes().keySet().stream()
             .map(workerId -> workerRepository.findById(workerId).orElse(null))
             .filter(worker -> worker != null)
             .toList();
@@ -200,7 +187,7 @@ public class ScheduleService {
             schedule.getYear(),
             schedule.getScore(),
             schedule.getDaySchedules(),
-            schedule.getWorkerHours(),
+            schedule.getWorkerHoursInMinutes(),
             workers
         );
     }
@@ -211,7 +198,7 @@ public class ScheduleService {
         schedule.setYear(dto.getYear());
         schedule.setScore(dto.getScore());
         schedule.setDaySchedules(daySchedules);
-        schedule.setWorkerHours(dto.getWorkerHours());
+        schedule.setWorkerHoursInMinutes(dto.getWorkerHours());
         return schedule;
     }
 

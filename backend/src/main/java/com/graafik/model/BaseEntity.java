@@ -15,7 +15,6 @@ import jakarta.persistence.PreUpdate;
 public abstract class BaseEntity {
 
     @Id
-    @UuidGenerator
     @Column(updatable = false, nullable = false)
     private UUID id;
 
@@ -39,6 +38,9 @@ public abstract class BaseEntity {
 
     @PrePersist
     protected void onCreate() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
         createdAt = LocalDateTime.now();
         modifiedAt = createdAt;
     }
