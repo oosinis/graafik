@@ -10,6 +10,7 @@ import { Worker } from '@/models/Worker'
 import { Shift } from '@/models/Shift'
 import { Rule } from '@/models/Rule'
 import { Button } from "@/components/ui/button"
+import { RoleGuard } from '@/components/RoleGuard';
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
@@ -207,58 +208,60 @@ export default function GeneratorRoute() {
 
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <PageHeader title="Schedule generator" description="Create a new work schedule" />
+    <RoleGuard allowedRoles={['Admin', 'Manager']}>
+      <div className="max-w-6xl mx-auto">
+        <PageHeader title="Schedule generator" description="Create a new work schedule" />
 
-      <MonthsHoursStep
-        fullTimeHours={fullTimeHours}
-        onFullTimeHoursChange={setFullTimeHours}
-        month={month}
-        onMonthChange={setMonth}
-      />
+        <MonthsHoursStep
+          fullTimeHours={fullTimeHours}
+          onFullTimeHoursChange={setFullTimeHours}
+          month={month}
+          onMonthChange={setMonth}
+        />
 
-      <ShiftDetailsStep
-        makeId={makeId}
-        shifts={shifts}
-        activeShiftId={activeShiftId}
-        onAddShift={onAddShift}
-        onDeleteShift={deleteShift}
-        onSelectShift={setActiveShiftId}
-        onUpdateShift={updateShift}
-        rulesProps={{
-          activeRuleId,
-          rules: shifts.find(s => s.id === activeShiftId)?.rules ?? [],
-          onSelectRule: setActiveRuleId,
-          onAddRule: addRule,
-          onDeleteRule: deleteRule,
-          onUpdateRule,
-          onToggleDay,
-          onSetPriority,
-        }}
-      />
+        <ShiftDetailsStep
+          makeId={makeId}
+          shifts={shifts}
+          activeShiftId={activeShiftId}
+          onAddShift={onAddShift}
+          onDeleteShift={deleteShift}
+          onSelectShift={setActiveShiftId}
+          onUpdateShift={updateShift}
+          rulesProps={{
+            activeRuleId,
+            rules: shifts.find(s => s.id === activeShiftId)?.rules ?? [],
+            onSelectRule: setActiveRuleId,
+            onAddRule: addRule,
+            onDeleteRule: deleteRule,
+            onUpdateRule,
+            onToggleDay,
+            onSetPriority,
+          }}
+        />
 
-      <AssignEmployeesStep
-        makeId={makeId}
-        monthName={month}
-        shifts={shifts}
-        workers={workers}
-        activeWorkerId={activeWorkerId}
-        onAddWorker={addWorker}
-        onDeleteWorker={deleteWorker}
-        onSelectWorker={setActiveWorkerId}
-        onUpdateWorker={updateWorker}
-        onToggleAssignedShift={toggleAssignedShift}
-        onSetWorkLoad={setWorkLoad}
-        onToggleDesiredVacationDay={toggleDesiredVacationDay}
-        onToggleVacationDay={toggleVacationDay}
-        onSetRequestedWorkDay={setRequestedWorkDay}
-      />
-      <Button
-        onClick={generateSchedule}
-        className="mt-6 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
-      >
-        Generate Schedule
-      </Button>
-    </div>
+        <AssignEmployeesStep
+          makeId={makeId}
+          monthName={month}
+          shifts={shifts}
+          workers={workers}
+          activeWorkerId={activeWorkerId}
+          onAddWorker={addWorker}
+          onDeleteWorker={deleteWorker}
+          onSelectWorker={setActiveWorkerId}
+          onUpdateWorker={updateWorker}
+          onToggleAssignedShift={toggleAssignedShift}
+          onSetWorkLoad={setWorkLoad}
+          onToggleDesiredVacationDay={toggleDesiredVacationDay}
+          onToggleVacationDay={toggleVacationDay}
+          onSetRequestedWorkDay={setRequestedWorkDay}
+        />
+        <Button
+          onClick={generateSchedule}
+          className="mt-6 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+        >
+          Generate Schedule
+        </Button>
+      </div>
+    </RoleGuard>
   )
 }
