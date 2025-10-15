@@ -67,6 +67,8 @@ public class GenerateSchedule {
         schedule.setMonth(scheduleRequest.getMonth());
         // TODO change to automatic
         schedule.setYear(2025);
+        // for generating all durations are in minutes
+        schedule.setFullTimeHours(scheduleRequest.getFullTimeHours()* 60);
 
         HelperMethods.initWorkerHours(schedule, scheduleRequest);
 
