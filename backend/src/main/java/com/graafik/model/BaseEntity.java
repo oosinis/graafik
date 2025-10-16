@@ -3,8 +3,6 @@ package com.graafik.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.UuidGenerator;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
@@ -15,7 +13,6 @@ import jakarta.persistence.PreUpdate;
 public abstract class BaseEntity {
 
     @Id
-    @UuidGenerator
     @Column(updatable = false, nullable = false)
     private UUID id;
 
@@ -39,6 +36,9 @@ public abstract class BaseEntity {
 
     @PrePersist
     protected void onCreate() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
         createdAt = LocalDateTime.now();
         modifiedAt = createdAt;
     }
