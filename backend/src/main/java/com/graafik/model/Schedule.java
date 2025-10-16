@@ -20,7 +20,7 @@ public class Schedule extends BaseEntity {
     private int month;
     private int year;
     private int score;
-    private int fullTimeHours;
+    private int fullTimeMinutes;
 
     @ElementCollection
     @CollectionTable(name = "schedule_worker_hours", joinColumns = @JoinColumn(name = "schedule_id"))
@@ -45,8 +45,8 @@ public class Schedule extends BaseEntity {
         return score;
     }
 
-    public int getFullTimeHours() {
-        return fullTimeHours;
+    public int getFullTimeMinutes() {
+        return fullTimeMinutes;
     }
 
     public List<DaySchedule> getDaySchedules() { 
@@ -73,8 +73,8 @@ public class Schedule extends BaseEntity {
         this.score = this.score + addition;
     }
 
-    public void setFullTimeHours(int minutes) {
-        this.fullTimeHours = minutes;
+    public void setFullTimeMinutes(int minutes) {
+        this.fullTimeMinutes = minutes;
     }
     
     public Map<UUID, Integer> getWorkerHoursInMinutes() {

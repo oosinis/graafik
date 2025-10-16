@@ -1,6 +1,5 @@
 package com.graafik.dto;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,18 +19,13 @@ public class ScheduleDTO {
 
     public ScheduleDTO() {}
 
-    public ScheduleDTO(UUID id, int month, int year, int score, int fullTimeMinutes, List<DaySchedule> daySchedules, Map<UUID, Integer> workerHoursFromBackend, List<Worker> workers) {
+    public ScheduleDTO(UUID id, int month, int year, int score, int fullTimeHours, List<DaySchedule> daySchedules, Map<UUID, Integer> workerHours, List<Worker> workers) {
         this.id = id;
         this.month = month;
         this.year = year;
         this.score = score;
-        this.fullTimeHours = fullTimeMinutes / 60;
+        this.fullTimeHours = fullTimeHours;
         this.daySchedules = daySchedules;
-        Map<UUID, Integer> workerHours = new HashMap<>();
-        for (Worker worker : workers) {
-            if (!workerHoursFromBackend.keySet().contains(worker.getId())) continue;
-            workerHours.put(worker.getId(), (int) (fullTimeMinutes * worker.getWorkLoad() + workerHoursFromBackend.get(worker.getId())) / 60);
-        }
         this.workerHours = workerHours;
         this.workers = workers;
     }

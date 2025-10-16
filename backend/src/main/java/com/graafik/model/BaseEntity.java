@@ -3,8 +3,6 @@ package com.graafik.model;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.hibernate.annotations.UuidGenerator;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;

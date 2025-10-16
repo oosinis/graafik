@@ -180,14 +180,22 @@ public class ScheduleService {
             .filter(worker -> worker != null)
             .toList();
 
+
+        int fullTimeHours = schedule.getFullTimeMinutes() / 60;
+        
+        Map<UUID, Integer> workerHours = new HashMap<>();
+        for (Worker worker : workers) {
+            workerHours.put(worker.getId(), (int) (schedule.getFullTimeMinutes() * worker.getWorkLoad() + schedule.getWorkerHoursInMinutes().get(worker.getId())) / 60);
+        }
+
         return new ScheduleDTO(
             schedule.getId(),
             schedule.getMonth(),
             schedule.getYear(),
             schedule.getScore(),
-            schedule.getFullTimeHours(),
+            fullTimeHours,
             schedule.getDaySchedules(),
-            schedule.getWorkerHoursInMinutes(),
+            workerHours,
             workers
         );
     }

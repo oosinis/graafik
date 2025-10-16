@@ -79,6 +79,7 @@ public class HelperMethods {
     cloned.setMonth(original.getMonth());
     cloned.setYear(original.getYear());
     cloned.setScore(original.getScore());
+    cloned.setFullTimeMinutes(original.getFullTimeMinutes());
     cloned.setWorkerHoursInMinutes(new HashMap<>(original.getWorkerHoursInMinutes()));
 
     if (original.getDaySchedules() != null) {
