@@ -17,7 +17,7 @@ public class Shift extends BaseEntity {
     private String type;
 
     @Column(nullable = false)
-    private int duration;
+    private int durationInMinutes;
 
     @Transient
     private List<Rule> rules;
@@ -28,8 +28,8 @@ public class Shift extends BaseEntity {
         return type;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getDurationInMinutes() {
+        return durationInMinutes;
     }
 
     public List<Rule> getRules() {
@@ -40,8 +40,8 @@ public class Shift extends BaseEntity {
         this.type = type;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setDurationInMinutes(int duration) {
+        this.durationInMinutes = duration;
     }
 
     public void setRules(List<Rule> rules) {
@@ -53,19 +53,19 @@ public class Shift extends BaseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Shift shift = (Shift) o;
-        return duration == shift.duration && type.equals(shift.type);
+        return durationInMinutes == shift.durationInMinutes && type.equals(shift.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, duration);
+        return Objects.hash(type, durationInMinutes);
     }
 
     @Override
     public String toString() {
         return "Shift{" +
                "type='" + type + '\'' +
-               ", duration=" + duration +
+               ", duration=" + durationInMinutes +
                ", rules=" + rules +
                '}';
     }

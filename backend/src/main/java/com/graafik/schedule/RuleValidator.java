@@ -45,7 +45,7 @@ public class RuleValidator {
             int newDayScheduleDate = (currentSchedule.getDaySchedules() == null) ? 0 : currentSchedule.getDaySchedules().size();
             
             checkDesiredVacationDays(worker, newDayScheduleDate, currentSchedule, currentDayShiftAssignments);
-            checkWorkerHours(shiftAssignment, currentSchedule, currentDayShiftAssignments);
+            checkWorkerMinutes(shiftAssignment, currentSchedule, currentDayShiftAssignments);
 
             // check how mny days in a row the current assignment is
             int countCont = checkContinuousNewAssignment(shiftAssignment, currentSchedule, currentDayShiftAssignments, newDayScheduleDate - 1);
@@ -174,20 +174,21 @@ public class RuleValidator {
         }
     }
 
-    public static void checkWorkerHours(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+    public static void checkWorkerMinutes(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         Worker worker = shiftAssignment.getWorker();
         Shift shift = shiftAssignment.getShift();
-        int workerCurrentHours = currentSchedule.getWorkerHours().get(worker.getId());
+        int workerCurrentHours = currentSchedule.getWorkerHoursInMinutes().get(worker.getId());
 
         // TODO: Adjust score impact calculation if needed
-        if (workerCurrentHours - shift.getDuration() < -2) {
-            int penalty = ((workerCurrentHours - shift.getDuration()) * 2);            
+        // rn in inutes, 2h mööda on fine, peale seda võtab maha skoorist 2x nii plju kui palju tunde mööda vajalikes
+        if (workerCurrentHours - shift.getDurationInMinutes() < -120) {
+            int penalty = ((workerCurrentHours - shift.getDurationInMinutes()) * 2 / 60);            
             currentDayShiftAssignments.addToScore(penalty);
         }
     }
 
     public static boolean initialValidator(Map<UUID, List<Worker>> currentRequestedWorkDays, Shift shift, Worker worker) {
-        return worker.getAssignedShifts().contains(shift.getId()) || !(currentRequestedWorkDays.containsKey(shift.getId()) && !currentRequestedWorkDays.get(shift.getId()).contains(worker));
+        return worker.getAssignedShifts().contains(shift.getId()) || currentRequestedWorkDays.containsKey(shift.getId()) && !currentRequestedWorkDays.get(shift.getId()).contains(worker);
     }
 
     /**
@@ -215,7 +216,7 @@ public class RuleValidator {
 
 
         // check worker hours
-        int newHours = currentSchedule.getWorkerHours().get(worker.getId()) - shift.getDuration();
+        int newHours = currentSchedule.getWorkerHoursInMinutes().get(worker.getId()) - shift.getDurationInMinutes();
         if (newHours < -2) score -= newHours * 2;
         // check desired vacation
         if (worker.getDesiredVacationDays().contains(date)) score -= 10;

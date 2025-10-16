@@ -2,6 +2,7 @@ package com.graafik.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,12 +36,14 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<ScheduleDTO> createSchedule(@RequestBody ScheduleRequest scheduleRequest) {
+    public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequest scheduleRequest) {
+
         ScheduleDTO schedule = scheduleService.createSchedule(scheduleRequest);
-        if (schedule == null) return ResponseEntity.badRequest().build();
+
         return ResponseEntity
                 .created(URI.create("/api/schedules/" + schedule.getId()))
                 .body(schedule);
+        
     }
 
     @GetMapping
@@ -68,7 +71,7 @@ public class ScheduleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ScheduleDTO> updateSchedule(
+    public ResponseEntity<?> updateSchedule(
             @PathVariable UUID id,
             @RequestBody ScheduleRequest scheduleRequest,
             @RequestParam int startDate,
@@ -77,10 +80,18 @@ public class ScheduleController {
     ) {
 
         Optional<Worker> workerOpt = workerService.getWorkerById(workerId);
-        if (workerOpt.isEmpty()) return ResponseEntity.notFound().build();
+        if (workerOpt.isEmpty()) {
+            return ResponseEntity
+                .status(404)
+                .body(Map.of("error", "Worker with id " + workerId + " not found"));
+        }
 
-        Optional<ScheduleDTO> schedule = scheduleService.getScheduleById(id);
-        if (schedule.isEmpty()) return ResponseEntity.notFound().build();
+        Optional<ScheduleDTO> scheduleOpt = scheduleService.getScheduleById(id);
+        if (scheduleOpt.isEmpty()) {
+            return ResponseEntity
+                .status(404)
+                .body(Map.of("error", "Schedule with id " + id + " not found"));
+        }
 
         Optional<ScheduleDTO> updatedOpt = scheduleService.updateSchedule(
                 scheduleRequest,
@@ -90,9 +101,13 @@ public class ScheduleController {
                 workerOpt.get()
         );
 
-        return updatedOpt
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        if (updatedOpt.isEmpty()) {
+            return ResponseEntity
+                .badRequest()
+                .body(Map.of("error", "Failed to update schedule"));
+        }
+
+        return ResponseEntity.ok(updatedOpt.get());
     }
 
 
