@@ -26,7 +26,7 @@ public class Schedule extends BaseEntity {
     @CollectionTable(name = "schedule_worker_hours", joinColumns = @JoinColumn(name = "schedule_id"))
     @MapKeyColumn(name = "worker_id")
     @Column(name = "hours")
-    private Map<UUID, Integer> workerHours;
+    private Map<UUID, Integer> workerHoursInMinutes;
 
     @Transient
     private List<DaySchedule> daySchedules;
@@ -73,20 +73,20 @@ public class Schedule extends BaseEntity {
         this.score = this.score + addition;
     }
 
-    public void setFullTimeHours(int hours) {
-        this.fullTimeHours = hours;
+    public void setFullTimeHours(int minutes) {
+        this.fullTimeHours = minutes;
     }
     
-    public Map<UUID, Integer> getWorkerHours() {
-        return workerHours;
+    public Map<UUID, Integer> getWorkerHoursInMinutes() {
+        return workerHoursInMinutes;
     }
 
-    public void setWorkerHours(Map<UUID, Integer> workerHours) {
-        this.workerHours = workerHours;
+    public void setWorkerHoursInMinutes(Map<UUID, Integer> workerHours) {
+        this.workerHoursInMinutes = workerHours;
     }
 
     public void changeWorkerHours(int x, UUID workerId) {
-        this.workerHours.put(workerId, this.workerHours.get(workerId) + x);
+        this.workerHoursInMinutes.put(workerId, this.workerHoursInMinutes.get(workerId) + x);
     }
 
     @Override

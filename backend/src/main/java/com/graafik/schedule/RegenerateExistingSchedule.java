@@ -64,7 +64,7 @@ public class RegenerateExistingSchedule {
             if (toRemove != null) {
                 missingShifts.add(toRemove.getShift());
                 assignments.remove(toRemove);
-                currentSchedule.changeWorkerHours(toRemove.getShift().getDuration(), missingWorker.getId());
+                currentSchedule.changeWorkerHours(toRemove.getShift().getDurationInMinutes(), missingWorker.getId());
             } else missingShifts.add(null);
         }
 
@@ -103,7 +103,7 @@ public class RegenerateExistingSchedule {
                 
                 clonedSchedule.setScore(RuleValidator.singleAssignmentValidator(scheduleRequest, clonedSchedule, new ShiftAssignment(missingShift, worker), date));
 
-                clonedSchedule.changeWorkerHours(- missingShift.getDuration(), worker.getId());
+                clonedSchedule.changeWorkerHours(- missingShift.getDurationInMinutes(), worker.getId());
 
                 clonedSchedule.getDaySchedules().get(date).getAssignments().add(new ShiftAssignment(missingShift, worker));
 

@@ -50,7 +50,6 @@ public class ScheduleService {
             }
 
             for (Shift shift : request.getShifts()) {
-                System.out.println("SHIFT: " + shift.getDuration());
                 if (shift.getRules() == null || shift.getRules().isEmpty()) {
                     throw new BadRequestException("Every shift must have at least one rule. Shift '" + shift.getType() + "' has none.");
                 }
@@ -186,6 +185,7 @@ public class ScheduleService {
             schedule.getMonth(),
             schedule.getYear(),
             schedule.getScore(),
+            schedule.getFullTimeHours(),
             schedule.getDaySchedules(),
             schedule.getWorkerHoursInMinutes(),
             workers

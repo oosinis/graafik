@@ -50,17 +50,17 @@ public class HelperMethods {
         return requestedWorkDays;
     }  
 
-    public static void initWorkerHours(Schedule currentSchedule, ScheduleRequest scheduleRequest) {
-        currentSchedule.setWorkerHours(new HashMap<>());
+    public static void initWorkerHoursInMinutes(Schedule currentSchedule, ScheduleRequest scheduleRequest) {
+        currentSchedule.setWorkerHoursInMinutes(new HashMap<>());
         for (Worker worker : scheduleRequest.getWorkers()) {
-            currentSchedule.getWorkerHours().put(worker.getId(), (int) (worker.getWorkLoad() * scheduleRequest.getFullTimeHours()));
+            currentSchedule.getWorkerHoursInMinutes().put(worker.getId(), (int) (worker.getWorkLoad() * scheduleRequest.getFullTimeHours() * 60));
         }
     }
 
     public static void addToWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
             //System.out.println("ADD: " + shiftAssignment.getShift().getDuration() + ", " + shiftAssignment.getWorker().getId());
-            currentSchedule.changeWorkerHours(shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker().getId());
+            currentSchedule.changeWorkerHours(shiftAssignment.getShift().getDurationInMinutes(), shiftAssignment.getWorker().getId());
         }
     }
 
@@ -68,7 +68,7 @@ public class HelperMethods {
         for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
             //System.out.println("SUBSTRACT: " + shiftAssignment.getShift().getDuration() + ", " + shiftAssignment.getWorker().getId());
 
-            currentSchedule.changeWorkerHours(-shiftAssignment.getShift().getDuration(), shiftAssignment.getWorker().getId());
+            currentSchedule.changeWorkerHours(-shiftAssignment.getShift().getDurationInMinutes(), shiftAssignment.getWorker().getId());
         }
     }
 
@@ -79,7 +79,7 @@ public class HelperMethods {
     cloned.setMonth(original.getMonth());
     cloned.setYear(original.getYear());
     cloned.setScore(original.getScore());
-    cloned.setWorkerHours(new HashMap<>(original.getWorkerHours()));
+    cloned.setWorkerHoursInMinutes(new HashMap<>(original.getWorkerHoursInMinutes()));
 
     if (original.getDaySchedules() != null) {
         List<DaySchedule> clonedDaySchedules = new ArrayList<>();

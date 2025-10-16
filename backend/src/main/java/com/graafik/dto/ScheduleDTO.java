@@ -1,5 +1,6 @@
 package com.graafik.dto;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,18 +13,25 @@ public class ScheduleDTO {
     private int month;
     private int year;
     private int score;
+    private int fullTimeHours;
     private List<DaySchedule> daySchedules;
     private Map<UUID, Integer> workerHours;
     private List<Worker> workers;
 
     public ScheduleDTO() {}
 
-    public ScheduleDTO(UUID id, int month, int year, int score, List<DaySchedule> daySchedules, Map<UUID, Integer> workerHours, List<Worker> workers) {
+    public ScheduleDTO(UUID id, int month, int year, int score, int fullTimeMinutes, List<DaySchedule> daySchedules, Map<UUID, Integer> workerHoursFromBackend, List<Worker> workers) {
         this.id = id;
         this.month = month;
         this.year = year;
         this.score = score;
+        this.fullTimeHours = fullTimeMinutes / 60;
         this.daySchedules = daySchedules;
+        Map<UUID, Integer> workerHours = new HashMap<>();
+        for (Worker worker : workers) {
+            if (!workerHoursFromBackend.keySet().contains(worker.getId())) continue;
+            workerHours.put(worker.getId(), (int) (fullTimeMinutes * worker.getWorkLoad() + workerHoursFromBackend.get(worker.getId())) / 60);
+        }
         this.workerHours = workerHours;
         this.workers = workers;
     }
@@ -39,6 +47,9 @@ public class ScheduleDTO {
 
     public int getScore() { return score; }
     public void setScore(int score) { this.score = score; }
+
+    public int getFullTimeHours() { return fullTimeHours; }
+    public void setFullTimeHours(int hours) { this.fullTimeHours = hours; }
 
     public List<DaySchedule> getDaySchedules() { return daySchedules; }
     public void setDaySchedules(List<DaySchedule> dayScheduleIds) { this.daySchedules = dayScheduleIds; }

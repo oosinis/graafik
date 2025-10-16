@@ -39,7 +39,7 @@ public class GenerateSchedule {
     public static List<Schedule> generateSchedule(ScheduleRequest scheduleRequest) {
 
         for (Shift shift : scheduleRequest.getShifts()) {
-            System.out.println(shift.getType() + ": " + shift.getDuration());
+            System.out.println(shift.getType() + ": " + shift.getDurationInMinutes());
         }
 
         List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
@@ -70,7 +70,7 @@ public class GenerateSchedule {
         // for generating all durations are in minutes
         schedule.setFullTimeHours(scheduleRequest.getFullTimeHours()* 60);
 
-        HelperMethods.initWorkerHours(schedule, scheduleRequest);
+        HelperMethods.initWorkerHoursInMinutes(schedule, scheduleRequest);
 
         // Recursively generate all combinations
         generateCombinationsRecursive(scheduleRequest, 0, schedule, allCombinations);
@@ -168,7 +168,7 @@ public class GenerateSchedule {
             }
 
             System.out.println();
-            combination.getWorkerHours().forEach((worker, hours) -> {
+            combination.getWorkerHoursInMinutes().forEach((worker, hours) -> {
                 System.out.println("worker: " + worker + ": " + hours);
             });
             
