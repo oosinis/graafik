@@ -135,7 +135,7 @@ export function RuleDetailsStep({
           <div>
             <label className="block text-sm font-medium mb-2">Priority</label>
             <div className="flex flex-wrap gap-2">
-              {(["low","medium","high","critical"] as Rule["priority"][]).map(p => {
+              {(["low","medium","high"] as Rule["priority"][]).map(p => {
                 const selected = draftPriority === p
                 return (
                   <Button
@@ -230,7 +230,7 @@ export function RuleDetailsStep({
             <div>
               <label className="block text-sm font-medium mb-2">Priority</label>
               <div className="flex space-x-2">
-                {(["low","medium","high","critical"] as Rule["priority"][]).map(p => (
+                {(["low","medium","high"] as Rule["priority"][]).map(p => (
                   <Button
                     key={p}
                     size="sm"
