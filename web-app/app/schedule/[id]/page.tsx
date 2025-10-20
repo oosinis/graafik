@@ -8,7 +8,7 @@ interface SchedulePageProps {
   params: { id: string };
 }
 
-export default async function SchedulePage({ params }: SchedulePageProps) {
+export default function SchedulePage({ params }: SchedulePageProps) {
   const scheduleId = params.id;
 
   return (

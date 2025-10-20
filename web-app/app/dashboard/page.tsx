@@ -25,12 +25,13 @@ function DashboardContent() {
         </div>
       )}
 
-      {hasRole('Manager') || hasRole('Admin') && (
+      {(hasRole('Manager') || hasRole('Admin')) && (
         <div className="bg-red-100 border border-red-300 p-4 rounded-lg mb-4">
           <h3 className="font-semibold text-red-800">Admin Panel</h3>
           <p className="text-red-700">You have administrator access.</p>
         </div>
       )}
+
     </div>
   );
 }

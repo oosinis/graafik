@@ -26,7 +26,6 @@ export function RoleGuard({
   const hasAccess = hasAnyRole(allowedRoles);
 
   useEffect(() => {
-    // If not loading and user doesn't have access, redirect
     if (!isLoading && user && !hasAccess && !error) {
       router.push(redirectTo);
     }
