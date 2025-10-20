@@ -71,14 +71,17 @@ export function RuleDetailsStep({
 
   const saveDraft = () => {
     if (!canSaveDraft) return;
-    onAddRule(shiftId!, {
+
+    const newRule = {
       name: draftName.trim(),
       priority: draftPriority!,
       perDay: draftPerDay as number,
       restDays: draftRestDays as number,
       continuousDays: draftContinuousDays as number,
       daysApplied: [...draftDaysApplied].sort((a, b) => a - b),
-    });
+    };
+
+    onAddRule(shiftId!, newRule);
     setAdding(false);
     resetDraft();
   };
