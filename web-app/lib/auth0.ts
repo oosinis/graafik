@@ -1,8 +1,12 @@
-// lib/auth0.js
+// lib/auth0.ts
 
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
 
-// Initialize the Auth0 client 
+type Auth0WithOptionalLogout = Auth0Client & {
+  logout?: (req: unknown) => Promise<unknown>
+}
+
+// Initialize the Auth0 client
 export const auth0 = new Auth0Client({
   // Options are loaded from environment variables by default
   // Ensure necessary environment variables are properly set
@@ -18,4 +22,4 @@ export const auth0 = new Auth0Client({
     scope: process.env.AUTH0_SCOPE,
     audience: process.env.AUTH0_AUDIENCE,
   }
-});
+}) as unknown as Auth0WithOptionalLogout;

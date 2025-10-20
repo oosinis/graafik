@@ -386,7 +386,7 @@ export default function ScheduleGridView({
               className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
               onClick={() => setSelectedShift(null)}
             >
-              <div onClick={(e) => e.stopPropagation()} o>
+              <div onClick={(e) => e.stopPropagation()}>
                 <ShiftDetailsCard
                   day={selectedShift.day}
                   shiftType={selectedShift.shiftType}

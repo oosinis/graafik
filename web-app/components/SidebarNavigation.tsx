@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { PenTool, Users, Clock, Calendar } from "lucide-react"
+import { PenTool, Users, Clock, Calendar, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import styles from "@/components/styles/SidebarNavigation.module.css";
 // Auth features temporarily disabled (Auth0 package not installed)
@@ -35,6 +35,11 @@ export function SidebarNavigation() {
       name: "Schedule",
       href: "/schedule",
       icon: Calendar,
+    },
+    {
+      name: "Logout",
+      href: "/logout",
+      icon: LogOut,
     },
    /* {
       name: "Schedule history",
