@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { MonthNavigation } from '@/components/month-navigation';
-import { DayNavigation } from '@/components/day-navigation';
-import { ViewModeToggle } from '@/components/view-mode-toggle';
-import type { ScheduleResponse } from '@/models/ScheduleResponse';
-import { ShiftDetailsCard } from '@/components/shift-details-card';
+import { useState, useEffect, useMemo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MonthNavigation } from "@/components/month-navigation";
+import { DayNavigation } from "@/components/day-navigation";
+import { ViewModeToggle } from "@/components/view-mode-toggle";
+import type { ScheduleResponse } from "@/models/ScheduleResponse";
+import { ShiftDetailsCard } from "./shift-details-card";
 
 interface ScheduleGridViewProps {
   scheduleId?: string;
@@ -274,20 +275,15 @@ export default function ScheduleGridView({
 
       {schedule && (
         <>
-          {viewMode === 'weekly' && (
-            <div className="flex justify-end gap-2">
-              <Button onClick={prevWeek} disabled={currentWeekStart === 1}>
-                Previous week
-              </Button>
-              <span className="font-medium">
-                {visibleDays[0]}–{visibleDays[visibleDays.length - 1]}
-              </span>
-              <Button
-                onClick={nextWeek}
-                disabled={currentWeekStart + 6 >= daysInMonth}
-              >
-                Next week
-              </Button>
+          {viewMode === "weekly" && (
+            <div className="flex justify-start items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={prevWeek} disabled={currentWeekStart === 1}>
+                <ChevronLeft className="h-5 w-5" />
+                </Button>
+              <span className="font-bold">{visibleDays[0]}–{visibleDays[visibleDays.length-1]}</span>
+              <Button variant="ghost" size="icon" onClick={nextWeek} disabled={currentWeekStart + 6 >= daysInMonth}>
+                <ChevronRight className="h-5 w-5" />
+                </Button>
             </div>
           )}
 
