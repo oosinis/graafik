@@ -6,9 +6,17 @@ public class ScheduleRequest {
     private List<Worker> workers;
     private List<Shift> shifts;
     private int month;
-    private int fullTimeHours;
+    private long fullTimeMinutes;
 
     public ScheduleRequest() {}
+
+    public ScheduleRequest(List<Worker> workers, List<Shift> shifts, int month, long fullTimeMinutes) {
+        this.workers = workers;
+        this.shifts = shifts;
+        this.month = month;
+        this.fullTimeMinutes = fullTimeMinutes;
+    
+    }
 
     public List<Worker> getWorkers() {
         return workers;
@@ -22,8 +30,8 @@ public class ScheduleRequest {
         return month;
     }
 
-    public int getFullTimeHours() {
-        return fullTimeHours;
+    public long getFullTimeMinutes() {
+        return fullTimeMinutes;
     }
 
     public void setWorkers(List<Worker> workers) {
@@ -38,7 +46,7 @@ public class ScheduleRequest {
         this.month = month;
     }
 
-    public void setFullTimeHours(int fullTimeHours) {
-        this.fullTimeHours = fullTimeHours;
+    public void setFullTimeMinutes(long fullTimeMinutes) {
+        this.fullTimeMinutes = fullTimeMinutes;
     }
 }

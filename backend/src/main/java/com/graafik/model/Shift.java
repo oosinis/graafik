@@ -17,18 +17,24 @@ public class Shift extends BaseEntity {
     private String type;
 
     @Column(nullable = false)
-    private int durationInMinutes;
+    private long durationInMinutes;
 
     @Transient
     private List<Rule> rules;
 
     public Shift() {}
 
+    public Shift(String type,  long durationInMinutes, List<Rule> rules) {
+        this.type = type;
+        this.durationInMinutes = durationInMinutes;
+        this.rules = rules;
+    }
+
     public String getType() {
         return type;
     }
 
-    public int getDurationInMinutes() {
+    public long getDurationInMinutes() {
         return durationInMinutes;
     }
 

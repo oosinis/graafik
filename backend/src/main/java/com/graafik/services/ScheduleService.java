@@ -1,17 +1,17 @@
 package com.graafik.services;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.graafik.dto.ScheduleDTO;
+import com.graafik.dto.*;
 import com.graafik.error_magement.BadRequestException;
 import com.graafik.model.*;
 import com.graafik.repositories.*;
@@ -42,36 +42,43 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleDTO createSchedule(ScheduleRequest request) {
+    public ScheduleDTO createSchedule(ScheduleRequestDTO requestDTO) {
         try {
 
-            if (request.getShifts() == null || request.getShifts().isEmpty()) {
+
+
+            if (requestDTO.getShifts() == null || requestDTO.getShifts().isEmpty()) {
                 throw new BadRequestException("No shifts provided for schedule creation.");
             }
 
-            for (Shift shift : request.getShifts()) {
+            for (ShiftDTO shift : requestDTO.getShifts()) {
                 if (shift.getRules() == null || shift.getRules().isEmpty()) {
                     throw new BadRequestException("Every shift must have at least one rule. Shift '" + shift.getType() + "' has none.");
                 }
             }
 
-            if (request.getWorkers() == null || request.getWorkers().isEmpty()) {
+            if (requestDTO.getWorkers() == null || requestDTO.getWorkers().isEmpty()) {
                 throw new BadRequestException("No workers provided for schedule creation.");
             }
 
-            List<Shift> managedShifts = request.getShifts().stream()
+            List<ShiftDTO> managedShifts = requestDTO.getShifts().stream()
                 .map(shift -> {
-                    Shift saved = shiftService.saveShift(shift);
+                    ShiftDTO saved = shiftService.saveShift(shift);
                     return saved;
                 })
                 .toList();
-            request.setShifts(managedShifts);
+            requestDTO.setShifts(managedShifts);
 
-            List<Worker> managedWorkers = request.getWorkers().stream()
+            List<Worker> managedWorkers = requestDTO.getWorkers().stream()
                 .map(workerRepository::save)
                 .toList();
-            request.setWorkers(managedWorkers);
+            requestDTO.setWorkers(managedWorkers);
 
+            
+            List<Shift> shifts = new ArrayList<>();
+            for (ShiftDTO shiftDTO : managedShifts) { shifts.add(ShiftService.fromDTO(shiftDTO)); }
+
+            ScheduleRequest request = new ScheduleRequest(managedWorkers, shifts, requestDTO.getMonth(), requestDTO.getFullTimeMinutes());
 
             List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
 
@@ -180,12 +187,10 @@ public class ScheduleService {
             .filter(worker -> worker != null)
             .toList();
 
-
-        int fullTimeHours = schedule.getFullTimeMinutes() / 60;
         
-        Map<UUID, Integer> workerHours = new HashMap<>();
+        Map<UUID, Long> workerHours = new HashMap<>();
         for (Worker worker : workers) {
-            workerHours.put(worker.getId(), (int) (schedule.getFullTimeMinutes() * worker.getWorkLoad() + schedule.getWorkerHoursInMinutes().get(worker.getId())) / 60);
+            workerHours.put(worker.getId(), (long) (schedule.getFullTimeMinutes() * worker.getWorkLoad() + schedule.getWorkerHoursInMinutes().get(worker.getId())));
         }
 
         return new ScheduleDTO(
@@ -193,7 +198,7 @@ public class ScheduleService {
             schedule.getMonth(),
             schedule.getYear(),
             schedule.getScore(),
-            fullTimeHours,
+            schedule.getFullTimeMinutes(),
             schedule.getDaySchedules(),
             workerHours,
             workers
@@ -206,7 +211,7 @@ public class ScheduleService {
         schedule.setYear(dto.getYear());
         schedule.setScore(dto.getScore());
         schedule.setDaySchedules(daySchedules);
-        schedule.setWorkerHoursInMinutes(dto.getWorkerHours());
+        schedule.setWorkerHoursInMinutes(dto.getWorkerHoursInMinutes());
         return schedule;
     }
 
