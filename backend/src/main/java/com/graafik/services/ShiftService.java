@@ -1,15 +1,16 @@
 package com.graafik.services;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
-import com.graafik.model.Shift;
+import com.graafik.dto.ShiftDTO;
 import com.graafik.model.Rule;
+import com.graafik.model.Shift;
 import com.graafik.repositories.RuleRepository;
 import com.graafik.repositories.ShiftRepository;
+
+import java.time.Duration;
 
 @Service
 public class ShiftService {
@@ -22,13 +23,13 @@ public class ShiftService {
         this.ruleRepository = ruleRepository;
     }
 
-    public List<Shift> getAllShifts() {
+    public List<ShiftDTO> getAllShifts() {
         return shiftRepository.findAll()
                 .stream()
                 .toList();
     }
 
-    public Optional<Shift> getShiftById(UUID id) {
+    public Optional<ShiftDTO> getShiftById(UUID id) {
         return shiftRepository.findById(id)
                 .map(shift -> {
                     List<Rule> rules = ruleRepository.findByShiftId(id);
@@ -37,7 +38,7 @@ public class ShiftService {
                 });
     }
 
-    public Shift saveShift(Shift shift) {
+    public ShiftDTO saveShift(ShiftDTO shift) {
         var savedShift = shiftRepository.save(shift);
 
         if (shift.getRules() != null && !shift.getRules().isEmpty()) {
@@ -62,4 +63,11 @@ public class ShiftService {
         }
         return false;
     }
+
+
+    public static Shift fromDTO(ShiftDTO shiftDTO) {
+
+        return new Shift(shiftDTO.getType(), Duration.between(shiftDTO.getStartTime(), shiftDTO.getEndTime()).toMinutes(), shiftDTO.getRules());
+    }
+
 }

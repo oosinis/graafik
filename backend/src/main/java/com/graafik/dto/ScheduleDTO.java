@@ -12,21 +12,21 @@ public class ScheduleDTO {
     private int month;
     private int year;
     private int score;
-    private int fullTimeHours;
+    private long fullTimeHours;
     private List<DaySchedule> daySchedules;
-    private Map<UUID, Integer> workerHours;
+    private Map<UUID, Long> workerHoursInMinutes;
     private List<Worker> workers;
 
     public ScheduleDTO() {}
 
-    public ScheduleDTO(UUID id, int month, int year, int score, int fullTimeHours, List<DaySchedule> daySchedules, Map<UUID, Integer> workerHours, List<Worker> workers) {
+    public ScheduleDTO(UUID id, int month, int year, int score, long fullTimeHours, List<DaySchedule> daySchedules, Map<UUID, Long> workerHours, List<Worker> workers) {
         this.id = id;
         this.month = month;
         this.year = year;
         this.score = score;
         this.fullTimeHours = fullTimeHours;
         this.daySchedules = daySchedules;
-        this.workerHours = workerHours;
+        this.workerHoursInMinutes = workerHours;
         this.workers = workers;
     }
 
@@ -42,14 +42,14 @@ public class ScheduleDTO {
     public int getScore() { return score; }
     public void setScore(int score) { this.score = score; }
 
-    public int getFullTimeHours() { return fullTimeHours; }
-    public void setFullTimeHours(int hours) { this.fullTimeHours = hours; }
+    public long getFullTimeHours() { return fullTimeHours; }
+    public void setFullTimeHours(long hours) { this.fullTimeHours = hours; }
 
     public List<DaySchedule> getDaySchedules() { return daySchedules; }
     public void setDaySchedules(List<DaySchedule> dayScheduleIds) { this.daySchedules = dayScheduleIds; }
 
-    public Map<UUID,Integer> getWorkerHours() { return workerHours; }
-    public void setWorkerHours(Map<UUID,Integer> workerHours) { this.workerHours = workerHours; }
+    public Map<UUID, Long> getWorkerHoursInMinutes() { return workerHoursInMinutes; }
+    public void setWorkerHoursInMinutes(Map<UUID,Long> workerHours) { this.workerHoursInMinutes = workerHours; }
 
     public List<Worker> getWorkers() { return workers; }
     public void setWorkers(List<Worker> workers) { this.workers = workers; }

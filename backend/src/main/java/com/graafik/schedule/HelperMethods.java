@@ -53,7 +53,7 @@ public class HelperMethods {
     public static void initWorkerHoursInMinutes(Schedule currentSchedule, ScheduleRequest scheduleRequest) {
         currentSchedule.setWorkerHoursInMinutes(new HashMap<>());
         for (Worker worker : scheduleRequest.getWorkers()) {
-            currentSchedule.getWorkerHoursInMinutes().put(worker.getId(), (int) (worker.getWorkLoad() * scheduleRequest.getFullTimeHours() * 60));
+            currentSchedule.getWorkerHoursInMinutes().put(worker.getId(), (long) (worker.getWorkLoad() * scheduleRequest.getFullTimeMinutes() * 60));
         }
     }
 

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.graafik.dto.ScheduleDTO;
+import com.graafik.dto.ScheduleRequestDTO;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.Worker;
 import com.graafik.services.ScheduleService;
@@ -36,9 +37,9 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequest scheduleRequest) {
+    public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequestDTO scheduleRequestDTO) {
 
-        ScheduleDTO schedule = scheduleService.createSchedule(scheduleRequest);
+        ScheduleDTO schedule = scheduleService.createSchedule(scheduleRequestDTO);
 
         return ResponseEntity
                 .created(URI.create("/api/schedules/" + schedule.getId()))

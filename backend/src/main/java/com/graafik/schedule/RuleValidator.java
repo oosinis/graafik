@@ -177,12 +177,12 @@ public class RuleValidator {
     public static void checkWorkerMinutes(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
         Worker worker = shiftAssignment.getWorker();
         Shift shift = shiftAssignment.getShift();
-        int workerCurrentHours = currentSchedule.getWorkerHoursInMinutes().get(worker.getId());
+        long workerCurrentHours = currentSchedule.getWorkerHoursInMinutes().get(worker.getId());
 
         // TODO: Adjust score impact calculation if needed
         // rn in inutes, 2h mööda on fine, peale seda võtab maha skoorist 2x nii plju kui palju tunde mööda vajalikes
         if (workerCurrentHours - shift.getDurationInMinutes() < -120) {
-            int penalty = ((workerCurrentHours - shift.getDurationInMinutes()) * 2 / 60);            
+            int penalty = (int) ((workerCurrentHours - shift.getDurationInMinutes()) * 2 / 60);            
             currentDayShiftAssignments.addToScore(penalty);
         }
     }
@@ -216,7 +216,7 @@ public class RuleValidator {
 
 
         // check worker hours
-        int newHours = currentSchedule.getWorkerHoursInMinutes().get(worker.getId()) - shift.getDurationInMinutes();
+        long newHours = currentSchedule.getWorkerHoursInMinutes().get(worker.getId()) - shift.getDurationInMinutes();
         if (newHours < -2) score -= newHours * 2;
         // check desired vacation
         if (worker.getDesiredVacationDays().contains(date)) score -= 10;
