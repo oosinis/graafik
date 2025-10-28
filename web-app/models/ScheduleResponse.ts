@@ -1,3 +1,18 @@
+export interface DayAssignment {
+  shift: { type: string; length: number };
+  worker: { name: string };
+}
+
+export interface DaySchedule {
+  dayOfMonth: number;
+  assignments: DayAssignment[];
+}
+
+export interface ScheduleResponse {
+  month: number;
+  year: number;
+  daySchedules: DaySchedule[];
+}
 import type { DaySchedule } from "./DaySchedule"
 import type { Worker } from "./Worker"
 
