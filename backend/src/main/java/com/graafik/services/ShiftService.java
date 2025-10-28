@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.graafik.model.Shift;
 import com.graafik.model.Rule;
+import com.graafik.model.Shift;
 import com.graafik.repositories.RuleRepository;
 import com.graafik.repositories.ShiftRepository;
 
