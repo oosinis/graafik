@@ -13,8 +13,6 @@ export interface ScheduleResponse {
   year: number;
   daySchedules: DaySchedule[];
 }
-import type { DaySchedule } from "./DaySchedule"
-import type { Worker } from "./Worker"
 
 export interface ScheduleResponse {
   month: number

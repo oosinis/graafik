@@ -6,6 +6,10 @@ import type { Employee } from "@/models/Employee";
 import type { Shift } from "@/models/Shift";
 import type { GeneratedSchedule } from "@/models/Schedule";
 import type { Role } from "@/models/Role";
+import { EmployeeService } from "@/services/employeeService";
+import { RoleService } from "@/services/roleService";
+import { ShiftsService } from "@/services/shiftService";
+import { ScheduleService } from "@/services/scheduleService";
 
 export default function DashboardPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -18,17 +22,18 @@ export default function DashboardPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [empRes, roleRes, shiftRes, schedRes] = await Promise.all([
-          fetch("/api/employees"),
-          fetch("/api/roles"),
-          fetch("/api/shifts"),
-          fetch("/api/schedules"),
+        const [employeesData, rolesData, shiftsData, schedulesData] = await Promise.all([
+          EmployeeService.getAll(),
+          RoleService.getAll(),
+          ShiftsService.getAll(),
+          ScheduleService.getAll(),
         ]);
 
-        setEmployees(await empRes.json());
-        setRoles(await roleRes.json());
-        setShifts(await shiftRes.json());
-        setGeneratedSchedules(await schedRes.json());
+        setEmployees(employeesData);
+        setRoles(rolesData);
+        setShifts(shiftsData);
+        setGeneratedSchedules(schedulesData); //Check the schedule data structure
+
       } catch (e) {
         console.error("Dashboard load failed:", e);
       } finally {
