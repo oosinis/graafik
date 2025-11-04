@@ -3,7 +3,7 @@ package com.graafik.model;
 import java.util.List;
 
 public class ScheduleRequest {
-    private List<Worker> workers;
+    private List<Employee> employees;
     private List<Shift> shifts;
     private int month;
     private long fullTimeMinutes;
@@ -13,8 +13,8 @@ public class ScheduleRequest {
     public List<Shift> getShifts() {return shifts;}
     public void setShifts(List<Shift> shifts) { this.shifts = shifts; }
 
-    public List<Worker> getWorkers() { return workers; }
-    public void setWorkers(List<Worker> workers) { this.workers = workers; }
+    public List<Employee> getEmployees() { return employees; }
+    public void setEmployees(List<Employee> employees) { this.employees = employees; }
 
     public int getMonth() { return month; }
 

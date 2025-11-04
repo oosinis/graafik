@@ -13,7 +13,7 @@ import com.graafik.model.ScheduleAlg;
 import com.graafik.model.ScheduleRequestAlg;
 import com.graafik.model.ShiftAlg;
 import com.graafik.model.ShiftAssignment;
-import com.graafik.model.Worker;
+import com.graafik.model.Employee;
 
 public class GenerateSchedule {
     public static void main(String[] args) {
@@ -70,7 +70,7 @@ public class GenerateSchedule {
         // for generating all durations are in minutes
         schedule.setFullTimeMinutes(scheduleRequest.getFullTimeMinutes()* 60);
 
-        HelperMethods.initWorkerHoursInMinutes(schedule, scheduleRequest);
+        HelperMethods.initEmployeeHoursInMinutes(schedule, scheduleRequest);
 
         // Recursively generate all combinations
         generateCombinationsRecursive(scheduleRequest, 0, schedule, allCombinations);
@@ -99,7 +99,7 @@ public class GenerateSchedule {
             return;
         }
 
-        // Generate currentDayAllPossibleShiftAssignments of workers for the current shift count
+        // Generate currentDayAllPossibleShiftAssignments of employees for the current shift count
         List<DaySchedule> currentDayAllPossibleShiftAssignments = getPermutations(scheduleRequest, date);
 
         // go through all the generated possible assignments for the current date
@@ -118,7 +118,7 @@ public class GenerateSchedule {
                 currentSchedule.getDaySchedules().add(currentDayShiftAssignments);
             }
 
-            HelperMethods.substractFromWorkerHours(currentSchedule, currentDayShiftAssignments);
+            HelperMethods.substractFromEmployeeHours(currentSchedule, currentDayShiftAssignments);
 
             currentSchedule.setScore(currentScore);
             
@@ -131,7 +131,7 @@ public class GenerateSchedule {
 
             // recursion done, remove last assignments list that was added and try with the next one
             DaySchedule lastDaySchedule = currentSchedule.getDaySchedules().removeLast();
-            HelperMethods.addToWorkerHours(currentSchedule, lastDaySchedule);
+            HelperMethods.addToEmployeeHours(currentSchedule, lastDaySchedule);
             currentSchedule.addToScore(- lastDaySchedule.getScore());
         }
     }
@@ -146,7 +146,7 @@ public class GenerateSchedule {
         List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
 
         List<ShiftAlg> currentDayShifts = HelperMethods.getShiftsForDay(scheduleRequest, date);
-        Map<UUID, List<Worker>> currentRequestedWorkDays = HelperMethods.getRequestedWorkDays(scheduleRequest, date);
+        Map<UUID, List<Employee>> currentRequestedWorkDays = HelperMethods.getRequestedWorkDays(scheduleRequest, date);
 
         HelperMethods.permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations, date);
         return allDaySchedulePermutations;
@@ -161,15 +161,15 @@ public class GenerateSchedule {
             for (DaySchedule day : combination.getDaySchedules()) {
                 System.out.print(x + ": ");
                 for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
-                    System.out.print(ShiftAssignment.getWorker().getName() +  ", " + ShiftAssignment.getShift().getType() +"; ");
+                    System.out.print(ShiftAssignment.getEmployee().getName() +  ", " + ShiftAssignment.getShift().getType() +"; ");
                 }
                 x++;
                 System.out.println();
             }
 
             System.out.println();
-            combination.getWorkerHoursInMinutes().forEach((worker, hours) -> {
-                System.out.println("worker: " + worker + ": " + hours);
+            combination.getEmployeeHoursInMinutes().forEach((employee, hours) -> {
+                System.out.println("employee: " + employee + ": " + hours);
             });
             
             System.out.println();

@@ -68,9 +68,9 @@ public class DaySchedule extends BaseEntity {
         this.score = this.score + addition;
     }
 
-    public static ShiftAssignment containsWorker(DaySchedule ShiftAssignments, Worker worker) {
+    public static ShiftAssignment containsEmployee(DaySchedule ShiftAssignments, Employee employee) {
         for (ShiftAssignment shiftAssignment : ShiftAssignments.getAssignments()) {
-            if (shiftAssignment.getWorker().equals(worker)) {
+            if (shiftAssignment.getEmployee().equals(employee)) {
                 return shiftAssignment;
             }
         }

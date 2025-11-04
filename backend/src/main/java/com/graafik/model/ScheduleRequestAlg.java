@@ -3,23 +3,23 @@ import java.util.List;
 
 public class ScheduleRequestAlg {
 
-    private List<Worker> workers;
+    private List<Employee> employees;
     private List<ShiftAlg> shifts;
     private int month;
     private long fullTimeMinutes;
 
     public ScheduleRequestAlg() {}
 
-    public ScheduleRequestAlg(List<Worker> workers, List<ShiftAlg> shifts, int month, long fullTimeMinutes) {
-        this.workers = workers;
+    public ScheduleRequestAlg(List<Employee> employees, List<ShiftAlg> shifts, int month, long fullTimeMinutes) {
+        this.employees = employees;
         this.shifts = shifts;
         this.month = month;
         this.fullTimeMinutes = fullTimeMinutes;
     
     }
 
-    public List<Worker> getWorkers() {
-        return workers;
+    public List<Employee> getEmployees() {
+        return employees;
     }
 
     public List<ShiftAlg> getShifts() {
@@ -34,8 +34,8 @@ public class ScheduleRequestAlg {
         return fullTimeMinutes;
     }
 
-    public void setWorkers(List<Worker> workers) {
-        this.workers = workers;
+    public void setEmployees(List<Employee> employees) {
+        this.employees = employees;
     }
 
     public void setShifts(List<ShiftAlg> shifts) {

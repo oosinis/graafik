@@ -14,45 +14,45 @@ import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "workers")
-public class Worker extends BaseEntity {
+@Table(name = "employees")
+public class Employee extends BaseEntity {
     
     @Column(nullable = false)
     private String name;
 
     private float workLoad;
 
-    private String workerRole;
+    private String employeeRole;
 
     @ElementCollection
-    @CollectionTable(name = "worker_assigned_shift_ids", joinColumns = @JoinColumn(name = "worker_id"))
+    @CollectionTable(name = "employee_assigned_shift_ids", joinColumns = @JoinColumn(name = "employee_id"))
     @Column(name = "shift_id")
     private List<UUID> assignedShifts;
 
     @ElementCollection
-    @CollectionTable(name = "worker_desired_vacation_days", joinColumns = @JoinColumn(name = "worker_id"))
+    @CollectionTable(name = "employee_desired_vacation_days", joinColumns = @JoinColumn(name = "employee_id"))
     @Column(name = "day")
     private List<Integer> desiredVacationDays;
     
     
     @ElementCollection
-    @CollectionTable(name = "worker_vacation_days", joinColumns = @JoinColumn(name = "worker_id"))
+    @CollectionTable(name = "employee_vacation_days", joinColumns = @JoinColumn(name = "employee_id"))
     @Column(name = "day")
     private List<Integer> vacationDays;
 
     @ElementCollection
-    @CollectionTable(name = "worker_sick_days", joinColumns = @JoinColumn(name = "worker_id"))
+    @CollectionTable(name = "employee_sick_days", joinColumns = @JoinColumn(name = "employee_id"))
     @Column(name = "day")
     private List<Integer> sickDays;
 
 
     @ElementCollection
-    @CollectionTable(name = "worker_requested_work_days", joinColumns = @JoinColumn(name = "worker_id"))
+    @CollectionTable(name = "employee_requested_work_days", joinColumns = @JoinColumn(name = "employee_id"))
     @MapKeyColumn(name = "day")
     @Column(name = "shift_id", nullable = true)
     private Map<Integer, UUID> requestedWorkDays;
 
-    public Worker() {}
+    public Employee() {}
 
     public String getName() {
         return name;
@@ -94,30 +94,30 @@ public class Worker extends BaseEntity {
         return sickDays;
     }
 
-    public String getWorkerRole() {
-        return workerRole;
+    public String getEmployeeRole() {
+        return employeeRole;
     }
 
-    public void setWorkerRole(String workerRole) {
-        this.workerRole = workerRole;
+    public void setEmployeeRole(String employeeRole) {
+        this.employeeRole = employeeRole;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Worker workerDto = (Worker) o;
-        return Objects.equals(name, workerDto.name);
+        Employee employee = (Employee) o;
+        return Objects.equals(name, employee.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, assignedShifts, workLoad, desiredVacationDays, vacationDays, requestedWorkDays, sickDays, workerRole);
+        return Objects.hash(name, assignedShifts, workLoad, desiredVacationDays, vacationDays, requestedWorkDays, sickDays, employeeRole);
     }
     
     @Override
     public String toString() {
-        return "WorkerDto{" +
+        return "Employee{" +
                "name='" + name + '\'' +
                '}';
     }

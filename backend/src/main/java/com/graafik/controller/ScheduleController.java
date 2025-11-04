@@ -20,20 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.graafik.model.Schedule;
 import com.graafik.model.ScheduleRequest;
 import com.graafik.model.ScheduleRequestAlg;
-import com.graafik.model.Worker;
+import com.graafik.model.Employee;
 import com.graafik.services.ScheduleService;
-import com.graafik.services.WorkerService;
+import com.graafik.services.EmployeeService;
 
 @RestController
 @RequestMapping("/api/schedules")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
-    private final WorkerService workerService;
+    private final EmployeeService employeeService;
 
-    public ScheduleController(ScheduleService scheduleService, WorkerService workerService) {
+    public ScheduleController(ScheduleService scheduleService, EmployeeService employeeService) {
         this.scheduleService = scheduleService;
-        this.workerService = workerService;
+        this.employeeService = employeeService;
     }
 
     @PostMapping
@@ -77,14 +77,14 @@ public class ScheduleController {
             @RequestBody ScheduleRequestAlg scheduleRequest,
             @RequestParam int startDate,
             @RequestParam int endDate,
-            @RequestParam UUID workerId
+            @RequestParam UUID employeeId
     ) {
 
-        Optional<Worker> workerOpt = workerService.getWorkerById(workerId);
-        if (workerOpt.isEmpty()) {
+        Optional<Employee> employeeOpt = employeeService.getEmployeeById(employeeId);
+        if (employeeOpt.isEmpty()) {
             return ResponseEntity
                 .status(404)
-                .body(Map.of("error", "Worker with id " + workerId + " not found"));
+                .body(Map.of("error", "Employee with id " + employeeId + " not found"));
         }
 
         Optional<Schedule> scheduleOpt = scheduleService.getScheduleById(id);
@@ -99,7 +99,7 @@ public class ScheduleController {
                 id,
                 startDate,
                 endDate,
-                workerOpt.get()
+                employeeOpt.get()
         );
 
         if (updatedOpt.isEmpty()) {

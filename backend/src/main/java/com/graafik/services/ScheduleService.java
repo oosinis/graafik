@@ -23,19 +23,19 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final ShiftService shiftService;
-    private final WorkerRepository workerRepository;
+    private final EmployeeRepository employeeRepository;
     private final DayScheduleRepository dayScheduleRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
 
 
     public ScheduleService(ScheduleRepository scheduleRepository, 
                         ShiftService shiftService, 
-                        WorkerRepository workerRepository,
+                        EmployeeRepository employeeRepository,
                         DayScheduleRepository dayScheduleRepository,
                         ShiftAssignmentRepository shiftAssignmentRepository) {
         this.scheduleRepository = scheduleRepository;
         this.shiftService = shiftService;
-        this.workerRepository = workerRepository;
+        this.employeeRepository = employeeRepository;
         this.dayScheduleRepository = dayScheduleRepository;
         this.shiftAssignmentRepository = shiftAssignmentRepository;
     }
@@ -54,8 +54,8 @@ public class ScheduleService {
                 }
             }
 
-            if (request.getWorkers() == null || request.getWorkers().isEmpty()) {
-                throw new BadRequestException("No workers provided for schedule creation.");
+            if (request.getEmployees() == null || request.getEmployees().isEmpty()) {
+                throw new BadRequestException("No employees provided for schedule creation.");
             }
 
             List<Shift> managedShifts = request.getShifts().stream()
@@ -66,16 +66,16 @@ public class ScheduleService {
                 .toList();
             request.setShifts(managedShifts);
 
-            List<Worker> managedWorkers = request.getWorkers().stream()
-                .map(workerRepository::save)
+            List<Employee> managedEmployees = request.getEmployees().stream()
+                .map(employeeRepository::save)
                 .toList();
-            request.setWorkers(managedWorkers);
+            request.setEmployees(managedEmployees);
 
             
             List<ShiftAlg> shifts = new ArrayList<>();
             for (Shift shift : managedShifts) { shifts.add(ShiftService.toAlg(shift)); }
 
-            ScheduleRequestAlg requestAlg = new ScheduleRequestAlg(managedWorkers, shifts, request.getMonth(), request.getFullTimeMinutes());
+            ScheduleRequestAlg requestAlg = new ScheduleRequestAlg(managedEmployees, shifts, request.getMonth(), request.getFullTimeMinutes());
 
             List<ScheduleAlg> schedules = GenerateSchedule.generateSchedule(requestAlg);
 
@@ -142,19 +142,18 @@ public class ScheduleService {
             UUID scheduleId,
             int startDate,
             int endDate,
-            Worker missingWorker
+            Employee missingEmployee
     ) {
         Optional<Schedule> currentScheduleOpt = scheduleRepository.findById(scheduleId);
         if (currentScheduleOpt.isEmpty()) return Optional.empty();
 
         Schedule currentSchedule = currentScheduleOpt.get();
 
-        List<ScheduleAlg> schedules = RegenerateExistingSchedule.regenerateSchedule(
-                scheduleRequest,
+        List<ScheduleAlg> schedules = RegenerateExistingSchedule.regenerateSchedule(scheduleRequest,
                 toAlg(currentSchedule),
                 startDate,
                 endDate,
-                missingWorker
+                missingEmployee
         );
 
         if (schedules == null || schedules.isEmpty()) {
@@ -178,17 +177,17 @@ public class ScheduleService {
     }
 
     private Schedule fromAlg(ScheduleAlg schedule) {
-        // Get all workers referenced in workerHours
+        // Get all employees referenced in employeeHours
         // Tuleb muuta see halb lahendus
-        List<Worker> workers = schedule.getWorkerHoursInMinutes().keySet().stream()
-            .map(workerId -> workerRepository.findById(workerId).orElse(null))
-            .filter(worker -> worker != null)
+        List<Employee> employees = schedule.getEmployeeHoursInMinutes().keySet().stream()
+            .map(employeeId -> employeeRepository.findById(employeeId).orElse(null))
+            .filter(employee -> employee != null)
             .toList();
 
         
-        Map<UUID, Long> workerHoursInMinCountingUp = new HashMap<>();
-        for (Worker worker : workers) {
-            workerHoursInMinCountingUp.put(worker.getId(), (long) (schedule.getFullTimeMinutes() * worker.getWorkLoad() + schedule.getWorkerHoursInMinutes().get(worker.getId())));
+        Map<UUID, Long> employeeHoursInMinCountingUp = new HashMap<>();
+        for (Employee employee : employees) {
+            employeeHoursInMinCountingUp.put(employee.getId(), (long) (schedule.getFullTimeMinutes() * employee.getWorkLoad() + schedule.getEmployeeHoursInMinutes().get(employee.getId())));
         }
 
         return new Schedule(
@@ -197,8 +196,8 @@ public class ScheduleService {
             schedule.getScore(),
             schedule.getFullTimeMinutes(),
             schedule.getDaySchedules(),
-            workerHoursInMinCountingUp,
-            workers
+            employeeHoursInMinCountingUp,
+            employees
         );
     }
 
@@ -208,7 +207,7 @@ public class ScheduleService {
         schedule.setYear(scheduleAlg.getYear());
         schedule.setScore(scheduleAlg.getScore());
         schedule.setDaySchedules(scheduleAlg.getDaySchedules());
-        schedule.setWorkerHoursInMinutes(scheduleAlg.getWorkerHoursInMinCountingUp());
+        schedule.setEmployeeHoursInMinutes(scheduleAlg.getEmployeeHoursInMinCountingUp());
         return schedule;
     }
 

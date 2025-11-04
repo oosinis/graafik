@@ -20,14 +20,14 @@ public class ShiftAssignment extends BaseEntity {
     private ShiftAlg shift;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "worker_id", nullable = false)
-    private Worker worker;
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee employee;
 
     public ShiftAssignment() {}
 
-    public ShiftAssignment(ShiftAlg shift, Worker worker) {
+    public ShiftAssignment(ShiftAlg shift, Employee employee) {
         this.shift = shift;
-        this.worker = worker;
+        this.employee = employee;
     }
 
     public UUID getDayScheduleId() {
@@ -42,23 +42,23 @@ public class ShiftAssignment extends BaseEntity {
         return shift;
     }
 
-    public Worker getWorker() {
-        return worker;
+    public Employee getEmployee() {
+        return employee;
     }
 
     public void setShift(ShiftAlg shift) {
         this.shift = shift;
     }
 
-    public void setWorker(Worker worker) {
-        this.worker = worker;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     @Override
     public String toString() {
         return "ShiftAssignment{" +
                "shift=" + (shift != null ? shift.toString() : "null") +
-               ", worker=" + (worker != null ? worker.toString() : "null") +
+               ", employee=" + (employee != null ? employee.toString() : "null") +
                '}';
     }
     

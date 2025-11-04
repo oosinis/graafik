@@ -23,26 +23,26 @@ public class Schedule extends BaseEntity {
 
 
     @ElementCollection
-    @CollectionTable(name = "schedule_worker_hours", joinColumns = @JoinColumn(name = "schedule_id"))
-    @MapKeyColumn(name = "worker_id")
+    @CollectionTable(name = "schedule_employee_hours", joinColumns = @JoinColumn(name = "schedule_id"))
+    @MapKeyColumn(name = "employee_id")
     @Column(name = "hours")
-    private Map<UUID, Long> workerHoursInMinCountingUp;
+    private Map<UUID, Long> employeeHoursInMinCountingUp;
 
-    private List<Worker> workers;
+    private List<Employee> employees;
 
     @Transient
     private List<DaySchedule> daySchedules;
 
     public Schedule() {}
 
-    public Schedule(int month, int year, int score, long fullTimeHours, List<DaySchedule> daySchedules, Map<UUID, Long> workerHours, List<Worker> workers) {
+    public Schedule(int month, int year, int score, long fullTimeHours, List<DaySchedule> daySchedules, Map<UUID, Long> employeeHours, List<Employee> employees) {
         this.month = month;
         this.year = year;
         this.score = score;
         this.fullTimeHours = fullTimeHours;
         this.daySchedules = daySchedules;
-        this.workerHoursInMinCountingUp = workerHours;
-        this.workers = workers;
+        this.employeeHoursInMinCountingUp = employeeHours;
+        this.employees = employees;
     }
 
     public int getMonth() { return month; }
@@ -60,10 +60,10 @@ public class Schedule extends BaseEntity {
     public List<DaySchedule> getDaySchedules() { return daySchedules; }
     public void setDaySchedules(List<DaySchedule> dayScheduleIds) { this.daySchedules = dayScheduleIds; }
 
-    public Map<UUID, Long> getWorkerHoursInMinCountingUp() { return workerHoursInMinCountingUp; }
-    public void setWorkerHoursInMinCountingUp(Map<UUID,Long> workerHours) { this.workerHoursInMinCountingUp = workerHours; }
+    public Map<UUID, Long> getEmployeeHoursInMinCountingUp() { return employeeHoursInMinCountingUp; }
+    public void setEmployeeHoursInMinCountingUp(Map<UUID,Long> employeeHours) { this.employeeHoursInMinCountingUp = employeeHours; }
 
-    public List<Worker> getWorkers() { return workers; }
-    public void setWorkers(List<Worker> workers) { this.workers = workers; }
+    public List<Employee> getEmployees() { return employees; }
+    public void setEmployees(List<Employee> employees) { this.employees = employees; }
 
 }

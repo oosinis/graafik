@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.graafik.model.Worker;
+import com.graafik.model.Employee;
 
 @Repository
-public interface WorkerRepository extends JpaRepository<Worker, UUID> {
+public interface EmployeeRepository extends JpaRepository<Employee, UUID> {
 }
