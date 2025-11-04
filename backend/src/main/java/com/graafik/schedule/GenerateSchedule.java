@@ -9,9 +9,9 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graafik.model.DaySchedule;
-import com.graafik.model.Schedule;
-import com.graafik.model.ScheduleRequest;
-import com.graafik.model.Shift;
+import com.graafik.model.ScheduleAlg;
+import com.graafik.model.ScheduleRequestAlg;
+import com.graafik.model.ShiftAlg;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.Worker;
 
@@ -21,8 +21,8 @@ public class GenerateSchedule {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             File jsonFile = new File("backend/src/main/java/com/graafik/data/db/schedulerequest.json");
-            List<ScheduleRequest> requests = objectMapper.readValue(jsonFile, 
-            objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequest.class));
+            List<ScheduleRequestAlg> requests = objectMapper.readValue(jsonFile, 
+            objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequestAlg.class));
 
             generateSchedule(requests.getFirst());
         } catch (Exception e) {
@@ -36,13 +36,13 @@ public class GenerateSchedule {
      * @param scheduleRequest
      * @return
      */
-    public static List<Schedule> generateSchedule(ScheduleRequest scheduleRequest) {
+    public static List<ScheduleAlg> generateSchedule(ScheduleRequestAlg scheduleRequest) {
 
-        for (Shift shift : scheduleRequest.getShifts()) {
+        for (ShiftAlg shift : scheduleRequest.getShifts()) {
             System.out.println(shift.getType() + ": " + shift.getDurationInMinutes());
         }
 
-        List<Schedule> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
+        List<ScheduleAlg> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
 
         System.out.println("ALL SCHEDULES:");
         //printSchedules(allPossibleSchedules);
@@ -56,13 +56,13 @@ public class GenerateSchedule {
      * @param scheduleRequest
      * @return
      */
-    public static List<Schedule> generateAllPossibleSchedules(ScheduleRequest scheduleRequest) {
+    public static List<ScheduleAlg> generateAllPossibleSchedules(ScheduleRequestAlg scheduleRequest) {
 
         // get a list of shifts for every day of the month
 
-        List<Schedule> allCombinations = new ArrayList<>();
+        List<ScheduleAlg> allCombinations = new ArrayList<>();
 
-        Schedule schedule = new Schedule();
+        ScheduleAlg schedule = new ScheduleAlg();
 
         schedule.setMonth(scheduleRequest.getMonth());
         // TODO change to automatic
@@ -86,14 +86,14 @@ public class GenerateSchedule {
      * @param currentSchedule
      * @param allCombinations
      */
-    private static void generateCombinationsRecursive(ScheduleRequest scheduleRequest, int date,
-                                                      Schedule currentSchedule, List<Schedule> allCombinations) {
+    private static void generateCombinationsRecursive(ScheduleRequestAlg scheduleRequest, int date,
+                                                      ScheduleAlg currentSchedule, List<ScheduleAlg> allCombinations) {
 
         int daysInMonth = YearMonth.of(2025, currentSchedule.getMonth()).lengthOfMonth();
 
         if (date == daysInMonth) {
             // All days processed, add the combination
-            Schedule clonedSchedule = HelperMethods.cloneSchedule(currentSchedule);
+            ScheduleAlg clonedSchedule = HelperMethods.cloneSchedule(currentSchedule);
 
             allCombinations.add(clonedSchedule);
             return;
@@ -142,10 +142,10 @@ public class GenerateSchedule {
      * @param date
      * @return
      */
-    public static List<DaySchedule> getPermutations(ScheduleRequest scheduleRequest, int date) {
+    public static List<DaySchedule> getPermutations(ScheduleRequestAlg scheduleRequest, int date) {
         List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
 
-        List<Shift> currentDayShifts = HelperMethods.getShiftsForDay(scheduleRequest, date);
+        List<ShiftAlg> currentDayShifts = HelperMethods.getShiftsForDay(scheduleRequest, date);
         Map<UUID, List<Worker>> currentRequestedWorkDays = HelperMethods.getRequestedWorkDays(scheduleRequest, date);
 
         HelperMethods.permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations, date);
@@ -154,8 +154,8 @@ public class GenerateSchedule {
 
     
     
-    public static void printSchedules(List<Schedule> schedules) {
-        for (Schedule combination : schedules) {
+    public static void printSchedules(List<ScheduleAlg> schedules) {
+        for (ScheduleAlg combination : schedules) {
             System.out.println("\n NEW SCHEDULE score: " + combination.getScore());
             int x  = 1;
             for (DaySchedule day : combination.getDaySchedules()) {

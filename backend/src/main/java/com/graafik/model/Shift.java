@@ -1,13 +1,13 @@
 package com.graafik.model;
 
+import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-
 
 @Entity
 @Table(name = "shifts")
@@ -15,65 +15,37 @@ public class Shift extends BaseEntity {
 
     @Column(nullable = false)
     private String type;
-
     @Column(nullable = false)
-    private long durationInMinutes;
+    private LocalTime startTime;
+    @Column(nullable = false)
+    private LocalTime endTime;
 
     @Transient
     private List<Rule> rules;
 
     public Shift() {}
 
-    public Shift(String type,  long durationInMinutes, List<Rule> rules) {
+    public Shift(String type, LocalTime startTime, LocalTime endTime, List<Rule> rules) {
         this.type = type;
-        this.durationInMinutes = durationInMinutes;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.rules = rules;
     }
 
-    public String getType() {
-        return type;
-    }
+    public String getType()  {return type; }
 
-    public long getDurationInMinutes() {
-        return durationInMinutes;
-    }
+    public LocalTime getStartTime() { return startTime; }
 
-    public List<Rule> getRules() {
-        return rules;
-    }
+    public LocalTime getEndTime() { return endTime; }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+    public List<Rule> getRules() { return rules; }
 
-    public void setDurationInMinutes(int duration) {
-        this.durationInMinutes = duration;
-    }
+    public void setType(String type) { this.type = type; }
 
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
-    }
+    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Shift shift = (Shift) o;
-        return durationInMinutes == shift.durationInMinutes && type.equals(shift.type);
-    }
+   public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, durationInMinutes);
-    }
-
-    @Override
-    public String toString() {
-        return "Shift{" +
-               "type='" + type + '\'' +
-               ", duration=" + durationInMinutes +
-               ", rules=" + rules +
-               '}';
-    }
+    public void setRules(List<Rule> rules) { this.rules = rules; }
     
 }

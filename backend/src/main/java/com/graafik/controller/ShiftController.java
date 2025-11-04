@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.graafik.dto.ShiftDTO;
+import com.graafik.model.Shift;
 import com.graafik.services.ShiftService;
 
 @RestController
@@ -26,21 +26,21 @@ public class ShiftController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShiftDTO> getShiftById(@PathVariable UUID id) {
-        Optional<ShiftDTO> shift = shiftService.getShiftById(id);
+    public ResponseEntity<Shift> getShiftById(@PathVariable UUID id) {
+        Optional<Shift> shift = shiftService.getShiftById(id);
         return shift
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public ResponseEntity<List<ShiftDTO>> getAllShifts() {
-        List<ShiftDTO> shifts = shiftService.getAllShifts();
+    public ResponseEntity<List<Shift>> getAllShifts() {
+        List<Shift> shifts = shiftService.getAllShifts();
         return ResponseEntity.ok(shifts);
     }
 
     @PostMapping
-    public ShiftDTO createShift(@RequestBody ShiftDTO shift) {
+    public Shift createShift(@RequestBody Shift shift) {
         return shiftService.saveShift(shift);
     }
 }

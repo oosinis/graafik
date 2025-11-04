@@ -17,7 +17,7 @@ public class ShiftAssignment extends BaseEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "shift_id", nullable = false)
-    private Shift shift;
+    private ShiftAlg shift;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "worker_id", nullable = false)
@@ -25,7 +25,7 @@ public class ShiftAssignment extends BaseEntity {
 
     public ShiftAssignment() {}
 
-    public ShiftAssignment(Shift shift, Worker worker) {
+    public ShiftAssignment(ShiftAlg shift, Worker worker) {
         this.shift = shift;
         this.worker = worker;
     }
@@ -38,7 +38,7 @@ public class ShiftAssignment extends BaseEntity {
         this.dayScheduleId = dayScheduleId;
     }
 
-    public Shift getShift() {
+    public ShiftAlg getShift() {
         return shift;
     }
 
@@ -46,7 +46,7 @@ public class ShiftAssignment extends BaseEntity {
         return worker;
     }
 
-    public void setShift(Shift shift) {
+    public void setShift(ShiftAlg shift) {
         this.shift = shift;
     }
 

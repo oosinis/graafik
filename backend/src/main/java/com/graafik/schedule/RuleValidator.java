@@ -7,9 +7,9 @@ import java.util.UUID;
 
 import com.graafik.model.DaySchedule;
 import com.graafik.model.Rule;
-import com.graafik.model.Schedule;
-import com.graafik.model.ScheduleRequest;
-import com.graafik.model.Shift;
+import com.graafik.model.ScheduleAlg;
+import com.graafik.model.ScheduleRequestAlg;
+import com.graafik.model.ShiftAlg;
 import com.graafik.model.ShiftAssignment;
 import com.graafik.model.Worker;
 
@@ -24,7 +24,7 @@ public class RuleValidator {
      * @param currentDayShiftAssignments new assignments to be checked now
      * @return the score of the new assignments
      */
-    public static int dayAssignmentsValidator(ScheduleRequest scheduleRequest, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+    public static int dayAssignmentsValidator(ScheduleRequestAlg scheduleRequest, ScheduleAlg currentSchedule, DaySchedule currentDayShiftAssignments) {
         
         currentDayShiftAssignments.setScore(0);
 
@@ -39,7 +39,7 @@ public class RuleValidator {
             // continuous days of work before previous rest
             int countPrevWork = 0;
             // and the shift tht they were working
-            Shift prevWorkShift = null;
+            ShiftAlg prevWorkShift = null;
 
             // date of the currently observable day
             int newDayScheduleDate = (currentSchedule.getDaySchedules() == null) ? 0 : currentSchedule.getDaySchedules().size();
@@ -96,7 +96,7 @@ public class RuleValidator {
      * @param date
      * @return the nr of continuous shifts, if -1 then there are too many
      */
-    private static int checkContinuousNewAssignment(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
+    private static int checkContinuousNewAssignment(ShiftAssignment shiftAssignment, ScheduleAlg currentSchedule, DaySchedule currentDayShiftAssignments, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
         Worker worker = shiftAssignment.getWorker();
@@ -140,7 +140,7 @@ public class RuleValidator {
      * @param date
      * @return
      */
-    private static int checkContinuous(ShiftAssignment shiftAssignment, Schedule currentSchedule, int date) {
+    private static int checkContinuous(ShiftAssignment shiftAssignment, ScheduleAlg currentSchedule, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
         Worker worker = shiftAssignment.getWorker();
@@ -167,16 +167,16 @@ public class RuleValidator {
         return countCont;
     }
 
-    public static void checkDesiredVacationDays(Worker worker, int date, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+    public static void checkDesiredVacationDays(Worker worker, int date, ScheduleAlg currentSchedule, DaySchedule currentDayShiftAssignments) {
         // TODO: kui palju see score täpselt muutub
         if (worker.getDesiredVacationDays().contains(date)) {
             currentDayShiftAssignments.addToScore(-10);
         }
     }
 
-    public static void checkWorkerMinutes(ShiftAssignment shiftAssignment, Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
+    public static void checkWorkerMinutes(ShiftAssignment shiftAssignment, ScheduleAlg currentSchedule, DaySchedule currentDayShiftAssignments) {
         Worker worker = shiftAssignment.getWorker();
-        Shift shift = shiftAssignment.getShift();
+        ShiftAlg shift = shiftAssignment.getShift();
         long workerCurrentHours = currentSchedule.getWorkerHoursInMinutes().get(worker.getId());
 
         // TODO: Adjust score impact calculation if needed
@@ -187,7 +187,7 @@ public class RuleValidator {
         }
     }
 
-    public static boolean initialValidator(Map<UUID, List<Worker>> currentRequestedWorkDays, Shift shift, Worker worker) {
+    public static boolean initialValidator(Map<UUID, List<Worker>> currentRequestedWorkDays, ShiftAlg shift, Worker worker) {
         return worker.getAssignedShifts().contains(shift.getId()) || currentRequestedWorkDays.containsKey(shift.getId()) && !currentRequestedWorkDays.get(shift.getId()).contains(worker);
     }
 
@@ -200,9 +200,9 @@ public class RuleValidator {
      * @param date
      * @return score of this addition
      */
-    public static int singleAssignmentValidator(ScheduleRequest scheduleRequest, Schedule currentSchedule, ShiftAssignment shiftAssignment, int date) {
+    public static int singleAssignmentValidator(ScheduleRequestAlg scheduleRequest, ScheduleAlg currentSchedule, ShiftAssignment shiftAssignment, int date) {
 
-        Shift shift = shiftAssignment.getShift();
+        ShiftAlg shift = shiftAssignment.getShift();
         Worker worker = shiftAssignment.getWorker();
         int score = 0;
 
@@ -212,7 +212,7 @@ public class RuleValidator {
         // continuous days of work before previous rest
         int countPrevWork = 0;
         // and the shift tht they were working
-        Shift prevWorkShift = null;
+        ShiftAlg prevWorkShift = null;
 
 
         // check worker hours
@@ -272,7 +272,7 @@ public class RuleValidator {
      * @param date
      * @return
      */
-    private static int checkContinuousNewAssignmentSingleShift(ShiftAssignment shiftAssignment, Schedule currentSchedule, int date) {
+    private static int checkContinuousNewAssignmentSingleShift(ShiftAssignment shiftAssignment, ScheduleAlg currentSchedule, int date) {
         int countCont = 0;
         List<Rule> rules = shiftAssignment.getShift().getRules();
         Worker worker = shiftAssignment.getWorker();
