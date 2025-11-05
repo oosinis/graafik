@@ -15,12 +15,16 @@ public class ShiftAssignment extends BaseEntity {
     @Column(name = "day_schedule_id")
     private UUID dayScheduleId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "shift_id", nullable = false)
-    private ShiftAlg shift;
+    @Column(name = "shift_id")
+    private UUID shiftId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @Transient
+    private Shift shift;
+
+    @Column(name = "employee_id")
+    private UUID employeeId;
+
+    @Transient
     private Employee employee;
 
     public ShiftAssignment() {}

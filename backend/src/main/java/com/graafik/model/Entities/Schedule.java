@@ -26,23 +26,20 @@ public class Schedule extends BaseEntity {
     @CollectionTable(name = "schedule_employee_hours", joinColumns = @JoinColumn(name = "schedule_id"))
     @MapKeyColumn(name = "employee_id")
     @Column(name = "hours")
-    private Map<UUID, Long> employeeHoursInMinCountingUp;
-
-    private List<Employee> employees;
+    private Map<UUID, Long> employeeHoursInMins;
 
     @Transient
     private List<DaySchedule> daySchedules;
 
     public Schedule() {}
 
-    public Schedule(int month, int year, int score, long fullTimeHours, List<DaySchedule> daySchedules, Map<UUID, Long> employeeHours, List<Employee> employees) {
+    public Schedule(int month, int year, int score, long fullTimeHours, List<DaySchedule> daySchedules, Map<UUID, Long> employeeHours) {
         this.month = month;
         this.year = year;
         this.score = score;
         this.fullTimeHours = fullTimeHours;
         this.daySchedules = daySchedules;
-        this.employeeHoursInMinCountingUp = employeeHours;
-        this.employees = employees;
+        this.employeeHoursInMins = employeeHours;
     }
 
     public int getMonth() { return month; }
@@ -60,10 +57,6 @@ public class Schedule extends BaseEntity {
     public List<DaySchedule> getDaySchedules() { return daySchedules; }
     public void setDaySchedules(List<DaySchedule> dayScheduleIds) { this.daySchedules = dayScheduleIds; }
 
-    public Map<UUID, Long> getEmployeeHoursInMinCountingUp() { return employeeHoursInMinCountingUp; }
-    public void setEmployeeHoursInMinCountingUp(Map<UUID,Long> employeeHours) { this.employeeHoursInMinCountingUp = employeeHours; }
-
-    public List<Employee> getEmployees() { return employees; }
-    public void setEmployees(List<Employee> employees) { this.employees = employees; }
-
+    public Map<UUID, Long> getEmployeeHoursInMins() { return employeeHoursInMins; }
+    public void setEmployeeHoursInMins(Map<UUID,Long> employeeHours) { this.employeeHoursInMins = employeeHours; }
 }

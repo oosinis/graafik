@@ -1,5 +1,6 @@
 package com.graafik.model;
 
+import java.beans.Transient;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,6 +19,9 @@ public class Rule extends BaseEntity {
 
     @Column(name =  "shift_id")
     private UUID shiftId;
+
+    @Transient
+    private Shift shift;
 
     @Convert(converter = IntegerListConverter.class)
     @Column(name = "days_applied")

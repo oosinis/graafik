@@ -10,20 +10,20 @@ public class ScheduleAlg {
     private int year;
     private int score;
     private long fullTimeMinutes;
-    private Map<UUID, Long> employeeHoursInMinutes;
+    private Map<UUID, Long> employeeHoursInMinutesRemaining;
 
     private List<DaySchedule> daySchedules;
 
     public ScheduleAlg() {}
 
-    public ScheduleAlg(UUID id, int month, int year, int score, long fullTimeMinutes, List<DaySchedule> daySchedules, Map<UUID, Long> employeeHoursInMinCountingDown, List<Employee> employees) {
+    public ScheduleAlg(UUID id, int month, int year, int score, long fullTimeMinutes, List<DaySchedule> daySchedules, Map<UUID, Long> employeeHoursInMinutesRemaining) {
         this.id = id;
         this.month = month;
         this.year = year;
         this.score = score;
         this.fullTimeMinutes = fullTimeMinutes;
         this.daySchedules = daySchedules;
-        this.employeeHoursInMinutes = employeeHoursInMinCountingDown;
+        this.employeeHoursInMinutesRemaining = employeeHoursInMinutesRemaining;
     }
 
 
@@ -75,15 +75,15 @@ public class ScheduleAlg {
     }
     
     public Map<UUID, Long> getEmployeeHoursInMinutes() {
-        return employeeHoursInMinutes;
+        return employeeHoursInMinutesRemaining;
     }
 
     public void setEmployeeHoursInMinutes(Map<UUID, Long> employeeHours) {
-        this.employeeHoursInMinutes = employeeHours;
+        this.employeeHoursInMinutesRemaining = employeeHours;
     }
 
     public void changeEmployeeHours(long x, UUID employeeId) {
-        this.employeeHoursInMinutes.put(employeeId, this.employeeHoursInMinutes.get(employeeId) + x);
+        this.employeeHoursInMinutesRemaining.put(employeeId, this.employeeHoursInMinutesRemaining.get(employeeId) + x);
     }
 
     @Override
