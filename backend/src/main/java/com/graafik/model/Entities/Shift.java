@@ -20,8 +20,8 @@ public class Shift extends BaseEntity {
     @Column(nullable = false)
     private LocalTime endTime;
 
-    @Transient
-    private List<Rule> rules;
+    @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rule> rules = new ArrayList<>();
 
     public Shift() {}
 

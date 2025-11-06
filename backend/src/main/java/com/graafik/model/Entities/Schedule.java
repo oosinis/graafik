@@ -21,15 +21,14 @@ public class Schedule extends BaseEntity {
     private int score;
     private long fullTimeHours;
 
-
     @ElementCollection
     @CollectionTable(name = "schedule_employee_hours", joinColumns = @JoinColumn(name = "schedule_id"))
     @MapKeyColumn(name = "employee_id")
     @Column(name = "hours")
     private Map<UUID, Long> employeeHoursInMins;
 
-    @Transient
-    private List<DaySchedule> daySchedules;
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DaySchedule> daySchedules = new ArrayList<>();
 
     public Schedule() {}
 

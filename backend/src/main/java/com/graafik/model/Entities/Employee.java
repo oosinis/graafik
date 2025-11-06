@@ -24,16 +24,18 @@ public class Employee extends BaseEntity {
 
     private String employeeRole;
 
-    @ElementCollection
-    @CollectionTable(name = "employee_assigned_shift_ids", joinColumns = @JoinColumn(name = "employee_id"))
-    @Column(name = "shift_id")
-    private List<UUID> assignedShifts;
-
+    @ManyToMany
+    @JoinTable(
+        name = "employee_shifts",
+        joinColumns = @JoinColumn(name = "employee_id"),
+        inverseJoinColumns = @JoinColumn(name = "shift_id")
+    )
+    private List<Shift> assignedShifts;
+    
     @ElementCollection
     @CollectionTable(name = "employee_desired_vacation_days", joinColumns = @JoinColumn(name = "employee_id"))
     @Column(name = "day")
     private List<Integer> desiredVacationDays;
-    
     
     @ElementCollection
     @CollectionTable(name = "employee_vacation_days", joinColumns = @JoinColumn(name = "employee_id"))
@@ -45,12 +47,28 @@ public class Employee extends BaseEntity {
     @Column(name = "day")
     private List<Integer> sickDays;
 
-
     @ElementCollection
     @CollectionTable(name = "employee_requested_work_days", joinColumns = @JoinColumn(name = "employee_id"))
     @MapKeyColumn(name = "day")
     @Column(name = "shift_id", nullable = true)
     private Map<Integer, UUID> requestedWorkDays;
+
+    // Kas selle (Map<Integer, UUID> requestedWorkDay) saab asendada nt sellega?
+    // @Entity
+    // @Table(name = "employee_requested_work_days")
+    // public class WorkDayRequest extends BaseEntity {
+        
+    //     @ManyToOne
+    //     @JoinColumn(name = "employee_id")
+    //     private Employee employee;
+        
+    //     @Column(name = "day")
+    //     private Integer day;
+        
+    //     @ManyToOne
+    //     @JoinColumn(name = "shift_id")
+    //     private Shift shift; // Full Shift object, not just UUID
+    // }
 
     public Employee() {}
 

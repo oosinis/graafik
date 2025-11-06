@@ -12,16 +12,17 @@ import jakarta.persistence.Transient;
 @Entity
 @Table(name = "day_schedules")
 public class DaySchedule extends BaseEntity {
-    
-    @Column(name = "schedule_id")
-    private UUID scheduleId;
+
+    @ManyToOne
+    @JoinColumn(name = "schedule_id", nullable = false)
+    private Schedule schedule;
 
     @Column(nullable = false)
     private int dayOfMonth;
 
     private int score;
 
-    @Transient
+    @OneToMany(mappedBy = "daySchedule")
     private List<ShiftAssignment> assignments;
 
     public DaySchedule() {}
@@ -30,7 +31,6 @@ public class DaySchedule extends BaseEntity {
         this.dayOfMonth = dayOfMonth;
         this.assignments = assignments;
     }
-
 
     public UUID getScheduleId() {
         return scheduleId;

@@ -12,24 +12,21 @@ import jakarta.persistence.Table;
 @Table(name = "shift_assignments")
 public class ShiftAssignment extends BaseEntity {
 
-    @Column(name = "day_schedule_id")
-    private UUID dayScheduleId;
+    @ManyToOne
+    @JoinColumn(name = "day_schedule_id", nullable = false)
+    private DaySchedule daySchedule;
 
-    @Column(name = "shift_id")
-    private UUID shiftId;
-
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "shift_id", nullable = false)
     private Shift shift;
 
-    @Column(name = "employee_id")
-    private UUID employeeId;
-
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
     public ShiftAssignment() {}
 
-    public ShiftAssignment(ShiftAlg shift, Employee employee) {
+    public ShiftAssignment(Shift shift, Employee employee) {
         this.shift = shift;
         this.employee = employee;
     }
@@ -58,7 +55,7 @@ public class ShiftAssignment extends BaseEntity {
         this.employee = employee;
     }
 
-    @Override
+    @Override // see siin ei peaks vist olema pigem ShiftAssignmentAlg.javas ?
     public String toString() {
         return "ShiftAssignment{" +
                "shift=" + (shift != null ? shift.toString() : "null") +

@@ -17,10 +17,8 @@ import jakarta.persistence.Table;
 @Table(name = "rules")
 public class Rule extends BaseEntity {
 
-    @Column(name =  "shift_id")
-    private UUID shiftId;
-
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "shift_id", referencedColumnName = "id")
     private Shift shift;
 
     @Convert(converter = IntegerListConverter.class)
