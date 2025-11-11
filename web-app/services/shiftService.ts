@@ -22,6 +22,7 @@ export const ShiftsService = {
    * POST /shifts
    */
   create(shift: Partial<Shift>): Promise<Shift> {
+    console.log("POST /shifts payload:", shift);
     return httpClient(BASE_URL, {
       method: "POST",
       body: JSON.stringify(shift),

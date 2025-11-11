@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Shifts from "./Shifts";
-import { AddShift } from "./AddShift";
-import type { Shift } from "@/models/Shift";
-import { ShiftsService } from "@/services/shiftService";
+import { useEffect, useState } from 'react';
+import Shifts from './Shifts';
+import { AddShift } from './AddShift';
+import type { Shift } from '@/models/Shift';
+import { ShiftsService } from '@/services/shiftService';
 
 export default function ShiftsPage() {
   const [shifts, setShifts] = useState<Shift[]>([]);
@@ -17,7 +17,7 @@ export default function ShiftsPage() {
       const data = await ShiftsService.getAll();
       setShifts(data);
     } catch (err) {
-      console.error("Failed to fetch shifts", err);
+      console.error('Failed to fetch shifts', err);
     } finally {
       setIsLoading(false);
     }
@@ -29,10 +29,15 @@ export default function ShiftsPage() {
 
   const handleCreateShift = async (shiftData: Partial<Shift>) => {
     try {
-      await ShiftsService.create(shiftData);
-      await fetchShifts();
+      console.log('Sending shift:', shiftData);
+      const created = await ShiftsService.create(shiftData);
+      if (created) {
+        setShifts((prev) => [created, ...prev]);
+      } else {
+        await fetchShifts();
+      }
     } catch (err) {
-      console.error("Failed to create shift", err);
+      console.error('Failed to create shift', err);
     } finally {
       setShowModal(false);
     }
@@ -43,7 +48,7 @@ export default function ShiftsPage() {
       await ShiftsService.delete(shiftId);
       await fetchShifts();
     } catch (err) {
-      console.error("Failed to delete shift", err);
+      console.error('Failed to delete shift', err);
     }
   };
 
@@ -53,7 +58,7 @@ export default function ShiftsPage() {
         shifts={shifts}
         isLoading={isLoading}
         onAddShift={() => setShowModal(true)}
-        onEditShift={(shift) => console.log("Edit shift:", shift)}
+        onEditShift={(shift) => console.log('Edit shift:', shift)}
         onDeleteShift={handleDeleteShift}
       />
 
