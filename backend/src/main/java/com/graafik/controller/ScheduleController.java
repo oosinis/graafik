@@ -17,10 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.graafik.model.Schedule;
-import com.graafik.model.ScheduleRequest;
-import com.graafik.model.ScheduleRequestAlg;
-import com.graafik.model.Employee;
+import com.graafik.model.Domain.*;
+import com.graafik.model.Entities.*;
+import com.graafik.model.Dtos.*;
 import com.graafik.services.ScheduleService;
 import com.graafik.services.EmployeeService;
 

@@ -1,5 +1,7 @@
-package com.graafik.model;
+package com.graafik.model.Domain;
 import java.util.List;
+
+import com.graafik.model.Entities.*;
 
 public class ScheduleRequestAlg {
 

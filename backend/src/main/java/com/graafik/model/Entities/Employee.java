@@ -1,17 +1,11 @@
-package com.graafik.model;
+package com.graafik.model.Entities;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "employees")
@@ -30,7 +24,7 @@ public class Employee extends BaseEntity {
         joinColumns = @JoinColumn(name = "employee_id"),
         inverseJoinColumns = @JoinColumn(name = "shift_id")
     )
-    private List<Shift> assignedShifts;
+    private List<UUID> assignedShifts;
     
     @ElementCollection
     @CollectionTable(name = "employee_desired_vacation_days", joinColumns = @JoinColumn(name = "employee_id"))

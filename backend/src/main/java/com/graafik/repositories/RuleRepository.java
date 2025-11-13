@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.graafik.model.Rule;
+import com.graafik.model.Entities.Rule;
 
 public interface RuleRepository extends JpaRepository<Rule, UUID> {
         List<Rule> findByShiftId(UUID shiftId);

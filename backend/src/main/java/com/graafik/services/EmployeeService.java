@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.graafik.model.Employee;
+import com.graafik.model.Entities.*;
 import com.graafik.repositories.EmployeeRepository;
 
 @Service

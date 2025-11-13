@@ -1,12 +1,11 @@
-package com.graafik.model;
+package com.graafik.model.Entities;
+
 
 import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.graafik.model.Entities.*;
+
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "shift_assignments")
@@ -31,15 +30,15 @@ public class ShiftAssignment extends BaseEntity {
         this.employee = employee;
     }
 
-    public UUID getDayScheduleId() {
-        return dayScheduleId;
+    public DaySchedule getDaySchedule() {
+        return daySchedule;
     }
 
-    public void setDayScheduleId (UUID dayScheduleId) {
-        this.dayScheduleId = dayScheduleId;
+    public void setDayScheduleId (DaySchedule daySchedule) {
+        this.daySchedule = daySchedule;
     }
 
-    public ShiftAlg getShift() {
+    public Shift getShift() {
         return shift;
     }
 
@@ -47,20 +46,11 @@ public class ShiftAssignment extends BaseEntity {
         return employee;
     }
 
-    public void setShift(ShiftAlg shift) {
+    public void setShift(Shift shift) {
         this.shift = shift;
     }
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
-
-    @Override // see siin ei peaks vist olema pigem ShiftAssignmentAlg.javas ?
-    public String toString() {
-        return "ShiftAssignment{" +
-               "shift=" + (shift != null ? shift.toString() : "null") +
-               ", employee=" + (employee != null ? employee.toString() : "null") +
-               '}';
-    }
-    
 }

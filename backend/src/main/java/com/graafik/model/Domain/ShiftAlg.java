@@ -1,8 +1,10 @@
-package com.graafik.model;
+package com.graafik.model.Domain;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import com.graafik.model.Entities.*;
 
 
 public class ShiftAlg {

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.graafik.model.Shift;
+import com.graafik.model.Entities.*;
 import com.graafik.services.ShiftService;
 
 @RestController

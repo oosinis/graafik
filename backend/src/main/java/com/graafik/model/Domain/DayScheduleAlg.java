@@ -1,29 +1,19 @@
-package com.graafik.model.Entities;
+package com.graafik.model.Domain;
 
 import java.util.List;
+import java.util.UUID;
 
-import jakarta.persistence.*;
+import com.graafik.model.Entities.*;
 
-
-@Entity
-@Table(name = "day_schedules")
-public class DaySchedule extends BaseEntity {
-
-    @ManyToOne
-    @JoinColumn(name = "schedule_id", nullable = false)
-    private Schedule schedule;
-
-    @Column(nullable = false)
+public class DayScheduleAlg {
+    
     private int dayOfMonth;
 
     private int score;
 
-    @OneToMany(mappedBy = "daySchedule")
-    private List<ShiftAssignment> assignments;
+    private List<ShiftAssignmentAlg> assignments;
 
-    public DaySchedule() {}
-
-    public DaySchedule(int dayOfMonth, List<ShiftAssignment> assignments) {
+    public DayScheduleAlg(int dayOfMonth, List<ShiftAssignmentAlg> assignments) {
         this.dayOfMonth = dayOfMonth;
         this.assignments = assignments;
     }
@@ -32,7 +22,7 @@ public class DaySchedule extends BaseEntity {
         return dayOfMonth;
     }
 
-    public List<ShiftAssignment> getAssignments() {
+    public List<ShiftAssignmentAlg> getAlgAssignments() {
         return assignments;
     }
 
@@ -44,7 +34,7 @@ public class DaySchedule extends BaseEntity {
         this.dayOfMonth = dayOfMonth;
     }
 
-    public void setAssignments(List<ShiftAssignment> assignments) {
+    public void setAssignments(List<ShiftAssignmentAlg> assignments) {
         this.assignments = assignments;
     }
 
@@ -56,8 +46,8 @@ public class DaySchedule extends BaseEntity {
         this.score = this.score + addition;
     }
 
-    public static ShiftAssignment containsEmployee(DaySchedule ShiftAssignments, Employee employee) {
-        for (ShiftAssignment shiftAssignment : ShiftAssignments.getAssignments()) {
+    public static ShiftAssignmentAlg containsEmployee(DayScheduleAlg ShiftAssignments, Employee employee) {
+        for (ShiftAssignmentAlg shiftAssignment : ShiftAssignments.getAlgAssignments()) {
             if (shiftAssignment.getEmployee().equals(employee)) {
                 return shiftAssignment;
             }

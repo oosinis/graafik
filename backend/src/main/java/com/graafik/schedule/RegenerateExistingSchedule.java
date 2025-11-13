@@ -6,12 +6,12 @@ import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graafik.model.DaySchedule;
-import com.graafik.model.ScheduleAlg;
-import com.graafik.model.ScheduleRequestAlg;
-import com.graafik.model.ShiftAlg;
-import com.graafik.model.ShiftAssignment;
-import com.graafik.model.Employee;
+import com.graafik.model.Domain.DayScheduleAlg;
+import com.graafik.model.Domain.ScheduleAlg;
+import com.graafik.model.Domain.ScheduleRequestAlg;
+import com.graafik.model.Domain.ShiftAlg;
+import com.graafik.model.Domain.ShiftAssignmentAlg;
+import com.graafik.model.Entities.Employee;
 
 public class RegenerateExistingSchedule {
 
@@ -48,23 +48,23 @@ public class RegenerateExistingSchedule {
 
         List<ShiftAlg> missingShifts = new ArrayList<>();
         for (int date = startDate - 1; date < endDate; date++) {
-            DaySchedule daySchedule = null;
-            for (DaySchedule ds : currentSchedule.getDaySchedules()) {
+            DayScheduleAlg daySchedule = null;
+            for (DayScheduleAlg ds : currentSchedule.getAlgDaySchedules()) {
                 if (ds.getDayOfMonth() == date) {
                     daySchedule = ds;
                     break;
                 }
             }
-            List<ShiftAssignment> assignments = currentSchedule.getDaySchedules().get(date).getAssignments();
-            ShiftAssignment toRemove = assignments.stream()
+            List<ShiftAssignmentAlg> assignments = currentSchedule.getAlgDaySchedules().get(date).getAlgAssignments();
+            ShiftAssignmentAlg toRemove = assignments.stream()
                 .filter(a -> a.getEmployee() == missingEmployee)
                 .findFirst()
                 .orElse(null);
 
             if (toRemove != null) {
-                missingShifts.add(toRemove.getShift());
+                missingShifts.add(toRemove.getShiftAlg());
                 assignments.remove(toRemove);
-                currentSchedule.changeEmployeeHours(toRemove.getShift().getDurationInMinutes(), missingEmployee.getId());
+                currentSchedule.changeEmployeeHours(toRemove.getShiftAlg().getDurationInMinutes(), missingEmployee.getId());
             } else missingShifts.add(null);
         }
 
@@ -101,11 +101,11 @@ public class RegenerateExistingSchedule {
                 
                 ScheduleAlg clonedSchedule = HelperMethods.cloneSchedule(currentSchedule);
                 
-                clonedSchedule.setScore(RuleValidator.singleAssignmentValidator(scheduleRequest, clonedSchedule, new ShiftAssignment(missingShift, employee), date));
+                clonedSchedule.setScore(RuleValidator.singleAssignmentValidator(scheduleRequest, clonedSchedule, new ShiftAssignmentAlg(missingShift, employee), date));
 
                 clonedSchedule.changeEmployeeHours(- missingShift.getDurationInMinutes(), employee.getId());
 
-                clonedSchedule.getDaySchedules().get(date).getAssignments().add(new ShiftAssignment(missingShift, employee));
+                clonedSchedule.getAlgDaySchedules().get(date).getAlgAssignments().add(new ShiftAssignmentAlg(missingShift, employee));
 
                 newPartialSchedules.add(clonedSchedule);
 

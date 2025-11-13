@@ -4,9 +4,8 @@ import java.util.*;
 
 import org.springframework.stereotype.Service;
 
-import com.graafik.model.Rule;
-import com.graafik.model.Shift;
-import com.graafik.model.ShiftAlg;
+import com.graafik.model.Domain.*;
+import com.graafik.model.Entities.*;
 import com.graafik.repositories.RuleRepository;
 import com.graafik.repositories.ShiftRepository;
 

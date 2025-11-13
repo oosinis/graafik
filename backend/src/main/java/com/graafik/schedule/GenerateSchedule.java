@@ -8,12 +8,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graafik.model.DaySchedule;
-import com.graafik.model.ScheduleAlg;
-import com.graafik.model.ScheduleRequestAlg;
-import com.graafik.model.ShiftAlg;
-import com.graafik.model.ShiftAssignment;
-import com.graafik.model.Employee;
+import com.graafik.model.Domain.*;
+import com.graafik.model.Entities.*;
 
 public class GenerateSchedule {
     public static void main(String[] args) {
@@ -100,22 +96,22 @@ public class GenerateSchedule {
         }
 
         // Generate currentDayAllPossibleShiftAssignments of employees for the current shift count
-        List<DaySchedule> currentDayAllPossibleShiftAssignments = getPermutations(scheduleRequest, date);
+        List<DayScheduleAlg> currentDayAllPossibleShiftAssignments = getPermutations(scheduleRequest, date);
 
         // go through all the generated possible assignments for the current date
-        for (DaySchedule currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
+        for (DayScheduleAlg currentDayShiftAssignments : currentDayAllPossibleShiftAssignments) {
 
             int currentScore = currentSchedule.getScore() + RuleValidator.dayAssignmentsValidator(scheduleRequest, currentSchedule, currentDayShiftAssignments);
             if (currentScore < -50) continue;
 
-            if (currentSchedule.getDaySchedules() == null) {
+            if (currentSchedule.getAlgDaySchedules() == null) {
                 // kui schedule alles tühi
-                currentSchedule.setDaySchedules(new ArrayList<>(List.of(currentDayShiftAssignments)));
+                currentSchedule.setAlgDaySchedules(new ArrayList<>(List.of(currentDayShiftAssignments)));
                 
             } 
             else {
                 // kui juba schedulis midagi olems
-                currentSchedule.getDaySchedules().add(currentDayShiftAssignments);
+                currentSchedule.getAlgDaySchedules().add(currentDayShiftAssignments);
             }
 
             HelperMethods.substractFromEmployeeHours(currentSchedule, currentDayShiftAssignments);
@@ -130,7 +126,7 @@ public class GenerateSchedule {
             generateCombinationsRecursive(scheduleRequest, date + 1, currentSchedule, allCombinations);
 
             // recursion done, remove last assignments list that was added and try with the next one
-            DaySchedule lastDaySchedule = currentSchedule.getDaySchedules().removeLast();
+            DayScheduleAlg lastDaySchedule = currentSchedule.getAlgDaySchedules().removeLast();
             HelperMethods.addToEmployeeHours(currentSchedule, lastDaySchedule);
             currentSchedule.addToScore(- lastDaySchedule.getScore());
         }
@@ -142,13 +138,13 @@ public class GenerateSchedule {
      * @param date
      * @return
      */
-    public static List<DaySchedule> getPermutations(ScheduleRequestAlg scheduleRequest, int date) {
-        List<DaySchedule> allDaySchedulePermutations = new ArrayList<>();
+    public static List<DayScheduleAlg> getPermutations(ScheduleRequestAlg scheduleRequest, int date) {
+        List<DayScheduleAlg> allDaySchedulePermutations = new ArrayList<>();
 
         List<ShiftAlg> currentDayShifts = HelperMethods.getShiftsForDay(scheduleRequest, date);
         Map<UUID, List<Employee>> currentRequestedWorkDays = HelperMethods.getRequestedWorkDays(scheduleRequest, date);
 
-        HelperMethods.permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, new DaySchedule(date, new ArrayList<>()), allDaySchedulePermutations, date);
+        HelperMethods.permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, new DayScheduleAlg(date, new ArrayList<>()), allDaySchedulePermutations, date);
         return allDaySchedulePermutations;
     }
 
@@ -158,10 +154,10 @@ public class GenerateSchedule {
         for (ScheduleAlg combination : schedules) {
             System.out.println("\n NEW SCHEDULE score: " + combination.getScore());
             int x  = 1;
-            for (DaySchedule day : combination.getDaySchedules()) {
+            for (DayScheduleAlg day : combination.getAlgDaySchedules()) {
                 System.out.print(x + ": ");
-                for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
-                    System.out.print(ShiftAssignment.getEmployee().getName() +  ", " + ShiftAssignment.getShift().getType() +"; ");
+                for (ShiftAssignmentAlg ShiftAssignment : day.getAlgAssignments()) {
+                    System.out.print(ShiftAssignment.getEmployee().getName() +  ", " + ShiftAssignment.getShiftAlg().getType() +"; ");
                 }
                 x++;
                 System.out.println();

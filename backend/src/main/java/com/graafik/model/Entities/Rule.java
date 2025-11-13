@@ -1,4 +1,5 @@
-package com.graafik.model;
+package com.graafik.model.Entities;
+
 
 import java.beans.Transient;
 import java.util.List;
@@ -6,12 +7,7 @@ import java.util.UUID;
 
 import com.graafik.converters.IntegerListConverter;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "rules")
@@ -34,12 +30,12 @@ public class Rule extends BaseEntity {
 
     public Rule() {}
 
-    public UUID getShiftId() {
-        return shiftId;
+    public Shift getShift() {
+        return shift;
     }
 
-    public void setShiftId(UUID shiftId) {
-        this.shiftId = shiftId;
+    public void setShift(Shift shift) {
+        this.shift = shift;
     }
 
     public List<Integer> getDaysApplied() {

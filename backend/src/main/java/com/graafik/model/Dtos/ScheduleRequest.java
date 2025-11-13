@@ -1,6 +1,8 @@
-package com.graafik.model;
+package com.graafik.model.Dtos;
 
 import java.util.List;
+
+import com.graafik.model.Entities.*;
 
 public class ScheduleRequest {
     private List<Employee> employees;

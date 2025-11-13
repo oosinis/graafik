@@ -1,23 +1,24 @@
-package com.graafik.model;
+package com.graafik.model.Domain;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.graafik.model.Entities.*;
+import com.graafik.model.Domain.*;
+
 public class ScheduleAlg {
-    private UUID id;
     private int month;
     private int year;
     private int score;
     private long fullTimeMinutes;
     private Map<UUID, Long> employeeHoursInMinutesRemaining;
 
-    private List<DaySchedule> daySchedules;
+    private List<DayScheduleAlg> daySchedules;
 
     public ScheduleAlg() {}
 
-    public ScheduleAlg(UUID id, int month, int year, int score, long fullTimeMinutes, List<DaySchedule> daySchedules, Map<UUID, Long> employeeHoursInMinutesRemaining) {
-        this.id = id;
+    public ScheduleAlg(int month, int year, int score, long fullTimeMinutes, List<DayScheduleAlg> daySchedules, Map<UUID, Long> employeeHoursInMinutesRemaining) {
         this.month = month;
         this.year = year;
         this.score = score;
@@ -25,10 +26,6 @@ public class ScheduleAlg {
         this.daySchedules = daySchedules;
         this.employeeHoursInMinutesRemaining = employeeHoursInMinutesRemaining;
     }
-
-
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
 
     public int getMonth() {
         return month;
@@ -46,11 +43,11 @@ public class ScheduleAlg {
         return fullTimeMinutes;
     }
 
-    public List<DaySchedule> getDaySchedules() { 
+    public List<DayScheduleAlg> getAlgDaySchedules() { 
         return daySchedules;
     }
 
-    public void setDaySchedules(List<DaySchedule> daySchedules) {
+    public void setAlgDaySchedules(List<DayScheduleAlg> daySchedules) {
         this.daySchedules = daySchedules; 
     }
 
@@ -85,28 +82,4 @@ public class ScheduleAlg {
     public void changeEmployeeHours(long x, UUID employeeId) {
         this.employeeHoursInMinutesRemaining.put(employeeId, this.employeeHoursInMinutesRemaining.get(employeeId) + x);
     }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Schedule{");
-        sb.append("month=").append(month);
-        sb.append(", year=").append(year);
-        sb.append(", daySchedules=");
-
-        if (daySchedules == null || daySchedules.isEmpty()) {
-            sb.append("[]");
-        } else {
-            sb.append("\n[\n");
-            for (DaySchedule daySchedule : daySchedules) {
-                sb.append(daySchedule.toString()).append(", \n");
-            }
-            sb.setLength(sb.length() - 2);
-            sb.append("\n]\n");
-        }
-
-        sb.append("}");
-        return sb.toString();
-}
-
 }

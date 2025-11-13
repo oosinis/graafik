@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.graafik.error_magement.BadRequestException;
-import com.graafik.model.*;
+import com.graafik.model.Domain.*;
+import com.graafik.model.Entities.*;
+import com.graafik.model.Dtos.*;
 import com.graafik.repositories.*;
 import com.graafik.schedule.GenerateSchedule;
 import com.graafik.schedule.RegenerateExistingSchedule;
@@ -190,14 +192,18 @@ public class ScheduleService {
             employeeHoursInMinCountingUp.put(employee.getId(), (long) (schedule.getFullTimeMinutes() * employee.getWorkLoad() + schedule.getEmployeeHoursInMinutes().get(employee.getId())));
         }
 
+        List<DaySchedule> daySchedules = new ArrayList<>();
+        for (DayScheduleAlg dayScheduleAlg : schedule.getAlgDaySchedules()) {
+            daySchedules.add(new DaySchedule());
+        }
+
         return new Schedule(
             schedule.getMonth(),
             schedule.getYear(),
             schedule.getScore(),
             schedule.getFullTimeMinutes(),
             schedule.getDaySchedules(),
-            employeeHoursInMinCountingUp,
-            employees
+            employeeHoursInMinCountingUp
         );
     }
 
@@ -207,7 +213,7 @@ public class ScheduleService {
         schedule.setYear(scheduleAlg.getYear());
         schedule.setScore(scheduleAlg.getScore());
         schedule.setDaySchedules(scheduleAlg.getDaySchedules());
-        schedule.setEmployeeHoursInMinutes(scheduleAlg.getEmployeeHoursInMinCountingUp());
+        schedule.setEmployeeHoursInMinutes(scheduleAlg.getEmployeeHoursInMins());
         return schedule;
     }
 
