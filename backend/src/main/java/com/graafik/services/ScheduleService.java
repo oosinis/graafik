@@ -193,8 +193,12 @@ public class ScheduleService {
         }
 
         List<DaySchedule> daySchedules = new ArrayList<>();
-        for (DayScheduleAlg dayScheduleAlg : schedule.getAlgDaySchedules()) {
-            daySchedules.add(new DaySchedule());
+        if (schedule.getAlgDaySchedules() != null) {
+            for (DayScheduleAlg dayScheduleAlg : schedule.getAlgDaySchedules()) {
+                DaySchedule ds = new DaySchedule();
+                ds.setDayOfMonth(dayScheduleAlg.getDayOfMonth());
+                daySchedules.add(ds);
+            }
         }
 
         return new Schedule(
@@ -202,7 +206,7 @@ public class ScheduleService {
             schedule.getYear(),
             schedule.getScore(),
             schedule.getFullTimeMinutes(),
-            schedule.getDaySchedules(),
+            daySchedules,
             employeeHoursInMinCountingUp
         );
     }
@@ -212,7 +216,12 @@ public class ScheduleService {
         schedule.setMonth(scheduleAlg.getMonth());
         schedule.setYear(scheduleAlg.getYear());
         schedule.setScore(scheduleAlg.getScore());
-        schedule.setDaySchedules(scheduleAlg.getDaySchedules());
+        if (scheduleAlg.getDaySchedules() != null) {
+            List<DayScheduleAlg> algDaySchedules = scheduleAlg.getDaySchedules().stream()
+                .map(ds -> new DayScheduleAlg(ds.getDayOfMonth(), new ArrayList<>()))
+                .toList();
+            schedule.setAlgDaySchedules(algDaySchedules);
+        }
         schedule.setEmployeeHoursInMinutes(scheduleAlg.getEmployeeHoursInMins());
         return schedule;
     }
@@ -223,15 +232,15 @@ public class ScheduleService {
         
         if (schedule.getDaySchedules() != null && !schedule.getDaySchedules().isEmpty()) {
             schedule.getDaySchedules().forEach(ds -> {
-                if (ds.getScheduleId() == null) {
-                    ds.setScheduleId(savedSchedule.getId());
+                if (ds.getSchedule() == null) {
+                    ds.setSchedule(savedSchedule);
                 }
 
                 if (ds.getAssignments() != null && !ds.getAssignments().isEmpty()) {
                     var savedDaySchedule = dayScheduleRepository.save(ds);
                     ds.getAssignments().forEach(sa -> {
-                        if (sa.getDayScheduleId() == null) {
-                            sa.setDayScheduleId(savedDaySchedule.getId());
+                        if (sa.getDaySchedule() == null) {
+                            sa.setDaySchedule(savedDaySchedule);
                         }
                     });
                     shiftAssignmentRepository.saveAll(ds.getAssignments());

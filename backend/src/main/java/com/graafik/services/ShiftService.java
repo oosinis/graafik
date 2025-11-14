@@ -42,8 +42,8 @@ public class ShiftService {
 
         if (shift.getRules() != null && !shift.getRules().isEmpty()) {
             shift.getRules().forEach(rule -> {
-                if (rule.getShiftId() == null) {
-                    rule.setShiftId(savedShift.getId());
+                if (rule.getShift() == null) {
+                    rule.setShift(savedShift);
                 }
             });
             ruleRepository.saveAll(shift.getRules());

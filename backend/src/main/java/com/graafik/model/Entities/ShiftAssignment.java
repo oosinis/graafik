@@ -34,7 +34,7 @@ public class ShiftAssignment extends BaseEntity {
         return daySchedule;
     }
 
-    public void setDayScheduleId (DaySchedule daySchedule) {
+    public void setDaySchedule(DaySchedule daySchedule) {
         this.daySchedule = daySchedule;
     }
 
