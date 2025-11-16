@@ -13,6 +13,18 @@ export default function RolesPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
+  const fetchRoles = async () => {
+    setLoading(true);
+    try {
+      const data = await RoleService.getAll();
+      setRoles(data);
+    } catch (err) {
+      console.error('Failed to fetch roles', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -31,9 +43,20 @@ export default function RolesPage() {
     loadData();
   }, []);
 
-  const handleAddRole = () => {
-    // TODO: Implement add role modal/form
-    console.log('Add role clicked');
+  const handleAddRole = async (roleData: Partial<Role>) => {
+    try {
+      console.log('Sending role:', roleData);
+      const created = await RoleService.create(roleData);
+      if (created) {
+        setRoles((prev) => [created, ...prev]);
+      } else {
+        await fetchRoles();
+      }
+    } catch (err) {
+      console.error('Failed to create role', err);
+    } finally {
+      setShowModal(false);
+    }
   };
 
   const handleDeleteRole = async (roleName: string) => {
