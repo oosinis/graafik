@@ -1,11 +1,9 @@
 package com.graafik.model.Entities;
 
-
-import java.util.UUID;
-
-import com.graafik.model.Entities.*;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "shift_assignments")

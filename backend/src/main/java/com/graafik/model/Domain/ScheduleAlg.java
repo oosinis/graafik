@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.graafik.model.Entities.*;
-import com.graafik.model.Domain.*;
-
 public class ScheduleAlg {
     private int month;
     private int year;

@@ -1,9 +1,8 @@
 package com.graafik.model.Domain;
 
 import java.util.List;
-import java.util.UUID;
 
-import com.graafik.model.Entities.*;
+import com.graafik.model.Entities.Employee;
 
 public class DayScheduleAlg {
     

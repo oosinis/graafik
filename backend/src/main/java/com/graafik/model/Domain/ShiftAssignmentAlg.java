@@ -1,7 +1,5 @@
 package com.graafik.model.Domain;
 
-import java.util.UUID;
-
 import com.graafik.model.Entities.Employee;
 
 public class ShiftAssignmentAlg {
