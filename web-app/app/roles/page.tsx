@@ -99,7 +99,7 @@ export default function RolesPage() {
           onClick={() => setShowModal(false)}
         >
           <div
-            className="bg-white rounded-lg p-4 w-[600px]"
+            className="bg-white rounded-lg p-4 w-full max-w-[600px] mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             <AddRole
