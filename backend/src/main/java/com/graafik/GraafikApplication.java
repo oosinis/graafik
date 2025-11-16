@@ -8,6 +8,7 @@ public class GraafikApplication {
 
 
 	public static void main(String[] args) {
+		//mvn spring-boot:run
 		SpringApplication.run(GraafikApplication.class, args);
 	}
 }

@@ -11,11 +11,16 @@ export function SidebarNavigation() {
   const pathname = usePathname()
 
   const navItems = [
-    /*{
+    {
       name: "Dashboard",
-      href: "/",
-      icon: LayoutDashboard,
-    },*/
+      href: "/dashboard",
+      icon: PenTool,
+    },
+    {
+      name: "Dashboard2",
+      href: "/dashboard2",
+      icon: PenTool,
+    },
     {
       name: "Generator",
       href: "/generator",
@@ -37,17 +42,32 @@ export function SidebarNavigation() {
       icon: Calendar,
     },
     {
+      name: "Employees",
+      href: "/employees",
+      icon: Calendar,
+    },
+    {
+      name: "Generator 2",
+      href: "/generator2",
+      icon: Calendar,
+    },
+    {
+      name: "Roles",
+      href: "/roles",
+      icon: Calendar,
+    },
+    {
       name: "Logout",
       href: "/logout",
       icon: LogOut,
     },
-   /* {
-      name: "Schedule history",
-      href: "/schedule-history",
-      icon: Calendar,
-    },*/
+    /* {
+       name: "Schedule history",
+       href: "/schedule-history",
+       icon: Calendar,
+     },*/
   ]
-  
+
   return (
     <nav className={styles.nav}>
       <h1 className={styles.title} hidden>Schedule planner</h1>

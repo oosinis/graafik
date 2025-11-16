@@ -1,6 +1,5 @@
-import React from 'react';
-
-export default function ShiftsLayout({
+// app/employees/layout.tsx
+export default function EmployeesLayout({
   children,
 }: {
   children: React.ReactNode;
