@@ -5,7 +5,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "employees")
@@ -24,7 +32,7 @@ public class Employee extends BaseEntity {
         joinColumns = @JoinColumn(name = "employee_id"),
         inverseJoinColumns = @JoinColumn(name = "shift_id")
     )
-    private List<UUID> assignedShifts;
+    private List<Shift> assignedShifts;
     
     @ElementCollection
     @CollectionTable(name = "employee_desired_vacation_days", joinColumns = @JoinColumn(name = "employee_id"))
@@ -74,11 +82,11 @@ public class Employee extends BaseEntity {
         this.name = name;
     }
 
-    public List<UUID> getAssignedShifts() {
+    public List<Shift> getAssignedShifts() {
         return assignedShifts;
     }
 
-    public void setAssignedShifts(List<UUID> assignedShifts) {
+    public void setAssignedShifts(List<Shift> assignedShifts) {
         this.assignedShifts = assignedShifts;
     }
 
