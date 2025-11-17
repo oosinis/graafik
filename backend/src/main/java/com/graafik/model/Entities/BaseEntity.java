@@ -1,4 +1,4 @@
-package com.graafik.model;
+package com.graafik.model.Entities;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

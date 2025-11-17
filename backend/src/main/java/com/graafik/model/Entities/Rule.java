@@ -1,7 +1,6 @@
-package com.graafik.model;
+package com.graafik.model.Entities;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.graafik.converters.IntegerListConverter;
 
@@ -10,14 +9,17 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "rules")
 public class Rule extends BaseEntity {
 
-    @Column(name =  "shift_id")
-    private UUID shiftId;
+    @ManyToOne
+    @JoinColumn(name = "shift_id", referencedColumnName = "id")
+    private Shift shift;
 
     @Convert(converter = IntegerListConverter.class)
     @Column(name = "days_applied")
@@ -32,12 +34,12 @@ public class Rule extends BaseEntity {
 
     public Rule() {}
 
-    public UUID getShiftId() {
-        return shiftId;
+    public Shift getShift() {
+        return shift;
     }
 
-    public void setShiftId(UUID shiftId) {
-        this.shiftId = shiftId;
+    public void setShift(Shift shift) {
+        this.shift = shift;
     }
 
     public List<Integer> getDaysApplied() {

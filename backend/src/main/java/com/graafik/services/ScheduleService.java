@@ -1,19 +1,20 @@
 package com.graafik.services;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.graafik.dto.ScheduleDTO;
 import com.graafik.error_magement.BadRequestException;
-import com.graafik.model.*;
+import com.graafik.model.Domain.*;
+import com.graafik.model.Entities.*;
+import com.graafik.model.Dtos.*;
 import com.graafik.repositories.*;
 import com.graafik.schedule.GenerateSchedule;
 import com.graafik.schedule.RegenerateExistingSchedule;
@@ -24,25 +25,25 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final ShiftService shiftService;
-    private final WorkerRepository workerRepository;
+    private final EmployeeRepository employeeRepository;
     private final DayScheduleRepository dayScheduleRepository;
     private final ShiftAssignmentRepository shiftAssignmentRepository;
 
 
     public ScheduleService(ScheduleRepository scheduleRepository, 
                         ShiftService shiftService, 
-                        WorkerRepository workerRepository,
+                        EmployeeRepository employeeRepository,
                         DayScheduleRepository dayScheduleRepository,
                         ShiftAssignmentRepository shiftAssignmentRepository) {
         this.scheduleRepository = scheduleRepository;
         this.shiftService = shiftService;
-        this.workerRepository = workerRepository;
+        this.employeeRepository = employeeRepository;
         this.dayScheduleRepository = dayScheduleRepository;
         this.shiftAssignmentRepository = shiftAssignmentRepository;
     }
 
     @Transactional
-    public ScheduleDTO createSchedule(ScheduleRequest request) {
+    public Schedule createSchedule(ScheduleRequest request) {
         try {
 
             if (request.getShifts() == null || request.getShifts().isEmpty()) {
@@ -55,8 +56,8 @@ public class ScheduleService {
                 }
             }
 
-            if (request.getWorkers() == null || request.getWorkers().isEmpty()) {
-                throw new BadRequestException("No workers provided for schedule creation.");
+            if (request.getEmployees() == null || request.getEmployees().isEmpty()) {
+                throw new BadRequestException("No employees provided for schedule creation.");
             }
 
             List<Shift> managedShifts = request.getShifts().stream()
@@ -67,25 +68,30 @@ public class ScheduleService {
                 .toList();
             request.setShifts(managedShifts);
 
-            List<Worker> managedWorkers = request.getWorkers().stream()
-                .map(workerRepository::save)
+            List<Employee> managedEmployees = request.getEmployees().stream()
+                .map(employeeRepository::save)
                 .toList();
-            request.setWorkers(managedWorkers);
+            request.setEmployees(managedEmployees);
 
+            
+            List<ShiftAlg> shifts = new ArrayList<>();
+            for (Shift shift : managedShifts) { shifts.add(ShiftService.toAlg(shift)); }
 
-            List<Schedule> schedules = GenerateSchedule.generateSchedule(request);
+            ScheduleRequestAlg requestAlg = new ScheduleRequestAlg(managedEmployees, shifts, request.getMonth(), request.getFullTimeMinutes());
+
+            List<ScheduleAlg> schedules = GenerateSchedule.generateSchedule(requestAlg);
 
             if (schedules == null || schedules.isEmpty()) {
                 throw new BadRequestException("Schedule generation failed: no valid schedule produced from input data.");
             }
 
-            Schedule schedule = schedules.stream()
-                .max(Comparator.comparingDouble(Schedule::getScore))
+            ScheduleAlg schedule = schedules.stream()
+                .max(Comparator.comparingDouble(ScheduleAlg::getScore))
                 .orElse(null);
 
-            saveSchedule(schedule);
+            saveSchedule(fromAlg(schedule));
 
-            return toDTO(schedule);
+            return fromAlg(schedule);
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
@@ -96,15 +102,14 @@ public class ScheduleService {
 
 
     @Transactional
-    public List<ScheduleDTO> getAllSchedules() {
+    public List<Schedule> getAllSchedules() {
         return scheduleRepository.findAll()
                 .stream()
-                .map(this::toDTO)
                 .toList();
     }
 
     @Transactional
-    public Optional<ScheduleDTO> getScheduleById(UUID scheduleId) {
+    public Optional<Schedule> getScheduleById(UUID scheduleId) {
         return scheduleRepository.findById(scheduleId)
                 .map(schedule -> {
                     List<DaySchedule> daySchedules = dayScheduleRepository.findByScheduleId(scheduleId);
@@ -113,12 +118,12 @@ public class ScheduleService {
                         ds.setAssignments(assignments);
                     });
                     schedule.setDaySchedules(daySchedules);
-                    return toDTO(schedule);
+                    return schedule;
                 });
     }
 
     @Transactional
-    public Optional<ScheduleDTO> getLatestScheduleByMonthAndYear(int month, int year) {
+    public Optional<Schedule> getLatestScheduleByMonthAndYear(int month, int year) {
         return scheduleRepository.findFirstByMonthAndYearOrderByCreatedAtDesc(month, year)
                 .map(schedule -> {
                     List<DaySchedule> daySchedules = dayScheduleRepository.findByScheduleId(schedule.getId());
@@ -127,31 +132,30 @@ public class ScheduleService {
                         ds.setAssignments(assignments);
                     });
                     schedule.setDaySchedules(daySchedules);
-                    return toDTO(schedule);
+                    return schedule;
                 });
     }
 
     // TODO
     // rn saves the new schedule by default
     // should display multiple schedules to the user save the one they choose
-    public Optional<ScheduleDTO> updateSchedule(
-            ScheduleRequest scheduleRequest,
+    public Optional<Schedule> updateSchedule(
+            ScheduleRequestAlg scheduleRequest,
             UUID scheduleId,
             int startDate,
             int endDate,
-            Worker missingWorker
+            Employee missingEmployee
     ) {
         Optional<Schedule> currentScheduleOpt = scheduleRepository.findById(scheduleId);
         if (currentScheduleOpt.isEmpty()) return Optional.empty();
 
         Schedule currentSchedule = currentScheduleOpt.get();
 
-        List<Schedule> schedules = RegenerateExistingSchedule.regenerateSchedule(
-                scheduleRequest,
-                currentSchedule,
+        List<ScheduleAlg> schedules = RegenerateExistingSchedule.regenerateSchedule(scheduleRequest,
+                toAlg(currentSchedule),
                 startDate,
                 endDate,
-                missingWorker
+                missingEmployee
         );
 
         if (schedules == null || schedules.isEmpty()) {
@@ -159,8 +163,10 @@ public class ScheduleService {
         }
 
 
-        Schedule saved = scheduleRepository.save(schedules.get(0));
-        return Optional.of(toDTO(saved));
+        // TODO best not first
+        Schedule saved = scheduleRepository.save(fromAlg(schedules.get(0)));
+
+        return Optional.of(saved);
     }
 
 
@@ -172,41 +178,51 @@ public class ScheduleService {
         return false;
     }
 
-    private ScheduleDTO toDTO(Schedule schedule) {
-        // Get all workers referenced in workerHours
+    private Schedule fromAlg(ScheduleAlg schedule) {
+        // Get all employees referenced in employeeHours
         // Tuleb muuta see halb lahendus
-        List<Worker> workers = schedule.getWorkerHoursInMinutes().keySet().stream()
-            .map(workerId -> workerRepository.findById(workerId).orElse(null))
-            .filter(worker -> worker != null)
+        List<Employee> employees = schedule.getEmployeeHoursInMinutes().keySet().stream()
+            .map(employeeId -> employeeRepository.findById(employeeId).orElse(null))
+            .filter(employee -> employee != null)
             .toList();
 
-
-        int fullTimeHours = schedule.getFullTimeMinutes() / 60;
         
-        Map<UUID, Integer> workerHours = new HashMap<>();
-        for (Worker worker : workers) {
-            workerHours.put(worker.getId(), (int) (schedule.getFullTimeMinutes() * worker.getWorkLoad() + schedule.getWorkerHoursInMinutes().get(worker.getId())) / 60);
+        Map<UUID, Long> employeeHoursInMinCountingUp = new HashMap<>();
+        for (Employee employee : employees) {
+            employeeHoursInMinCountingUp.put(employee.getId(), (long) (schedule.getFullTimeMinutes() * employee.getWorkLoad() + schedule.getEmployeeHoursInMinutes().get(employee.getId())));
         }
 
-        return new ScheduleDTO(
-            schedule.getId(),
+        List<DaySchedule> daySchedules = new ArrayList<>();
+        if (schedule.getAlgDaySchedules() != null) {
+            for (DayScheduleAlg dayScheduleAlg : schedule.getAlgDaySchedules()) {
+                DaySchedule ds = new DaySchedule();
+                ds.setDayOfMonth(dayScheduleAlg.getDayOfMonth());
+                daySchedules.add(ds);
+            }
+        }
+
+        return new Schedule(
             schedule.getMonth(),
             schedule.getYear(),
             schedule.getScore(),
-            fullTimeHours,
-            schedule.getDaySchedules(),
-            workerHours,
-            workers
+            schedule.getFullTimeMinutes(),
+            daySchedules,
+            employeeHoursInMinCountingUp
         );
     }
 
-    private Schedule fromDTO(ScheduleDTO dto, List<DaySchedule> daySchedules) {
-        Schedule schedule = new Schedule();
-        schedule.setMonth(dto.getMonth());
-        schedule.setYear(dto.getYear());
-        schedule.setScore(dto.getScore());
-        schedule.setDaySchedules(daySchedules);
-        schedule.setWorkerHoursInMinutes(dto.getWorkerHours());
+    private ScheduleAlg toAlg(Schedule scheduleAlg) {
+        ScheduleAlg schedule = new ScheduleAlg();
+        schedule.setMonth(scheduleAlg.getMonth());
+        schedule.setYear(scheduleAlg.getYear());
+        schedule.setScore(scheduleAlg.getScore());
+        if (scheduleAlg.getDaySchedules() != null) {
+            List<DayScheduleAlg> algDaySchedules = scheduleAlg.getDaySchedules().stream()
+                .map(ds -> new DayScheduleAlg(ds.getDayOfMonth(), new ArrayList<>()))
+                .toList();
+            schedule.setAlgDaySchedules(algDaySchedules);
+        }
+        schedule.setEmployeeHoursInMinutes(scheduleAlg.getEmployeeHoursInMins());
         return schedule;
     }
 
@@ -216,15 +232,15 @@ public class ScheduleService {
         
         if (schedule.getDaySchedules() != null && !schedule.getDaySchedules().isEmpty()) {
             schedule.getDaySchedules().forEach(ds -> {
-                if (ds.getScheduleId() == null) {
-                    ds.setScheduleId(savedSchedule.getId());
+                if (ds.getSchedule() == null) {
+                    ds.setSchedule(savedSchedule);
                 }
 
                 if (ds.getAssignments() != null && !ds.getAssignments().isEmpty()) {
                     var savedDaySchedule = dayScheduleRepository.save(ds);
                     ds.getAssignments().forEach(sa -> {
-                        if (sa.getDayScheduleId() == null) {
-                            sa.setDayScheduleId(savedDaySchedule.getId());
+                        if (sa.getDaySchedule() == null) {
+                            sa.setDaySchedule(savedDaySchedule);
                         }
                     });
                     shiftAssignmentRepository.saveAll(ds.getAssignments());

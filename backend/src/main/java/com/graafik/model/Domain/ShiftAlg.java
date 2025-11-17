@@ -1,34 +1,39 @@
-package com.graafik.model;
+package com.graafik.model.Domain;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import com.graafik.model.Entities.*;
 
 
-@Entity
-@Table(name = "shifts")
-public class Shift extends BaseEntity {
+public class ShiftAlg {
+    private UUID id;
 
-    @Column(nullable = false)
     private String type;
 
-    @Column(nullable = false)
-    private int durationInMinutes;
+    private long durationInMinutes;
 
-    @Transient
     private List<Rule> rules;
 
-    public Shift() {}
+    public ShiftAlg() {}
+
+    public ShiftAlg(UUID id, String type,  long durationInMinutes, List<Rule> rules) {
+        this.id = id;
+        this.type = type;
+        this.durationInMinutes = durationInMinutes;
+        this.rules = rules;
+    }
+
+
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
     public String getType() {
         return type;
     }
 
-    public int getDurationInMinutes() {
+    public long getDurationInMinutes() {
         return durationInMinutes;
     }
 
@@ -52,7 +57,7 @@ public class Shift extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Shift shift = (Shift) o;
+        ShiftAlg shift = (ShiftAlg) o;
         return durationInMinutes == shift.durationInMinutes && type.equals(shift.type);
     }
 

@@ -17,28 +17,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.graafik.dto.ScheduleDTO;
-import com.graafik.model.ScheduleRequest;
-import com.graafik.model.Worker;
+import com.graafik.model.Domain.*;
+import com.graafik.model.Entities.*;
+import com.graafik.model.Dtos.*;
 import com.graafik.services.ScheduleService;
-import com.graafik.services.WorkerService;
+import com.graafik.services.EmployeeService;
 
 @RestController
 @RequestMapping("/api/schedules")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
-    private final WorkerService workerService;
+    private final EmployeeService employeeService;
 
-    public ScheduleController(ScheduleService scheduleService, WorkerService workerService) {
+    public ScheduleController(ScheduleService scheduleService, EmployeeService employeeService) {
         this.scheduleService = scheduleService;
-        this.workerService = workerService;
+        this.employeeService = employeeService;
     }
 
     @PostMapping
-    public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequest scheduleRequest) {
+    public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequest scheduleRequestDTO) {
 
-        ScheduleDTO schedule = scheduleService.createSchedule(scheduleRequest);
+        Schedule schedule = scheduleService.createSchedule(scheduleRequestDTO);
 
         return ResponseEntity
                 .created(URI.create("/api/schedules/" + schedule.getId()))
@@ -47,24 +47,24 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ScheduleDTO>> getAllSchedules() {
-        List<ScheduleDTO> schedules = scheduleService.getAllSchedules();
+    public ResponseEntity<List<Schedule>> getAllSchedules() {
+        List<Schedule> schedules = scheduleService.getAllSchedules();
         return ResponseEntity.ok(schedules);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ScheduleDTO> getScheduleById(@PathVariable UUID id) {
-        Optional<ScheduleDTO> scheduleOpt = scheduleService.getScheduleById(id);
+    public ResponseEntity<Schedule> getScheduleById(@PathVariable UUID id) {
+        Optional<Schedule> scheduleOpt = scheduleService.getScheduleById(id);
         return scheduleOpt
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<ScheduleDTO> getLatestScheduleByMonthAndYear(
+    public ResponseEntity<Schedule> getLatestScheduleByMonthAndYear(
             @RequestParam int month,
             @RequestParam int year) {
-        Optional<ScheduleDTO> scheduleOpt = scheduleService.getLatestScheduleByMonthAndYear(month, year);
+        Optional<Schedule> scheduleOpt = scheduleService.getLatestScheduleByMonthAndYear(month, year);
         return scheduleOpt
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -73,32 +73,32 @@ public class ScheduleController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateSchedule(
             @PathVariable UUID id,
-            @RequestBody ScheduleRequest scheduleRequest,
+            @RequestBody ScheduleRequestAlg scheduleRequest,
             @RequestParam int startDate,
             @RequestParam int endDate,
-            @RequestParam UUID workerId
+            @RequestParam UUID employeeId
     ) {
 
-        Optional<Worker> workerOpt = workerService.getWorkerById(workerId);
-        if (workerOpt.isEmpty()) {
+        Optional<Employee> employeeOpt = employeeService.getEmployeeById(employeeId);
+        if (employeeOpt.isEmpty()) {
             return ResponseEntity
                 .status(404)
-                .body(Map.of("error", "Worker with id " + workerId + " not found"));
+                .body(Map.of("error", "Employee with id " + employeeId + " not found"));
         }
 
-        Optional<ScheduleDTO> scheduleOpt = scheduleService.getScheduleById(id);
+        Optional<Schedule> scheduleOpt = scheduleService.getScheduleById(id);
         if (scheduleOpt.isEmpty()) {
             return ResponseEntity
                 .status(404)
                 .body(Map.of("error", "Schedule with id " + id + " not found"));
         }
 
-        Optional<ScheduleDTO> updatedOpt = scheduleService.updateSchedule(
+        Optional<Schedule> updatedOpt = scheduleService.updateSchedule(
                 scheduleRequest,
                 id,
                 startDate,
                 endDate,
-                workerOpt.get()
+                employeeOpt.get()
         );
 
         if (updatedOpt.isEmpty()) {

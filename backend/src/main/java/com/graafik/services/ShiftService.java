@@ -1,13 +1,15 @@
 package com.graafik.services;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.graafik.model.Rule;
-import com.graafik.model.Shift;
+import com.graafik.model.Domain.ShiftAlg;
+import com.graafik.model.Entities.Rule;
+import com.graafik.model.Entities.Shift;
 import com.graafik.repositories.RuleRepository;
 import com.graafik.repositories.ShiftRepository;
 
@@ -42,8 +44,8 @@ public class ShiftService {
 
         if (shift.getRules() != null && !shift.getRules().isEmpty()) {
             shift.getRules().forEach(rule -> {
-                if (rule.getShiftId() == null) {
-                    rule.setShiftId(savedShift.getId());
+                if (rule.getShift() == null) {
+                    rule.setShift(savedShift);
                 }
             });
             ruleRepository.saveAll(shift.getRules());
@@ -61,5 +63,11 @@ public class ShiftService {
             return true;
         }
         return false;
+    }
+
+
+    public static ShiftAlg toAlg(Shift shiftDTO) {
+
+        return new ShiftAlg(shiftDTO.getId(), shiftDTO.getType(), Duration.between(shiftDTO.getStartTime(), shiftDTO.getEndTime()).toMinutes(), shiftDTO.getRules());
     }
 }

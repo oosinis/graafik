@@ -8,24 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
-import com.graafik.model.DaySchedule;
-import com.graafik.model.Rule;
-import com.graafik.model.Schedule;
-import com.graafik.model.ScheduleRequest;
-import com.graafik.model.Shift;
-import com.graafik.model.ShiftAssignment;
-import com.graafik.model.Worker;
+import com.graafik.model.Domain.*;
+import com.graafik.model.Entities.*;
 
 
 public class HelperMethods {
 
-    public static List<Shift> getShiftsForDay(ScheduleRequest scheduleRequest, int date) {
+    public static List<ShiftAlg> getShiftsForDay(ScheduleRequestAlg scheduleRequest, int date) {
 
         int dayOfWeekInt = LocalDate.of(2025, scheduleRequest.getMonth(), date + 1).getDayOfWeek().getValue();
 
-        List<Shift> dayShifts = new ArrayList<>();
-        for (Shift shift : scheduleRequest.getShifts()) {
+        List<ShiftAlg> dayShifts = new ArrayList<>();
+        for (ShiftAlg shift : scheduleRequest.getShifts()) {
             for (Rule rule : shift.getRules()) {
                 if (!rule.getDaysApplied().contains(dayOfWeekInt)) continue;
                 for (int i = 0; i < rule.getPerDay(); i++) {
@@ -37,67 +31,67 @@ public class HelperMethods {
         return dayShifts;
     }   
 
-    // TODO: kontrolli, kas date mis on workeri listis algab nullist
-    public static Map<UUID, List<Worker>> getRequestedWorkDays(ScheduleRequest scheduleRequest, int date) {
-        Map<UUID, List<Worker>> requestedWorkDays = new HashMap<>();
-        for (Worker worker : scheduleRequest.getWorkers()) {
-            for (Map.Entry<Integer, UUID> entry : worker.getRequestedWorkDays().entrySet()) {
+    // TODO: kontrolli, kas date mis on employeei listis algab nullist
+    public static Map<UUID, List<Employee>> getRequestedWorkDays(ScheduleRequestAlg scheduleRequest, int date) {
+        Map<UUID, List<Employee>> requestedWorkDays = new HashMap<>();
+        for (Employee employee : scheduleRequest.getEmployees()) {
+            for (Map.Entry<Integer, UUID> entry : employee.getRequestedWorkDays().entrySet()) {
                 if (entry.getKey() != date) continue;
-                if (requestedWorkDays.containsKey(entry.getValue())) requestedWorkDays.get(entry.getValue()).add(worker);
-                else requestedWorkDays.put(entry.getValue(), new ArrayList<>(Arrays.asList(worker)));
+                if (requestedWorkDays.containsKey(entry.getValue())) requestedWorkDays.get(entry.getValue()).add(employee);
+                else requestedWorkDays.put(entry.getValue(), new ArrayList<>(Arrays.asList(employee)));
             }
         }
         return requestedWorkDays;
     }  
 
-    public static void initWorkerHoursInMinutes(Schedule currentSchedule, ScheduleRequest scheduleRequest) {
-        currentSchedule.setWorkerHoursInMinutes(new HashMap<>());
-        for (Worker worker : scheduleRequest.getWorkers()) {
-            currentSchedule.getWorkerHoursInMinutes().put(worker.getId(), (int) (worker.getWorkLoad() * scheduleRequest.getFullTimeHours() * 60));
+    public static void initEmployeeHoursInMinutes(ScheduleAlg currentSchedule, ScheduleRequestAlg scheduleRequest) {
+        currentSchedule.setEmployeeHoursInMinutes(new HashMap<>());
+        for (Employee employee : scheduleRequest.getEmployees()) {
+            currentSchedule.getEmployeeHoursInMinutes().put(employee.getId(), (long) (employee.getWorkLoad() * scheduleRequest.getFullTimeMinutes() * 60));
         }
     }
 
-    public static void addToWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
-        for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
-            //System.out.println("ADD: " + shiftAssignment.getShift().getDuration() + ", " + shiftAssignment.getWorker().getId());
-            currentSchedule.changeWorkerHours(shiftAssignment.getShift().getDurationInMinutes(), shiftAssignment.getWorker().getId());
+    public static void addToEmployeeHours(ScheduleAlg currentSchedule, DayScheduleAlg currentDayShiftAssignments) {
+        for (ShiftAssignmentAlg shiftAssignment : currentDayShiftAssignments.getAlgAssignments()) {
+            //System.out.println("ADD: " + shiftAssignment.getShift().getDuration() + ", " + shiftAssignment.getemployee().getId());
+            currentSchedule.changeEmployeeHours(shiftAssignment.getShiftAlg().getDurationInMinutes(), shiftAssignment.getEmployee().getId());
         }
     }
 
-    public static void substractFromWorkerHours(Schedule currentSchedule, DaySchedule currentDayShiftAssignments) {
-        for (ShiftAssignment shiftAssignment : currentDayShiftAssignments.getAssignments()) {
-            //System.out.println("SUBSTRACT: " + shiftAssignment.getShift().getDuration() + ", " + shiftAssignment.getWorker().getId());
+    public static void substractFromEmployeeHours(ScheduleAlg currentSchedule, DayScheduleAlg currentDayShiftAssignments) {
+        for (ShiftAssignmentAlg shiftAssignment : currentDayShiftAssignments.getAlgAssignments()) {
+            //System.out.println("SUBSTRACT: " + shiftAssignment.getShift().getDuration() + ", " + shiftAssignment.getemployee().getId());
 
-            currentSchedule.changeWorkerHours(-shiftAssignment.getShift().getDurationInMinutes(), shiftAssignment.getWorker().getId());
+            currentSchedule.changeEmployeeHours(-shiftAssignment.getShiftAlg().getDurationInMinutes(), shiftAssignment.getEmployee().getId());
         }
     }
 
 
     // ClONING
-    public static Schedule cloneSchedule(Schedule original) {
-    Schedule cloned = new Schedule();
+    public static ScheduleAlg cloneSchedule(ScheduleAlg original) {
+    ScheduleAlg cloned = new ScheduleAlg();
     cloned.setMonth(original.getMonth());
     cloned.setYear(original.getYear());
     cloned.setScore(original.getScore());
     cloned.setFullTimeMinutes(original.getFullTimeMinutes());
-    cloned.setWorkerHoursInMinutes(new HashMap<>(original.getWorkerHoursInMinutes()));
+    cloned.setEmployeeHoursInMinutes(new HashMap<>(original.getEmployeeHoursInMinutes()));
 
-    if (original.getDaySchedules() != null) {
-        List<DaySchedule> clonedDaySchedules = new ArrayList<>();
-        for (DaySchedule daySchedule : original.getDaySchedules()) {
+    if (original.getAlgDaySchedules() != null) {
+        List<DayScheduleAlg> clonedDaySchedules = new ArrayList<>();
+        for (DayScheduleAlg daySchedule : original.getAlgDaySchedules()) {
             clonedDaySchedules.add(cloneDaySchedule(daySchedule));
         }
-        cloned.setDaySchedules(clonedDaySchedules);
+        cloned.setAlgDaySchedules(clonedDaySchedules);
     }
 
     return cloned;
     }
 
-    public static DaySchedule cloneDaySchedule(DaySchedule original) {
-        DaySchedule cloned = new DaySchedule(original.getDayOfMonth(), new ArrayList<>());
+    public static DayScheduleAlg cloneDaySchedule(DayScheduleAlg original) {
+        DayScheduleAlg cloned = new DayScheduleAlg(original.getDayOfMonth(), new ArrayList<>());
 
-        for (ShiftAssignment assignment : original.getAssignments()) {
-            cloned.getAssignments().add(new ShiftAssignment(assignment.getShift(), assignment.getWorker()));
+        for (ShiftAssignmentAlg assignment : original.getAlgAssignments()) {
+            cloned.getAlgAssignments().add(new ShiftAssignmentAlg(assignment.getShiftAlg(), assignment.getEmployee()));
         }
 
         return cloned;
@@ -112,32 +106,32 @@ public class HelperMethods {
      * @param allDaySchedulePermutations
      * @param date
      */
-    public static void permuteHelper(ScheduleRequest scheduleRequest, List<Shift> currentDayShifts, Map<UUID, List<Worker>> currentRequestedWorkDays, DaySchedule currentDaySchedule, List<DaySchedule> allDaySchedulePermutations, int date) {
+    public static void permuteHelper(ScheduleRequestAlg scheduleRequest, List<ShiftAlg> currentDayShifts, Map<UUID, List<Employee>> currentRequestedWorkDays, DayScheduleAlg currentDaySchedule, List<DayScheduleAlg> allDaySchedulePermutations, int date) {
 
-        // if all shifts have a worker assigned for them, return
-        if (currentDaySchedule.getAssignments().size() == currentDayShifts.size()) {
-            DaySchedule clonedDaySchedule = HelperMethods.cloneDaySchedule(currentDaySchedule);
+        // if all shifts have a employee assigned for them, return
+        if (currentDaySchedule.getAlgAssignments().size() == currentDayShifts.size()) {
+            DayScheduleAlg clonedDaySchedule = HelperMethods.cloneDaySchedule(currentDaySchedule);
             allDaySchedulePermutations.add(clonedDaySchedule);
             return;
         }
 
-        for (Worker worker : scheduleRequest.getWorkers()) {
+        for (Employee employee : scheduleRequest.getEmployees()) {
 
             // skip vacation days
             // +1 bc the dates start from 1
-            if (worker.getVacationDays().contains(date + 1)) continue;
-            if (worker.getSickDays().contains(date + 1)) continue;
+            if (employee.getVacationDays().contains(date + 1)) continue;
+            if (employee.getSickDays().contains(date + 1)) continue;
 
-            Shift shift = (currentDayShifts.get(currentDaySchedule.getAssignments().size()));
+            ShiftAlg shift = (currentDayShifts.get(currentDaySchedule.getAlgAssignments().size()));
 
-            if (!RuleValidator.initialValidator(currentRequestedWorkDays, shift, worker)) continue;
+            if (!RuleValidator.initialValidator(currentRequestedWorkDays, shift, employee)) continue;
 
-            ShiftAssignment ShiftAssignment = new ShiftAssignment(shift, worker);
+            ShiftAssignmentAlg shiftAssignment = new ShiftAssignmentAlg(shift, employee);
 
-            if (DaySchedule.containsWorker(currentDaySchedule, worker) == null) {
-                currentDaySchedule.getAssignments().add(ShiftAssignment);
+            if (DayScheduleAlg.containsEmployee(currentDaySchedule, employee) == null) {
+                currentDaySchedule.getAlgAssignments().add(shiftAssignment);
                 permuteHelper(scheduleRequest, currentDayShifts, currentRequestedWorkDays, currentDaySchedule, allDaySchedulePermutations, date);
-                currentDaySchedule.getAssignments().removeLast();
+                currentDaySchedule.getAlgAssignments().removeLast();
             
             }
 
