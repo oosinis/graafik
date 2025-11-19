@@ -70,4 +70,5 @@ public class ShiftService {
 
         return new ShiftAlg(shiftDTO.getId(), shiftDTO.getType(), Duration.between(shiftDTO.getStartTime(), shiftDTO.getEndTime()).toMinutes(), shiftDTO.getRules());
     }
+
 }
