@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.graafik.model.Entities.*;
+
 public class ScheduleAlg {
     private int month;
     private int year;
@@ -11,11 +13,11 @@ public class ScheduleAlg {
     private long fullTimeMinutes;
     private Map<UUID, Long> employeeHoursInMinutesRemaining;
 
-    private List<DayScheduleAlg> daySchedules;
+    private List<DaySchedule> daySchedules;
 
     public ScheduleAlg() {}
 
-    public ScheduleAlg(int month, int year, int score, long fullTimeMinutes, List<DayScheduleAlg> daySchedules, Map<UUID, Long> employeeHoursInMinutesRemaining) {
+    public ScheduleAlg(int month, int year, int score, long fullTimeMinutes, List<DaySchedule> daySchedules, Map<UUID, Long> employeeHoursInMinutesRemaining) {
         this.month = month;
         this.year = year;
         this.score = score;
@@ -40,11 +42,11 @@ public class ScheduleAlg {
         return fullTimeMinutes;
     }
 
-    public List<DayScheduleAlg> getAlgDaySchedules() { 
+    public List<DaySchedule> getDaySchedules() { 
         return daySchedules;
     }
 
-    public void setAlgDaySchedules(List<DayScheduleAlg> daySchedules) {
+    public void setDaySchedules(List<DaySchedule> daySchedules) {
         this.daySchedules = daySchedules; 
     }
 
