@@ -49,5 +49,9 @@ public class Shift extends BaseEntity {
    public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
 
     public void setRules(List<Rule> rules) { this.rules = rules; }
+
+    public long getDurationInMinutes() {
+        return java.time.Duration.between(startTime, endTime).toMinutes();
+    }
     
 }

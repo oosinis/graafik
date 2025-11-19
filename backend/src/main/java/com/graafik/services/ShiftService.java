@@ -1,13 +1,12 @@
 package com.graafik.services;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.graafik.model.Domain.ShiftAlg;
+import com.graafik.model.Domain.*;
 import com.graafik.model.Entities.Rule;
 import com.graafik.model.Entities.Shift;
 import com.graafik.repositories.RuleRepository;
@@ -65,9 +64,4 @@ public class ShiftService {
         return false;
     }
 
-
-    public static ShiftAlg toAlg(Shift shiftDTO) {
-
-        return new ShiftAlg(shiftDTO.getId(), shiftDTO.getType(), Duration.between(shiftDTO.getStartTime(), shiftDTO.getEndTime()).toMinutes(), shiftDTO.getRules());
-    }
 }

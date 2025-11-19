@@ -73,7 +73,7 @@ public class ScheduleController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateSchedule(
             @PathVariable UUID id,
-            @RequestBody ScheduleRequestAlg scheduleRequest,
+            @RequestBody ScheduleRequest scheduleRequest,
             @RequestParam int startDate,
             @RequestParam int endDate,
             @RequestParam UUID employeeId
