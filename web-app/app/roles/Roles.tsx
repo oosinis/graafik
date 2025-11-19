@@ -20,26 +20,34 @@ interface RolesProps {
   isLoading?: boolean;
 }
 
-export function Roles({ onAddRole, onDeleteRole, employees = [], roles: rolesProp = [], isLoading = false }: RolesProps) {
+export function Roles({
+  onAddRole,
+  onDeleteRole,
+  employees = [],
+  roles: rolesProp = [],
+  isLoading = false,
+}: RolesProps) {
   // Use roles from props and count employees for each role
   const roles = React.useMemo(() => {
     // Deduplicate roles by name to prevent duplicate keys
     const uniqueRoles = rolesProp.reduce((acc, role) => {
-      const existing = acc.find(r => r.name === role.name);
+      const existing = acc.find((r) => r.name === role.name);
       if (!existing) {
         acc.push(role);
       }
       return acc;
     }, [] as typeof rolesProp);
-    
+
     return uniqueRoles.map((role, index) => {
-      const employeeCount = employees.filter(emp => emp.role === role.name).length;
+      const employeeCount = employees.filter(
+        (emp) => emp.role === role.name
+      ).length;
       return {
         id: `${role.name.toLowerCase().replace(/\s+/g, '-')}-${index}`,
         name: role.name,
         color: role.color,
         backgroundColor: role.backgroundColor,
-        employeeCount
+        employeeCount,
       };
     });
   }, [rolesProp, employees]);
@@ -51,7 +59,7 @@ export function Roles({ onAddRole, onDeleteRole, employees = [], roles: rolesPro
         <h1 className="font-['Poppins:Medium',_sans-serif] text-[24px] tracking-[-0.48px] text-[#19181d] leading-[32px] capitalize">
           Roles
         </h1>
-        <button 
+        <button
           onClick={onAddRole}
           className="bg-[#7636ff] box-border content-stretch flex gap-[8px] h-[38px] items-center justify-center px-[24px] py-[12px] rounded-[8px] cursor-pointer hover:bg-[#6428e0] transition-colors"
         >
@@ -63,9 +71,9 @@ export function Roles({ onAddRole, onDeleteRole, employees = [], roles: rolesPro
       </div>
 
       {/* Roles Table */}
-      <div className="bg-white rounded-[8px] border border-[#e6e6ec] overflow-hidden w-[1145px] mt-[35px]">
+      <div className="bg-white rounded-[8px] border border-[#e6e6ec] overflow-x-auto w-full mt-[35px]">
         {/* Table Header */}
-        <div className="flex items-center h-[48px] border-b border-[#e6e6ec]">
+        <div className="grid grid-cols-5 min-w-[700px] h-[48px] border-b">
           <div className="w-[48px] h-[48px] flex items-center justify-center p-[12px]">
             <p className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#19181d] leading-[16px]">
               #
@@ -109,7 +117,10 @@ export function Roles({ onAddRole, onDeleteRole, employees = [], roles: rolesPro
           </div>
         ) : (
           roles.map((role, index) => (
-            <div key={role.id} className="flex items-center h-[56px] border-b border-[#e6e6ec] last:border-b-0">
+            <div
+              key={role.id}
+              className="grid grid-cols-5 min-w-[700px] h-[56px] border-b"
+            >
               <div className="w-[48px] h-[56px] flex items-center justify-center p-[12px]">
                 <p className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
                   {index + 1}
@@ -125,7 +136,7 @@ export function Roles({ onAddRole, onDeleteRole, employees = [], roles: rolesPro
                   className="px-[10px] py-[5px] rounded-[4px] border border-solid capitalize"
                   style={{
                     backgroundColor: role.backgroundColor,
-                    borderColor: `${role.color}4d`
+                    borderColor: `${role.color}4d`,
                   }}
                 >
                   <p
@@ -138,14 +149,18 @@ export function Roles({ onAddRole, onDeleteRole, employees = [], roles: rolesPro
               </div>
               <div className="w-[397px] h-[56px] flex items-center px-[12px] py-[16px]">
                 <p className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-black leading-[16px]">
-                  {role.employeeCount} {role.employeeCount === 1 ? 'employee' : 'employees'}
+                  {role.employeeCount}{' '}
+                  {role.employeeCount === 1 ? 'employee' : 'employees'}
                 </p>
               </div>
               <div className="w-[50px] h-[56px] flex items-center justify-center">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="w-[32px] h-[32px] rounded-[6px] flex items-center justify-center hover:bg-[#f7f6fb] transition-colors">
-                      <MoreVertical className="w-[20px] h-[20px] text-[#888796]" strokeWidth={2} />
+                      <MoreVertical
+                        className="w-[20px] h-[20px] text-[#888796]"
+                        strokeWidth={2}
+                      />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-[160px]">
@@ -165,7 +180,7 @@ export function Roles({ onAddRole, onDeleteRole, employees = [], roles: rolesPro
       </div>
 
       {/* Role Count */}
-      <div className="mt-[24px] flex items-center justify-end w-[1145px]">
+      <div className="mt-[24px] flex items-center justify-end w-full">
         <p className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
           <span>Showing </span>
           <span className="text-[#19181d]">{roles.length}</span>
