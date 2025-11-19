@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.graafik.model.Domain.*;
 import com.graafik.model.Entities.Rule;
 import com.graafik.model.Entities.Shift;
 import com.graafik.repositories.RuleRepository;
