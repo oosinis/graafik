@@ -2,6 +2,7 @@ package com.graafik.model.Entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.graafik.converters.IntegerListConverter;
 
 import jakarta.persistence.Column;
@@ -19,6 +20,7 @@ public class Rule extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "shift_id", referencedColumnName = "id")
+    @JsonBackReference
     private Shift shift;
 
     @Convert(converter = IntegerListConverter.class)
