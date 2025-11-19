@@ -46,9 +46,9 @@ export const ScheduleService = {
         schedule: ScheduleRequest,
         startDate: number,
         endDate: number,
-        workerId: string
+        employeeId: string
     ): Promise<ScheduleResponse> {
-        const query = `?startDate=${startDate}&endDate=${endDate}&workerId=${workerId}`;
+        const query = `?startDate=${startDate}&endDate=${endDate}&employeeId=${employeeId}`;
         return httpClient(`${BASE_URL}/${id}${query}`, {
             method: "PUT",
             body: JSON.stringify(schedule),

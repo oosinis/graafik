@@ -36,4 +36,13 @@ public class EmployeeService {
         }
         return false;
     }
+
+    public Optional<Employee> updateEmployee(UUID id, Employee updated) {
+        return employeeRepository.findById(id).map(existing -> {
+            if (updated.getName() != null) existing.setName(updated.getName());
+            if (updated.getEmployeeRole() != null) existing.setEmployeeRole(updated.getEmployeeRole());
+            if (updated.getAssignedShifts() != null) existing.setAssignedShifts(updated.getAssignedShifts());
+            return employeeRepository.save(existing);
+        });
+    }
 }

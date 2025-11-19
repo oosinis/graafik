@@ -5,8 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.graafik.model.Domain.*;
-import com.graafik.model.Entities.*;
+import com.graafik.model.Domain.DayScheduleAlg;
+import com.graafik.model.Domain.ScheduleAlg;
+import com.graafik.model.Domain.ScheduleRequestAlg;
+import com.graafik.model.Domain.ShiftAlg;
+import com.graafik.model.Domain.ShiftAssignmentAlg;
+import com.graafik.model.Entities.Employee;
+import com.graafik.model.Entities.Rule;
+import com.graafik.services.ShiftService;
 
 
 
