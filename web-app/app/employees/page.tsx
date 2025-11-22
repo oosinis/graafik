@@ -19,23 +19,24 @@ export default function EmployeesPage() {
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [roles, setRoles] = useState<Role[]>([]);
 
+  const loadData = async () => {
+    try {
+      const [employeesData, shiftsData, rolesData] = await Promise.all([
+        EmployeeService.getAll(),
+        ShiftsService.getAll(),
+        RoleService.getAll(),
+      ]);
+      setEmployees(employeesData);
+      setShifts(shiftsData);
+      setRoles(rolesData);
+    } catch (error) {
+      console.error("Failed to load data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [employeesData, shiftsData, rolesData] = await Promise.all([
-          EmployeeService.getAll(),
-          ShiftsService.getAll(),
-          RoleService.getAll(),
-        ]);
-        setEmployees(employeesData);
-        setShifts(shiftsData);
-        setRoles(rolesData);
-      } catch {
-        console.error("Failed to load data");
-      } finally {
-        setLoading(false);
-      }
-    };
     loadData();
   }, []);
 
@@ -49,22 +50,14 @@ export default function EmployeesPage() {
     setShowAddEmployee(true);
   };
 
-  const handleSaveEmployee = async (employeeData: any) => {
-    try {
-      if (editingEmployee) {
-        await EmployeeService.update(editingEmployee.id, employeeData);
-        // Refresh the list
-        const data = await EmployeeService.getAll();
-        setEmployees(data);
-      } else {
-        const newEmployee = await EmployeeService.create(employeeData);
-        setEmployees(prev => [...prev, newEmployee]);
-      }
-      setShowAddEmployee(false);
-      setEditingEmployee(null);
-    } catch (error) {
-      console.error("Failed to save employee:", error);
+  const handleSaveEmployee = (savedEmployee: Employee) => {
+    if (editingEmployee) {
+      setEmployees(prev => prev.map(e => e.id === savedEmployee.id ? savedEmployee : e));
+    } else {
+      setEmployees(prev => [...prev, savedEmployee]);
     }
+    setShowAddEmployee(false);
+    setEditingEmployee(null);
   };
 
   const handleDiscardEmployee = () => {
@@ -73,9 +66,12 @@ export default function EmployeesPage() {
   };
 
   const handleDeleteEmployee = async (employeeId: string) => {
-    // TODO: Add delete method to EmployeeService
-    await fetch(`/api/employees/${employeeId}`, { method: "DELETE" });
-    setEmployees(prev => prev.filter(e => e.id !== employeeId));
+    try {
+      await EmployeeService.delete(employeeId);
+      await loadData();
+    } catch (error) {
+      console.error("Failed to delete employee:", error);
+    }
   };
 
   const handleUpdateAvailability = async (employeeId: string, availability: AvailabilityData) => {
@@ -93,7 +89,7 @@ export default function EmployeesPage() {
       <AddEmployee
         onSave={handleSaveEmployee}
         onDiscard={handleDiscardEmployee}
-        editingEmployee={editingEmployee}
+        editingEmployee={editingEmployee || undefined}
         roles={roles}
         shifts={shifts}
       />
