@@ -1,11 +1,13 @@
 import React from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import { Shift } from '@/models/Shift';
+import { Employee } from '@/models/Employee';
+import { EmployeeService } from '@/services/employeeService';
 
 interface AddEmployeeProps {
-  onSave: (employee: any) => void;
+  onSave: (employee: Employee) => void;
   onDiscard: () => void;
-  editingEmployee?: any;
+  editingEmployee?: Employee;
   roles?: Array<{
     name: string;
     color: string;
@@ -16,7 +18,7 @@ interface AddEmployeeProps {
 
 export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], shifts = [] }: AddEmployeeProps) {
   const [isSaving, setIsSaving] = React.useState(false);
-  
+
   // Parse employee data if editing
   const getInitialFormData = () => {
     if (editingEmployee) {
@@ -27,12 +29,12 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
         email: editingEmployee.email || '',
         phone: editingEmployee.phone !== 'N/A' ? editingEmployee.phone : '',
         notes: editingEmployee.notes || '',
-        primaryRole: editingEmployee.role || '',
+        primaryRole: editingEmployee.employeeRole || '',
         secondaryRole: editingEmployee.secondaryRole || '',
-        fte: editingEmployee.fte || '',
+        fte: editingEmployee.workLoad?.toString() || '',
         preferredShifts: editingEmployee.preferredShifts || [],
         preferredWorkdays: editingEmployee.preferredWorkdays || [],
-        assignedShifts: editingEmployee.assignedShifts || []
+        assignedShifts: (editingEmployee.assignedShifts || []).map(s => typeof s === 'string' ? s : s.id)
       };
     }
     return {
@@ -115,7 +117,30 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
 
     setIsSaving(true);
     try {
-      await onSave(formData);
+      const employeeData: Partial<Employee> = {
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        email: formData.email,
+        phone: formData.phone || 'N/A',
+        employeeRole: formData.primaryRole,
+        secondaryRole: formData.secondaryRole,
+        workLoad: parseFloat(formData.fte),
+        notes: formData.notes,
+        preferredShifts: formData.preferredShifts,
+        preferredWorkdays: formData.preferredWorkdays,
+        assignedShifts: formData.assignedShifts
+      };
+
+      let savedEmployee: Employee;
+      if (editingEmployee) {
+        savedEmployee = await EmployeeService.update(editingEmployee.id, employeeData);
+      } else {
+        savedEmployee = await EmployeeService.create(employeeData);
+      }
+
+      onSave(savedEmployee);
+    } catch (error) {
+      console.error('Failed to save employee:', error);
+      alert('Failed to save employee. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -129,7 +154,7 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
           {editingEmployee ? 'Edit employee' : 'Add a new employee'}
         </h1>
         <div className="flex gap-[8px] items-center pl-[24px]">
-          <button 
+          <button
             onClick={onDiscard}
             disabled={isSaving}
             className="box-border content-stretch flex gap-[8px] h-[38px] items-center justify-center px-[24px] py-[12px] rounded-[8px] disabled:opacity-50"
@@ -138,7 +163,7 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
               Discard
             </p>
           </button>
-          <button 
+          <button
             onClick={handleSave}
             disabled={isSaving}
             className="bg-[#7636ff] box-border content-stretch flex gap-[8px] h-[38px] items-center justify-center px-[24px] py-[12px] rounded-[8px] disabled:opacity-50 disabled:cursor-not-allowed"
@@ -345,11 +370,10 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
                                 setIsSecondaryRoleOpen(false);
                               }}
                               disabled={isSameAsPrimary}
-                              className={`w-full text-left px-[12px] py-[8px] font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] leading-[16px] first:rounded-t-[8px] last:rounded-b-[8px] ${
-                                isSameAsPrimary 
-                                  ? 'text-[#d1d1d9] bg-[#fafafa] cursor-not-allowed' 
-                                  : 'text-[#19181d] hover:bg-[#f7f6fb] cursor-pointer'
-                              }`}
+                              className={`w-full text-left px-[12px] py-[8px] font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] leading-[16px] first:rounded-t-[8px] last:rounded-b-[8px] ${isSameAsPrimary
+                                ? 'text-[#d1d1d9] bg-[#fafafa] cursor-not-allowed'
+                                : 'text-[#19181d] hover:bg-[#f7f6fb] cursor-pointer'
+                                }`}
                             >
                               {role}
                               {isSameAsPrimary && (
@@ -377,9 +401,8 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
                   <button
                     key={option}
                     onClick={() => setFormData(prev => ({ ...prev, fte: option }))}
-                    className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center justify-center font-['Poppins:Regular',_sans-serif] text-[17px] tracking-[-0.34px] leading-[22px] transition-colors ${
-                      formData.fte === option ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
-                    }`}
+                    className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center justify-center font-['Poppins:Regular',_sans-serif] text-[17px] tracking-[-0.34px] leading-[22px] transition-colors ${formData.fte === option ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
+                      }`}
                   >
                     {option === 'Other' ? option : `${option} FTE`}
                   </button>
@@ -397,9 +420,8 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
                   <button
                     key={shift}
                     onClick={() => toggleShift(shift)}
-                    className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center justify-center font-['Poppins:Regular',_sans-serif] text-[17px] tracking-[-0.34px] leading-[22px] transition-colors ${
-                      formData.preferredShifts.includes(shift) ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
-                    }`}
+                    className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center justify-center font-['Poppins:Regular',_sans-serif] text-[17px] tracking-[-0.34px] leading-[22px] transition-colors ${formData.preferredShifts.includes(shift) ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
+                      }`}
                   >
                     {shift}
                   </button>
@@ -418,9 +440,8 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
                     <button
                       key={day}
                       onClick={() => toggleWorkday(day)}
-                      className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center justify-center font-['Poppins:Regular',_sans-serif] text-[17px] tracking-[-0.34px] leading-[22px] transition-colors ${
-                        formData.preferredWorkdays.includes(day) ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
-                      }`}
+                      className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center justify-center font-['Poppins:Regular',_sans-serif] text-[17px] tracking-[-0.34px] leading-[22px] transition-colors ${formData.preferredWorkdays.includes(day) ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
+                        }`}
                     >
                       {day}
                     </button>
@@ -431,9 +452,8 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
                     <button
                       key={day}
                       onClick={() => toggleWorkday(day)}
-                      className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center justify-center font-['Poppins:Regular',_sans-serif] text-[17px] tracking-[-0.34px] leading-[22px] transition-colors ${
-                        formData.preferredWorkdays.includes(day) ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
-                      }`}
+                      className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center justify-center font-['Poppins:Regular',_sans-serif] text-[17px] tracking-[-0.34px] leading-[22px] transition-colors ${formData.preferredWorkdays.includes(day) ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
+                        }`}
                     >
                       {day}
                     </button>
@@ -462,9 +482,8 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
                     <button
                       key={shift.id}
                       onClick={() => toggleAssignedShift(shift.id)}
-                      className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center gap-[6px] justify-center font-['Poppins:Regular',_sans-serif] text-[15px] tracking-[-0.30px] leading-[15px] transition-colors ${
-                        formData.assignedShifts.includes(shift.id) ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
-                      }`}
+                      className={`h-[32px] px-[16px] py-[12px] rounded-[8px] flex items-center gap-[6px] justify-center font-['Poppins:Regular',_sans-serif] text-[15px] tracking-[-0.30px] leading-[15px] transition-colors ${formData.assignedShifts.includes(shift.id) ? 'bg-[#7636ff] text-white' : 'bg-[#f7f6fb] text-[#888796]'
+                        }`}
                     >
                       {shift.name}
                       {formData.assignedShifts.includes(shift.id) && (

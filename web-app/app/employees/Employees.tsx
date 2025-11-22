@@ -79,8 +79,8 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
       const matchesSearch = searchQuery === '' ||
         employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         employee.email?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesRole = selectedRole === 'All' || employee.role === selectedRole;
-      const matchesFTE = selectedFTE === 'All' || employee.fte === selectedFTE;
+      const matchesRole = selectedRole === 'All' || employee.employeeRole === selectedRole;
+      const matchesFTE = selectedFTE === 'All' || (employee.workLoad?.toString() || '') === selectedFTE;
       return matchesSearch && matchesRole && matchesFTE;
     });
   }, [employees, searchQuery, selectedRole, selectedFTE]);
@@ -309,13 +309,13 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
                     className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px]"
                     style={{ color: employee.roleColor }}
                   >
-                    {employee.role}
+                    {employee.employeeRole}
                   </p>
                 </div>
               </div>
               <div className="w-[86px] h-[48px] flex items-center justify-start px-[12px] py-[16px]">
                 <p className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-black leading-[16px]">
-                  {employee.fte}
+                  {employee.workLoad}
                 </p>
               </div>
               <div className="w-[343px] h-[48px] flex items-center px-[12px] py-[16px]">

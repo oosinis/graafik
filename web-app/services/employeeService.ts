@@ -37,4 +37,13 @@ export const EmployeeService = {
       body: JSON.stringify(employee),
     });
   },
+
+  /**
+   * DELETE /employees/{id}
+   */
+  delete(id: string): Promise<void> {
+    return httpClient(`${BASE_URL}/${id}`, {
+      method: "DELETE",
+    });
+  },
 };

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.graafik.model.Entities.Employee;
 import com.graafik.services.EmployeeService;
 
-
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
@@ -30,8 +29,9 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable UUID id) {
         Optional<Employee> employee = employeeService.getEmployeeById(id);
-        
-        if (employee.isEmpty()) ResponseEntity.notFound().build();
+
+        if (employee.isEmpty())
+            ResponseEntity.notFound().build();
         return ResponseEntity.ok(employee.get());
     }
 
@@ -50,6 +50,13 @@ public class EmployeeController {
         Optional<Employee> updated = employeeService.updateEmployee(id, employee);
         return updated.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
-    
-}
 
+    @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable UUID id) {
+        if (employeeService.deleteEmployee(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+}

@@ -10,14 +10,18 @@ export interface AssignedShift {
 export interface Employee {
   id: string;
   name: string;
-  role?: string;
+  employeeRole?: string;
   roleColor?: string;
   roleBg?: string;
-  fte?: string;
+  workLoad?: number;
   email?: string;
   phone?: string;
   assignedShifts?: string[] | AssignedShift[];
   availability?: any;
   userId?: string;
+  notes?: string;
+  secondaryRole?: string;
+  preferredShifts?: string[];
+  preferredWorkdays?: string[];
   hasAccount?: boolean;
 }
