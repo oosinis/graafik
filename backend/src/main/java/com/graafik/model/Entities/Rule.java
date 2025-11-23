@@ -2,6 +2,7 @@ package com.graafik.model.Entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.graafik.converters.IntegerListConverter;
 
 import jakarta.persistence.Column;

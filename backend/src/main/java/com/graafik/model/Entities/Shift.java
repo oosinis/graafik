@@ -5,8 +5,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +23,6 @@ public class Shift extends BaseEntity {
     private LocalTime endTime;
 
     @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<Rule> rules = new ArrayList<>();
 
     public Shift() {}

@@ -21,23 +21,11 @@ export const ShiftsService = {
   /**
    * POST /shifts
    */
-  create(shift: Partial<Shift>): Promise<Shift> {
-    // When creating a shift the frontend may generate temporary string ids for nested rules
-    // (e.g. "rule-123"). The backend expects UUIDs (or no id for new entities). Strip
-    // any client-side ids from nested rules before sending the payload so Jackson can
-    // deserialize into entities without failing on UUID parsing.
-    const payload: any = {
-      ...shift,
-      rules: shift.rules ? shift.rules.map(r => {
-        const { id, ...rest } = r as any;
-        return rest;
-      }) : undefined
-    };
-
-    console.log("POST /shifts payload:", payload);
+create(shift: Partial<Shift>): Promise<Shift> {
+    console.log("POST /shifts payload:", shift);
     return httpClient(BASE_URL, {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(shift),
     });
   },
 };

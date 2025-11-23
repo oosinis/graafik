@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.graafik.model.Domain.*;
-import com.graafik.model.Entities.*;
-import com.graafik.model.Dtos.*;
-import com.graafik.services.ScheduleService;
+import com.graafik.model.Dtos.ScheduleRequest;
+import com.graafik.model.Entities.Employee;
+import com.graafik.model.Entities.Schedule;
 import com.graafik.services.EmployeeService;
+import com.graafik.services.ScheduleService;
 
 @RestController
 @RequestMapping("/api/schedules")
