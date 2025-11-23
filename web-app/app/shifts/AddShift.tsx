@@ -3,6 +3,7 @@ import React from 'react';
 import { Plus, Trash2, Check } from 'lucide-react';
 import type { Shift } from '@/models/Shift';
 import type { Rule } from '@/models/Rule';
+import { v4 as uuidv4 } from "uuid";
 
 interface AddShiftProps {
   onSave: (shift: Partial<Shift>) => void;
@@ -47,7 +48,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     if (ruleForm.daysApplied.length === 0) return alert('Select days');
 
     const newRule: Rule = {
-      id: `rule-${Date.now()}`,
+      id: uuidv4().toString(), 
       name: ruleForm.name.trim(),
       daysApplied: ruleForm.daysApplied,
       perDay: parseInt(ruleForm.perDay),

@@ -15,5 +15,9 @@ export async function httpClient(path: string, options: RequestInit = {}) {
     throw new Error(errorMsg || "API request failed");
   }
 
+  if (res.status === 204) {
+    return;
+  }
+
   return res.json();
 }

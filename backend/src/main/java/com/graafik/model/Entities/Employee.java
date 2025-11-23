@@ -55,6 +55,21 @@ public class Employee extends BaseEntity {
     @Column(name = "shift_id", nullable = true)
     private Map<Integer, UUID> requestedWorkDays;
 
+    private String email;
+    private String phone;
+    private String notes;
+    private String secondaryRole;
+
+    @ElementCollection
+    @CollectionTable(name = "employee_preferred_shifts", joinColumns = @JoinColumn(name = "employee_id"))
+    @Column(name = "shift_type")
+    private List<String> preferredShifts;
+
+    @ElementCollection
+    @CollectionTable(name = "employee_preferred_workdays", joinColumns = @JoinColumn(name = "employee_id"))
+    @Column(name = "day")
+    private List<String> preferredWorkdays;
+
     // Kas selle (Map<Integer, UUID> requestedWorkDay) saab asendada nt sellega?
     // @Entity
     // @Table(name = "employee_requested_work_days")
@@ -120,6 +135,54 @@ public class Employee extends BaseEntity {
 
     public void setEmployeeRole(String employeeRole) {
         this.employeeRole = employeeRole;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getSecondaryRole() {
+        return secondaryRole;
+    }
+
+    public void setSecondaryRole(String secondaryRole) {
+        this.secondaryRole = secondaryRole;
+    }
+
+    public List<String> getPreferredShifts() {
+        return preferredShifts;
+    }
+
+    public void setPreferredShifts(List<String> preferredShifts) {
+        this.preferredShifts = preferredShifts;
+    }
+
+    public List<String> getPreferredWorkdays() {
+        return preferredWorkdays;
+    }
+
+    public void setPreferredWorkdays(List<String> preferredWorkdays) {
+        this.preferredWorkdays = preferredWorkdays;
     }
 
     @Override
