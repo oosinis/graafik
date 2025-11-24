@@ -2,8 +2,8 @@ package com.graafik.model.Entities;
 
 import java.util.List;
 
-import com.graafik.converters.IntegerListConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.graafik.converters.IntegerListConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -27,6 +27,9 @@ public class Rule extends BaseEntity {
     @Column(name = "days_applied")
     private List<Integer> daysApplied;
 
+    @Column(nullable = false)
+    private String name;
+
     private int perDay;
     private int restDays;
     private int continuousDays;
@@ -35,6 +38,14 @@ public class Rule extends BaseEntity {
     private PriorityType priority;
 
     public Rule() {}
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Shift getShift() {
         return shift;
@@ -91,11 +102,12 @@ public class Rule extends BaseEntity {
     @Override
     public String toString() {
         return "Rule{" +
-                "daysApplied=" + daysApplied +
-                ", perDay=" + perDay +
-                ", restDays=" + restDays +
-                ", continuousDays=" + continuousDays +
-                ", priority=" + priority +
-                '}';
+            "name='" + name + '\'' +
+            ", daysApplied=" + daysApplied +
+            ", perDay=" + perDay +
+            ", restDays=" + restDays +
+            ", continuousDays=" + continuousDays +
+            ", priority=" + priority +
+            '}';
     }
 }
