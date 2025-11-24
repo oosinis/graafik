@@ -73,25 +73,19 @@ public class ScheduleService {
                 .toList();
             request.setEmployees(managedEmployees);
 
-            
-            List<ShiftAlg> shifts = new ArrayList<>();
-            for (Shift shift : managedShifts) { shifts.add(ShiftService.toAlg(shift)); }
+            List<ScheduleAlg> algSchedules = GenerateSchedule.generateSchedule(request);
 
-            ScheduleRequestAlg requestAlg = new ScheduleRequestAlg(managedEmployees, shifts, request.getMonth(), request.getFullTimeMinutes());
-
-            List<ScheduleAlg> schedules = GenerateSchedule.generateSchedule(requestAlg);
-
-            if (schedules == null || schedules.isEmpty()) {
+            if (algSchedules == null || algSchedules.isEmpty()) {
                 throw new BadRequestException("Schedule generation failed: no valid schedule produced from input data.");
             }
 
-            ScheduleAlg schedule = schedules.stream()
+            ScheduleAlg bestSchedule = algSchedules.stream()
                 .max(Comparator.comparingDouble(ScheduleAlg::getScore))
                 .orElse(null);
 
-            saveSchedule(fromAlg(schedule));
+            saveSchedule(fromAlg(bestSchedule));
 
-            return fromAlg(schedule);
+            return fromAlg(bestSchedule);
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
@@ -140,7 +134,7 @@ public class ScheduleService {
     // rn saves the new schedule by default
     // should display multiple schedules to the user save the one they choose
     public Optional<Schedule> updateSchedule(
-            ScheduleRequestAlg scheduleRequest,
+            ScheduleRequest scheduleRequest,
             UUID scheduleId,
             int startDate,
             int endDate,
@@ -192,21 +186,12 @@ public class ScheduleService {
             employeeHoursInMinCountingUp.put(employee.getId(), (long) (schedule.getFullTimeMinutes() * employee.getWorkLoad() + schedule.getEmployeeHoursInMinutes().get(employee.getId())));
         }
 
-        List<DaySchedule> daySchedules = new ArrayList<>();
-        if (schedule.getAlgDaySchedules() != null) {
-            for (DayScheduleAlg dayScheduleAlg : schedule.getAlgDaySchedules()) {
-                DaySchedule ds = new DaySchedule();
-                ds.setDayOfMonth(dayScheduleAlg.getDayOfMonth());
-                daySchedules.add(ds);
-            }
-        }
-
         return new Schedule(
             schedule.getMonth(),
             schedule.getYear(),
             schedule.getScore(),
             schedule.getFullTimeMinutes(),
-            daySchedules,
+            schedule.getDaySchedules(),
             employeeHoursInMinCountingUp
         );
     }
@@ -216,12 +201,7 @@ public class ScheduleService {
         schedule.setMonth(scheduleAlg.getMonth());
         schedule.setYear(scheduleAlg.getYear());
         schedule.setScore(scheduleAlg.getScore());
-        if (scheduleAlg.getDaySchedules() != null) {
-            List<DayScheduleAlg> algDaySchedules = scheduleAlg.getDaySchedules().stream()
-                .map(ds -> new DayScheduleAlg(ds.getDayOfMonth(), new ArrayList<>()))
-                .toList();
-            schedule.setAlgDaySchedules(algDaySchedules);
-        }
+        schedule.setDaySchedules(scheduleAlg.getDaySchedules());
         schedule.setEmployeeHoursInMinutes(scheduleAlg.getEmployeeHoursInMins());
         return schedule;
     }
@@ -237,7 +217,7 @@ public class ScheduleService {
                 }
 
                 if (ds.getAssignments() != null && !ds.getAssignments().isEmpty()) {
-                    var savedDaySchedule = dayScheduleRepository.save(ds);
+                    DaySchedule savedDaySchedule = dayScheduleRepository.save(ds);
                     ds.getAssignments().forEach(sa -> {
                         if (sa.getDaySchedule() == null) {
                             sa.setDaySchedule(savedDaySchedule);
