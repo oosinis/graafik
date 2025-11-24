@@ -52,7 +52,7 @@ public class ScheduleService {
 
             for (Shift shift : request.getShifts()) {
                 if (shift.getRules() == null || shift.getRules().isEmpty()) {
-                    throw new BadRequestException("Every shift must have at least one rule. Shift '" + shift.getType() + "' has none.");
+                    throw new BadRequestException("Every shift must have at least one rule. Shift '" + shift.getName() + "' has none.");
                 }
             }
 

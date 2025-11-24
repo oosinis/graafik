@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 public class Shift extends BaseEntity {
 
     @Column(nullable = false)
-    private String type;
+    private String name;
     @Column(nullable = false)
     private LocalTime startTime;
     @Column(nullable = false)
@@ -27,14 +27,14 @@ public class Shift extends BaseEntity {
 
     public Shift() {}
 
-    public Shift(String type, LocalTime startTime, LocalTime endTime, List<Rule> rules) {
-        this.type = type;
+    public Shift(String name, LocalTime startTime, LocalTime endTime, List<Rule> rules) {
+        this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
         this.rules = rules;
     }
 
-    public String getType()  {return type; }
+    public String getName()  {return name; }
 
     public LocalTime getStartTime() { return startTime; }
 
@@ -42,7 +42,7 @@ public class Shift extends BaseEntity {
 
     public List<Rule> getRules() { return rules; }
 
-    public void setType(String type) { this.type = type; }
+    public void setName(String type) { this.name = type; }
 
     public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
 

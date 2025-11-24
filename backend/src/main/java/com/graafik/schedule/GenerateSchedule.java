@@ -36,7 +36,7 @@ public class GenerateSchedule {
     public static List<ScheduleAlg> generateSchedule(ScheduleRequest scheduleRequest) {
 
         for (Shift shift : scheduleRequest.getShifts()) {
-            System.out.println(shift.getType() + ": " + shift.getDurationInMinutes());
+            System.out.println(shift.getName() + ": " + shift.getDurationInMinutes());
         }
 
         List<ScheduleAlg> allPossibleSchedules = generateAllPossibleSchedules(scheduleRequest);
@@ -158,7 +158,7 @@ public class GenerateSchedule {
             for (DaySchedule day : combination.getDaySchedules()) {
                 System.out.print(x + ": ");
                 for (ShiftAssignment ShiftAssignment : day.getAssignments()) {
-                    System.out.print(ShiftAssignment.getEmployee().getName() +  ", " + ShiftAssignment.getShift().getType() +"; ");
+                    System.out.print(ShiftAssignment.getEmployee().getName() +  ", " + ShiftAssignment.getShift().getName() +"; ");
                 }
                 x++;
                 System.out.println();
