@@ -3,7 +3,8 @@ import React from 'react';
 import { Plus, Trash2, Check } from 'lucide-react';
 import type { Shift } from '@/models/Shift';
 import type { Rule } from '@/models/Rule';
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
+import { daysOfTheWeek } from '@/lib/utils';
 
 interface AddShiftProps {
   onSave: (shift: Partial<Shift>) => void;
@@ -19,9 +20,9 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
   const [endTime, setEndTime] = React.useState(
     editingShift?.endTime ?? '17:00'
   );
-  const [shiftType, setShiftType] = React.useState<Shift['type']>(
+  /*   const [shiftType, setShiftType] = React.useState<Shift['type']>(
     editingShift?.type ?? 'Day'
-  );
+  ); */
   const [rules, setRules] = React.useState<Rule[]>(editingShift?.rules ?? []);
 
   const [isAddingRule, setIsAddingRule] = React.useState(false);
@@ -48,7 +49,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     if (ruleForm.daysApplied.length === 0) return alert('Select days');
 
     const newRule: Rule = {
-      id: uuidv4().toString(), 
+      id: uuidv4().toString(),
       name: ruleForm.name.trim(),
       daysApplied: ruleForm.daysApplied,
       perDay: parseInt(ruleForm.perDay),
@@ -74,9 +75,9 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
 
     const payload: Partial<Shift> = {
       name: shiftTitle.trim(),
-      type: shiftType,
-      startTime,
-      endTime,
+      //type: shiftType,
+      startTime: startTime + ':00',
+      endTime: endTime + ':00',
       rules,
     };
 
@@ -222,7 +223,26 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
                         : 'bg-white text-[#888796]'
                     }`}
                   >
-                    {d}
+                    {daysOfTheWeek(d)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Priority</label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {(['low', 'medium', 'high'] as Rule['priority'][]).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setRuleForm((f) => ({ ...f, priority: p }))}
+                    className={`px-3 py-1 rounded ${
+                      ruleForm.priority === p
+                        ? 'bg-[#7636ff] text-white'
+                        : 'bg-white text-[#888796]'
+                    }`}
+                  >
+                    {p.charAt(0).toUpperCase() + p.slice(1)}
                   </button>
                 ))}
               </div>

@@ -46,7 +46,7 @@ export default function ShiftsPage() {
   const handleDeleteShift = async (shiftId: string) => {
     try {
       await ShiftsService.delete(shiftId);
-      await fetchShifts();
+      setShifts((prev) => prev.filter((s) => s.id !== shiftId));
     } catch (err) {
       console.error('Failed to delete shift', err);
     }
@@ -68,7 +68,7 @@ export default function ShiftsPage() {
           onClick={() => setShowModal(false)}
         >
           <div
-            className="bg-white rounded-lg p-4 w-[600px]"
+            className="bg-white rounded-lg p-4 w-[850px]"
             onClick={(e) => e.stopPropagation()}
           >
             <AddShift

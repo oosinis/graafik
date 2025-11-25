@@ -28,4 +28,24 @@ create(shift: Partial<Shift>): Promise<Shift> {
       body: JSON.stringify(shift),
     });
   },
+  
+
+  /**
+   * PUT /roles/{id}
+   */
+  update(id: string, shift: Partial<Shift>): Promise<Shift> {
+    return httpClient(`${BASE_URL}/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(shift),
+    });
+  },
+
+  /**
+   * DELETE /roles/{id}
+   */
+  delete(id: string): Promise<void> {
+    return httpClient(`${BASE_URL}/${id}`, {
+      method: "DELETE",
+    });
+  },
 };
