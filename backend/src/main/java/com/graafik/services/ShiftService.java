@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.graafik.model.Entities.Rule;
 import com.graafik.model.Entities.Shift;
@@ -23,20 +24,18 @@ public class ShiftService {
     }
 
     public List<Shift> getAllShifts() {
-        return shiftRepository.findAll()
-                .stream()
-                .toList();
+        return shiftRepository.findAll();
     }
 
     public Optional<Shift> getShiftById(UUID id) {
         return shiftRepository.findById(id)
                 .map(shift -> {
-                    List<Rule> rules = ruleRepository.findByShiftId(id);
-                    shift.setRules(rules);
+                    shift.setRules(ruleRepository.findByShiftId(id));
                     return shift;
                 });
     }
 
+    
     public Shift saveShift(Shift shift) {
         var savedShift = shiftRepository.save(shift);
 
@@ -55,12 +54,45 @@ public class ShiftService {
     }
 
 
+    @Transactional
+    public Optional<Shift> updateShift(UUID id, Shift updatedShift) {
+        return shiftRepository.findById(id).map(existingShift -> {
+
+            existingShift.setName(updatedShift.getName());
+            existingShift.setStartTime(updatedShift.getStartTime());
+            existingShift.setEndTime(updatedShift.getEndTime());
+
+            List<Rule> existingRules = ruleRepository.findByShiftId(id);
+
+            // Delete removed rules
+            existingRules.stream()
+                .filter(er -> updatedShift.getRules().stream()
+                    .noneMatch(ur -> ur.getId() != null && ur.getId().equals(er.getId())))
+                .forEach(ruleRepository::delete);
+
+            // update rules
+            updatedShift.getRules().forEach(rule -> {
+                rule.setShift(existingShift);
+                ruleRepository.save(rule);
+            });
+
+            shiftRepository.save(existingShift);
+
+            existingShift.getRules().clear();
+            existingShift.getRules().addAll(ruleRepository.findByShiftId(id));
+
+            return existingShift;
+        });
+    }
+
+    @Transactional
     public boolean deleteShift(UUID id) {
-        if (shiftRepository.existsById(id)) {
-            shiftRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return shiftRepository.findById(id)
+                .map(shift -> {
+                    shiftRepository.delete(shift);
+                    return true;
+                })
+                .orElse(false);
     }
 
 }
