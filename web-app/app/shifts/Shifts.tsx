@@ -35,7 +35,7 @@ export default function Shifts({
   onDeleteShift,
 }: ShiftsProps) {
   const handleDelete = (s: Shift) =>
-    onDeleteShift(s.id, s.name ?? s.type ?? 'Shift');
+    onDeleteShift(s.id, s.name ?? s.name ?? 'Shift');
 
   return (
     <div className="py-[32px] w-full">
@@ -122,7 +122,7 @@ export default function Shifts({
                   {shift.rules && shift.rules.length > 0 ? (
                     <ul className="list-disc text-[#19181d]">
                       {shift.rules.map((rule) => (
-                        <ul key={rule.id} className="">
+                        <ul key={rule.id} className="mb-2">
                           <div>
                             <span className="font-medium">{rule.name}</span>
                             <span

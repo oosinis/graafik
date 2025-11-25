@@ -70,14 +70,16 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     setIsAddingRule(false);
   };
 
+  const normalizeTime = (time: string) => time.slice(0, 5);
+
   const handleSave = () => {
     if (!shiftTitle.trim()) return alert('Enter a title');
 
     const payload: Partial<Shift> = {
       name: shiftTitle.trim(),
       //type: shiftType,
-      startTime: startTime + ':00',
-      endTime: endTime + ':00',
+      startTime: normalizeTime(startTime),
+      endTime: normalizeTime(endTime),
       rules,
     };
 
