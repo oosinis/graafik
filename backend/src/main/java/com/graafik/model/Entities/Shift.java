@@ -31,7 +31,7 @@ public class Shift extends BaseEntity {
         this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.rules = rules;
+        this.rules = rules != null ? rules : new ArrayList<>();
     }
 
     public String getName()  {return name; }
