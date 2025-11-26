@@ -36,7 +36,22 @@ public class ShiftService {
     }
 
     
+    @Transactional
     public Shift saveShift(Shift shift) {
+        // If shift already exists, fetch it and return without modifying
+        // DO NOT call setRules() as it replaces the managed collection and triggers orphanRemoval
+        if (shift.getId() != null && shiftRepository.existsById(shift.getId())) {
+            Optional<Shift> existingShiftOpt = shiftRepository.findById(shift.getId());
+            if (existingShiftOpt.isPresent()) {
+                Shift existingShift = existingShiftOpt.get();
+                // Trigger lazy loading of rules if needed, but don't replace the collection
+                // Accessing getRules() will load them if lazy, without replacing the managed collection
+                existingShift.getRules().size(); // Force lazy load if needed
+                return existingShift;
+            }
+        }
+        
+        // For new shifts, save normally
         var savedShift = shiftRepository.save(shift);
 
         if (shift.getRules() != null && !shift.getRules().isEmpty()) {

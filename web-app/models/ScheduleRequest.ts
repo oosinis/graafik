@@ -1,9 +1,9 @@
-import { Worker } from "./Worker";
+import { Employee } from "./Employee";
 import { Shift } from "./Shift";
 
 export interface ScheduleRequest {
-  workers: Worker[];
+  employees: Employee[];
   shifts: Shift[];
   month: number;
-  fullTimeHours: number;
+  fullTimeMinutes: number;
 }

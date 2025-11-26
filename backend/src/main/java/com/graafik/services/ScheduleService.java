@@ -68,8 +68,14 @@ public class ScheduleService {
                 .toList();
             request.setShifts(managedShifts);
 
+            // For existing employees, fetch managed entities to avoid cascade issues
             List<Employee> managedEmployees = request.getEmployees().stream()
-                .map(employeeRepository::save)
+                .map(employee -> {
+                    if (employee.getId() != null && employeeRepository.existsById(employee.getId())) {
+                        return employeeRepository.findById(employee.getId()).orElse(employee);
+                    }
+                    return employeeRepository.save(employee);
+                })
                 .toList();
             request.setEmployees(managedEmployees);
 

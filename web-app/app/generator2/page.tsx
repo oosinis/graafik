@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Employee } from "@/models/Employee";
 import { Shift } from "@/models/Shift";
 import { Role } from "@/models/Role";
+import { ScheduleResponse } from "@/models/ScheduleResponse";
 // import { RoleGuard } from "@/components/RoleGuard"; // Temporarily disabled for testing
 import Generator from "./Generator";
 import { EmployeeService } from "@/services/employeeService";
@@ -60,33 +61,26 @@ export default function GeneratorPage() {
     }
   };
 
-  const handleScheduleGenerated = async (schedule: any, year: number, month: number) => {
+  const handleScheduleGenerated = async (scheduleResponse: ScheduleResponse, year: number, month: number) => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      if (!apiUrl) {
-        throw new Error("Missing NEXT_PUBLIC_API_URL");
+      // Schedule is already saved by the backend, navigate using the schedule ID
+      const scheduleId = scheduleResponse.id;
+      
+      if (!scheduleId) {
+        throw new Error("Schedule ID not found in response");
       }
 
-      const response = await fetch(`${apiUrl}/schedules`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          year,
-          month,
-          assignments: schedule
-        }),
+      console.log('📅 Navigating to schedule view:', {
+        scheduleId: scheduleId,
+        year: scheduleResponse.year,
+        month: scheduleResponse.month
       });
 
-      if (!response.ok) {
-        throw new Error("Schedule failed to save");
-      }
-
-      router.push(`/schedule/${year}/${month + 1}`);
+      // Navigate to schedule view using the schedule ID
+      router.push(`/schedule/${scheduleId}`);
     } catch (err) {
-      console.error("Failed to save schedule:", err);
-      alert("Failed to save schedule");
+      console.error("Failed to navigate to schedule:", err);
+      alert("Schedule generated successfully, but failed to navigate to schedule view");
     }
   };
 
