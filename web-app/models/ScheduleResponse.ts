@@ -1,24 +1,25 @@
-export interface DayAssignment {
-  shift: { type: string; length: number };
-  worker: { name: string };
+import { Shift } from "./Shift";
+import { Employee } from "./Employee";
+
+export interface ShiftAssignment {
+  id: string;
+  shift: Shift;
+  employee: Employee;
 }
 
 export interface DaySchedule {
+  id: string;
   dayOfMonth: number;
-  assignments: DayAssignment[];
+  score: number;
+  assignments: ShiftAssignment[];
 }
 
 export interface ScheduleResponse {
+  id: string;
   month: number;
   year: number;
+  score: number;
+  fullTimeHours: number;
+  employeeHoursInMins: Record<string, number>;
   daySchedules: DaySchedule[];
-}
-
-export interface ScheduleResponse {
-  month: number
-  year: number
-  daySchedules: DaySchedule[]
-  score: number
-  workerHours: Record<string, number>
-  workers: Worker[]
 }

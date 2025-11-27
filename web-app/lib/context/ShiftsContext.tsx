@@ -69,13 +69,13 @@ export function ShiftsContext({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(undefined);
 
-  const apiBase = ""; // same origin – adjust if needed
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
   async function getAllShifts() {
     setIsLoading(true);
     setError(undefined);
     try {
-      const res = await fetch(`${apiBase}/api/shifts`);
+      const res = await fetch(`${apiBase}/shifts`);
       if (!res.ok) throw new Error(`Failed fetching shifts ${res.status}`);
       const data = await res.json();
       const list = Array.isArray(data) ? data.map(serverToClient) : [];
@@ -130,7 +130,7 @@ export function ShiftsContext({ children }: { children: ReactNode }) {
       // include name if backend supports it (harmless if ignored)
       if (input.name) payload.name = input.name;
 
-      const res = await fetch(`${apiBase}/api/shifts`, {
+      const res = await fetch(`${apiBase}/shifts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
