@@ -6,15 +6,19 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.graafik.model.Entities.Employee;
 import com.graafik.model.Entities.Role;
+import com.graafik.repositories.EmployeeRepository;
 import com.graafik.repositories.RoleRepository;
 
 @Service
 public class RoleService {
     private final RoleRepository roleRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public RoleService(RoleRepository roleRepository) {
+    public RoleService(RoleRepository roleRepository, EmployeeRepository employeeRepository) {
         this.roleRepository = roleRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public List<Role> getAllRoles() {
@@ -40,6 +44,20 @@ public class RoleService {
 
     public boolean deleteRole(UUID id) {
         if (roleRepository.existsById(id)) {
+            // Find all employees with this role and set their role to null
+            List<Employee> employees = employeeRepository.findAll();
+            for (Employee employee : employees) {
+                if (employee.getRole() != null && employee.getRole().getId().equals(id)) {
+                    employee.setRole(null);
+                    employeeRepository.save(employee);
+                }
+                // Also check secondary role
+                if (employee.getSecondaryRole() != null && employee.getSecondaryRole().getId().equals(id)) {
+                    employee.setSecondaryRole(null);
+                    employeeRepository.save(employee);
+                }
+            }
+            
             roleRepository.deleteById(id);
             return true;
         }
