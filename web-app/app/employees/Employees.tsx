@@ -303,13 +303,13 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
                 <div
                   className="px-[10px] py-[5px] rounded-[4px] border border-solid capitalize"
                   style={{
-                    backgroundColor: employee.roleBg,
-                    borderColor: `${employee.roleColor}4d`
+                    backgroundColor: employee.role?.backgroundColor || employee.roleBg || '#f3f4f6',
+                    borderColor: `${employee.role?.color || employee.roleColor || '#374151'}4d`
                   }}
                 >
                   <p
                     className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px]"
-                    style={{ color: employee.roleColor }}
+                    style={{ color: employee.role?.color || employee.roleColor || '#374151' }}
                   >
                     {employee.role?.name || 'No Role'}
                   </p>
