@@ -67,7 +67,7 @@ export default function RolesPage() {
 
       // Check if any employees have this role
       const employeesWithRole = employees.filter(
-        (emp) => emp.role === roleName
+        (emp) => emp.role?.id === roleToDelete.id || emp.role?.name === roleName
       );
       if (employeesWithRole.length > 0) {
         alert(
