@@ -66,7 +66,11 @@ export default function ShiftsPage() {
     try {
       const saved = await ShiftsService.update(editingShift.id, updatedShift);
       setShifts((prev) =>
-        prev.map((s) => (s.id === editingShift.id ? saved : s))
+        prev.map((s) =>
+          s.id === editingShift.id
+            ? { ...s, ...saved, rules: updatedShift.rules ?? s.rules }
+            : s
+        )
       );
     } catch (err) {
       console.error('Failed to update shift', err);

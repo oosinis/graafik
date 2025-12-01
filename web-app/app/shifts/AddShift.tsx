@@ -5,6 +5,7 @@ import type { Shift } from '@/models/Shift';
 import type { Rule } from '@/models/Rule';
 import { v4 as uuidv4 } from 'uuid';
 import { daysOfTheWeek } from '@/lib/utils';
+import { useEffect } from 'react';
 
 interface AddShiftProps {
   onSave: (shift: Partial<Shift>) => void;
@@ -20,10 +21,11 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
   const [endTime, setEndTime] = React.useState(
     editingShift?.endTime ?? '17:00'
   );
-  /*   const [shiftType, setShiftType] = React.useState<Shift['type']>(
-    editingShift?.type ?? 'Day'
-  ); */
-  const [rules, setRules] = React.useState<Rule[]>(editingShift?.rules ?? []);
+  const [editingRuleId, setEditingRuleId] = React.useState<string | null>(null);
+
+  const [rules, setRules] = React.useState<Rule[]>(
+    editingShift?.rules ? structuredClone(editingShift.rules) : []
+  );
 
   const [isAddingRule, setIsAddingRule] = React.useState(false);
   const [ruleForm, setRuleForm] = React.useState({
@@ -34,6 +36,15 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     continuousDays: '5',
     restDays: '2',
   });
+
+  useEffect(() => {
+    if (editingShift) {
+      setShiftTitle(editingShift.name);
+      setStartTime(editingShift.startTime);
+      setEndTime(editingShift.endTime);
+      setRules(editingShift.rules ? structuredClone(editingShift.rules) : []);
+    }
+  }, [editingShift]);
 
   const toggleDay = (day: number) => {
     setRuleForm((f) => ({
@@ -49,7 +60,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     if (ruleForm.daysApplied.length === 0) return alert('Select days');
 
     const newRule: Rule = {
-      id: uuidv4().toString(),
+      id: editingRuleId ?? uuidv4(),
       name: ruleForm.name.trim(),
       daysApplied: ruleForm.daysApplied,
       perDay: parseInt(ruleForm.perDay),
@@ -58,7 +69,13 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
       priority: ruleForm.priority,
     };
 
-    setRules((prev) => [...prev, newRule]);
+    setRules((prev) => {
+      if (editingRuleId) {
+        return prev.map((r) => (r.id === editingRuleId ? newRule : r));
+      }
+      return [...prev, newRule];
+    });
+
     setRuleForm({
       name: '',
       daysApplied: [],
@@ -67,6 +84,8 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
       continuousDays: '5',
       restDays: '2',
     });
+
+    setEditingRuleId(null);
     setIsAddingRule(false);
   };
 
@@ -176,7 +195,19 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
             {rules.map((r) => (
               <div
                 key={r.id}
-                className="bg-[#f7f6fb] p-3 rounded-lg flex justify-between"
+                className="bg-[#f7f6fb] p-3 rounded-lg flex justify-between cursor-pointer"
+                onClick={() => {
+                  setRuleForm({
+                    name: r.name,
+                    daysApplied: r.daysApplied,
+                    priority: r.priority,
+                    perDay: String(r.perDay),
+                    continuousDays: String(r.continuousDays),
+                    restDays: String(r.restDays),
+                  });
+                  setIsAddingRule(true);
+                  setEditingRuleId(r.id);
+                }}
               >
                 <div>
                   <p className="font-medium">{r.name}</p>
@@ -186,11 +217,13 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
                   </p>
                 </div>
                 <button
-                  onClick={() =>
-                    setRules((prev) => prev.filter((x) => x.id !== r.id))
-                  }
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setRules((prev) => prev.filter((x) => x.id !== r.id));
+                  }}
                 >
-                  <Trash2 className="text-[#d4183d]" size={16} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             ))}
@@ -273,16 +306,20 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
 
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setIsAddingRule(false)}
+                onClick={() => {
+                  setIsAddingRule(false);
+                  setEditingRuleId(null);
+                }}
                 className="text-[#888796] px-3 py-1"
               >
                 Cancel
               </button>
+
               <button
                 onClick={handleAddRule}
                 className="bg-[#7636ff] text-white px-3 py-1 rounded-lg"
               >
-                Add Rule
+                {editingRuleId ? 'Save Rule' : 'Add Rule'}
               </button>
             </div>
           </div>
