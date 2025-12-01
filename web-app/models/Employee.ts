@@ -1,3 +1,5 @@
+import { Role } from "./Role";
+
 export interface AssignedShift {
   id: string;
   type?: string;
@@ -10,7 +12,7 @@ export interface AssignedShift {
 export interface Employee {
   id: string;
   name: string;
-  employeeRole?: string;
+  role?: Role;
   roleColor?: string;
   roleBg?: string;
   workLoad?: number;
@@ -20,7 +22,7 @@ export interface Employee {
   availability?: any;
   userId?: string;
   notes?: string;
-  secondaryRole?: string;
+  secondaryRole?: Role;
   preferredShifts?: string[];
   preferredWorkdays?: string[];
   hasAccount?: boolean;

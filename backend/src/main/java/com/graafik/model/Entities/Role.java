@@ -1,9 +1,13 @@
 package com.graafik.model.Entities;
 
+import java.util.List;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -18,6 +22,10 @@ public class Role extends BaseEntity {
 
     @Column(name = "background_color")
     private String backgroundColor;
+
+    @OneToMany(mappedBy = "role")
+    @JsonIgnore
+    private List<Employee> employees;
 
     public Role() {}
 
