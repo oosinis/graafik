@@ -23,3 +23,6 @@ export const daysOfTheWeek = (num: number) => {
       return 'Sunday';
   }
 };
+
+export const normalizeTime = (time: string) => time.slice(0, 5);
+

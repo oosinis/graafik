@@ -4,7 +4,7 @@ import { Plus, Trash2, Check, Pencil } from 'lucide-react';
 import type { Shift } from '@/models/Shift';
 import type { Rule } from '@/models/Rule';
 import { v4 as uuidv4 } from 'uuid';
-import { daysOfTheWeek } from '@/lib/utils';
+import { daysOfTheWeek, normalizeTime } from '@/lib/utils';
 import { useEffect } from 'react';
 
 interface AddShiftProps {
@@ -112,7 +112,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     'bg-[#f7f6fb] h-[40px] px-[14px] rounded-[8px] text-[15px] w-full outline-none';
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-6">
       {/* Header */}
       <div className="mb-8 flex justify-between items-center pr-6">
         <h1 className="text-[24px] font-medium">
@@ -137,7 +137,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
       </div>
 
       {/* Shift Details */}
-      <div className="bg-white p-6 rounded-lg max-w-4xl mb-4 shadow-sm">
+      <div className="bg-white p-6 rounded-lg max-w-4xl mb-4 shadow-sm ">
         <h2 className="text-[18px] font-medium mb-1">Basic Information</h2>
         <p className="text-sm text-[#888796] mb-4">Name & time range</p>
 
@@ -157,7 +157,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
             <label className="text-[14px] font-medium">Start</label>
             <input
               type="time"
-              value={startTime}
+              value={normalizeTime(startTime)}
               onChange={(e) => setStartTime(e.target.value)}
               className={inputClass}
             />
@@ -166,7 +166,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
             <label className="text-[14px] font-medium mt-4">End</label>
             <input
               type="time"
-              value={endTime}
+              value={normalizeTime(endTime)}
               onChange={(e) => setEndTime(e.target.value)}
               className={inputClass}
             />

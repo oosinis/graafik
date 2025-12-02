@@ -4,7 +4,7 @@ import React from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import type { Shift } from '@/models/Shift';
 import { Rule } from '@/models/Rule';
-import { daysOfTheWeek } from '@/lib/utils';
+import { daysOfTheWeek, normalizeTime } from '@/lib/utils';
 
 interface ShiftsProps {
   shifts: Shift[];
@@ -99,7 +99,8 @@ export default function Shifts({
                     Time
                   </h3>
                   <span className="text-[#19181d] mt-[8px]">
-                    {shift.startTime} — {shift.endTime}
+                    {normalizeTime(shift.startTime)} —{' '}
+                    {normalizeTime(shift.endTime)}
                   </span>
                 </div>
                 <div className="mb-[12px]">
