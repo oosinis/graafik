@@ -118,11 +118,14 @@ export default function Shifts({
                 <h3 className="text-[#888796] text-[14px] mb-[6px]">
                   Shift Rules:
                 </h3>
-                <div className=" bg-[#f7f6fb] p-4 rounded-lg">
+                <div>
                   {shift.rules && shift.rules.length > 0 ? (
                     <ul className="list-disc text-[#19181d]">
                       {shift.rules.map((rule) => (
-                        <ul key={rule.id} className="mb-2">
+                        <ul
+                          key={rule.id}
+                          className=" bg-[#f7f6fb] p-4 rounded-lg mb-2"
+                        >
                           <div>
                             <span className="font-medium">{rule.name}</span>
                             <span
