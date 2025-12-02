@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Plus, Trash2, Check } from 'lucide-react';
+import { Plus, Trash2, Check, Pencil } from 'lucide-react';
 import type { Shift } from '@/models/Shift';
 import type { Rule } from '@/models/Rule';
 import { v4 as uuidv4 } from 'uuid';
@@ -192,41 +192,54 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
         {/* Existing Rules */}
         {rules.length > 0 && (
           <div className="mt-4 grid gap-3">
-            {rules.map((r) => (
-              <div
-                key={r.id}
-                className="bg-[#f7f6fb] p-3 rounded-lg flex justify-between cursor-pointer"
-                onClick={() => {
-                  setRuleForm({
-                    name: r.name,
-                    daysApplied: r.daysApplied,
-                    priority: r.priority,
-                    perDay: String(r.perDay),
-                    continuousDays: String(r.continuousDays),
-                    restDays: String(r.restDays),
-                  });
-                  setIsAddingRule(true);
-                  setEditingRuleId(r.id);
-                }}
-              >
-                <div>
-                  <p className="font-medium">{r.name}</p>
-                  <p className="text-xs text-[#888796] mt-1">
-                    {r.daysApplied.join(', ')} • {r.perDay} per day •{' '}
-                    {r.continuousDays} days • {r.restDays} off
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setRules((prev) => prev.filter((x) => x.id !== r.id));
-                  }}
+            {rules.map((r) => {
+              if (r.id === editingRuleId) return null;
+
+              return (
+                <div
+                  key={r.id}
+                  className="bg-[#f7f6fb] p-3 rounded-lg flex justify-between cursor-pointer"
                 >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            ))}
+                  <div>
+                    <p className="font-medium">{r.name}</p>
+                    <p className="text-xs text-[#888796] mt-1">
+                      {r.daysApplied.join(', ')} • {r.perDay} per day •{' '}
+                      {r.continuousDays} days • {r.restDays} off
+                    </p>
+                  </div>
+                  <div className="flex gap-6 p-2">
+                    <button
+                      type="button"
+                      className="text-[#7636ff]"
+                      onClick={() => {
+                        setRuleForm({
+                          name: r.name,
+                          daysApplied: r.daysApplied,
+                          priority: r.priority,
+                          perDay: String(r.perDay),
+                          continuousDays: String(r.continuousDays),
+                          restDays: String(r.restDays),
+                        });
+                        setIsAddingRule(true);
+                        setEditingRuleId(r.id);
+                      }}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className="text-[#d4183d]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setRules((prev) => prev.filter((x) => x.id !== r.id));
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
