@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import { ChevronDown, Plus, X } from 'lucide-react';
 import type { Employee } from '@/models/Employee';
 import type { Shift } from '@/models/Shift';
-import { generateSchedule } from '../utils/scheduleAlgorithm';
+import { ScheduleService } from '@/services/scheduleService';
+import type { ScheduleRequest } from '@/models/ScheduleRequest';
+import type { ScheduleResponse } from '@/models/ScheduleResponse';
 
 interface GeneratorProps {
   employees: Employee[];
@@ -12,7 +14,7 @@ interface GeneratorProps {
   roles: Array<{ name: string; color: string; backgroundColor: string }>;
   onUpdateEmployee: (employee: Employee) => void;
   accessToken?: string;
-  onScheduleGenerated?: (schedule: any, year: number, month: number) => void;
+  onScheduleGenerated?: (scheduleResponse: ScheduleResponse, year: number, month: number) => void;
   generatedSchedules?: { [key: string]: any };
 }
 
@@ -77,82 +79,87 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
     alert('This feature will retrieve configuration from the previous month');
   };
 
-  const handleGenerateSchedule = () => {
+  const handleGenerateSchedule = async () => {
+    // Validation
     if (employees.length === 0 || shifts.length === 0) {
+      alert('Please add employees and shifts before generating a schedule.');
+      return;
+    }
+
+    // Check if employees have assigned shifts
+    const employeesWithoutShifts = employees.filter(emp => {
+      const assignedShifts = toShiftIds(emp.assignedShifts);
+      return assignedShifts.length === 0;
+    });
+
+    if (employeesWithoutShifts.length > 0) {
+      const names = employeesWithoutShifts.map(e => e.name).join(', ');
+      alert(`The following employees have no assigned shifts: ${names}\n\nPlease assign shifts to all employees before generating a schedule.`);
+      return;
+    }
+
+    // Check if shifts have rules
+    const shiftsWithoutRules = shifts.filter(shift => {
+      return !shift.rules || shift.rules.length === 0;
+    });
+
+    if (shiftsWithoutRules.length > 0) {
+      const names = shiftsWithoutRules.map(s => s.name).join(', ');
+      alert(`The following shifts have no rules configured: ${names}\n\nEvery shift must have at least one rule. Please configure shift rules before generating a schedule.`);
       return;
     }
 
     setIsGenerating(true);
 
     try {
-      // Calculate start and end dates for the selected month
-      const startDate = new Date(selectedYear, selectedMonth, 1);
-      const endDate = new Date(selectedYear, selectedMonth + 1, 0);
+      // Build ScheduleRequest payload
+      const scheduleRequest: ScheduleRequest = {
+        employees: employees,
+        shifts: shifts,
+        month: selectedMonth + 1, // Convert 0-11 to 1-12
+        fullTimeMinutes: parseInt(fullTimeHours) * 60 // Convert hours to minutes
+      };
 
-      const daysInMonth = endDate.getDate();
-
-      // Reference: Days in each month
-      const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-      const isLeapYear = (selectedYear % 4 === 0 && selectedYear % 100 !== 0) || (selectedYear % 400 === 0);
-      if (selectedMonth === 1 && isLeapYear) monthDays[1] = 29; // February in leap year
-
-      const expectedDays = monthDays[selectedMonth];
-
-      console.log(`\n🗓️  SCHEDULE GENERATION`);
-      console.log(`   Month: ${months[selectedMonth]} ${selectedYear} ${isLeapYear && selectedMonth === 1 ? '(Leap Year)' : ''}`);
-      console.log(`   Start Date: ${startDate.toISOString().split('T')[0]} (${startDate.toDateString()})`);
-      console.log(`   End Date: ${endDate.toISOString().split('T')[0]} (${endDate.toDateString()})`);
-      console.log(`   Days in month (calculated): ${daysInMonth}`);
-      console.log(`   Days in month (expected): ${expectedDays}`);
-
-      if (daysInMonth !== expectedDays) {
-        console.error(`❌ CRITICAL ERROR: Calculated ${daysInMonth} days but ${months[selectedMonth]} should have ${expectedDays} days!`);
-      } else {
-        console.log(`   ✅ Correct month length confirmed: ${daysInMonth} days`);
-      }
-
-      // Generate the schedule
-      const schedule = generateSchedule(
-        employees,
-        shifts,
-        startDate,
-        endDate,
-        {
-          maxWeeklyHours: parseInt(fullTimeHours) / 4.33 // Convert monthly to weekly
-        }
-      );
-
-      console.log('📊 Generated schedule:', {
-        assignmentsCount: schedule?.assignments?.length || 0,
-        startDate: schedule?.startDate,
-        endDate: schedule?.endDate,
+      console.log('📤 Sending schedule generation request:', {
+        employeesCount: employees.length,
+        shiftsCount: shifts.length,
+        month: selectedMonth + 1,
+        monthName: months[selectedMonth],
         year: selectedYear,
-        month: selectedMonth,
-        monthName: months[selectedMonth]
+        fullTimeMinutes: scheduleRequest.fullTimeMinutes
       });
 
-      // Call the callback to save and navigate
+      // Call backend API
+      const scheduleResponse = await ScheduleService.create(scheduleRequest);
+
+      console.log('✅ Schedule generated successfully:', {
+        month: scheduleResponse.month,
+        year: scheduleResponse.year,
+        score: scheduleResponse.score,
+        daySchedulesCount: scheduleResponse.daySchedules?.length || 0
+      });
+
+      // Call the callback to navigate
       if (onScheduleGenerated) {
-        console.log(`📤 Calling onScheduleGenerated with year=${selectedYear}, month=${selectedMonth} (${months[selectedMonth]})`);
-
-        // Test if schedule can be serialized to JSON (to catch circular references)
-        try {
-          const testJson = JSON.stringify(schedule);
-          console.log(`   ✅ Schedule is JSON-serializable (size: ${testJson.length} bytes)`);
-        } catch (jsonError) {
-          console.error('❌ Schedule cannot be serialized to JSON:', jsonError);
-          alert('Error: Generated schedule contains invalid data. Please try again.');
-          setIsGenerating(false);
-          return;
-        }
-
-        onScheduleGenerated(schedule, selectedYear, selectedMonth);
+        onScheduleGenerated(scheduleResponse, selectedYear, selectedMonth);
       }
     } catch (error: any) {
       console.error('❌ Error generating schedule:', error);
-      console.error('   Error message:', error.message);
-      console.error('   Error stack:', error.stack);
-      alert(`Failed to generate schedule: ${error.message}\n\nPlease check your data and try again.`);
+      const errorMessage = error.message || 'Failed to generate schedule';
+      
+      // Provide user-friendly error messages
+      let userMessage = errorMessage;
+      if (errorMessage.includes('Every shift must have at least one rule')) {
+        userMessage = 'Every shift must have at least one rule configured. Please add rules to all shifts before generating a schedule.';
+      } else if (errorMessage.includes('No shifts provided')) {
+        userMessage = 'No shifts provided. Please add shifts before generating a schedule.';
+      } else if (errorMessage.includes('No employees provided')) {
+        userMessage = 'No employees provided. Please add employees before generating a schedule.';
+      } else if (errorMessage.includes('no valid schedule produced')) {
+        userMessage = 'Could not generate a valid schedule with the current configuration. Please check:\n- All employees have assigned shifts\n- All shifts have rules configured\n- Employee work loads and constraints are valid';
+      }
+      
+      alert(`Failed to generate schedule: ${userMessage}\n\nPlease check your data and try again.`);
     } finally {
       setIsGenerating(false);
     }
@@ -371,7 +378,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                         {employee.name}
                       </p>
                       <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[12px]">
-                        {employee.role} • FTE {employee.fte}
+                        {employee.employeeRole || 'No role'} • FTE {employee.workLoad || 0}
                       </p>
                     </div>
                   </div>
