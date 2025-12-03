@@ -105,6 +105,7 @@ export default function EmployeesPage() {
       onDeleteEmployee={handleDeleteEmployee}
       onUpdateAvailability={handleUpdateAvailability}
       shifts={shifts}
+      roles={roles}
     />
   );
 }

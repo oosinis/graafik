@@ -3,6 +3,7 @@ import { Search, ChevronDown, Plus, MoreHorizontal, Edit2, Trash2, Calendar, Inf
 import { AvailabilityData, AvailabilityDialog } from './AvailabilityDialog';
 import type { Shift } from '@/models/Shift';
 import type { Employee } from '@/models/Employee';
+import type { Role } from '@/models/Role';
 
 interface EmployeesProps {
   onAddEmployee?: () => void;
@@ -11,10 +12,11 @@ interface EmployeesProps {
   onUpdateAvailability?: (employeeId: string, availability: AvailabilityData) => void;
   employees?: Employee[];
   shifts?: Shift[];
+  roles?: Role[];
   isLoading?: boolean;
 }
 
-export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onUpdateAvailability, employees = [], shifts = [], isLoading = false }: EmployeesProps) {
+export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onUpdateAvailability, employees = [], shifts = [], roles = [], isLoading = false }: EmployeesProps) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedRole, setSelectedRole] = React.useState<string>('All');
   const [selectedFTE, setSelectedFTE] = React.useState<string>('All');
@@ -26,7 +28,7 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
 
   const getShiftById = (shiftId: string) => shifts.find(s => s.id === shiftId);
 
-  const roles = ['All', 'Chef', 'Shift manager', 'Waiter'];
+  const roleNames = ['All', ...roles.map(r => r.name)];
   const fteOptions = ['All', '1.0', '0.75', '0.5'];
 
   // Close dropdowns when clicking outside
@@ -79,7 +81,7 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
       const matchesSearch = searchQuery === '' ||
         employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         employee.email?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesRole = selectedRole === 'All' || employee.employeeRole === selectedRole;
+      const matchesRole = selectedRole === 'All' || employee.role?.name === selectedRole;
       const matchesFTE = selectedFTE === 'All' || (employee.workLoad?.toString() || '') === selectedFTE;
       return matchesSearch && matchesRole && matchesFTE;
     });
@@ -145,7 +147,7 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
 
             {isRoleOpen && (
               <div className="absolute top-[42px] left-0 bg-white border border-[#e6e6ec] rounded-[8px] shadow-lg z-10 min-w-[160px]" onClick={(e) => e.stopPropagation()}>
-                {roles.map((role) => (
+                {roleNames.map((role) => (
                   <button
                     key={role}
                     onClick={(e) => {
@@ -301,15 +303,15 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
                 <div
                   className="px-[10px] py-[5px] rounded-[4px] border border-solid capitalize"
                   style={{
-                    backgroundColor: employee.roleBg,
-                    borderColor: `${employee.roleColor}4d`
+                    backgroundColor: employee.role?.backgroundColor || employee.roleBg || '#f3f4f6',
+                    borderColor: `${employee.role?.color || employee.roleColor || '#374151'}4d`
                   }}
                 >
                   <p
                     className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px]"
-                    style={{ color: employee.roleColor }}
+                    style={{ color: employee.role?.color || employee.roleColor || '#374151' }}
                   >
-                    {employee.employeeRole}
+                    {employee.role?.name || 'No Role'}
                   </p>
                 </div>
               </div>

@@ -13,6 +13,7 @@ interface RolesProps {
   onDeleteRole?: (roleName: string) => void;
   employees?: Employee[];
   roles?: Array<{
+    id: string;
     name: string;
     color: string;
     backgroundColor: string;
@@ -39,15 +40,15 @@ export function Roles({
     }, [] as typeof rolesProp);
 
     return uniqueRoles.map((role, index) => {
-      const employeeCount = employees.filter(
-        (emp) => emp.role === role.name
-      ).length;
+      const roleEmployees = employees.filter(
+        (emp) => emp.role?.id === role.id || emp.role?.name === role.name
+      );
       return {
-        id: `${role.name.toLowerCase().replace(/\s+/g, '-')}-${index}`,
+        id: role.id,
         name: role.name,
         color: role.color,
         backgroundColor: role.backgroundColor,
-        employeeCount,
+        employeeCount: roleEmployees.length,
       };
     });
   }, [rolesProp, employees]);
