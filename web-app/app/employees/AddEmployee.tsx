@@ -3,16 +3,13 @@ import { ChevronDown, X } from 'lucide-react';
 import { Shift } from '@/models/Shift';
 import { Employee } from '@/models/Employee';
 import { EmployeeService } from '@/services/employeeService';
+import { Role } from '@/models/Role';
 
 interface AddEmployeeProps {
   onSave: (employee: Employee) => void;
-  onDiscard: () => void;
+  onDiscard: ()=> void;
   editingEmployee?: Employee;
-  roles?: Array<{
-    name: string;
-    color: string;
-    backgroundColor: string;
-  }>;
+  roles?: Role[];
   shifts?: Shift[];
 }
 
@@ -29,8 +26,8 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
         email: editingEmployee.email || '',
         phone: editingEmployee.phone !== 'N/A' ? editingEmployee.phone : '',
         notes: editingEmployee.notes || '',
-        primaryRole: editingEmployee.employeeRole || '',
-        secondaryRole: editingEmployee.secondaryRole || '',
+        primaryRole: editingEmployee.role?.name || '',
+        secondaryRole: editingEmployee.secondaryRole?.name || '',
         fte: editingEmployee.workLoad?.toString() || '',
         preferredShifts: editingEmployee.preferredShifts || [],
         preferredWorkdays: editingEmployee.preferredWorkdays || [],
@@ -121,8 +118,8 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
         phone: formData.phone || 'N/A',
-        employeeRole: formData.primaryRole,
-        secondaryRole: formData.secondaryRole,
+        role: roles.find(r => r.name === formData.primaryRole),
+        secondaryRole: roles.find(r => r.name === formData.secondaryRole),
         workLoad: parseFloat(formData.fte),
         notes: formData.notes,
         preferredShifts: formData.preferredShifts,

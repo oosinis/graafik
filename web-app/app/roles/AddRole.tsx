@@ -13,9 +13,13 @@ interface AddRoleProps {
 
 export function AddRole({ onSave, onDiscard, editingRole }: AddRoleProps) {
   const [roleName, setRoleName] = useState<string>(editingRole?.name ?? '');
-  const [selected, setSelected] = useState<string | undefined>(
-    (editingRole as any)?.color ?? undefined
-  );
+
+  // Find the initial selected color ID based on the editingRole's color/bg
+  const initialSelectedId = editingRole
+    ? RoleColor.find(c => c.dot === editingRole.color && c.bg === editingRole.backgroundColor)?.id
+    : undefined;
+
+  const [selected, setSelected] = useState<string | undefined>(initialSelectedId);
 
   const inputClass =
     'bg-[#f7f6fb] h-[40px] px-[14px] rounded-[8px] text-[15px] w-full outline-none';
@@ -26,9 +30,14 @@ export function AddRole({ onSave, onDiscard, editingRole }: AddRoleProps) {
       return;
     }
 
+    const selectedColor = RoleColor.find((c) => c.id === selected);
+
     const payload: Partial<Role> = {
       name: roleName.trim(),
-      ...(selected ? { color: selected } : {}),
+      ...(selectedColor ? {
+        color: selectedColor.dot,
+        backgroundColor: selectedColor.bg
+      } : {}),
     };
 
     console.log('Creating role payload:', payload);

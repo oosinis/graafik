@@ -3,6 +3,7 @@ import { Search, ChevronDown, Plus, MoreHorizontal, Edit2, Trash2, Calendar, Inf
 import { AvailabilityData, AvailabilityDialog } from './AvailabilityDialog';
 import type { Shift } from '@/models/Shift';
 import type { Employee } from '@/models/Employee';
+import type { Role } from '@/models/Role';
 
 interface EmployeesProps {
   onAddEmployee?: () => void;
@@ -11,6 +12,7 @@ interface EmployeesProps {
   onUpdateAvailability?: (employeeId: string, availability: AvailabilityData) => void;
   employees?: Employee[];
   shifts?: Shift[];
+  roles?: Role[];
   isLoading?: boolean;
 }
 
@@ -95,9 +97,8 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
       const matchesSearch = searchQuery === '' ||
         employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         employee.email?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesRole = selectedRole === 'All' ||
-        (employee.employeeRole && employee.employeeRole.toLowerCase() === selectedRole.toLowerCase());
-
+      const matchesRole = selectedRole === 'All' || (employee.role && employee.role.name.toLowerCase() === selectedRole.toLowerCase());
+      
       const matchesFTE = selectedFTE === 'All' || (() => {
         if (employee.workLoad === undefined || employee.workLoad === null) return false;
         const targetFTE = parseFloat(selectedFTE);
@@ -323,15 +324,15 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
                 <div
                   className="px-[10px] py-[5px] rounded-[4px] border border-solid capitalize"
                   style={{
-                    backgroundColor: employee.roleBg,
-                    borderColor: `${employee.roleColor}4d`
+                    backgroundColor: employee.role?.backgroundColor || employee.roleBg || '#f3f4f6',
+                    borderColor: `${employee.role?.color || employee.roleColor || '#374151'}4d`
                   }}
                 >
                   <p
                     className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px]"
-                    style={{ color: employee.roleColor }}
+                    style={{ color: employee.role?.color || employee.roleColor || '#374151' }}
                   >
-                    {employee.employeeRole}
+                    {employee.role?.name || 'No Role'}
                   </p>
                 </div>
               </div>

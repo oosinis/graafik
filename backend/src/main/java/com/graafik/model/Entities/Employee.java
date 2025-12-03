@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,7 +24,13 @@ public class Employee extends BaseEntity {
 
     private float workLoad;
 
-    private String employeeRole;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "secondary_role_id")
+    private Role secondaryRole;
 
     @ManyToMany
     @JoinTable(name = "employee_shifts", joinColumns = @JoinColumn(name = "employee_id"), inverseJoinColumns = @JoinColumn(name = "shift_id"))
@@ -56,7 +63,6 @@ public class Employee extends BaseEntity {
     private String email;
     private String phone;
     private String notes;
-    private String secondaryRole;
 
     @ElementCollection
     @CollectionTable(name = "employee_preferred_shifts", joinColumns = @JoinColumn(name = "employee_id"))
@@ -123,12 +129,12 @@ public class Employee extends BaseEntity {
         this.sickDays = sickDays;
     }
 
-    public String getEmployeeRole() {
-        return employeeRole;
+    public Role getRole() {
+        return role;
     }
 
-    public void setEmployeeRole(String employeeRole) {
-        this.employeeRole = employeeRole;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getEmail() {
@@ -155,11 +161,11 @@ public class Employee extends BaseEntity {
         this.notes = notes;
     }
 
-    public String getSecondaryRole() {
+    public Role getSecondaryRole() {
         return secondaryRole;
     }
 
-    public void setSecondaryRole(String secondaryRole) {
+    public void setSecondaryRole(Role secondaryRole) {
         this.secondaryRole = secondaryRole;
     }
 
@@ -191,8 +197,7 @@ public class Employee extends BaseEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, assignedShifts, workLoad, desiredWorkDays, requestedDaysOff, vacationDays, sickDays,
-                employeeRole);
+        return Objects.hash(name, assignedShifts, workLoad, desiredWorkDays, requestedDaysOff, vacationDays, sickDays, role);
     }
 
     @Override
