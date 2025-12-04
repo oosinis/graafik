@@ -5,12 +5,14 @@ import Shifts from './Shifts';
 import { AddShift } from './AddShift';
 import type { Shift } from '@/models/Shift';
 import { ShiftsService } from '@/services/shiftService';
+import { Notification } from '@/components/ui/notification';
 
 export default function ShiftsPage() {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const fetchShifts = async () => {
     setIsLoading(true);
@@ -51,12 +53,24 @@ export default function ShiftsPage() {
   } */
 
   const handleDeleteShift = async (shiftId: string) => {
+    setPendingDeleteId(shiftId);
+  };
+
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return;
+
     try {
-      await ShiftsService.delete(shiftId);
-      setShifts((prev) => prev.filter((s) => s.id !== shiftId));
+      await ShiftsService.delete(pendingDeleteId);
+      await fetchShifts();
     } catch (err) {
       console.error('Failed to delete shift', err);
+    } finally {
+      setPendingDeleteId(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setPendingDeleteId(null);
   };
 
   const handleEditShift = (shift: Shift) => {
@@ -115,6 +129,14 @@ export default function ShiftsPage() {
             />
           </div>
         </div>
+      )}
+
+      {pendingDeleteId && (
+        <Notification
+          message="Are you sure you want to delete this shift?"
+          onConfirm={confirmDelete}
+          onClose={cancelDelete}
+        />
       )}
     </>
   );
