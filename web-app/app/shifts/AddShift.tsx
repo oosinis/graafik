@@ -1,9 +1,11 @@
 'use client';
 import React from 'react';
-import { Plus, Trash2, Check } from 'lucide-react';
+import { Plus, Trash2, Check, Pencil } from 'lucide-react';
 import type { Shift } from '@/models/Shift';
 import type { Rule } from '@/models/Rule';
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
+import { daysOfTheWeek, normalizeTime } from '@/lib/utils';
+import { useEffect } from 'react';
 
 interface AddShiftProps {
   onSave: (shift: Partial<Shift>) => void;
@@ -19,10 +21,11 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
   const [endTime, setEndTime] = React.useState(
     editingShift?.endTime ?? '17:00'
   );
-  const [shiftType, setShiftType] = React.useState<Shift['type']>(
-    editingShift?.type ?? 'Day'
+  const [editingRuleId, setEditingRuleId] = React.useState<string | null>(null);
+
+  const [rules, setRules] = React.useState<Rule[]>(
+    editingShift?.rules ? structuredClone(editingShift.rules) : []
   );
-  const [rules, setRules] = React.useState<Rule[]>(editingShift?.rules ?? []);
 
   const [isAddingRule, setIsAddingRule] = React.useState(false);
   const [ruleForm, setRuleForm] = React.useState({
@@ -33,6 +36,15 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     continuousDays: '5',
     restDays: '2',
   });
+
+  useEffect(() => {
+    if (editingShift) {
+      setShiftTitle(editingShift.name);
+      setStartTime(editingShift.startTime);
+      setEndTime(editingShift.endTime);
+      setRules(editingShift.rules ? structuredClone(editingShift.rules) : []);
+    }
+  }, [editingShift]);
 
   const toggleDay = (day: number) => {
     setRuleForm((f) => ({
@@ -48,7 +60,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     if (ruleForm.daysApplied.length === 0) return alert('Select days');
 
     const newRule: Rule = {
-      id: uuidv4().toString(), 
+      id: editingRuleId ?? uuidv4(),
       name: ruleForm.name.trim(),
       daysApplied: ruleForm.daysApplied,
       perDay: parseInt(ruleForm.perDay),
@@ -57,7 +69,13 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
       priority: ruleForm.priority,
     };
 
-    setRules((prev) => [...prev, newRule]);
+    setRules((prev) => {
+      if (editingRuleId) {
+        return prev.map((r) => (r.id === editingRuleId ? newRule : r));
+      }
+      return [...prev, newRule];
+    });
+
     setRuleForm({
       name: '',
       daysApplied: [],
@@ -66,17 +84,21 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
       continuousDays: '5',
       restDays: '2',
     });
+
+    setEditingRuleId(null);
     setIsAddingRule(false);
   };
+
+  const normalizeTime = (time: string) => time.slice(0, 5);
 
   const handleSave = () => {
     if (!shiftTitle.trim()) return alert('Enter a title');
 
     const payload: Partial<Shift> = {
       name: shiftTitle.trim(),
-      type: shiftType,
-      startTime,
-      endTime,
+      //type: shiftType,
+      startTime: normalizeTime(startTime),
+      endTime: normalizeTime(endTime),
       rules,
     };
 
@@ -90,7 +112,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
     'bg-[#f7f6fb] h-[40px] px-[14px] rounded-[8px] text-[15px] w-full outline-none';
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-6">
       {/* Header */}
       <div className="mb-8 flex justify-between items-center pr-6">
         <h1 className="text-[24px] font-medium">
@@ -115,7 +137,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
       </div>
 
       {/* Shift Details */}
-      <div className="bg-white p-6 rounded-lg max-w-4xl mb-4 shadow-sm">
+      <div className="bg-white p-6 rounded-lg max-w-4xl mb-4 shadow-sm ">
         <h2 className="text-[18px] font-medium mb-1">Basic Information</h2>
         <p className="text-sm text-[#888796] mb-4">Name & time range</p>
 
@@ -135,7 +157,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
             <label className="text-[14px] font-medium">Start</label>
             <input
               type="time"
-              value={startTime}
+              value={normalizeTime(startTime)}
               onChange={(e) => setStartTime(e.target.value)}
               className={inputClass}
             />
@@ -144,7 +166,7 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
             <label className="text-[14px] font-medium mt-4">End</label>
             <input
               type="time"
-              value={endTime}
+              value={normalizeTime(endTime)}
               onChange={(e) => setEndTime(e.target.value)}
               className={inputClass}
             />
@@ -170,27 +192,54 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
         {/* Existing Rules */}
         {rules.length > 0 && (
           <div className="mt-4 grid gap-3">
-            {rules.map((r) => (
-              <div
-                key={r.id}
-                className="bg-[#f7f6fb] p-3 rounded-lg flex justify-between"
-              >
-                <div>
-                  <p className="font-medium">{r.name}</p>
-                  <p className="text-xs text-[#888796] mt-1">
-                    {r.daysApplied.join(', ')} • {r.perDay} per day •{' '}
-                    {r.continuousDays} days • {r.restDays} off
-                  </p>
-                </div>
-                <button
-                  onClick={() =>
-                    setRules((prev) => prev.filter((x) => x.id !== r.id))
-                  }
+            {rules.map((r) => {
+              if (r.id === editingRuleId) return null;
+
+              return (
+                <div
+                  key={r.id}
+                  className="bg-[#f7f6fb] p-3 rounded-lg flex justify-between cursor-pointer"
                 >
-                  <Trash2 className="text-[#d4183d]" size={16} />
-                </button>
-              </div>
-            ))}
+                  <div>
+                    <p className="font-medium">{r.name}</p>
+                    <p className="text-xs text-[#888796] mt-1">
+                      {r.daysApplied.join(', ')} • {r.perDay} per day •{' '}
+                      {r.continuousDays} days • {r.restDays} off
+                    </p>
+                  </div>
+                  <div className="flex gap-6 p-2">
+                    <button
+                      type="button"
+                      className="text-[#7636ff]"
+                      onClick={() => {
+                        setRuleForm({
+                          name: r.name,
+                          daysApplied: r.daysApplied,
+                          priority: r.priority,
+                          perDay: String(r.perDay),
+                          continuousDays: String(r.continuousDays),
+                          restDays: String(r.restDays),
+                        });
+                        setIsAddingRule(true);
+                        setEditingRuleId(r.id);
+                      }}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className="text-[#d4183d]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setRules((prev) => prev.filter((x) => x.id !== r.id));
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -222,7 +271,26 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
                         : 'bg-white text-[#888796]'
                     }`}
                   >
-                    {d}
+                    {daysOfTheWeek(d)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Priority</label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {(['low', 'medium', 'high'] as Rule['priority'][]).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setRuleForm((f) => ({ ...f, priority: p }))}
+                    className={`px-3 py-1 rounded ${
+                      ruleForm.priority === p
+                        ? 'bg-[#7636ff] text-white'
+                        : 'bg-white text-[#888796]'
+                    }`}
+                  >
+                    {p.charAt(0).toUpperCase() + p.slice(1)}
                   </button>
                 ))}
               </div>
@@ -251,16 +319,20 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
 
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setIsAddingRule(false)}
+                onClick={() => {
+                  setIsAddingRule(false);
+                  setEditingRuleId(null);
+                }}
                 className="text-[#888796] px-3 py-1"
               >
                 Cancel
               </button>
+
               <button
                 onClick={handleAddRule}
                 className="bg-[#7636ff] text-white px-3 py-1 rounded-lg"
               >
-                Add Rule
+                {editingRuleId ? 'Save Rule' : 'Add Rule'}
               </button>
             </div>
           </div>

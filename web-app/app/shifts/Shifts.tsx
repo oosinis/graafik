@@ -4,6 +4,7 @@ import React from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import type { Shift } from '@/models/Shift';
 import { Rule } from '@/models/Rule';
+import { daysOfTheWeek, normalizeTime } from '@/lib/utils';
 
 interface ShiftsProps {
   shifts: Shift[];
@@ -34,7 +35,7 @@ export default function Shifts({
   onDeleteShift,
 }: ShiftsProps) {
   const handleDelete = (s: Shift) =>
-    onDeleteShift(s.id, s.name ?? s.type ?? 'Shift');
+    onDeleteShift(s.id, s.name ?? s.name ?? 'Shift');
 
   return (
     <div className="py-[32px] w-full">
@@ -80,9 +81,7 @@ export default function Shifts({
               className="bg-white rounded-[8px] p-[24px] border border-[#e6e6ec] hover:border-[#7636ff] transition"
             >
               <div className="flex justify-between">
-                <h2 className="text-[20px] text-[#19181d]">
-                  {shift.name ?? shift.type}
-                </h2>
+                <h2 className="text-[20px] text-[#19181d]">{shift.name}</h2>
 
                 <div className="flex gap-[8px]">
                   <button onClick={() => onEditShift(shift)}>
@@ -100,7 +99,8 @@ export default function Shifts({
                     Time
                   </h3>
                   <span className="text-[#19181d] mt-[8px]">
-                    {shift.startTime} — {shift.endTime}
+                    {normalizeTime(shift.startTime)} —{' '}
+                    {normalizeTime(shift.endTime)}
                   </span>
                 </div>
                 <div className="mb-[12px]">
@@ -119,34 +119,40 @@ export default function Shifts({
                 <h3 className="text-[#888796] text-[14px] mb-[6px]">
                   Shift Rules:
                 </h3>
-                <div className="bg-[#f7f6fb] p-4 rounded-lg">
+                <div>
                   {shift.rules && shift.rules.length > 0 ? (
-                    <ul className="list-disc pl-5 text-[#19181d]">
+                    <ul className="list-disc text-[#19181d]">
                       {shift.rules.map((rule) => (
-                        <li key={rule.id}>
-                          <span className="text-[#19181D] text-[13px] font-medium">
-                            {rule.name}
-                          </span>
-
-                          {shift.rules.map((rule) => (
-                            <li
-                              key={rule.id}
-                              className="flex items-center justify-between"
+                        <ul
+                          key={rule.id}
+                          className=" bg-[#f7f6fb] p-4 rounded-lg mb-2"
+                        >
+                          <div>
+                            <span className="font-medium">{rule.name}</span>
+                            <span
+                              className={`ml-2 px-2 py-0.5 rounded-full text-[12px] font-medium ${priorityClass(
+                                rule.priority
+                              )}`}
+                              aria-label={`priority ${rule.priority}`}
                             >
-                              <div>
-                                <span className="font-medium">{rule.name}</span>
-                                <span
-                                  className={`ml-2 px-2 py-0.5 rounded-full text-[12px] font-medium ${priorityClass(
-                                    rule.priority
-                                  )}`}
-                                  aria-label={`priority ${rule.priority}`}
-                                >
-                                  {rule.priority}
-                                </span>
-                              </div>
-                            </li>
-                          ))}
-                        </li>
+                              {rule.priority}
+                            </span>
+                          </div>
+                          <div>
+                            <div>
+                              <span className="text-sm text-[#888796]">
+                                {rule.daysApplied.length > 0
+                                  ? rule.daysApplied
+                                      .map(daysOfTheWeek)
+                                      .join(', ')
+                                  : 'None'}{' '}
+                                • {rule.perDay} shifts/day •{' '}
+                                {rule.continuousDays} max days • {rule.restDays}{' '}
+                                days off
+                              </span>
+                            </div>
+                          </div>
+                        </ul>
                       ))}
                     </ul>
                   ) : (
