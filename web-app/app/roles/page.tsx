@@ -67,13 +67,19 @@ export default function RolesPage() {
 
       // Check if any employees have this role
       const employeesWithRole = employees.filter(
-        (emp) => emp.role === roleName
+        (emp) => emp.role?.id === roleToDelete.id || emp.role?.name === roleName
       );
+
       if (employeesWithRole.length > 0) {
-        alert(
-          `Cannot delete role "${roleName}". ${employeesWithRole.length} employee(s) are assigned to this role.`
+        const confirmed = window.confirm(
+          `Are you sure you want to delete the role "${roleName}"?\n\n` +
+          `${employeesWithRole.length} employee${employeesWithRole.length === 1 ? ' is' : 's are'} currently assigned to this role.\n\n` +
+          `Deleting this role will remove the role assignment from ${employeesWithRole.length === 1 ? 'this employee' : 'these employees'}.`
         );
-        return;
+
+        if (!confirmed) {
+          return;
+        }
       }
 
       await RoleService.delete(roleToDelete.id);

@@ -24,28 +24,43 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
   const [requestedDaysOff, setRequestedDaysOff] = useState<string[]>([]);
   const [vacationDays, setVacationDays] = useState<string[]>([]);
   const [sickDays, setSickDays] = useState<string[]>([]);
-  
+
   // Filter controls
   const [selectedCategory, setSelectedCategory] = useState<'desired' | 'requested' | 'vacation' | 'sick'>('desired');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  
+
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    if (isOpen && employee?.availability) {
-      setDesiredWorkDays(employee.availability.desiredWorkDays || []);
-      setRequestedDaysOff(employee.availability.requestedDaysOff || []);
-      setVacationDays(employee.availability.vacationDays || []);
-      setSickDays(employee.availability.sickDays || []);
-    } else if (isOpen) {
-      // Reset to defaults if no availability data
-      setDesiredWorkDays([]);
-      setRequestedDaysOff([]);
-      setVacationDays([]);
-      setSickDays([]);
-    }
-  }, [isOpen, employee]);
+    const fetchAvailability = async () => {
+      if (!isOpen || !employee) return;
+
+      setIsLoading(true);
+      try {
+        const response = await fetch(`/api/employees/${employee.id}/availability?year=${selectedYear}&month=${selectedMonth + 1}`);
+        if (response.ok) {
+          const data: AvailabilityData = await response.json();
+          setDesiredWorkDays(data.desiredWorkDays || []);
+          setRequestedDaysOff(data.requestedDaysOff || []);
+          setVacationDays(data.vacationDays || []);
+          setSickDays(data.sickDays || []);
+        } else {
+          console.error('Failed to fetch availability');
+          toast({ title: 'Failed to load availability', variant: 'destructive' });
+        }
+      } catch (error) {
+        console.error('Error fetching availability:', error);
+        toast({ title: 'Error loading availability', variant: 'destructive' });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAvailability();
+  }, [isOpen, employee, selectedYear, selectedMonth]);
 
   if (!isOpen || !employee) return null;
 
@@ -54,10 +69,10 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
     setRequestedDaysOff(prev => prev.filter(d => d !== date));
     setVacationDays(prev => prev.filter(d => d !== date));
     setSickDays(prev => prev.filter(d => d !== date));
-    
+
     // Toggle in this category
-    setDesiredWorkDays(prev => 
-      prev.includes(date) 
+    setDesiredWorkDays(prev =>
+      prev.includes(date)
         ? prev.filter(d => d !== date)
         : [...prev, date]
     );
@@ -68,7 +83,7 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
     setDesiredWorkDays(prev => prev.filter(d => d !== date));
     setVacationDays(prev => prev.filter(d => d !== date));
     setSickDays(prev => prev.filter(d => d !== date));
-    
+
     // Toggle in this category
     setRequestedDaysOff(prev =>
       prev.includes(date)
@@ -82,7 +97,7 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
     setDesiredWorkDays(prev => prev.filter(d => d !== date));
     setRequestedDaysOff(prev => prev.filter(d => d !== date));
     setSickDays(prev => prev.filter(d => d !== date));
-    
+
     // Toggle in this category
     setVacationDays(prev =>
       prev.includes(date)
@@ -96,7 +111,7 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
     setDesiredWorkDays(prev => prev.filter(d => d !== date));
     setRequestedDaysOff(prev => prev.filter(d => d !== date));
     setVacationDays(prev => prev.filter(d => d !== date));
-    
+
     // Toggle in this category
     setSickDays(prev =>
       prev.includes(date)
@@ -107,14 +122,14 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
 
   const handleSave = async () => {
     setSaveStatus('saving');
-    
+
     const availabilityData = {
       desiredWorkDays,
       requestedDaysOff,
       vacationDays,
       sickDays
     };
-    
+
     console.log('💾 Admin saving availability for employee:', {
       employeeId: employee?.id,
       employeeName: employee?.name,
@@ -123,15 +138,15 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
       vacationDays: availabilityData.vacationDays.length,
       sickDays: availabilityData.sickDays.length
     });
-    
+
     // Small delay to show the saving state
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     onSave(availabilityData);
     toast({ title: `Availability updated for ${employee?.name}` });
-    
+
     setSaveStatus('saved');
-    
+
     // Keep the saved state visible for 1 second before closing
     setTimeout(() => {
       setSaveStatus('idle');
@@ -143,17 +158,17 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
-  
+
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
-  
+
   const categories = [
     { id: 'desired' as const, label: 'Desired Work Days', color: '#7636ff', bgColor: '#eae1ff' },
     { id: 'requested' as const, label: 'Requested Days Off', color: '#ff6b6b', bgColor: '#ffe0e0' },
     { id: 'vacation' as const, label: 'Vacation Days', color: '#4caf50', bgColor: '#e8f5e9' },
     { id: 'sick' as const, label: 'Sick Days', color: '#ff9800', bgColor: '#fff3e0' }
   ];
-  
+
   const getCurrentDates = () => {
     switch (selectedCategory) {
       case 'desired': return desiredWorkDays;
@@ -162,7 +177,7 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
       case 'sick': return sickDays;
     }
   };
-  
+
   const getCurrentToggle = () => {
     switch (selectedCategory) {
       case 'desired': return toggleDesiredWorkDay;
@@ -171,7 +186,7 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
       case 'sick': return toggleSickDay;
     }
   };
-  
+
   const getCurrentCategory = () => categories.find(c => c.id === selectedCategory)!;
 
   // Get the category for a specific date
@@ -229,7 +244,7 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50" onClick={onClose}>
-      <div 
+      <div
         className="bg-[#f7f6fb] rounded-[12px] w-[800px] max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -264,11 +279,10 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-[16px] py-[10px] rounded-[8px] font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[14px] transition-all ${
-                      selectedCategory === cat.id
-                        ? 'text-white shadow-md'
-                        : 'bg-[#f7f6fb] text-[#888796] hover:bg-[#eae1ff]'
-                    }`}
+                    className={`px-[16px] py-[10px] rounded-[8px] font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[14px] transition-all ${selectedCategory === cat.id
+                      ? 'text-white shadow-md'
+                      : 'bg-[#f7f6fb] text-[#888796] hover:bg-[#eae1ff]'
+                      }`}
                     style={selectedCategory === cat.id ? { backgroundColor: cat.color } : {}}
                   >
                     {cat.label}
@@ -276,7 +290,7 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
                 ))}
               </div>
             </div>
-            
+
             {/* Month Selector */}
             <div className="w-[160px]">
               <label className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] text-[#19181d] leading-[14px] mb-[8px] block">
@@ -292,7 +306,7 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
                 ))}
               </select>
             </div>
-            
+
             {/* Year Selector */}
             <div className="w-[100px]">
               <label className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] text-[#19181d] leading-[14px] mb-[8px] block">
@@ -313,116 +327,126 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-[32px] py-[24px]">
-          <div className="bg-white rounded-[8px] p-[24px]">
-            <div className="flex items-center justify-between mb-[16px]">
-              <h3 className="font-['Poppins:Medium',_sans-serif] text-[18px] tracking-[-0.36px] text-[#19181d] leading-[18px]">
-                Select {getCurrentCategory().label}
-              </h3>
-              <div className="px-[12px] py-[6px] rounded-[6px]" style={{ backgroundColor: getCurrentCategory().bgColor }}>
-                <p className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[14px]" style={{ color: getCurrentCategory().color }}>
-                  {getCurrentDates().length} {getCurrentDates().length === 1 ? 'day' : 'days'} selected
+          {isLoading ? (
+            <div className="h-full flex items-center justify-center">
+              <div className="flex flex-col items-center gap-[16px]">
+                <div className="w-[40px] h-[40px] border-4 border-[#e6e6ec] border-t-[#7636ff] rounded-full animate-spin" />
+                <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
+                  Loading availability...
                 </p>
               </div>
             </div>
-            
-            {/* Custom Multi-Color Calendar */}
-            <div className="w-full mb-[20px]">
-              {/* Calendar Header */}
-              <div className="flex items-center justify-between mb-[12px]">
-                <button
-                  onClick={goToPreviousMonth}
-                  className="w-[28px] h-[28px] rounded-[6px] bg-[#f7f6fb] flex items-center justify-center hover:bg-[#eae1ff] transition-colors"
-                >
-                  <ChevronLeft className="w-[16px] h-[16px] text-[#19181d]" strokeWidth={2} />
-                </button>
-                <p className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#19181d] leading-[16px]">
-                  {monthNames[selectedMonth]} {selectedYear}
-                </p>
-                <button
-                  onClick={goToNextMonth}
-                  className="w-[28px] h-[28px] rounded-[6px] bg-[#f7f6fb] flex items-center justify-center hover:bg-[#eae1ff] transition-colors"
-                >
-                  <ChevronRight className="w-[16px] h-[16px] text-[#19181d]" strokeWidth={2} />
-                </button>
+          ) : (
+            <div className="bg-white rounded-[8px] p-[24px]">
+              <div className="flex items-center justify-between mb-[16px]">
+                <h3 className="font-['Poppins:Medium',_sans-serif] text-[18px] tracking-[-0.36px] text-[#19181d] leading-[18px]">
+                  Select {getCurrentCategory().label}
+                </h3>
+                <div className="px-[12px] py-[6px] rounded-[6px]" style={{ backgroundColor: getCurrentCategory().bgColor }}>
+                  <p className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[14px]" style={{ color: getCurrentCategory().color }}>
+                    {getCurrentDates().length} {getCurrentDates().length === 1 ? 'day' : 'days'} selected
+                  </p>
+                </div>
               </div>
 
-              {/* Day names */}
-              <div className="grid grid-cols-7 gap-[4px] mb-[4px]">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(name => (
-                  <div key={name} className="h-[28px] flex items-center justify-center">
-                    <p className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[12px]">
-                      {name}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              {/* Custom Multi-Color Calendar */}
+              <div className="w-full mb-[20px]">
+                {/* Calendar Header */}
+                <div className="flex items-center justify-between mb-[12px]">
+                  <button
+                    onClick={goToPreviousMonth}
+                    className="w-[28px] h-[28px] rounded-[6px] bg-[#f7f6fb] flex items-center justify-center hover:bg-[#eae1ff] transition-colors"
+                  >
+                    <ChevronLeft className="w-[16px] h-[16px] text-[#19181d]" strokeWidth={2} />
+                  </button>
+                  <p className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#19181d] leading-[16px]">
+                    {monthNames[selectedMonth]} {selectedYear}
+                  </p>
+                  <button
+                    onClick={goToNextMonth}
+                    className="w-[28px] h-[28px] rounded-[6px] bg-[#f7f6fb] flex items-center justify-center hover:bg-[#eae1ff] transition-colors"
+                  >
+                    <ChevronRight className="w-[16px] h-[16px] text-[#19181d]" strokeWidth={2} />
+                  </button>
+                </div>
 
-              {/* Calendar grid */}
-              <div className="grid grid-cols-7 gap-[4px]">
-                {(() => {
-                  const { daysInMonth, startingDayOfWeek } = getDaysInMonth(selectedYear, selectedMonth);
-                  const days: (number | null)[] = [];
-                  
-                  // Add empty slots
-                  for (let i = 0; i < startingDayOfWeek; i++) {
-                    days.push(null);
-                  }
-                  
-                  // Add all days
-                  for (let day = 1; day <= daysInMonth; day++) {
-                    days.push(day);
-                  }
+                {/* Day names */}
+                <div className="grid grid-cols-7 gap-[4px] mb-[4px]">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(name => (
+                    <div key={name} className="h-[28px] flex items-center justify-center">
+                      <p className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[12px]">
+                        {name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
 
-                  return days.map((day, index) => {
-                    if (day === null) {
-                      return <div key={`empty-${index}`} className="h-[32px]" />;
+                {/* Calendar grid */}
+                <div className="grid grid-cols-7 gap-[4px]">
+                  {(() => {
+                    const { daysInMonth, startingDayOfWeek } = getDaysInMonth(selectedYear, selectedMonth);
+                    const days: (number | null)[] = [];
+
+                    // Add empty slots
+                    for (let i = 0; i < startingDayOfWeek; i++) {
+                      days.push(null);
                     }
 
-                    const dateStr = formatDate(selectedYear, selectedMonth, day);
-                    const dateCategory = getDateCategory(dateStr);
-                    const categoryConfig = dateCategory ? categories.find(c => c.id === dateCategory) : null;
+                    // Add all days
+                    for (let day = 1; day <= daysInMonth; day++) {
+                      days.push(day);
+                    }
 
-                    return (
-                      <button
-                        key={day}
-                        onClick={() => handleDateClick(dateStr)}
-                        className={`h-[32px] rounded-[6px] flex items-center justify-center transition-colors ${
-                          categoryConfig
+                    return days.map((day, index) => {
+                      if (day === null) {
+                        return <div key={`empty-${index}`} className="h-[32px]" />;
+                      }
+
+                      const dateStr = formatDate(selectedYear, selectedMonth, day);
+                      const dateCategory = getDateCategory(dateStr);
+                      const categoryConfig = dateCategory ? categories.find(c => c.id === dateCategory) : null;
+
+                      return (
+                        <button
+                          key={day}
+                          onClick={() => handleDateClick(dateStr)}
+                          className={`h-[32px] rounded-[6px] flex items-center justify-center transition-colors ${categoryConfig
                             ? 'text-white'
                             : 'bg-[#f7f6fb] text-[#19181d] hover:bg-[#eae1ff]'
-                        }`}
-                        style={categoryConfig ? { backgroundColor: categoryConfig.color } : {}}
-                      >
-                        <p className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[14px]">
-                          {day}
-                        </p>
-                      </button>
-                    );
-                  });
-                })()}
+                            }`}
+                          style={categoryConfig ? { backgroundColor: categoryConfig.color } : {}}
+                        >
+                          <p className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[14px]">
+                            {day}
+                          </p>
+                        </button>
+                      );
+                    });
+                  })()}
+                </div>
               </div>
-            </div>
 
-            {/* Legend */}
-            <div className="p-[16px] bg-[#f7f6fb] rounded-[8px]">
-              <p className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] mb-[12px]">
-                LEGEND
-              </p>
-              <div className="grid grid-cols-2 gap-[12px]">
-                {categories.map((category) => (
-                  <div key={category.id} className="flex items-center gap-[8px]">
-                    <div
-                      className="w-[24px] h-[24px] rounded-[6px]"
-                      style={{ backgroundColor: category.color }}
-                    />
-                    <span className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#19181d]">
-                      {category.label}
-                    </span>
-                  </div>
-                ))}
+              {/* Legend */}
+              <div className="p-[16px] bg-[#f7f6fb] rounded-[8px]">
+                <p className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] mb-[12px]">
+                  LEGEND
+                </p>
+                <div className="grid grid-cols-2 gap-[12px]">
+                  {categories.map((category) => (
+                    <div key={category.id} className="flex items-center gap-[8px]">
+                      <div
+                        className="w-[24px] h-[24px] rounded-[6px]"
+                        style={{ backgroundColor: category.color }}
+                      />
+                      <span className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#19181d]">
+                        {category.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -430,22 +454,20 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
           <button
             onClick={onClose}
             disabled={saveStatus !== 'idle'}
-            className={`px-[24px] py-[10px] rounded-[8px] bg-[#f7f6fb] font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#19181d] leading-[16px] transition-colors ${
-              saveStatus === 'idle' ? 'hover:bg-[#eae1ff]' : 'opacity-50 cursor-not-allowed'
-            }`}
+            className={`px-[24px] py-[10px] rounded-[8px] bg-[#f7f6fb] font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#19181d] leading-[16px] transition-colors ${saveStatus === 'idle' ? 'hover:bg-[#eae1ff]' : 'opacity-50 cursor-not-allowed'
+              }`}
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={saveStatus === 'saving'}
-            className={`px-[24px] py-[10px] rounded-[8px] font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-white leading-[16px] transition-all ${
-              saveStatus === 'saved' 
-                ? 'bg-[#4caf50] hover:bg-[#4caf50]' 
-                : saveStatus === 'saving'
+            className={`px-[24px] py-[10px] rounded-[8px] font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-white leading-[16px] transition-all ${saveStatus === 'saved'
+              ? 'bg-[#4caf50] hover:bg-[#4caf50]'
+              : saveStatus === 'saving'
                 ? 'bg-[#888796] cursor-not-allowed'
                 : 'bg-[#7636ff] hover:bg-[#6428e0]'
-            }`}
+              }`}
           >
             {saveStatus === 'saving' && 'Saving...'}
             {saveStatus === 'saved' && '✓ Saved!'}
@@ -455,4 +477,4 @@ export function AvailabilityDialog({ isOpen, onClose, employee, onSave }: Availa
       </div>
     </div>
   );
-}
+};

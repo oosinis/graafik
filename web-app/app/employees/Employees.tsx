@@ -3,6 +3,7 @@ import { Search, ChevronDown, Plus, MoreHorizontal, Edit2, Trash2, Calendar, Inf
 import { AvailabilityData, AvailabilityDialog } from './AvailabilityDialog';
 import type { Shift } from '@/models/Shift';
 import type { Employee } from '@/models/Employee';
+import type { Role } from '@/models/Role';
 
 interface EmployeesProps {
   onAddEmployee?: () => void;
@@ -11,8 +12,13 @@ interface EmployeesProps {
   onUpdateAvailability?: (employeeId: string, availability: AvailabilityData) => void;
   employees?: Employee[];
   shifts?: Shift[];
+  roles?: Role[];
   isLoading?: boolean;
 }
+
+import { RoleService } from '@/services/roleService';
+
+// ... existing imports
 
 export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onUpdateAvailability, employees = [], shifts = [], isLoading = false }: EmployeesProps) {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -23,10 +29,22 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
   const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
   const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] = React.useState(false);
   const [selectedEmployee, setSelectedEmployee] = React.useState<Employee | null>(null);
+  const [availableRoles, setAvailableRoles] = React.useState<string[]>(['All']);
 
   const getShiftById = (shiftId: string) => shifts.find(s => s.id === shiftId);
 
-  const roles = ['All', 'Chef', 'Shift manager', 'Waiter'];
+  React.useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const rolesData = await RoleService.getAll();
+        setAvailableRoles(['All', ...rolesData.map(r => r.name)]);
+      } catch (error) {
+        console.error('Failed to fetch roles:', error);
+      }
+    };
+    fetchRoles();
+  }, []);
+
   const fteOptions = ['All', '1.0', '0.75', '0.5'];
 
   // Close dropdowns when clicking outside
@@ -79,8 +97,13 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
       const matchesSearch = searchQuery === '' ||
         employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         employee.email?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesRole = selectedRole === 'All' || employee.employeeRole === selectedRole;
-      const matchesFTE = selectedFTE === 'All' || (employee.workLoad?.toString() || '') === selectedFTE;
+      const matchesRole = selectedRole === 'All' || (employee.role && employee.role.name.toLowerCase() === selectedRole.toLowerCase());
+      
+      const matchesFTE = selectedFTE === 'All' || (() => {
+        if (employee.workLoad === undefined || employee.workLoad === null) return false;
+        const targetFTE = parseFloat(selectedFTE);
+        return Math.abs(employee.workLoad - targetFTE) < 0.01;
+      })();
       return matchesSearch && matchesRole && matchesFTE;
     });
   }, [employees, searchQuery, selectedRole, selectedFTE]);
@@ -145,7 +168,7 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
 
             {isRoleOpen && (
               <div className="absolute top-[42px] left-0 bg-white border border-[#e6e6ec] rounded-[8px] shadow-lg z-10 min-w-[160px]" onClick={(e) => e.stopPropagation()}>
-                {roles.map((role) => (
+                {availableRoles.map((role) => (
                   <button
                     key={role}
                     onClick={(e) => {
@@ -301,15 +324,15 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
                 <div
                   className="px-[10px] py-[5px] rounded-[4px] border border-solid capitalize"
                   style={{
-                    backgroundColor: employee.roleBg,
-                    borderColor: `${employee.roleColor}4d`
+                    backgroundColor: employee.role?.backgroundColor || employee.roleBg || '#f3f4f6',
+                    borderColor: `${employee.role?.color || employee.roleColor || '#374151'}4d`
                   }}
                 >
                   <p
                     className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px]"
-                    style={{ color: employee.roleColor }}
+                    style={{ color: employee.role?.color || employee.roleColor || '#374151' }}
                   >
-                    {employee.employeeRole}
+                    {employee.role?.name || 'No Role'}
                   </p>
                 </div>
               </div>
@@ -340,7 +363,7 @@ export function Employees({ onAddEmployee, onEditEmployee, onDeleteEmployee, onU
                     e.stopPropagation();
                     setOpenMenuId(openMenuId === employee.id ? null : employee.id);
                   }}
-                  className="bg-[#e4d7ff] w-[24px] h-[24px] rounded-[6px] flex items-center justify-center cursor-pointer hover:bg-[#d7c5ff] transition-colors"
+                  className="bg-[#7636ff] w-[24px] h-[24px] rounded-[6px] flex items-center justify-center cursor-pointer hover:bg-[#6428e0] transition-colors"
                 >
                   <MoreHorizontal className="w-[16px] h-[16px] text-white" strokeWidth={2} />
                 </button>
