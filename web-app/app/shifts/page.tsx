@@ -5,6 +5,7 @@ import Shifts from './Shifts';
 import { AddShift } from './AddShift';
 import type { Shift } from '@/models/Shift';
 import { ShiftsService } from '@/services/shiftService';
+import { Notification } from '@/components/ui/notification';
 
 export default function ShiftsPage() {
   const [shifts, setShifts] = useState<Shift[]>([]);
@@ -121,7 +122,6 @@ export default function ShiftsPage() {
       {pendingDeleteId && (
         <Notification
           message="Are you sure you want to delete this shift?"
-          type="info"
           onConfirm={confirmDelete}
           onClose={cancelDelete}
         />
