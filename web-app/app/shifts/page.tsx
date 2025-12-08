@@ -96,7 +96,6 @@ export default function ShiftsPage() {
       {pendingDeleteId && (
         <Notification
           message="Are you sure you want to delete this shift?"
-          type="info"
           onConfirm={confirmDelete}
           onClose={cancelDelete}
         />
