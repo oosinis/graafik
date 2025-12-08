@@ -17,8 +17,8 @@ public class RegenerateExistingSchedule {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             File jsonFile = new File("backend/src/main/java/com/graafik/data/db/schedulerequest.json");
-            List<ScheduleRequest> scheduleRequests = objectMapper.readValue(jsonFile,
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequest.class));
+            List<ScheduleRequest> scheduleRequests = objectMapper.readValue(jsonFile, 
+                objectMapper.getTypeFactory().constructCollectionType(List.class, ScheduleRequest.class));
 
             ScheduleAlg schedule = new ScheduleAlg();
 
@@ -34,16 +34,14 @@ public class RegenerateExistingSchedule {
 
     /**
      * Regenerate schedule without one employee
-     * 
      * @param scheduleRequest original request
      * @param currentSchedule the schedule to be changed
-     * @param startDate       starting date for chnge (included)
-     * @param endDate         ending date for change (included)
+     * @param startDate starting date for chnge (included)
+     * @param endDate ending date for change (included)
      * @param missingEmployee employee to be removed
      * @return list of new schedules with new scores
      */
-    public static List<ScheduleAlg> regenerateSchedule(ScheduleRequest scheduleRequest, ScheduleAlg currentSchedule,
-            int startDate, int endDate, Employee missingEmployee) {
+    public static List<ScheduleAlg> regenerateSchedule(ScheduleRequest scheduleRequest, ScheduleAlg currentSchedule, int startDate, int endDate, Employee missingEmployee) {
 
         List<Shift> missingShifts = new ArrayList<>();
         for (int date = startDate - 1; date < endDate; date++) {
@@ -56,17 +54,15 @@ public class RegenerateExistingSchedule {
             }
             List<ShiftAssignment> assignments = currentSchedule.getDaySchedules().get(date).getAssignments();
             ShiftAssignment toRemove = assignments.stream()
-                    .filter(a -> a.getEmployee() == missingEmployee)
-                    .findFirst()
-                    .orElse(null);
+                .filter(a -> a.getEmployee() == missingEmployee)
+                .findFirst()
+                .orElse(null);
 
             if (toRemove != null) {
                 missingShifts.add(toRemove.getShift());
                 assignments.remove(toRemove);
-                currentSchedule.changeEmployeeHours(toRemove.getShift().getDurationInMinutes(),
-                        missingEmployee.getId());
-            } else
-                missingShifts.add(null);
+                currentSchedule.changeEmployeeHours(toRemove.getShift().getDurationInMinutes(), missingEmployee.getId());
+            } else missingShifts.add(null);
         }
 
         // new score count to differentite between regenerations
@@ -74,55 +70,39 @@ public class RegenerateExistingSchedule {
         currentSchedule.setScore(0);
         List<ScheduleAlg> partialSchedules = Collections.singletonList(currentSchedule);
         for (int date = startDate - 1; date < endDate; date++) {
-            if (missingShifts.getFirst() != null)
-                partialSchedules = generateNewScheduleForDate(scheduleRequest, partialSchedules, date, missingEmployee,
-                        missingShifts.getFirst());
+            if (missingShifts.getFirst() != null) partialSchedules = generateNewScheduleForDate(scheduleRequest, partialSchedules, date, missingEmployee, missingShifts.getFirst());
             missingShifts.removeFirst();
         }
         return partialSchedules;
     }
 
+
     /**
      * 
-     * @param scheduleRequest  origingal request
+     * @param scheduleRequest origingal request
      * @param partialSchedules list of scheules to add new day to
-     * @param date             specific date we're currently adding to
-     * @param missingEmployee
-     * @param missingShift     mising shift from the date
-     * @return new schedules wth the missing shift added to current date (different
-     *         employee for each schedule in list)
+     * @param date specific date we're currently adding to
+     * @param missingEmployee 
+     * @param missingShift mising shift from the date
+     * @return new schedules wth the missing shift added to current date (different employee for each schedule in list)
      */
-    public static List<ScheduleAlg> generateNewScheduleForDate(ScheduleRequest scheduleRequest,
-            List<ScheduleAlg> partialSchedules, int date, Employee missingEmployee, Shift missingShift) {
-
+    public static List<ScheduleAlg> generateNewScheduleForDate(ScheduleRequest scheduleRequest, List<ScheduleAlg> partialSchedules, int date, Employee missingEmployee, Shift missingShift) {
+    
         List<ScheduleAlg> newPartialSchedules = new ArrayList<>();
         for (ScheduleAlg currentSchedule : partialSchedules) {
 
             for (Employee employee : scheduleRequest.getEmployees()) {
 
-                if (employee == missingEmployee)
-                    continue;
-                // Using 2025 as hardcoded year to match other logic
-                if (HelperMethods.isDateInList(employee.getVacationDays(), 2025, scheduleRequest.getMonth(), date + 1))
-                    continue;
-                if (HelperMethods.isDateInList(employee.getSickDays(), 2025, scheduleRequest.getMonth(), date + 1))
-                    continue;
-                if (HelperMethods.isDateInList(employee.getRequestedDaysOff(), 2025, scheduleRequest.getMonth(),
-                        date + 1))
-                    continue;
-                if (!RuleValidator.initialValidator(HelperMethods.getRequestedWorkDays(scheduleRequest, date),
-                        missingShift, employee))
-                    continue;
-
+                if (employee == missingEmployee || employee.getVacationDays().contains(date + 1) || employee.getSickDays().contains(date + 1)) continue;
+                if (!RuleValidator.initialValidator(HelperMethods.getRequestedWorkDays(scheduleRequest, date), missingShift, employee)) continue;
+                
                 ScheduleAlg clonedSchedule = HelperMethods.cloneSchedule(currentSchedule);
+                
+                clonedSchedule.setScore(RuleValidator.singleAssignmentValidator(scheduleRequest, clonedSchedule, new ShiftAssignment(missingShift, employee), date));
 
-                clonedSchedule.setScore(RuleValidator.singleAssignmentValidator(scheduleRequest, clonedSchedule,
-                        new ShiftAssignment(missingShift, employee), date));
+                clonedSchedule.changeEmployeeHours(- missingShift.getDurationInMinutes(), employee.getId());
 
-                clonedSchedule.changeEmployeeHours(-missingShift.getDurationInMinutes(), employee.getId());
-
-                clonedSchedule.getDaySchedules().get(date).getAssignments()
-                        .add(new ShiftAssignment(missingShift, employee));
+                clonedSchedule.getDaySchedules().get(date).getAssignments().add(new ShiftAssignment(missingShift, employee));
 
                 newPartialSchedules.add(clonedSchedule);
 
@@ -131,4 +111,5 @@ public class RegenerateExistingSchedule {
         return newPartialSchedules;
     }
 
+    
 }

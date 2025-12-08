@@ -5,7 +5,6 @@ import Shifts from './Shifts';
 import { AddShift } from './AddShift';
 import type { Shift } from '@/models/Shift';
 import { ShiftsService } from '@/services/shiftService';
-import { Notification } from '@/components/ui/notification';
 
 export default function ShiftsPage() {
   const [shifts, setShifts] = useState<Shift[]>([]);
@@ -46,12 +45,6 @@ export default function ShiftsPage() {
     }
   };
 
-  /* 
-  Hakkasin siia tegema funktsiooni, mis kontrollib, kas vahetuses on töötajaid.
-  const employeeCheck = (shiftId) => {
-    
-  } */
-
   const handleDeleteShift = async (shiftId: string) => {
     setPendingDeleteId(shiftId);
   };
@@ -64,8 +57,6 @@ export default function ShiftsPage() {
       await fetchShifts();
     } catch (err) {
       console.error('Failed to delete shift', err);
-    } finally {
-      setPendingDeleteId(null);
     }
   };
 
@@ -91,8 +82,7 @@ export default function ShiftsPage() {
     } catch (err) {
       console.error('Failed to update shift', err);
     } finally {
-      setEditingShift(null);
-      setShowModal(false);
+      setPendingDeleteId(null);
     }
   };
 
@@ -100,13 +90,14 @@ export default function ShiftsPage() {
     setPendingDeleteId(null);
   };
 
+
   return (
     <>
       <Shifts
         shifts={shifts}
         isLoading={isLoading}
         onAddShift={() => setShowModal(true)}
-        onEditShift={handleEditShift}
+        onEditShift={(shift) => console.log('Edit shift:', shift)}
         onDeleteShift={handleDeleteShift}
       />
 
@@ -116,16 +107,12 @@ export default function ShiftsPage() {
           onClick={() => setShowModal(false)}
         >
           <div
-            className="bg-white rounded-lg p-4 w-[850px]"
+            className="bg-white rounded-lg p-4 w-[600px]"
             onClick={(e) => e.stopPropagation()}
           >
             <AddShift
-              onSave={editingShift ? handleUpdateShift : handleCreateShift}
-              onDiscard={() => {
-                setShowModal(false);
-                setEditingShift(null);
-              }}
-              editingShift={editingShift ?? undefined}
+              onSave={handleCreateShift}
+              onDiscard={() => setShowModal(false)}
             />
           </div>
         </div>

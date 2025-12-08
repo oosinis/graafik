@@ -27,6 +27,11 @@ export function SidebarNavigation() {
       icon: PenTool,
     },
     {
+      name: "Workers",
+      href: "/workers",
+      icon: Users,
+    },
+    {
       name: "Shifts",
       href: "/shifts",
       icon: Clock,
