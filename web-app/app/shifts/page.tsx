@@ -46,12 +46,6 @@ export default function ShiftsPage() {
     }
   };
 
-  /* 
-  Hakkasin siia tegema funktsiooni, mis kontrollib, kas vahetuses on töötajaid.
-  const employeeCheck = (shiftId) => {
-    
-  } */
-
   const handleDeleteShift = async (shiftId: string) => {
     setPendingDeleteId(shiftId);
   };
@@ -95,10 +89,14 @@ export default function ShiftsPage() {
     } catch (err) {
       console.error('Failed to update shift', err);
     } finally {
-      setEditingShift(null);
-      setShowModal(false);
+      setPendingDeleteId(null);
     }
   };
+
+  const cancelDelete = () => {
+    setPendingDeleteId(null);
+  };
+
 
   return (
     <>
@@ -106,7 +104,7 @@ export default function ShiftsPage() {
         shifts={shifts}
         isLoading={isLoading}
         onAddShift={() => setShowModal(true)}
-        onEditShift={handleEditShift}
+        onEditShift={(shift) => console.log('Edit shift:', shift)}
         onDeleteShift={handleDeleteShift}
       />
 
@@ -116,16 +114,12 @@ export default function ShiftsPage() {
           onClick={() => setShowModal(false)}
         >
           <div
-            className="bg-white rounded-lg p-4 w-[850px]"
+            className="bg-white rounded-lg p-4 w-[600px]"
             onClick={(e) => e.stopPropagation()}
           >
             <AddShift
-              onSave={editingShift ? handleUpdateShift : handleCreateShift}
-              onDiscard={() => {
-                setShowModal(false);
-                setEditingShift(null);
-              }}
-              editingShift={editingShift ?? undefined}
+              onSave={handleCreateShift}
+              onDiscard={() => setShowModal(false)}
             />
           </div>
         </div>
