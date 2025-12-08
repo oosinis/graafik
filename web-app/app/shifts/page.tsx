@@ -53,7 +53,6 @@ export default function ShiftsPage() {
   const handleDeleteShift = async (shiftId: string) => {
     try {
       await ShiftsService.delete(shiftId);
-      if()
       setShifts((prev) => prev.filter((s) => s.id !== shiftId));
     } catch (err) {
       console.error('Failed to delete shift', err);
