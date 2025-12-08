@@ -12,6 +12,7 @@ export default function ShiftsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [editingShift, setEditingShift] = useState<Shift | null>(null);
 
   const fetchShifts = async () => {
     setIsLoading(true);
@@ -57,6 +58,30 @@ export default function ShiftsPage() {
       await fetchShifts();
     } catch (err) {
       console.error('Failed to delete shift', err);
+    }
+  };
+
+  const handleEditShift = (shift: Shift) => {
+    if (!shift) return alert('Shift not found');
+
+    setEditingShift(shift);
+    setShowModal(true);
+  };
+
+  const handleUpdateShift = async (updatedShift: Partial<Shift>) => {
+    if (!editingShift) return;
+
+    try {
+      const saved = await ShiftsService.update(editingShift.id, updatedShift);
+      setShifts((prev) =>
+        prev.map((s) =>
+          s.id === editingShift.id
+            ? { ...s, ...saved, rules: updatedShift.rules ?? s.rules }
+            : s
+        )
+      );
+    } catch (err) {
+      console.error('Failed to update shift', err);
     } finally {
       setPendingDeleteId(null);
     }
@@ -65,6 +90,7 @@ export default function ShiftsPage() {
   const cancelDelete = () => {
     setPendingDeleteId(null);
   };
+
 
   return (
     <>
