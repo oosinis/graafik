@@ -13,7 +13,6 @@ export default function ShiftsPage() {
   const [showModal, setShowModal] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const fetchShifts = async () => {
     setIsLoading(true);
