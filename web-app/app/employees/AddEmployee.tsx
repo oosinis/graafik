@@ -124,7 +124,7 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
         notes: formData.notes,
         preferredShifts: formData.preferredShifts,
         preferredWorkdays: formData.preferredWorkdays,
-        assignedShifts: formData.assignedShifts
+        assignedShifts: formData.assignedShifts.map(id => ({ id } as Shift))
       };
 
       let savedEmployee: Employee;

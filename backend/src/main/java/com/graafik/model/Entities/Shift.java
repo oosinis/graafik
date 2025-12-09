@@ -58,6 +58,9 @@ public class Shift extends BaseEntity {
     public void setDeleted(boolean deleted) { this.deleted = deleted; }
 
     public long getDurationInMinutes() {
+        if (startTime == null || endTime == null) {
+            return 0;
+        }
         return java.time.Duration.between(startTime, endTime).toMinutes();
     }
     
