@@ -10,16 +10,19 @@ import org.springframework.stereotype.Service;
 import com.graafik.model.Entities.*;
 import com.graafik.model.Dtos.UpdateEmployeeRequest;
 import com.graafik.repositories.EmployeeRepository;
+import com.graafik.repositories.RoleRepository;
 import com.graafik.repositories.ShiftRepository;
 
 @Service
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final ShiftRepository shiftRepository;
+    private final RoleRepository roleRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository, ShiftRepository shiftRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, ShiftRepository shiftRepository, RoleRepository roleRepository) {
         this.employeeRepository = employeeRepository;
         this.shiftRepository = shiftRepository;
+        this.roleRepository = roleRepository;
     }
 
     public List<Employee> getAllEmployees() {
@@ -60,7 +63,8 @@ public class EmployeeService {
                 existing.setName(request.getName());
             }
             if (request.getEmployeeRole() != null) {
-                existing.setEmployeeRole(request.getEmployeeRole());
+                roleRepository.findByName(request.getEmployeeRole())
+                    .ifPresent(existing::setRole);
             }
             
             // Convert shift IDs to Shift entities

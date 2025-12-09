@@ -2,6 +2,7 @@ package com.graafik.model.Entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 
@@ -56,6 +57,7 @@ public class DaySchedule extends BaseEntity {
         this.score = this.score + addition;
     }
 
+    @JsonIgnore
     public Schedule getSchedule() {
         return schedule;
     }

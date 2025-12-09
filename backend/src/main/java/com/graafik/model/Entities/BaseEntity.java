@@ -47,4 +47,20 @@ public abstract class BaseEntity {
     protected void onUpdate() {
         modifiedAt = LocalDateTime.now();
     }
+    
+    /**
+     * Manually initialize ID and timestamps before persist.
+     * This is useful when you need the ID to exist before cascading saves child entities.
+     */
+    public void initializeId() {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (modifiedAt == null) {
+            modifiedAt = createdAt;
+        }
+    }
 }
