@@ -11,4 +11,5 @@ import com.graafik.model.Entities.ShiftAssignment;
 @Repository
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, UUID> {
     List<ShiftAssignment> findByDayScheduleId(UUID dayScheduleId);
+    long countByShiftId(UUID shiftId);
 }
