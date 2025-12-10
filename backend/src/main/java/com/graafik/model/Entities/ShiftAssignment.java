@@ -1,5 +1,6 @@
 package com.graafik.model.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -28,6 +29,7 @@ public class ShiftAssignment extends BaseEntity {
         this.employee = employee;
     }
 
+    @JsonIgnore
     public DaySchedule getDaySchedule() {
         return daySchedule;
     }

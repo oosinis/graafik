@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.graafik.dto.AvailabilityDTO;
 import com.graafik.model.Entities.Employee;
+import com.graafik.model.Dtos.UpdateEmployeeRequest;
 import com.graafik.services.EmployeeService;
 
 @RestController
@@ -50,8 +51,8 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable UUID id, @RequestBody Employee employee) {
-        Optional<Employee> updated = employeeService.updateEmployee(id, employee);
+    public ResponseEntity<Employee> updateEmployee(@PathVariable UUID id, @RequestBody UpdateEmployeeRequest request) {
+        Optional<Employee> updated = employeeService.updateEmployee(id, request);
         return updated.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 

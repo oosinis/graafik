@@ -3,18 +3,26 @@ package com.graafik.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.graafik.model.Entities.*;
+import com.graafik.model.Dtos.UpdateEmployeeRequest;
 import com.graafik.repositories.EmployeeRepository;
+import com.graafik.repositories.RoleRepository;
+import com.graafik.repositories.ShiftRepository;
 
 @Service
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final ShiftRepository shiftRepository;
+    private final RoleRepository roleRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, ShiftRepository shiftRepository, RoleRepository roleRepository) {
         this.employeeRepository = employeeRepository;
+        this.shiftRepository = shiftRepository;
+        this.roleRepository = roleRepository;
     }
 
     public List<Employee> getAllEmployees() {
@@ -45,6 +53,30 @@ public class EmployeeService {
                 existing.setRole(updated.getRole());
             if (updated.getAssignedShifts() != null)
                 existing.setAssignedShifts(updated.getAssignedShifts());
+            return employeeRepository.save(existing);
+        });
+    }
+
+    public Optional<Employee> updateEmployee(UUID id, UpdateEmployeeRequest request) {
+        return employeeRepository.findById(id).map(existing -> {
+            if (request.getName() != null) {
+                existing.setName(request.getName());
+            }
+            if (request.getEmployeeRole() != null) {
+                roleRepository.findByName(request.getEmployeeRole())
+                    .ifPresent(existing::setRole);
+            }
+            
+            // Convert shift IDs to Shift entities
+            if (request.getAssignedShiftIds() != null) {
+                List<Shift> shifts = request.getAssignedShiftIds().stream()
+                    .map(shiftId -> shiftRepository.findById(shiftId))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+                existing.setAssignedShifts(shifts);
+            }
+            
             return employeeRepository.save(existing);
         });
     }
