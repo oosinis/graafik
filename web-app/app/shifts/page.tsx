@@ -5,11 +5,13 @@ import Shifts from './Shifts';
 import { AddShift } from './AddShift';
 import type { Shift } from '@/models/Shift';
 import { ShiftsService } from '@/services/shiftService';
+import { Notification } from '@/components/ui/notification';
 
 export default function ShiftsPage() {
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
 
   const fetchShifts = async () => {
@@ -44,19 +46,25 @@ export default function ShiftsPage() {
     }
   };
 
-  /* 
-  Hakkasin siia tegema funktsiooni, mis kontrollib, kas vahetuses on töötajaid.
-  const employeeCheck = (shiftId) => {
-    
-  } */
-
   const handleDeleteShift = async (shiftId: string) => {
+    setPendingDeleteId(shiftId);
+  };
+
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return;
+
     try {
-      await ShiftsService.delete(shiftId);
-      setShifts((prev) => prev.filter((s) => s.id !== shiftId));
+      await ShiftsService.delete(pendingDeleteId);
+      await fetchShifts();
     } catch (err) {
       console.error('Failed to delete shift', err);
+    } finally {
+      setPendingDeleteId(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setPendingDeleteId(null);
   };
 
   const handleEditShift = (shift: Shift) => {
@@ -81,8 +89,7 @@ export default function ShiftsPage() {
     } catch (err) {
       console.error('Failed to update shift', err);
     } finally {
-      setEditingShift(null);
-      setShowModal(false);
+      setPendingDeleteId(null);
     }
   };
 
@@ -102,19 +109,27 @@ export default function ShiftsPage() {
           onClick={() => setShowModal(false)}
         >
           <div
-            className="bg-white rounded-lg p-4 w-[850px]"
+            className="bg-white rounded-lg p-4 w-[600px]"
             onClick={(e) => e.stopPropagation()}
           >
             <AddShift
+              shift={editingShift}
               onSave={editingShift ? handleUpdateShift : handleCreateShift}
               onDiscard={() => {
                 setShowModal(false);
                 setEditingShift(null);
               }}
-              editingShift={editingShift ?? undefined}
             />
           </div>
         </div>
+      )}
+
+      {pendingDeleteId && (
+        <Notification
+          message="Are you sure you want to delete this shift?"
+          onConfirm={confirmDelete}
+          onClose={cancelDelete}
+        />
       )}
     </>
   );
