@@ -7,7 +7,7 @@ import { Role } from '@/models/Role';
 
 interface AddEmployeeProps {
   onSave: (employee: Employee) => void;
-  onDiscard: ()=> void;
+  onDiscard: () => void;
   editingEmployee?: Employee;
   roles?: Role[];
   shifts?: Shift[];
@@ -114,23 +114,42 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
 
     setIsSaving(true);
     try {
-      const employeeData: Partial<Employee> = {
-        name: `${formData.firstName} ${formData.lastName}`.trim(),
-        email: formData.email,
-        phone: formData.phone || 'N/A',
-        role: roles.find(r => r.name === formData.primaryRole),
-        secondaryRole: roles.find(r => r.name === formData.secondaryRole),
-        workLoad: parseFloat(formData.fte),
-        notes: formData.notes,
-        preferredShifts: formData.preferredShifts,
-        preferredWorkdays: formData.preferredWorkdays,
-        assignedShifts: formData.assignedShifts.map(id => ({ id } as Shift))
-      };
-
       let savedEmployee: Employee;
       if (editingEmployee) {
-        savedEmployee = await EmployeeService.update(editingEmployee.id, employeeData);
+        // For update, send the DTO expected by UpdateEmployeeRequest
+        const updatePayload = {
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email,
+          phone: formData.phone || 'N/A',
+          employeeRole: formData.primaryRole,
+          secondaryRole: formData.secondaryRole,
+          workLoad: parseFloat(formData.fte),
+          notes: formData.notes,
+          preferredShifts: formData.preferredShifts,
+          preferredWorkdays: formData.preferredWorkdays,
+          assignedShifts: formData.assignedShifts // Send IDs directly
+        };
+        savedEmployee = await EmployeeService.update(editingEmployee.id, updatePayload);
       } else {
+        // For create, keep using the Employee object structure (or ensure backend handles it)
+        // Existing logic used full objects for roles/shifts.
+        // If Create works, we leave it. Usage of this form for CREATE implies it might also need IDs if backend expects objects but gets IDs? 
+        // But backend `createEmployee` takes `Employee` entity directly.
+        // Frontend was sending objects: `assignedShifts: formData.assignedShifts.map(id => ({ id } as Shift))`
+        // This is valid for Entity deserialization if ID is present.
+
+        const employeeData: Partial<Employee> = {
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email,
+          phone: formData.phone || 'N/A',
+          role: roles.find(r => r.name === formData.primaryRole),
+          secondaryRole: roles.find(r => r.name === formData.secondaryRole),
+          workLoad: parseFloat(formData.fte),
+          notes: formData.notes,
+          preferredShifts: formData.preferredShifts,
+          preferredWorkdays: formData.preferredWorkdays,
+          assignedShifts: formData.assignedShifts.map(id => ({ id } as Shift))
+        };
         savedEmployee = await EmployeeService.create(employeeData);
       }
 

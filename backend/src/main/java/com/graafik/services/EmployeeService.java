@@ -19,7 +19,8 @@ public class EmployeeService {
     private final ShiftRepository shiftRepository;
     private final RoleRepository roleRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository, ShiftRepository shiftRepository, RoleRepository roleRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, ShiftRepository shiftRepository,
+            RoleRepository roleRepository) {
         this.employeeRepository = employeeRepository;
         this.shiftRepository = shiftRepository;
         this.roleRepository = roleRepository;
@@ -62,21 +63,47 @@ public class EmployeeService {
             if (request.getName() != null) {
                 existing.setName(request.getName());
             }
+            if (request.getEmail() != null) {
+                existing.setEmail(request.getEmail());
+            }
+            if (request.getPhone() != null) {
+                existing.setPhone(request.getPhone());
+            }
             if (request.getEmployeeRole() != null) {
                 roleRepository.findByName(request.getEmployeeRole())
-                    .ifPresent(existing::setRole);
+                        .ifPresent(existing::setRole);
             }
-            
+            if (request.getSecondaryRole() != null) {
+                if (request.getSecondaryRole().isEmpty()) {
+                    existing.setSecondaryRole(null);
+                } else {
+                    roleRepository.findByName(request.getSecondaryRole())
+                            .ifPresent(existing::setSecondaryRole);
+                }
+            }
+            if (request.getWorkLoad() != null) {
+                existing.setWorkLoad(request.getWorkLoad());
+            }
+            if (request.getNotes() != null) {
+                existing.setNotes(request.getNotes());
+            }
+            if (request.getPreferredShifts() != null) {
+                existing.setPreferredShifts(request.getPreferredShifts());
+            }
+            if (request.getPreferredWorkdays() != null) {
+                existing.setPreferredWorkdays(request.getPreferredWorkdays());
+            }
+
             // Convert shift IDs to Shift entities
             if (request.getAssignedShiftIds() != null) {
                 List<Shift> shifts = request.getAssignedShiftIds().stream()
-                    .map(shiftId -> shiftRepository.findById(shiftId))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+                        .map(shiftId -> shiftRepository.findById(shiftId))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList());
                 existing.setAssignedShifts(shifts);
             }
-            
+
             return employeeRepository.save(existing);
         });
     }
