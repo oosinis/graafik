@@ -194,7 +194,36 @@ public class ScheduleService {
 
 
     public boolean deleteSchedule(UUID id) {
-        if (scheduleRepository.existsById(id)) {
+        Optional<Schedule> scheduleOpt = scheduleRepository.findById(id);
+        if (scheduleOpt.isPresent()) {
+            
+            // We need to manually delete assignments to trigger the shift cleanup logic
+            List<DaySchedule> daySchedules = dayScheduleRepository.findByScheduleId(id);
+            for (DaySchedule ds : daySchedules) {
+                List<ShiftAssignment> assignments = shiftAssignmentRepository.findByDayScheduleId(ds.getId());
+                for (ShiftAssignment assignment : assignments) {
+                    Shift shift = assignment.getShift();
+                    shiftAssignmentRepository.delete(assignment);
+                    
+                    // Flush to ensure the delete is counted
+                    shiftAssignmentRepository.flush();
+
+                    if (shift.isDeleted()) {
+                        // veits kilplase lahendus
+                        // aga peaks töötama, korralikult saab testida kui scheule genemiseks läheb
+                        long remainingAssignments = shiftAssignmentRepository.countByShiftId(shift.getId());
+                        if (remainingAssignments == 0) {
+                            // We need to use shiftService to delete the shift or access repository directly
+                            // Since we don't have shiftRepository here, we can use shiftService.deleteShift which handles the check again
+                            // But deleteShift checks for assignments count > 0. If 0, it deletes.
+                            shiftService.deleteShift(shift.getId());
+                        }
+                    }
+                }
+                // Ensure DaySchedule is deleted if not cascaded (though it should be by Schedule cascade)
+                // If Schedule -> DaySchedule is Cascade.ALL, we don't need to delete explicitly, 
+            }
+
             scheduleRepository.deleteById(id);
             return true;
         }

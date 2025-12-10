@@ -22,6 +22,9 @@ public class Shift extends BaseEntity {
     @Column(nullable = false)
     private LocalTime endTime;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rule> rules = new ArrayList<>();
 
@@ -50,7 +53,14 @@ public class Shift extends BaseEntity {
 
     public void setRules(List<Rule> rules) { this.rules = rules; }
 
+    public boolean isDeleted() { return deleted; }
+
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+
     public long getDurationInMinutes() {
+        if (startTime == null || endTime == null) {
+            return 0;
+        }
         return java.time.Duration.between(startTime, endTime).toMinutes();
     }
     

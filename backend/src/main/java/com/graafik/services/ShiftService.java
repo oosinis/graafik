@@ -7,9 +7,12 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.graafik.model.Entities.Employee;
 import com.graafik.model.Entities.Rule;
 import com.graafik.model.Entities.Shift;
+import com.graafik.repositories.EmployeeRepository;
 import com.graafik.repositories.RuleRepository;
+import com.graafik.repositories.ShiftAssignmentRepository;
 import com.graafik.repositories.ShiftRepository;
 
 @Service
@@ -17,14 +20,18 @@ public class ShiftService {
 
     private final ShiftRepository shiftRepository;
     private final RuleRepository ruleRepository;
+    private final ShiftAssignmentRepository shiftAssignmentRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public ShiftService(ShiftRepository shiftRepository, RuleRepository ruleRepository) {
+    public ShiftService(ShiftRepository shiftRepository, RuleRepository ruleRepository, ShiftAssignmentRepository shiftAssignmentRepository, EmployeeRepository employeeRepository) {
         this.shiftRepository = shiftRepository;
         this.ruleRepository = ruleRepository;
+        this.shiftAssignmentRepository = shiftAssignmentRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public List<Shift> getAllShifts() {
-        return shiftRepository.findAll();
+        return shiftRepository.findAllByDeletedFalse();
     }
 
     public Optional<Shift> getShiftById(UUID id) {
@@ -104,7 +111,20 @@ public class ShiftService {
     public boolean deleteShift(UUID id) {
         return shiftRepository.findById(id)
                 .map(shift -> {
-                    shiftRepository.delete(shift);
+                    // Remove shift from all employees who have it assigned
+                    List<Employee> employees = employeeRepository.findAllByAssignedShiftsContaining(shift);
+                    for (Employee employee : employees) {
+                        employee.getAssignedShifts().remove(shift);
+                        employeeRepository.save(employee);
+                    }
+
+                    long assignmentCount = shiftAssignmentRepository.countByShiftId(id);
+                    if (assignmentCount > 0) {
+                        shift.setDeleted(true);
+                        shiftRepository.save(shift);
+                    } else {
+                        shiftRepository.delete(shift);
+                    }
                     return true;
                 })
                 .orElse(false);

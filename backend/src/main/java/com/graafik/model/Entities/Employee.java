@@ -97,6 +97,10 @@ public class Employee extends BaseEntity {
         return workLoad;
     }
 
+    public void setWorkLoad(float workLoad) {
+        this.workLoad = workLoad;
+    }
+
     public List<String> getDesiredWorkDays() {
         return desiredWorkDays;
     }
