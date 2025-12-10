@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import { Shift } from '@/models/Shift';
 import { Employee } from '@/models/Employee';
+import { UpdateEmployeeRequest } from "@/models/UpdateEmployeeRequest";
 import { EmployeeService } from '@/services/employeeService';
 import { Role } from '@/models/Role';
 
@@ -117,7 +118,7 @@ export function AddEmployee({ onSave, onDiscard, editingEmployee, roles = [], sh
       let savedEmployee: Employee;
       if (editingEmployee) {
         // For update, send the DTO expected by UpdateEmployeeRequest
-        const updatePayload = {
+        const updatePayload: UpdateEmployeeRequest = {
           name: `${formData.firstName} ${formData.lastName}`.trim(),
           email: formData.email,
           phone: formData.phone || 'N/A',

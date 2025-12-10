@@ -1,4 +1,5 @@
 import { Employee } from "@/models/Employee";
+import { UpdateEmployeeRequest } from "@/models/UpdateEmployeeRequest";
 import { httpClient } from "./httpClient";
 
 const BASE_URL = "/employees";
@@ -31,7 +32,7 @@ export const EmployeeService = {
   /**
    * PUT /employees/{id}
    */
-  update(id: string, employee: Partial<Employee>): Promise<Employee> {
+  update(id: string, employee: Partial<Employee> | UpdateEmployeeRequest): Promise<Employee> {
     return httpClient(`${BASE_URL}/${id}`, {
       method: "PUT",
       body: JSON.stringify(employee),

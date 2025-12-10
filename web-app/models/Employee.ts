@@ -27,3 +27,5 @@ export interface Employee {
   preferredWorkdays?: string[];
   hasAccount?: boolean;
 }
+
+
