@@ -1,5 +1,6 @@
 package com.graafik.services;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -138,9 +139,16 @@ public class ScheduleService {
                     List<DaySchedule> daySchedules = dayScheduleRepository.findByScheduleId(scheduleId);
                     daySchedules.forEach(ds -> {
                         List<ShiftAssignment> assignments = shiftAssignmentRepository.findByDayScheduleId(ds.getId());
-                        ds.setAssignments(assignments);
+                        // Fix: Clear and add instead of replacing to avoid cascade/orphan removal issues
+                        if (ds.getAssignments() == null) {
+                            ds.setAssignments(new ArrayList<>());
+                        }
+                        ds.getAssignments().clear();
+                        ds.getAssignments().addAll(assignments);
                     });
-                    schedule.setDaySchedules(daySchedules);
+                    // Fix: Clear and add instead of replacing to avoid cascade/orphan removal issues
+                    schedule.getDaySchedules().clear();
+                    schedule.getDaySchedules().addAll(daySchedules);
                     return schedule;
                 });
     }
@@ -152,9 +160,16 @@ public class ScheduleService {
                     List<DaySchedule> daySchedules = dayScheduleRepository.findByScheduleId(schedule.getId());
                     daySchedules.forEach(ds -> {
                         List<ShiftAssignment> assignments = shiftAssignmentRepository.findByDayScheduleId(ds.getId());
-                        ds.setAssignments(assignments);
+                        // Fix: Clear and add instead of replacing to avoid cascade/orphan removal issues
+                        if (ds.getAssignments() == null) {
+                            ds.setAssignments(new ArrayList<>());
+                        }
+                        ds.getAssignments().clear();
+                        ds.getAssignments().addAll(assignments);
                     });
-                    schedule.setDaySchedules(daySchedules);
+                    // Fix: Clear and add instead of replacing to avoid cascade/orphan removal issues
+                    schedule.getDaySchedules().clear();
+                    schedule.getDaySchedules().addAll(daySchedules);
                     return schedule;
                 });
     }

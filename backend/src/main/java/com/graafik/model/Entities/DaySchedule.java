@@ -19,7 +19,7 @@ public class DaySchedule extends BaseEntity {
 
     private int score;
 
-    @OneToMany(mappedBy = "daySchedule")
+    @OneToMany(mappedBy = "daySchedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShiftAssignment> assignments;
 
     public DaySchedule() {}
