@@ -1,5 +1,8 @@
 package com.graafik.services;
 
+import java.time.LocalTime;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -7,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -427,5 +431,83 @@ public class ScheduleService {
         
         // Now save - the Schedule has an ID that DaySchedule children can reference
         return scheduleRepository.save(schedule);
+    }
+
+    public ScheduleViewDto toViewDto(Schedule schedule) {
+        if (schedule == null) {
+            return null;
+        }
+
+        int year = schedule.getYear();
+        int month = schedule.getMonth();
+
+        // Calculate startDate (first day of month) and endDate (last day of month)
+        String startDate = String.format("%04d-%02d-%02d", year, month, 1);
+        YearMonth yearMonth = YearMonth.of(year, month);
+        int lastDay = yearMonth.lengthOfMonth();
+        String endDate = String.format("%04d-%02d-%02d", year, month, lastDay);
+
+        // DateTimeFormatter for converting LocalTime to HH:MM string
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        // Flatten daySchedules[] → assignments[]
+        List<ScheduleAssignmentDto> assignments = new ArrayList<>();
+        
+        if (schedule.getDaySchedules() != null) {
+            for (DaySchedule daySchedule : schedule.getDaySchedules()) {
+                int dayOfMonth = daySchedule.getDayOfMonth();
+                String date = String.format("%04d-%02d-%02d", year, month, dayOfMonth);
+
+                if (daySchedule.getAssignments() != null) {
+                    for (ShiftAssignment shiftAssignment : daySchedule.getAssignments()) {
+                        Employee employee = shiftAssignment.getEmployee();
+                        Shift shift = shiftAssignment.getShift();
+
+                        if (employee == null || shift == null) {
+                            continue; // Skip invalid assignments
+                        }
+
+                        // Get shift colors from employee's role
+                        String shiftColor = "#000000"; // Default black
+                        String shiftBg = "#ffffff";    // Default white
+                        
+                        if (employee.getRole() != null) {
+                            Role role = employee.getRole();
+                            if (role.getColor() != null && !role.getColor().isEmpty()) {
+                                shiftColor = role.getColor();
+                            }
+                            if (role.getBackgroundColor() != null && !role.getBackgroundColor().isEmpty()) {
+                                shiftBg = role.getBackgroundColor();
+                            }
+                        }
+
+                        // Convert LocalTime to HH:MM string
+                        String startTime = shift.getStartTime() != null 
+                            ? shift.getStartTime().format(timeFormatter) 
+                            : "00:00";
+                        String endTime = shift.getEndTime() != null 
+                            ? shift.getEndTime().format(timeFormatter) 
+                            : "00:00";
+
+                        ScheduleAssignmentDto assignmentDto = new ScheduleAssignmentDto(
+                            employee.getId(),
+                            employee.getName(),
+                            date,
+                            shift.getId(),
+                            shift.getName(),
+                            shiftColor,
+                            shiftBg,
+                            startTime,
+                            endTime,
+                            false // isDayOff = false for now
+                        );
+
+                        assignments.add(assignmentDto);
+                    }
+                }
+            }
+        }
+
+        return new ScheduleViewDto(startDate, endDate, assignments);
     }
 }

@@ -99,11 +99,11 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
   // Group employees by role
   const employeesByRole: { [key: string]: any[] } = {};
   employees.forEach(emp => {
-    const role = emp.role || 'Unassigned';
-    if (!employeesByRole[role]) {
-      employeesByRole[role] = [];
+    const roleName = emp.role?.name || 'Unassigned';
+    if (!employeesByRole[roleName]) {
+      employeesByRole[roleName] = [];
     }
-    employeesByRole[role].push(emp);
+    employeesByRole[roleName].push(emp);
   });
 
   // Filter by selected role
