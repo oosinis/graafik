@@ -58,21 +58,11 @@ public class ShiftService {
             }
         }
         
-        // For new shifts, save normally
-        var savedShift = shiftRepository.save(shift);
-
-        if (shift.getRules() != null && !shift.getRules().isEmpty()) {
-            shift.getRules().forEach(rule -> {
-                if (rule.getShift() == null) {
-                    rule.setShift(savedShift);
-                }
-            });
-            ruleRepository.saveAll(shift.getRules());
+        // For new shifts, ensure rules are linked, then save
+        if (shift.getRules() != null) {
+             shift.getRules().forEach(rule -> rule.setShift(shift));
         }
-
-        savedShift.setRules(ruleRepository.findByShiftId(savedShift.getId()));
-
-        return savedShift;
+        return shiftRepository.save(shift);
     }
 
 
