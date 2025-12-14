@@ -6,12 +6,16 @@ import { RoleService, type Role } from '@/services/roleService';
 import { EmployeeService } from '@/services/employeeService';
 import Roles from './Roles';
 import { AddRole } from './AddRole';
+import { Notification } from '@/components/ui/notification';
 
 export default function RolesPage() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [pendingDeleteRole, setPendingDeleteRole] = useState<string | null>(
+    null
+  );
 
   const fetchRoles = async () => {
     setLoading(true);
@@ -60,34 +64,26 @@ export default function RolesPage() {
   };
 
   const handleDeleteRole = async (roleName: string) => {
+    const roleToDelete = roles.find((r) => r.name === roleName);
+    if (!roleToDelete) return;
+    setPendingDeleteRole(roleName);
+  };
+
+  const confirmDeleteRole = async () => {
+    if (!pendingDeleteRole) return;
+
     try {
-      // Find the role by name
-      const roleToDelete = roles.find((r) => r.name === roleName);
-      if (!roleToDelete) return;
-
-      // Check if any employees have this role
-      const employeesWithRole = employees.filter(
-        (emp) => emp.role?.id === roleToDelete.id || emp.role?.name === roleName
-      );
-
-      if (employeesWithRole.length > 0) {
-        const confirmed = window.confirm(
-          `Are you sure you want to delete the role "${roleName}"?\n\n` +
-          `${employeesWithRole.length} employee${employeesWithRole.length === 1 ? ' is' : 's are'} currently assigned to this role.\n\n` +
-          `Deleting this role will remove the role assignment from ${employeesWithRole.length === 1 ? 'this employee' : 'these employees'}.`
-        );
-
-        if (!confirmed) {
-          return;
-        }
-      }
-
-      await RoleService.delete(roleToDelete.id);
-      setRoles((prev) => prev.filter((r) => r.id !== roleToDelete.id));
-    } catch (error) {
-      console.error('Failed to delete role:', error);
-      alert('Failed to delete role. Please try again.');
+      await RoleService.delete(pendingDeleteRole);
+      setRoles((prev) => prev.filter((r) => r.name !== pendingDeleteRole));
+    } catch (err) {
+      console.error('Failed to delete role', err);
+    } finally {
+      setPendingDeleteRole(null);
     }
+  };
+
+  const cancelDeleteRole = () => {
+    setPendingDeleteRole(null);
   };
 
   return (
@@ -114,6 +110,14 @@ export default function RolesPage() {
             />
           </div>
         </div>
+      )}
+
+      {pendingDeleteRole && (
+        <Notification
+          message={`Are you sure you want to delete the role "${}"?`}
+          onConfirm={confirmDeleteRole}
+          onClose={cancelDeleteRole}
+        />
       )}
     </>
   );
