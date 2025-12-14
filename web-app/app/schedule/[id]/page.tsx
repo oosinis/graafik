@@ -27,6 +27,10 @@ export default function SchedulePage({ params }: SchedulePageProps) {
   const [schedule, setSchedule] = useState<GeneratedSchedule | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const handleScheduleUpdate = (updatedSchedule: GeneratedSchedule) => {
+    setSchedule(updatedSchedule);
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -82,13 +86,14 @@ export default function SchedulePage({ params }: SchedulePageProps) {
             <p className="text-gray-500 text-lg">Loading schedule…</p>
           </div>
         ) : (
-          <MonthScheduleView
-            schedule={schedule}
-            employees={employees}
-            roles={roles}
-            year={year}
-            month={month}
-          />
+                <MonthScheduleView
+                  schedule={schedule}
+                  employees={employees}
+                  roles={roles}
+                  year={year}
+                  month={month}
+                  onScheduleUpdate={handleScheduleUpdate}
+                />
         )}
       </div>
     </RoleGuard>
