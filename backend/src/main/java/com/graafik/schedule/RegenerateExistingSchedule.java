@@ -102,12 +102,13 @@ public class RegenerateExistingSchedule {
 
                 if (employee == missingEmployee)
                     continue;
-                // Using 2025 as hardcoded year to match other logic
-                if (HelperMethods.isDateInList(employee.getVacationDays(), 2025, scheduleRequest.getMonth(), date + 1))
+                // Use year from request, default to current year if not provided
+                int year = scheduleRequest.getYear() > 0 ? scheduleRequest.getYear() : java.time.Year.now().getValue();
+                if (HelperMethods.isDateInList(employee.getVacationDays(), year, scheduleRequest.getMonth(), date + 1))
                     continue;
-                if (HelperMethods.isDateInList(employee.getSickDays(), 2025, scheduleRequest.getMonth(), date + 1))
+                if (HelperMethods.isDateInList(employee.getSickDays(), year, scheduleRequest.getMonth(), date + 1))
                     continue;
-                if (HelperMethods.isDateInList(employee.getRequestedDaysOff(), 2025, scheduleRequest.getMonth(),
+                if (HelperMethods.isDateInList(employee.getRequestedDaysOff(), year, scheduleRequest.getMonth(),
                         date + 1))
                     continue;
                 if (!RuleValidator.initialValidator(HelperMethods.getRequestedWorkDays(scheduleRequest, date),

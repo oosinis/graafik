@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.graafik.model.Dtos.ScheduleRequest;
+import com.graafik.model.Dtos.ScheduleViewDto;
 import com.graafik.model.Entities.Employee;
 import com.graafik.model.Entities.Schedule;
 import com.graafik.services.EmployeeService;
@@ -53,20 +54,20 @@ public class ScheduleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Schedule> getScheduleById(@PathVariable UUID id) {
+    public ResponseEntity<ScheduleViewDto> getScheduleById(@PathVariable UUID id) {
         Optional<Schedule> scheduleOpt = scheduleService.getScheduleById(id);
         return scheduleOpt
-                .map(ResponseEntity::ok)
+                .map(schedule -> ResponseEntity.ok(scheduleService.toViewDto(schedule)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<Schedule> getLatestScheduleByMonthAndYear(
+    public ResponseEntity<ScheduleViewDto> getLatestScheduleByMonthAndYear(
             @RequestParam int month,
             @RequestParam int year) {
         Optional<Schedule> scheduleOpt = scheduleService.getLatestScheduleByMonthAndYear(month, year);
         return scheduleOpt
-                .map(ResponseEntity::ok)
+                .map(schedule -> ResponseEntity.ok(scheduleService.toViewDto(schedule)))
                 .orElse(ResponseEntity.notFound().build());
     }
 

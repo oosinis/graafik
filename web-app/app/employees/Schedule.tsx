@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
-import { MonthScheduleView, type GeneratedSchedule } from './MonthScheduleView';
+import dynamic from 'next/dynamic';
 import { ChevronDown } from 'lucide-react';
 import type { Employee } from './Employees';
+import type { GeneratedSchedule } from '@/models/Schedule';
+
+// Dynamically import MonthScheduleView to avoid SSR issues with react-dnd
+const MonthScheduleView = dynamic(() => import('../schedule/MonthScheduleView').then(mod => ({ default: mod.MonthScheduleView })), {
+  ssr: false
+});
 
 interface EmployeeScheduleProps {
   employees: Employee[];
