@@ -62,8 +62,9 @@ public class GenerateSchedule {
         ScheduleAlg schedule = new ScheduleAlg();
 
         schedule.setMonth(scheduleRequest.getMonth());
-        // TODO change to automatic
-        schedule.setYear(2025);
+        // Use year from request, default to current year if not provided
+        int year = scheduleRequest.getYear() > 0 ? scheduleRequest.getYear() : java.time.Year.now().getValue();
+        schedule.setYear(year);
         // for generating all durations are in minutes
         schedule.setFullTimeMinutes(scheduleRequest.getFullTimeMinutes()* 60);
 
@@ -86,7 +87,7 @@ public class GenerateSchedule {
     private static void generateCombinationsRecursive(ScheduleRequest scheduleRequest, int date,
                                                       ScheduleAlg currentSchedule, List<ScheduleAlg> allCombinations) {
 
-        int daysInMonth = YearMonth.of(2025, currentSchedule.getMonth()).lengthOfMonth();
+        int daysInMonth = YearMonth.of(currentSchedule.getYear(), currentSchedule.getMonth()).lengthOfMonth();
 
         if (date == daysInMonth) {
             // All days processed, add the combination

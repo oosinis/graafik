@@ -16,6 +16,7 @@ interface MonthScheduleViewProps {
 
 export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate, year, month }: MonthScheduleViewProps) {
   const [selectedRole, setSelectedRole] = React.useState<string>('All');
+  const [selectedShiftType, setSelectedShiftType] = React.useState<string>('All');
   const [currentWeekStart, setCurrentWeekStart] = React.useState(0);
   const [collapsedRoles, setCollapsedRoles] = React.useState<{ [key: string]: boolean }>({});
   const [editingAssignment, setEditingAssignment] = React.useState<ScheduleAssignment | null>(null);
@@ -99,17 +100,29 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
   // Group employees by role
   const employeesByRole: { [key: string]: any[] } = {};
   employees.forEach(emp => {
-    const role = emp.role || 'Unassigned';
-    if (!employeesByRole[role]) {
-      employeesByRole[role] = [];
+    const roleName = emp.role?.name || 'Unassigned';
+    if (!employeesByRole[roleName]) {
+      employeesByRole[roleName] = [];
     }
-    employeesByRole[role].push(emp);
+    employeesByRole[roleName].push(emp);
   });
 
   // Filter by selected role
   const filteredRoles = selectedRole === 'All' 
     ? Object.keys(employeesByRole) 
     : [selectedRole];
+
+  // Get unique shift types from schedule assignments
+  const shiftTypes: string[] = React.useMemo(() => {
+    if (!schedule || !schedule.assignments) return [];
+    const uniqueShiftTypes = new Set<string>();
+    schedule.assignments.forEach(assignment => {
+      if (assignment.shiftName) {
+        uniqueShiftTypes.add(assignment.shiftName);
+      }
+    });
+    return Array.from(uniqueShiftTypes).sort();
+  }, [schedule]);
 
   const formatDate = (date: Date) => {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -126,9 +139,18 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
 
   const getAssignmentForEmployeeAndDate = (employeeId: string, date: Date) => {
     const dateKey = formatDateKey(date);
-    return schedule.assignments.find(
+    const assignment = schedule.assignments.find(
       a => a.employeeId === employeeId && a.date === dateKey
     );
+    
+    // Filter by shift type if not "All"
+    if (assignment && selectedShiftType !== 'All') {
+      if (assignment.shiftName !== selectedShiftType) {
+        return undefined;
+      }
+    }
+    
+    return assignment;
   };
 
   const goToPreviousWeek = () => {
@@ -405,11 +427,20 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
             <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
               Shift type
             </p>
-            <div className="flex items-center gap-[8px] relative">
-              <p className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#19181d] leading-[16px]">
-                All
-              </p>
-              <ChevronDown className="w-[16px] h-[16px] text-[#1f1e30] rotate-180" strokeWidth={2} />
+            <div className="flex items-center gap-[8px] bg-[#eae1ff] px-[8px] py-[4px] rounded-[6px] relative">
+              <select
+                value={selectedShiftType}
+                onChange={(e) => setSelectedShiftType(e.target.value)}
+                className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#7636ff] leading-[16px] bg-transparent border-none outline-none cursor-pointer appearance-none pr-[20px]"
+              >
+                <option value="All">All</option>
+                {shiftTypes.map((shiftType: string) => (
+                  <option key={shiftType} value={shiftType}>{shiftType}</option>
+                ))}
+              </select>
+              <div className="absolute right-[8px] pointer-events-none">
+                <ChevronDown className="w-[16px] h-[16px] text-[#7636ff]" strokeWidth={2} />
+              </div>
             </div>
           </div>
         </div>
@@ -453,7 +484,24 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
           <div className="absolute top-[40px] left-0 right-0 bottom-0 overflow-y-auto">
             {filteredRoles.map((roleName, roleIdx) => {
               const roleInfo = roles.find(r => r.name === roleName);
-              const roleEmployees = employeesByRole[roleName] || [];
+              let roleEmployees = employeesByRole[roleName] || [];
+              
+              // Filter employees by shift type if a shift type is selected
+              if (selectedShiftType !== 'All') {
+                roleEmployees = roleEmployees.filter(emp => {
+                  // Check if employee has at least one assignment with the selected shift type
+                  return schedule.assignments.some(
+                    assignment => assignment.employeeId === emp.id && 
+                                 assignment.shiftName === selectedShiftType
+                  );
+                });
+              }
+              
+              // Skip rendering this role if no employees match the filters
+              if (roleEmployees.length === 0) {
+                return null;
+              }
+              
               const isCollapsed = collapsedRoles[roleName];
 
               return (

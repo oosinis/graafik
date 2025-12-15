@@ -185,9 +185,8 @@ public class RuleValidator {
     public static void checkDesiredVacationDays(Employee employee, int date, ScheduleAlg currentSchedule,
             DaySchedule currentDayShiftAssignments) {
         // TODO: kui palju see score täpselt muutub
-        // Assuming 2025 and month from schedule (but schedule doesn't have month easily
-        // accessible here? currentSchedule has month!)
-        int year = currentSchedule.getYear() != 0 ? currentSchedule.getYear() : 2025;
+        // Use year from schedule, default to current year if not set
+        int year = currentSchedule.getYear() != 0 ? currentSchedule.getYear() : java.time.Year.now().getValue();
         int month = currentSchedule.getMonth();
 
         if (HelperMethods.isDateInList(employee.getRequestedDaysOff(), year, month, date)) {
@@ -254,7 +253,7 @@ public class RuleValidator {
             score -= newHours * 2;
 
         // check desired vacation
-        int year = currentSchedule.getYear() != 0 ? currentSchedule.getYear() : 2025;
+        int year = currentSchedule.getYear() != 0 ? currentSchedule.getYear() : java.time.Year.now().getValue();
         int month = currentSchedule.getMonth();
 
         if (HelperMethods.isDateInList(employee.getRequestedDaysOff(), year, month, date))

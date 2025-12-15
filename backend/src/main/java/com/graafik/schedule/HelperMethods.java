@@ -14,8 +14,9 @@ import com.graafik.model.Dtos.*;
 public class HelperMethods {
 
     public static List<Shift> getShiftsForDay(ScheduleRequest scheduleRequest, int date) {
-
-        int dayOfWeekInt = LocalDate.of(2025, scheduleRequest.getMonth(), date + 1).getDayOfWeek().getValue();
+        // Use year from request, default to current year if not provided
+        int year = scheduleRequest.getYear() > 0 ? scheduleRequest.getYear() : java.time.Year.now().getValue();
+        int dayOfWeekInt = LocalDate.of(year, scheduleRequest.getMonth(), date + 1).getDayOfWeek().getValue();
 
         List<Shift> dayShifts = new ArrayList<>();
         for (Shift shift : scheduleRequest.getShifts()) {
@@ -133,12 +134,13 @@ public class HelperMethods {
 
             // skip vacation days
             // +1 bc the dates start from 1
-            // Using 2025 as hardcoded year to match getShiftsForDay logic
-            if (isDateInList(employee.getVacationDays(), 2025, scheduleRequest.getMonth(), date + 1))
+            // Use year from request, default to current year if not provided
+            int year = scheduleRequest.getYear() > 0 ? scheduleRequest.getYear() : java.time.Year.now().getValue();
+            if (isDateInList(employee.getVacationDays(), year, scheduleRequest.getMonth(), date + 1))
                 continue;
-            if (isDateInList(employee.getSickDays(), 2025, scheduleRequest.getMonth(), date + 1))
+            if (isDateInList(employee.getSickDays(), year, scheduleRequest.getMonth(), date + 1))
                 continue;
-            if (isDateInList(employee.getRequestedDaysOff(), 2025, scheduleRequest.getMonth(), date + 1))
+            if (isDateInList(employee.getRequestedDaysOff(), year, scheduleRequest.getMonth(), date + 1))
                 continue;
 
             Shift shift = (currentDayShifts.get(currentDaySchedule.getAssignments().size()));
