@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { ChevronDown, Plus, X } from 'lucide-react';
@@ -14,35 +14,62 @@ interface GeneratorProps {
   roles: Array<{ name: string; color: string; backgroundColor: string }>;
   onUpdateEmployee: (employee: Employee) => void;
   accessToken?: string;
-  onScheduleGenerated?: (scheduleResponse: ScheduleResponse, year: number, month: number) => void;
+  onScheduleGenerated?: (
+    scheduleResponse: ScheduleResponse,
+    year: number,
+    month: number
+  ) => void;
   generatedSchedules?: { [key: string]: any };
 }
 
-export function Generator({ employees, shifts, roles, onUpdateEmployee, accessToken, onScheduleGenerated, generatedSchedules = {} }: GeneratorProps) {
+export function Generator({
+  employees,
+  shifts,
+  roles,
+  onUpdateEmployee,
+  accessToken,
+  onScheduleGenerated,
+  generatedSchedules = {},
+}: GeneratorProps) {
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth());
   const [fullTimeHours, setFullTimeHours] = useState('170');
   const [isYearOpen, setIsYearOpen] = useState(false);
   const [isMonthOpen, setIsMonthOpen] = useState(false);
-  const [assigningEmployeeId, setAssigningEmployeeId] = useState<string | null>(null);
+  const [assigningEmployeeId, setAssigningEmployeeId] = useState<string | null>(
+    null
+  );
   const [isGenerating, setIsGenerating] = useState(false);
 
   const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
-  const years = Array.from({ length: 5 }, (_, i) => currentDate.getFullYear() - 2 + i);
+  const years = Array.from(
+    { length: 5 },
+    (_, i) => currentDate.getFullYear() - 2 + i
+  );
 
   // Normalize assignedShifts into an array of shift IDs
-  const toShiftIds = (assigned: Employee["assignedShifts"]): string[] => {
+  const toShiftIds = (assigned: Employee['assignedShifts']): string[] => {
     if (!assigned) return [];
-    return assigned.map(s => (typeof s === "string" ? s : s.id));
+    return assigned.map((s) => (typeof s === 'string' ? s : s.id));
   };
 
   const handleAssignShift = (employeeId: string, shiftId: string) => {
-    const employee = employees.find(e => e.id === employeeId);
+    const employee = employees.find((e) => e.id === employeeId);
     if (!employee) return;
 
     const currentShifts = toShiftIds(employee.assignedShifts);
@@ -59,20 +86,21 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
   };
 
   const handleRemoveShift = (employeeId: string, shiftId: string) => {
-    const employee = employees.find(e => e.id === employeeId);
+    const employee = employees.find((e) => e.id === employeeId);
     if (!employee) return;
 
     const updatedEmployee: Employee = {
       ...employee,
-      assignedShifts: toShiftIds(employee.assignedShifts).filter(id => id !== shiftId),
+      assignedShifts: toShiftIds(employee.assignedShifts).filter(
+        (id) => id !== shiftId
+      ),
     };
 
     onUpdateEmployee(updatedEmployee);
   };
 
   const getShiftById = (shiftId: string) =>
-    shifts.find(s => s.id === shiftId);
-
+    shifts.find((s) => s.id === shiftId);
 
   const handleRetrieveLastMonth = () => {
     // Future: Implement logic to retrieve data from last month
@@ -87,25 +115,29 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
     }
 
     // Check if employees have assigned shifts
-    const employeesWithoutShifts = employees.filter(emp => {
+    const employeesWithoutShifts = employees.filter((emp) => {
       const assignedShifts = toShiftIds(emp.assignedShifts);
       return assignedShifts.length === 0;
     });
 
     if (employeesWithoutShifts.length > 0) {
-      const names = employeesWithoutShifts.map(e => e.name).join(', ');
-      alert(`The following employees have no assigned shifts: ${names}\n\nPlease assign shifts to all employees before generating a schedule.`);
+      const names = employeesWithoutShifts.map((e) => e.name).join(', ');
+      alert(
+        `The following employees have no assigned shifts: ${names}\n\nPlease assign shifts to all employees before generating a schedule.`
+      );
       return;
     }
 
     // Check if shifts have rules
-    const shiftsWithoutRules = shifts.filter(shift => {
+    const shiftsWithoutRules = shifts.filter((shift) => {
       return !shift.rules || shift.rules.length === 0;
     });
 
     if (shiftsWithoutRules.length > 0) {
-      const names = shiftsWithoutRules.map(s => s.name).join(', ');
-      alert(`The following shifts have no rules configured: ${names}\n\nEvery shift must have at least one rule. Please configure shift rules before generating a schedule.`);
+      const names = shiftsWithoutRules.map((s) => s.name).join(', ');
+      alert(
+        `The following shifts have no rules configured: ${names}\n\nEvery shift must have at least one rule. Please configure shift rules before generating a schedule.`
+      );
       return;
     }
 
@@ -118,7 +150,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
         shifts: shifts,
         month: selectedMonth + 1, // Convert 0-11 to 1-12
         year: selectedYear,
-        fullTimeMinutes: parseInt(fullTimeHours) * 60 // Convert hours to minutes
+        fullTimeMinutes: parseInt(fullTimeHours) * 60, // Convert hours to minutes
       };
 
       console.log('📤 Sending schedule generation request:', {
@@ -127,7 +159,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
         month: selectedMonth + 1,
         monthName: months[selectedMonth],
         year: selectedYear,
-        fullTimeMinutes: scheduleRequest.fullTimeMinutes
+        fullTimeMinutes: scheduleRequest.fullTimeMinutes,
       });
 
       // Call backend API
@@ -137,7 +169,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
         month: scheduleResponse.month,
         year: scheduleResponse.year,
         score: scheduleResponse.score,
-        daySchedulesCount: scheduleResponse.daySchedules?.length || 0
+        daySchedulesCount: scheduleResponse.daySchedules?.length || 0,
       });
 
       // Call the callback to navigate
@@ -147,20 +179,26 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
     } catch (error: any) {
       console.error('❌ Error generating schedule:', error);
       const errorMessage = error.message || 'Failed to generate schedule';
-      
+
       // Provide user-friendly error messages
       let userMessage = errorMessage;
       if (errorMessage.includes('Every shift must have at least one rule')) {
-        userMessage = 'Every shift must have at least one rule configured. Please add rules to all shifts before generating a schedule.';
+        userMessage =
+          'Every shift must have at least one rule configured. Please add rules to all shifts before generating a schedule.';
       } else if (errorMessage.includes('No shifts provided')) {
-        userMessage = 'No shifts provided. Please add shifts before generating a schedule.';
+        userMessage =
+          'No shifts provided. Please add shifts before generating a schedule.';
       } else if (errorMessage.includes('No employees provided')) {
-        userMessage = 'No employees provided. Please add employees before generating a schedule.';
+        userMessage =
+          'No employees provided. Please add employees before generating a schedule.';
       } else if (errorMessage.includes('no valid schedule produced')) {
-        userMessage = 'Could not generate a valid schedule with the current configuration. Please check:\n- All employees have assigned shifts\n- All shifts have rules configured\n- Employee work loads and constraints are valid';
+        userMessage =
+          'Could not generate a valid schedule with the current configuration. Please check:\n- All employees have assigned shifts\n- All shifts have rules configured\n- Employee work loads and constraints are valid';
       }
-      
-      alert(`Failed to generate schedule: ${userMessage}\n\nPlease check your data and try again.`);
+
+      alert(
+        `Failed to generate schedule: ${userMessage}\n\nPlease check your data and try again.`
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -174,19 +212,21 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
           Schedule Generator
         </h1>
         <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[20px] mt-[8px]">
-          Configure parameters and assign shifts to employees before generating the schedule
+          Configure parameters and assign shifts to employees before generating
+          the schedule
         </p>
       </div>
 
       {/* Month & Hours Section */}
-      <div className="bg-white rounded-[8px] p-[24px] w-[930px] mb-[24px]">
+      <div className="bg-white rounded-[8px] p-4 sm:p-6 max-w-[930px] w-full mb-6">
         <div className="mb-[16px] flex items-center justify-between">
           <div>
             <p className="font-['Poppins:Medium',_sans-serif] text-[24px] tracking-[-0.48px] text-[#19181d] leading-[24px] capitalize mb-[4px]">
               Month & Hours
             </p>
             <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
-              Choose the year and month, add the full-time working hours of the month
+              Choose the year and month, add the full-time working hours of the
+              month
             </p>
           </div>
           <button
@@ -203,7 +243,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
             <p className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] text-[#19181d] leading-[14px] mb-[12px]">
               Select month
             </p>
-            <div className="flex gap-[18px]">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-[18px]">
               {/* Year Dropdown */}
               <div className="relative">
                 <button
@@ -213,11 +253,15 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                   <p className="font-['Poppins:Regular',_sans-serif] leading-[22px] text-[17px] text-black tracking-[-0.34px]">
                     {selectedYear}
                   </p>
-                  <ChevronDown className={`w-[16px] h-[16px] text-[#888796] transition-transform ${isYearOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-[16px] h-[16px] text-[#888796] transition-transform ${
+                      isYearOpen ? 'rotate-180' : ''
+                    }`}
+                  />
                 </button>
                 {isYearOpen && (
                   <div className="absolute top-[36px] left-0 bg-white rounded-[8px] shadow-lg border border-[#e6e6ec] z-10 w-[108px]">
-                    {years.map(year => (
+                    {years.map((year) => (
                       <button
                         key={year}
                         onClick={() => {
@@ -242,7 +286,11 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                   <p className="font-['Poppins:Regular',_sans-serif] leading-[22px] text-[17px] text-black tracking-[-0.34px]">
                     {months[selectedMonth]}
                   </p>
-                  <ChevronDown className={`w-[16px] h-[16px] text-[#888796] transition-transform ${isMonthOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-[16px] h-[16px] text-[#888796] transition-transform ${
+                      isMonthOpen ? 'rotate-180' : ''
+                    }`}
+                  />
                 </button>
                 {isMonthOpen && (
                   <div className="absolute top-[36px] left-0 bg-white rounded-[8px] shadow-lg border border-[#e6e6ec] z-10 w-[296px] max-h-[240px] overflow-y-auto">
@@ -280,14 +328,17 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
           {/* Month Days Info */}
           {(() => {
             const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            const isLeapYear = (selectedYear % 4 === 0 && selectedYear % 100 !== 0) || (selectedYear % 400 === 0);
+            const isLeapYear =
+              (selectedYear % 4 === 0 && selectedYear % 100 !== 0) ||
+              selectedYear % 400 === 0;
             if (selectedMonth === 1 && isLeapYear) monthDays[1] = 29;
             const expectedDays = monthDays[selectedMonth];
 
             return (
               <div className="mt-[16px] bg-[#e8f5e9] border border-[#4caf50] rounded-[8px] p-[12px]">
                 <p className="font-['Poppins:Medium',_sans-serif] text-[13px] tracking-[-0.26px] text-[#2e7d32] leading-[16px]">
-                  📅 {months[selectedMonth]} {selectedYear} has {expectedDays} days
+                  📅 {months[selectedMonth]} {selectedYear} has {expectedDays}{' '}
+                  days
                   {selectedMonth === 1 && isLeapYear && ' (Leap Year)'}
                 </p>
               </div>
@@ -302,7 +353,8 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
               return (
                 <div className="mt-[8px] bg-[#fff3cd] border border-[#ffc107] rounded-[8px] p-[12px]">
                   <p className="font-['Poppins:Medium',_sans-serif] text-[13px] tracking-[-0.26px] text-[#856404] leading-[16px]">
-                    ⚠️ A schedule already exists for {months[selectedMonth]} {selectedYear}
+                    ⚠️ A schedule already exists for {months[selectedMonth]}{' '}
+                    {selectedYear}
                   </p>
                   <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#856404] leading-[14px] mt-[4px]">
                     Generating a new schedule will overwrite the existing one.
@@ -316,8 +368,8 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
       </div>
 
       {/* Summary Cards */}
-      <div className="flex gap-[16px] mb-[24px]">
-        <div className="bg-white rounded-[8px] p-[16px] border border-[#e6e6ec] min-w-[180px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 max-w-[930px] w-full">
+        <div className="bg-white rounded-[8px] p-4 border border-[#e6e6ec] w-full">
           <p className="font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] text-[#888796] leading-[13px] mb-[8px]">
             Total Employees
           </p>
@@ -325,7 +377,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
             {employees.length}
           </p>
         </div>
-        <div className="bg-white rounded-[8px] p-[16px] border border-[#e6e6ec] min-w-[180px]">
+        <div className="bg-white rounded-[8px] p-4 border border-[#e6e6ec] w-full">
           <p className="font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] text-[#888796] leading-[13px] mb-[8px]">
             Available Roles
           </p>
@@ -333,7 +385,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
             {roles.length}
           </p>
         </div>
-        <div className="bg-white rounded-[8px] p-[16px] border border-[#e6e6ec] min-w-[180px] mr-[24px]">
+        <div className="bg-white rounded-[8px] p-4 border border-[#e6e6ec] w-full">
           <p className="font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] text-[#888796] leading-[13px] mb-[8px]">
             Shift Types
           </p>
@@ -344,13 +396,14 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
       </div>
 
       {/* Assign Employees Section */}
-      <div className="bg-white rounded-[8px] p-[24px] w-[930px] mb-[24px]">
+      <div className="bg-white rounded-[8px] p-4 sm:p-6 max-w-[930px] w-full mb-6">
         <div className="mb-[20px]">
           <p className="font-['Poppins:Medium',_sans-serif] text-[24px] tracking-[-0.48px] text-[#19181d] leading-[24px] capitalize mb-[4px]">
             Assign Employees
           </p>
           <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
-            Assign shift types to each employee. These assignments will be used during schedule generation.
+            Assign shift types to each employee. These assignments will be used
+            during schedule generation.
           </p>
         </div>
 
@@ -363,15 +416,21 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
         ) : (
           <div className="flex flex-col gap-[12px]">
             {employees.map((employee) => (
-              <div key={employee.id} className="bg-[#f7f6fb] rounded-[8px] p-[16px]">
-                <div className="flex items-center justify-between mb-[12px]">
+              <div
+                key={employee.id}
+                className="bg-[#f7f6fb] rounded-[8px] p-[16px]"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
                   <div className="flex items-center gap-[12px]">
                     <div
                       className="w-[32px] h-[32px] rounded-full flex items-center justify-center text-white"
                       style={{ backgroundColor: employee.roleColor }}
                     >
                       <p className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[14px]">
-                        {employee.name.split(' ').map(n => n[0]).join('')}
+                        {employee.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')}
                       </p>
                     </div>
                     <div>
@@ -379,7 +438,8 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                         {employee.name}
                       </p>
                       <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[12px]">
-                        {employee.employeeRole || 'No role'} • FTE {employee.workLoad || 0}
+                        {employee.employeeRole || 'No role'} • FTE{' '}
+                        {employee.workLoad || 0}
                       </p>
                     </div>
                   </div>
@@ -388,7 +448,10 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                       onClick={() => setAssigningEmployeeId(employee.id)}
                       className="bg-[#7636ff] flex gap-[6px] h-[28px] items-center justify-center px-[12px] py-[6px] rounded-[6px] hover:bg-[#6428e0] transition-colors"
                     >
-                      <Plus className="w-[14px] h-[14px] text-white" strokeWidth={2} />
+                      <Plus
+                        className="w-[14px] h-[14px] text-white"
+                        strokeWidth={2}
+                      />
                       <p className="font-['Poppins:Medium',_sans-serif] text-[13px] tracking-[-0.26px] text-white leading-[13px]">
                         Assign Shift
                       </p>
@@ -411,19 +474,26 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                           {shift.name}
                         </p>
                         <button
-                          onClick={() => handleRemoveShift(employee.id, shiftId)}
+                          onClick={() =>
+                            handleRemoveShift(employee.id, shiftId)
+                          }
                           className="hover:bg-[#fef2f4] rounded-[3px] p-[2px] transition-colors"
                         >
-                          <X className="w-[12px] h-[12px] text-[#d4183d]" strokeWidth={2} />
+                          <X
+                            className="w-[12px] h-[12px] text-[#d4183d]"
+                            strokeWidth={2}
+                          />
                         </button>
                       </div>
                     );
                   })}
-                  {(!employee.assignedShifts || employee.assignedShifts.length === 0) && assigningEmployeeId !== employee.id && (
-                    <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[12px] italic">
-                      No shifts assigned
-                    </p>
-                  )}
+                  {(!employee.assignedShifts ||
+                    employee.assignedShifts.length === 0) &&
+                    assigningEmployeeId !== employee.id && (
+                      <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[12px] italic">
+                        No shifts assigned
+                      </p>
+                    )}
                 </div>
 
                 {/* Shift Selection */}
@@ -436,12 +506,19 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                       {shifts.map((shift) => (
                         <button
                           key={shift.id}
-                          onClick={() => handleAssignShift(employee.id, shift.id)}
-                          disabled={toShiftIds(employee.assignedShifts).includes(shift.id)}
-                          className={`px-[10px] py-[6px] rounded-[6px] font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] leading-[13px] transition-colors ${toShiftIds(employee.assignedShifts).includes(shift.id)
+                          onClick={() =>
+                            handleAssignShift(employee.id, shift.id)
+                          }
+                          disabled={toShiftIds(
+                            employee.assignedShifts
+                          ).includes(shift.id)}
+                          className={`px-[10px] py-[6px] rounded-[6px] font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] leading-[13px] transition-colors ${
+                            toShiftIds(employee.assignedShifts).includes(
+                              shift.id
+                            )
                               ? 'bg-[#e6e6ec] text-[#888796] cursor-not-allowed'
                               : 'bg-[#7636ff] text-white hover:bg-[#6428e0] cursor-pointer'
-                            }`}
+                          }`}
                         >
                           {shift.name}
                         </button>
@@ -462,10 +539,12 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
       </div>
 
       {/* Generate Button */}
-      <div className="pr-[24px]">
+      <div className="w-full sm:w-auto">
         <button
           onClick={handleGenerateSchedule}
-          disabled={employees.length === 0 || shifts.length === 0 || isGenerating}
+          disabled={
+            employees.length === 0 || shifts.length === 0 || isGenerating
+          }
           className="bg-[#7636ff] h-[48px] px-[32px] py-[16px] rounded-[8px] font-['Poppins:Medium',_sans-serif] text-[18px] tracking-[-0.36px] text-white leading-[18px] hover:bg-[#6428e0] transition-colors disabled:bg-[#e6e6ec] disabled:text-[#888796] disabled:cursor-not-allowed"
         >
           {isGenerating ? 'Generating & Saving...' : 'Generate Schedule'}
