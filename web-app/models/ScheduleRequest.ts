@@ -5,5 +5,6 @@ export interface ScheduleRequest {
   employees: Employee[];
   shifts: Shift[];
   month: number;
+  year: number;
   fullTimeMinutes: number;
 }

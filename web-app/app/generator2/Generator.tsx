@@ -117,6 +117,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
         employees: employees,
         shifts: shifts,
         month: selectedMonth + 1, // Convert 0-11 to 1-12
+        year: selectedYear,
         fullTimeMinutes: parseInt(fullTimeHours) * 60 // Convert hours to minutes
       };
 

@@ -45,7 +45,7 @@ export default function ScheduleGridView({
   );
   const [selectedShift, setSelectedShift] = useState<{
     day: number;
-    workerName: string;
+    employeeName: string;
     shiftType: string;
     duration: number;
   } | null>(null);
@@ -114,37 +114,42 @@ export default function ScheduleGridView({
   }, [scheduleId, currentDate]);
 
   // Move all useMemo hooks BEFORE the early return
-  const workerNameToId = useMemo(() => {
-    if (!schedule || !schedule.workers) return {};
+  const employeeNameToId = useMemo(() => {
+    if (!schedule) return {};
     const map: Record<string, string> = {};
 
-    // Build map from the workers list
-    schedule.workers.forEach((worker) => {
-      map[worker.name] = worker.id;
-    });
-
-    // Also include workers from assignments (in case there are any discrepancies)
+    // Extract employees from assignments
     schedule.daySchedules.forEach((d) =>
       d.assignments?.forEach((a) => {
-        map[a.worker.name] = a.worker.id;
+        if (a.employee) {
+          map[a.employee.name] = a.employee.id;
+        }
       })
     );
 
     return map;
   }, [schedule]);
 
-  const workerNames = useMemo(() => {
-    if (!schedule || !schedule.workers) return [];
+  const employeeNames = useMemo(() => {
+    if (!schedule) return [];
 
-    // Get all workers from the workers list (includes all workers, even those without assignments)
-    return schedule.workers.map((worker) => worker.name).sort();
+    // Extract unique employee names from assignments
+    const employeeSet = new Set<string>();
+    schedule.daySchedules.forEach((d) =>
+      d.assignments?.forEach((a) => {
+        if (a.employee) {
+          employeeSet.add(a.employee.name);
+        }
+      })
+    );
+    return Array.from(employeeSet).sort();
   }, [schedule]);
 
   const shiftTypes = useMemo(() => {
     if (!schedule) return [];
     const set = new Set<string>();
     schedule.daySchedules.forEach((d) =>
-      d.assignments?.forEach((a) => a.shift?.type && set.add(a.shift.type))
+      d.assignments?.forEach((a) => a.shift?.name && set.add(a.shift.name))
     );
     return Array.from(set).sort();
   }, [schedule]);
@@ -197,7 +202,7 @@ export default function ScheduleGridView({
   const addDays = (d: Date, n: number) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 
-  const assignmentFor = (workerName: string, day: number) => {
+  const assignmentFor = (employeeName: string, day: number) => {
     const dayRec = schedule?.daySchedules.find((d) => {
       // If API uses 1-based days, this is a no-op; if it uses 0-based, +1 fixes it.
       const apiDay = typeof d.dayOfMonth === 'number' ? d.dayOfMonth : NaN;
@@ -205,7 +210,7 @@ export default function ScheduleGridView({
       return uiDay === day;
     });
     return (
-      dayRec?.assignments?.find((a) => a.worker.name === workerName) ?? null
+      dayRec?.assignments?.find((a) => a.employee?.name === employeeName) ?? null
     );
   };
 
@@ -312,18 +317,18 @@ export default function ScheduleGridView({
                 </tr>
               </thead>
               <tbody>
-                {workerNames.map((workerName) => (
-                  <tr key={workerName}>
+                {employeeNames.map((employeeName) => (
+                  <tr key={employeeName}>
                     <td className="sticky left-0 bg-white border p-2 font-medium">
-                      {workerName}
+                      {employeeName}
                     </td>
                     {visibleDays.map((day) => {
-                      const a = assignmentFor(workerName, day);
-                      const t = a?.shift?.type ?? null;
+                      const a = assignmentFor(employeeName, day);
+                      const t = a?.shift?.name ?? null;
                       const durationInMinutes = getDurationMinutes(a);
 
                       if (a && typeof window !== 'undefined') {
-                        // Only log the first time we see a duration for this worker/day
+                        // Only log the first time we see a duration for this employee/day
                         // eslint-disable-next-line no-console
                         console.debug('Shift payload for check:', a.shift);
                       }
@@ -342,7 +347,7 @@ export default function ScheduleGridView({
                             if (t && durationInMinutes != null) {
                               setSelectedShift({
                                 day,
-                                workerName,
+                                employeeName,
                                 shiftType: t,
                                 duration: durationInMinutes,
                               });
@@ -356,12 +361,12 @@ export default function ScheduleGridView({
                       );
                     })}
                     <td className="border p-2 text-center">
-                      {schedule.workerHours?.[workerNameToId[workerName]] ?? 0}
+                      {schedule.employeeHoursInMins?.[employeeNameToId[employeeName]] ?? 0}
                       /180
                     </td>
                   </tr>
                 ))}
-                {workerNames.length === 0 && (
+                {employeeNames.length === 0 && (
                   <tr>
                     <td
                       colSpan={visibleDays.length + 2}
@@ -386,7 +391,7 @@ export default function ScheduleGridView({
                 <ShiftDetailsCard
                   day={selectedShift.day}
                   shiftType={selectedShift.shiftType}
-                  worker={selectedShift.workerName}
+                  worker={selectedShift.employeeName}
                   duration={selectedShift.duration / 60}
                 />
               </div>
