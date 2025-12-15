@@ -114,7 +114,7 @@ export default function RolesPage() {
 
       {pendingDeleteRole && (
         <Notification
-          message={`Are you sure you want to delete the role "${}"?`}
+          message={`Are you sure you want to delete the role "${pendingDeleteRole}"?`}
           onConfirm={confirmDeleteRole}
           onClose={cancelDeleteRole}
         />
