@@ -13,9 +13,7 @@ export default function RolesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [pendingDeleteRole, setPendingDeleteRole] = useState<string | null>(
-    null
-  );
+  const [pendingDeleteRole, setPendingDeleteRole] = useState<Role | null>(null);
 
   const fetchRoles = async () => {
     setLoading(true);
@@ -64,17 +62,17 @@ export default function RolesPage() {
   };
 
   const handleDeleteRole = async (roleName: string) => {
-    const roleToDelete = roles.find((r) => r.name === roleName);
-    if (!roleToDelete) return;
-    setPendingDeleteRole(roleName);
+    const role = roles.find((r) => r.name === roleName);
+    if (!role) return;
+    setPendingDeleteRole(role);
   };
 
   const confirmDeleteRole = async () => {
     if (!pendingDeleteRole) return;
 
     try {
-      await RoleService.delete(pendingDeleteRole);
-      setRoles((prev) => prev.filter((r) => r.name !== pendingDeleteRole));
+      await RoleService.delete(pendingDeleteRole.id);
+      setRoles((prev) => prev.filter((r) => r.id !== pendingDeleteRole.id));
     } catch (err) {
       console.error('Failed to delete role', err);
     } finally {
@@ -114,7 +112,7 @@ export default function RolesPage() {
 
       {pendingDeleteRole && (
         <Notification
-          message={`Are you sure you want to delete the role "${pendingDeleteRole}"?`}
+          message={`Are you sure you want to delete the role "${pendingDeleteRole.name}"?`}
           onConfirm={confirmDeleteRole}
           onClose={cancelDeleteRole}
         />
