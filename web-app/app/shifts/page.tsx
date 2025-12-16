@@ -113,7 +113,6 @@ export default function ShiftsPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <AddShift
-              /* shift={editingShift} */
               onSave={editingShift ? handleUpdateShift : handleCreateShift}
               onDiscard={() => {
                 setShowModal(false);
