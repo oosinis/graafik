@@ -23,7 +23,7 @@ public class Shift extends BaseEntity {
     private LocalTime endTime;
 
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean isDeleted = false;
 
     @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rule> rules = new ArrayList<>();
@@ -53,9 +53,9 @@ public class Shift extends BaseEntity {
 
     public void setRules(List<Rule> rules) { this.rules = rules; }
 
-    public boolean isDeleted() { return deleted; }
+    public boolean isDeleted() { return isDeleted; }
 
-    public void setDeleted(boolean deleted) { this.deleted = deleted; }
+    public void setIsDeleted(boolean deleted) { this.isDeleted = deleted; }
 
     public long getDurationInMinutes() {
         if (startTime == null || endTime == null) {

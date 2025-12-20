@@ -31,7 +31,7 @@ public class ShiftService {
     }
 
     public List<Shift> getAllShifts() {
-        return shiftRepository.findAllByDeletedFalse();
+        return shiftRepository.findAllByIsDeletedFalse();
     }
 
     public Optional<Shift> getShiftById(UUID id) {
@@ -110,7 +110,7 @@ public class ShiftService {
 
                     long assignmentCount = shiftAssignmentRepository.countByShiftId(id);
                     if (assignmentCount > 0) {
-                        shift.setDeleted(true);
+                        shift.setIsDeleted(true);
                         shiftRepository.save(shift);
                     } else {
                         shiftRepository.delete(shift);
