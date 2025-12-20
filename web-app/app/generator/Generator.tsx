@@ -147,7 +147,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
     } catch (error: any) {
       console.error('❌ Error generating schedule:', error);
       const errorMessage = error.message || 'Failed to generate schedule';
-      
+
       // Provide user-friendly error messages
       let userMessage = errorMessage;
       if (errorMessage.includes('Every shift must have at least one rule')) {
@@ -159,7 +159,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
       } else if (errorMessage.includes('no valid schedule produced')) {
         userMessage = 'Could not generate a valid schedule with the current configuration. Please check:\n- All employees have assigned shifts\n- All shifts have rules configured\n- Employee work loads and constraints are valid';
       }
-      
+
       alert(`Failed to generate schedule: ${userMessage}\n\nPlease check your data and try again.`);
     } finally {
       setIsGenerating(false);
@@ -379,7 +379,7 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                         {employee.name}
                       </p>
                       <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[12px]">
-                        {employee.employeeRole || 'No role'} • FTE {employee.workLoad || 0}
+                        {employee.role?.name || 'No role'} • FTE {employee.workLoad || 0}
                       </p>
                     </div>
                   </div>
@@ -439,8 +439,8 @@ export function Generator({ employees, shifts, roles, onUpdateEmployee, accessTo
                           onClick={() => handleAssignShift(employee.id, shift.id)}
                           disabled={toShiftIds(employee.assignedShifts).includes(shift.id)}
                           className={`px-[10px] py-[6px] rounded-[6px] font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] leading-[13px] transition-colors ${toShiftIds(employee.assignedShifts).includes(shift.id)
-                              ? 'bg-[#e6e6ec] text-[#888796] cursor-not-allowed'
-                              : 'bg-[#7636ff] text-white hover:bg-[#6428e0] cursor-pointer'
+                            ? 'bg-[#e6e6ec] text-[#888796] cursor-not-allowed'
+                            : 'bg-[#7636ff] text-white hover:bg-[#6428e0] cursor-pointer'
                             }`}
                         >
                           {shift.name}

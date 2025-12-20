@@ -1,7 +1,7 @@
 // app/schedule/page.tsx
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { LayoutGrid, Calendar, ChevronDown } from "lucide-react";
@@ -22,15 +22,24 @@ const monthNames = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
+// Wrapper component to provide Suspense boundary for useSearchParams
 export default function SchedulePage() {
+  return (
+    <Suspense fallback={<div className="text-center py-8"><p className="text-gray-500 text-lg">Loading...</p></div>}>
+      <SchedulePageContent />
+    </Suspense>
+  );
+}
+
+function SchedulePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentDate = new Date();
-  
+
   // Get month/year from URL params or use current date
   const urlMonth = searchParams.get('month');
   const urlYear = searchParams.get('year');
-  
+
   const [selectedMonth, setSelectedMonth] = useState(
     urlMonth ? parseInt(urlMonth, 10) : currentDate.getMonth() + 1
   );
@@ -75,7 +84,7 @@ export default function SchedulePage() {
       setLoading(true);
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL!;
-        
+
         // Fetch employees, roles, and schedule in parallel
         const [employeesData, rolesData, scheduleRes] = await Promise.all([
           EmployeeService.getAll(),
@@ -146,20 +155,19 @@ export default function SchedulePage() {
     <RoleGuard allowedRoles={['Admin', 'Manager']}>
       <div className="max-w-full mx-auto p-6">
         <div className="flex items-center justify-between mb-4">
-                <h1 className="font-['Poppins:Medium',_sans-serif] text-[24px] tracking-[-0.48px] text-[#19181d] leading-[32px]">
+          <h1 className="font-['Poppins:Medium',_sans-serif] text-[24px] tracking-[-0.48px] text-[#19181d] leading-[32px]">
             Schedule
           </h1>
-          
+
           <div className="flex items-center gap-[6px]">
             {/* Week/Month View Toggle */}
             <div className="bg-white h-[28px] rounded-[6px] border border-[#e6e6ec] flex items-center overflow-hidden">
               <button
                 onClick={() => setViewMode('week')}
-                className={`h-full px-[8px] flex items-center gap-[4px] transition-colors ${
-                  viewMode === 'week'
+                className={`h-full px-[8px] flex items-center gap-[4px] transition-colors ${viewMode === 'week'
                     ? 'bg-[#7636ff] text-white'
                     : 'bg-white text-[#888796] hover:bg-[#f7f6fb]'
-                }`}
+                  }`}
               >
                 <LayoutGrid className="w-[12px] h-[12px]" strokeWidth={2} />
                 <span className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px]">
@@ -170,11 +178,10 @@ export default function SchedulePage() {
               <button
                 onClick={() => setViewMode('month')}
                 disabled={true}
-                className={`h-full px-[8px] flex items-center gap-[4px] transition-colors ${
-                  viewMode === 'month'
+                className={`h-full px-[8px] flex items-center gap-[4px] transition-colors ${viewMode === 'month'
                     ? 'bg-[#7636ff] text-white'
                     : 'bg-white text-[#888796] hover:bg-[#f7f6fb]'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <Calendar className="w-[12px] h-[12px]" strokeWidth={2} />
                 <span className="font-['Poppins:Medium',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px]">
@@ -198,9 +205,9 @@ export default function SchedulePage() {
                 </span>
                 <ChevronDown className="w-[12px] h-[12px] text-[#888796]" strokeWidth={2} />
               </button>
-              
+
               {isYearOpen && (
-                <div 
+                <div
                   className="absolute top-[32px] right-0 bg-white border border-[#e6e6ec] rounded-[6px] shadow-lg z-50 min-w-[75px]"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -211,9 +218,8 @@ export default function SchedulePage() {
                         e.stopPropagation();
                         handleYearChange(year);
                       }}
-                      className={`w-full text-left px-[8px] py-[6px] hover:bg-[#f7f6fb] font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px] first:rounded-t-[6px] last:rounded-b-[6px] ${
-                        selectedYear === year ? 'bg-[#eae1ff] text-[#7636ff]' : 'text-[#19181d]'
-                      }`}
+                      className={`w-full text-left px-[8px] py-[6px] hover:bg-[#f7f6fb] font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px] first:rounded-t-[6px] last:rounded-b-[6px] ${selectedYear === year ? 'bg-[#eae1ff] text-[#7636ff]' : 'text-[#19181d]'
+                        }`}
                     >
                       {year}
                     </button>
@@ -237,9 +243,9 @@ export default function SchedulePage() {
                 </span>
                 <ChevronDown className="w-[12px] h-[12px] text-[#888796]" strokeWidth={2} />
               </button>
-              
+
               {isMonthOpen && (
-                <div 
+                <div
                   className="absolute top-[32px] right-0 bg-white border border-[#e6e6ec] rounded-[6px] shadow-lg z-50 min-w-[100px] max-h-[300px] overflow-y-auto"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -250,9 +256,8 @@ export default function SchedulePage() {
                         e.stopPropagation();
                         handleMonthChange(index + 1);
                       }}
-                      className={`w-full text-left px-[8px] py-[6px] hover:bg-[#f7f6fb] font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px] first:rounded-t-[6px] last:rounded-b-[6px] ${
-                        selectedMonth === index + 1 ? 'bg-[#eae1ff] text-[#7636ff]' : 'text-[#19181d]'
-                      }`}
+                      className={`w-full text-left px-[8px] py-[6px] hover:bg-[#f7f6fb] font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] leading-[12px] first:rounded-t-[6px] last:rounded-b-[6px] ${selectedMonth === index + 1 ? 'bg-[#eae1ff] text-[#7636ff]' : 'text-[#19181d]'
+                        }`}
                     >
                       {month}
                     </button>
@@ -268,14 +273,14 @@ export default function SchedulePage() {
             <p className="text-gray-500 text-lg">Loading schedule…</p>
           </div>
         ) : (
-                  <MonthScheduleView
-                    schedule={schedule}
-                    employees={employees}
-                    roles={roles}
-                    year={selectedYear}
-                    month={selectedMonth}
-                    onScheduleUpdate={handleScheduleUpdate}
-                  />
+          <MonthScheduleView
+            schedule={schedule}
+            employees={employees}
+            roles={roles}
+            year={selectedYear}
+            month={selectedMonth}
+            onScheduleUpdate={handleScheduleUpdate}
+          />
         )}
       </div>
     </RoleGuard>

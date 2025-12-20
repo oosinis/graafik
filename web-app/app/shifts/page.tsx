@@ -12,7 +12,7 @@ export default function ShiftsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const [editingShift, setEditingShift] = useState<Shift | null>(null);
+  const [shift, setShift] = useState<Shift | null>(null);
 
   const fetchShifts = async () => {
     setIsLoading(true);
@@ -70,18 +70,18 @@ export default function ShiftsPage() {
   const handleEditShift = (shift: Shift) => {
     if (!shift) return alert('Shift not found');
 
-    setEditingShift(shift);
+    setShift(shift);
     setShowModal(true);
   };
 
   const handleUpdateShift = async (updatedShift: Partial<Shift>) => {
-    if (!editingShift) return;
+    if (!shift) return;
 
     try {
-      const saved = await ShiftsService.update(editingShift.id, updatedShift);
+      const saved = await ShiftsService.update(shift.id, updatedShift);
       setShifts((prev) =>
         prev.map((s) =>
-          s.id === editingShift.id
+          s.id === shift.id
             ? { ...s, ...saved, rules: updatedShift.rules ?? s.rules }
             : s
         )
@@ -113,11 +113,11 @@ export default function ShiftsPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <AddShift
-              shift={editingShift}
-              onSave={editingShift ? handleUpdateShift : handleCreateShift}
+              shift={shift ?? undefined}
+              onSave={shift ? handleUpdateShift : handleCreateShift}
               onDiscard={() => {
                 setShowModal(false);
-                setEditingShift(null);
+                setShift(null);
               }}
             />
           </div>

@@ -4,6 +4,8 @@
     "@radix-ui/react-scroll-area": "^1.2.6",
     "jsonwebtoken": "^9.0.2",
     "next": "^15.5.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
