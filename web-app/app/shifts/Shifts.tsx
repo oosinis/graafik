@@ -99,8 +99,8 @@ export default function Shifts({
                     Time
                   </h3>
                   <span className="text-[#19181d] mt-[8px]">
-                    {normalizeTime(shift.startTime)} —{' '}
-                    {normalizeTime(shift.endTime)}
+                    {normalizeTime(shift.startTime ?? '')} —{' '}
+                    {normalizeTime(shift.endTime ?? '')}
                   </span>
                 </div>
                 <div className="mb-[12px]">
@@ -143,8 +143,8 @@ export default function Shifts({
                               <span className="text-sm text-[#888796]">
                                 {rule.daysApplied.length > 0
                                   ? rule.daysApplied
-                                      .map(daysOfTheWeek)
-                                      .join(', ')
+                                    .map(daysOfTheWeek)
+                                    .join(', ')
                                   : 'None'}{' '}
                                 • {rule.perDay} shifts/day •{' '}
                                 {rule.continuousDays} max days • {rule.restDays}{' '}

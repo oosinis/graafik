@@ -41,51 +41,51 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
   // Parse dates and normalize to avoid timezone issues
   const startDate = new Date(schedule.startDate);
   const endDate = new Date(schedule.endDate);
-  
+
   // Normalize to midnight local time
   const normalizedStart = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
   const normalizedEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
 
   // Get days in the date range, starting from the Monday of the first week
   const days: Date[] = [];
-  
+
   // Find the Monday of the week containing the first day of the month
   const firstDayOfMonth = new Date(normalizedStart);
   const firstDayWeekday = firstDayOfMonth.getDay(); // 0 = Sunday, 1 = Monday, etc.
   const daysFromMonday = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1; // Convert to days from Monday
-  
+
   const startFromMonday = new Date(firstDayOfMonth);
   startFromMonday.setDate(firstDayOfMonth.getDate() - daysFromMonday);
-  
+
   // Find the Sunday after the last day of the month (to complete the last week)
   const lastDayOfMonth = new Date(normalizedEnd);
   const lastDayWeekday = lastDayOfMonth.getDay();
   const daysToSunday = lastDayWeekday === 0 ? 0 : 7 - lastDayWeekday;
-  
+
   const endOnSunday = new Date(lastDayOfMonth);
   endOnSunday.setDate(lastDayOfMonth.getDate() + daysToSunday);
-  
+
   // Generate all days from Monday to Sunday (complete weeks)
   const current = new Date(startFromMonday);
-  
+
   while (current <= endOnSunday) {
     days.push(new Date(current));
     current.setDate(current.getDate() + 1);
   }
-  
+
   // Debug logging
   React.useEffect(() => {
     const expectedDaysInMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0).getDate();
     const expectedCompleteWeeks = Math.ceil(expectedDaysInMonth / 7) * 7; // Days needed for complete weeks
     const numberOfWeeks = days.length / 7;
-    
+
     console.log(`📊 MonthScheduleView rendering:`);
     console.log(`   Schedule startDate: ${schedule.startDate}`);
     console.log(`   Schedule endDate: ${schedule.endDate}`);
     console.log(`   Total days to display: ${days.length} (${numberOfWeeks} complete weeks)`);
     console.log(`   Days in month: ${expectedDaysInMonth}`);
     console.log(`   Days array: ${days.length > 0 ? days[0].toISOString().split('T')[0] : 'empty'} to ${days.length > 0 ? days[days.length - 1].toISOString().split('T')[0] : 'empty'}`);
-    
+
     // Validate that we have complete weeks (should be multiple of 7)
     if (days.length % 7 !== 0) {
       console.error(`❌ ERROR: Displaying ${days.length} days, which is not a complete set of weeks!`);
@@ -108,8 +108,8 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
   });
 
   // Filter by selected role
-  const filteredRoles = selectedRole === 'All' 
-    ? Object.keys(employeesByRole) 
+  const filteredRoles = selectedRole === 'All'
+    ? Object.keys(employeesByRole)
     : [selectedRole];
 
   // Get unique shift types from schedule assignments
@@ -142,14 +142,14 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
     const assignment = schedule.assignments.find(
       a => a.employeeId === employeeId && a.date === dateKey
     );
-    
+
     // Filter by shift type if not "All"
     if (assignment && selectedShiftType !== 'All') {
       if (assignment.shiftName !== selectedShiftType) {
         return undefined;
       }
     }
-    
+
     return assignment;
   };
 
@@ -190,12 +190,12 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
       // Parse time strings (HH:MM format)
       const [startHour, startMin] = assignment.startTime.split(':').map(Number);
       const [endHour, endMin] = assignment.endTime.split(':').map(Number);
-      
+
       // Calculate duration in hours
       const startMinutes = startHour * 60 + startMin;
       const endMinutes = endHour * 60 + endMin;
       const durationHours = (endMinutes - startMinutes) / 60;
-      
+
       return total + durationHours;
     }, 0);
 
@@ -207,7 +207,7 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
     if (!schedule || !onScheduleUpdate) return;
 
     const targetDateKey = formatDateKey(targetDate);
-    
+
     // Remove the old assignment
     const updatedAssignments = schedule.assignments.filter(
       a => !(a.employeeId === draggedAssignment.employeeId && a.date === draggedAssignment.date)
@@ -251,9 +251,9 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
     if (!schedule || !onScheduleUpdate) return;
 
     const updatedAssignments = schedule.assignments.map(a =>
-      a.employeeId === editingAssignment?.employeeId && 
-      a.date === editingAssignment?.date &&
-      a.shiftId === editingAssignment?.shiftId
+      a.employeeId === editingAssignment?.employeeId &&
+        a.date === editingAssignment?.date &&
+        a.shiftId === editingAssignment?.shiftId
         ? updatedAssignment
         : a
     );
@@ -270,9 +270,9 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
     if (!schedule || !onScheduleUpdate || !editingAssignment) return;
 
     const updatedAssignments = schedule.assignments.filter(
-      a => !(a.employeeId === editingAssignment.employeeId && 
-             a.date === editingAssignment.date &&
-             a.shiftId === editingAssignment.shiftId)
+      a => !(a.employeeId === editingAssignment.employeeId &&
+        a.date === editingAssignment.date &&
+        a.shiftId === editingAssignment.shiftId)
     );
 
     const updatedSchedule = {
@@ -295,7 +295,7 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
 
     return (
       <div
-        ref={drag}
+        ref={drag as unknown as React.Ref<HTMLDivElement>}
         onClick={(e) => {
           e.stopPropagation();
           handleEditAssignment(assignment);
@@ -350,13 +350,13 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
 
     return (
       <div
-        ref={drop}
+        ref={drop as unknown as React.Ref<HTMLDivElement>}
         className="flex-1 h-full flex items-center justify-center p-[2.5px] border-r border-[#e6e6ec] last:border-r-0 transition-colors"
         style={{
-          backgroundColor: isOver 
-            ? 'rgba(118, 54, 255, 0.1)' 
-            : !isCurrentMonth 
-              ? 'rgba(230, 230, 236, 0.3)' 
+          backgroundColor: isOver
+            ? 'rgba(118, 54, 255, 0.1)'
+            : !isCurrentMonth
+              ? 'rgba(230, 230, 236, 0.3)'
               : 'transparent'
         }}
       >
@@ -367,233 +367,233 @@ export function MonthScheduleView({ schedule, employees, roles, onScheduleUpdate
 
   return (
     <DndProvider backend={HTML5Backend}>
-    <div className="space-y-[16px]">
-      {/* Header Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-[16px]">
+      <div className="space-y-[16px]">
+        {/* Header Controls */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-[16px]">
-            <div className="flex items-center gap-[12px]">
-              <p className="font-['Poppins:Medium',_sans-serif] text-[20px] tracking-[-0.4px] text-[#19181d] leading-[16px]">
-                {weekDays[0] && `${weekDays[0].getDate()}. - ${weekDays[weekDays.length - 1]?.getDate()}.${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][startDate.getMonth()].toLowerCase()}`}
-              </p>
-              <p className="font-['Poppins:Regular',_sans-serif] text-[14px] tracking-[-0.28px] text-[#888796] leading-[14px]">
-                (Week {Math.floor(currentWeekStart / 7) + 1} of {Math.ceil(days.length / 7)} • {days.length} days total)
-              </p>
-            </div>
-            <div className="flex gap-[0px]">
-              <button
-                onClick={goToPreviousWeek}
-                disabled={currentWeekStart === 0}
-                className="w-[28px] h-[9px] flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-30"
-              >
-                <ChevronLeft className="w-[16px] h-[16px] text-[#888796]" strokeWidth={1.5} />
-              </button>
-              <button
-                onClick={goToNextWeek}
-                disabled={currentWeekStart + 7 >= days.length}
-                className="w-[28px] h-[9px] flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-30"
-              >
-                <ChevronRight className="w-[16px] h-[16px] text-[#888796]" strokeWidth={1.5} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-[8px]">
-          {/* Role Filter */}
-          <div className="bg-white rounded-[8px] h-[38px] px-[12px] flex items-center gap-[8px]">
-            <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
-              Role
-            </p>
-            <div className="flex items-center gap-[8px] bg-[#eae1ff] px-[8px] py-[4px] rounded-[6px] relative">
-              <select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-                className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#7636ff] leading-[16px] bg-transparent border-none outline-none cursor-pointer appearance-none pr-[20px]"
-              >
-                <option value="All">All</option>
-                {roles.map(role => (
-                  <option key={role.name} value={role.name}>{role.name}</option>
-                ))}
-              </select>
-              <div className="absolute right-[8px] pointer-events-none">
-                <ChevronDown className="w-[16px] h-[16px] text-[#7636ff]" strokeWidth={2} />
+            <div className="flex items-center gap-[16px]">
+              <div className="flex items-center gap-[12px]">
+                <p className="font-['Poppins:Medium',_sans-serif] text-[20px] tracking-[-0.4px] text-[#19181d] leading-[16px]">
+                  {weekDays[0] && `${weekDays[0].getDate()}. - ${weekDays[weekDays.length - 1]?.getDate()}.${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][startDate.getMonth()].toLowerCase()}`}
+                </p>
+                <p className="font-['Poppins:Regular',_sans-serif] text-[14px] tracking-[-0.28px] text-[#888796] leading-[14px]">
+                  (Week {Math.floor(currentWeekStart / 7) + 1} of {Math.ceil(days.length / 7)} • {days.length} days total)
+                </p>
+              </div>
+              <div className="flex gap-[0px]">
+                <button
+                  onClick={goToPreviousWeek}
+                  disabled={currentWeekStart === 0}
+                  className="w-[28px] h-[9px] flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-30"
+                >
+                  <ChevronLeft className="w-[16px] h-[16px] text-[#888796]" strokeWidth={1.5} />
+                </button>
+                <button
+                  onClick={goToNextWeek}
+                  disabled={currentWeekStart + 7 >= days.length}
+                  className="w-[28px] h-[9px] flex items-center justify-center hover:opacity-70 transition-opacity disabled:opacity-30"
+                >
+                  <ChevronRight className="w-[16px] h-[16px] text-[#888796]" strokeWidth={1.5} />
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Shift Type Filter */}
-          <div className="bg-white rounded-[8px] h-[38px] px-[12px] flex items-center gap-[8px]">
-            <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
-              Shift type
-            </p>
-            <div className="flex items-center gap-[8px] bg-[#eae1ff] px-[8px] py-[4px] rounded-[6px] relative">
-              <select
-                value={selectedShiftType}
-                onChange={(e) => setSelectedShiftType(e.target.value)}
-                className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#7636ff] leading-[16px] bg-transparent border-none outline-none cursor-pointer appearance-none pr-[20px]"
-              >
-                <option value="All">All</option>
-                {shiftTypes.map((shiftType: string) => (
-                  <option key={shiftType} value={shiftType}>{shiftType}</option>
-                ))}
-              </select>
-              <div className="absolute right-[8px] pointer-events-none">
-                <ChevronDown className="w-[16px] h-[16px] text-[#7636ff]" strokeWidth={2} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Schedule Grid */}
-      <div className="bg-white relative rounded-[15px] overflow-hidden" style={{ width: '1158px', height: 'calc(100vh - 280px)' }}>
-        <div aria-hidden="true" className="absolute border border-[#e6e6ec] border-solid inset-0 pointer-events-none rounded-[15px]" />
-        <div className="relative h-full">
-          {/* Header Row with Number Column */}
-          <div className="absolute top-0 left-0 right-0 h-[40px] bg-[#7636ff] flex items-center z-10 rounded-t-[15px]">
-            {/* Nr Column */}
-            <div className="w-[40px] flex items-center justify-center border-r border-[#9c7aff]">
-              <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-white leading-[16px] text-center">
-                Nr
+          <div className="flex items-center gap-[8px]">
+            {/* Role Filter */}
+            <div className="bg-white rounded-[8px] h-[38px] px-[12px] flex items-center gap-[8px]">
+              <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
+                Role
               </p>
-            </div>
-            {/* Name Column */}
-            <div className="w-[159px] flex items-center px-[16px] border-r border-[#9c7aff]">
-              <p className="font-['Poppins:Medium',_sans-serif] text-[15px] tracking-[-0.3px] text-white leading-[16px]">
-                Name
-              </p>
-            </div>
-            {/* Day Columns */}
-            {weekDays.map((day, idx) => {
-              const isCurrentMonth = day.getMonth() === normalizedStart.getMonth() && day.getFullYear() === normalizedStart.getFullYear();
-              return (
-                <div key={idx} className="flex-1 flex items-center justify-center border-r border-[#9c7aff] last:border-r-0">
-                  <p 
-                    className="font-['Poppins:Medium',_sans-serif] text-[13px] tracking-[-0.26px] text-white leading-[16px]"
-                    style={{ opacity: isCurrentMonth ? 1 : 0.5 }}
-                  >
-                    {formatDate(day)}
-                  </p>
+              <div className="flex items-center gap-[8px] bg-[#eae1ff] px-[8px] py-[4px] rounded-[6px] relative">
+                <select
+                  value={selectedRole}
+                  onChange={(e) => setSelectedRole(e.target.value)}
+                  className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#7636ff] leading-[16px] bg-transparent border-none outline-none cursor-pointer appearance-none pr-[20px]"
+                >
+                  <option value="All">All</option>
+                  {roles.map(role => (
+                    <option key={role.name} value={role.name}>{role.name}</option>
+                  ))}
+                </select>
+                <div className="absolute right-[8px] pointer-events-none">
+                  <ChevronDown className="w-[16px] h-[16px] text-[#7636ff]" strokeWidth={2} />
                 </div>
-              );
-            })}
+              </div>
+            </div>
+
+            {/* Shift Type Filter */}
+            <div className="bg-white rounded-[8px] h-[38px] px-[12px] flex items-center gap-[8px]">
+              <p className="font-['Poppins:Regular',_sans-serif] text-[16px] tracking-[-0.32px] text-[#888796] leading-[16px]">
+                Shift type
+              </p>
+              <div className="flex items-center gap-[8px] bg-[#eae1ff] px-[8px] py-[4px] rounded-[6px] relative">
+                <select
+                  value={selectedShiftType}
+                  onChange={(e) => setSelectedShiftType(e.target.value)}
+                  className="font-['Poppins:Medium',_sans-serif] text-[16px] tracking-[-0.32px] text-[#7636ff] leading-[16px] bg-transparent border-none outline-none cursor-pointer appearance-none pr-[20px]"
+                >
+                  <option value="All">All</option>
+                  {shiftTypes.map((shiftType: string) => (
+                    <option key={shiftType} value={shiftType}>{shiftType}</option>
+                  ))}
+                </select>
+                <div className="absolute right-[8px] pointer-events-none">
+                  <ChevronDown className="w-[16px] h-[16px] text-[#7636ff]" strokeWidth={2} />
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
 
-          {/* Scrollable Content */}
-          <div className="absolute top-[40px] left-0 right-0 bottom-0 overflow-y-auto">
-            {filteredRoles.map((roleName, roleIdx) => {
-              const roleInfo = roles.find(r => r.name === roleName);
-              let roleEmployees = employeesByRole[roleName] || [];
-              
-              // Filter employees by shift type if a shift type is selected
-              if (selectedShiftType !== 'All') {
-                roleEmployees = roleEmployees.filter(emp => {
-                  // Check if employee has at least one assignment with the selected shift type
-                  return schedule.assignments.some(
-                    assignment => assignment.employeeId === emp.id && 
-                                 assignment.shiftName === selectedShiftType
-                  );
-                });
-              }
-              
-              // Skip rendering this role if no employees match the filters
-              if (roleEmployees.length === 0) {
-                return null;
-              }
-              
-              const isCollapsed = collapsedRoles[roleName];
+        {/* Schedule Grid */}
+        <div className="bg-white relative rounded-[15px] overflow-hidden" style={{ width: '1158px', height: 'calc(100vh - 280px)' }}>
+          <div aria-hidden="true" className="absolute border border-[#e6e6ec] border-solid inset-0 pointer-events-none rounded-[15px]" />
+          <div className="relative h-full">
+            {/* Header Row with Number Column */}
+            <div className="absolute top-0 left-0 right-0 h-[40px] bg-[#7636ff] flex items-center z-10 rounded-t-[15px]">
+              {/* Nr Column */}
+              <div className="w-[40px] flex items-center justify-center border-r border-[#9c7aff]">
+                <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-white leading-[16px] text-center">
+                  Nr
+                </p>
+              </div>
+              {/* Name Column */}
+              <div className="w-[159px] flex items-center px-[16px] border-r border-[#9c7aff]">
+                <p className="font-['Poppins:Medium',_sans-serif] text-[15px] tracking-[-0.3px] text-white leading-[16px]">
+                  Name
+                </p>
+              </div>
+              {/* Day Columns */}
+              {weekDays.map((day, idx) => {
+                const isCurrentMonth = day.getMonth() === normalizedStart.getMonth() && day.getFullYear() === normalizedStart.getFullYear();
+                return (
+                  <div key={idx} className="flex-1 flex items-center justify-center border-r border-[#9c7aff] last:border-r-0">
+                    <p
+                      className="font-['Poppins:Medium',_sans-serif] text-[13px] tracking-[-0.26px] text-white leading-[16px]"
+                      style={{ opacity: isCurrentMonth ? 1 : 0.5 }}
+                    >
+                      {formatDate(day)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
 
-              return (
-                <div key={roleIdx}>
-                  {/* Role Header */}
-                  <div 
-                    className="h-[40px] flex items-center sticky top-0 z-[5] cursor-pointer hover:opacity-90 transition-opacity"
-                    style={{ backgroundColor: roleInfo?.backgroundColor || '#eae1ff' }}
-                    onClick={() => toggleRoleCollapse(roleName)}
-                  >
-                    <div className="w-[40px] flex items-center justify-center border-r border-[#e6e6ec]">
-                      <ChevronDown 
-                        className={`w-[16px] h-[16px] transition-transform ${isCollapsed ? '-rotate-90' : ''}`}
-                        style={{ color: roleInfo?.color || '#7636ff' }}
-                        strokeWidth={2}
-                      />
+            {/* Scrollable Content */}
+            <div className="absolute top-[40px] left-0 right-0 bottom-0 overflow-y-auto">
+              {filteredRoles.map((roleName, roleIdx) => {
+                const roleInfo = roles.find(r => r.name === roleName);
+                let roleEmployees = employeesByRole[roleName] || [];
+
+                // Filter employees by shift type if a shift type is selected
+                if (selectedShiftType !== 'All') {
+                  roleEmployees = roleEmployees.filter(emp => {
+                    // Check if employee has at least one assignment with the selected shift type
+                    return schedule.assignments.some(
+                      assignment => assignment.employeeId === emp.id &&
+                        assignment.shiftName === selectedShiftType
+                    );
+                  });
+                }
+
+                // Skip rendering this role if no employees match the filters
+                if (roleEmployees.length === 0) {
+                  return null;
+                }
+
+                const isCollapsed = collapsedRoles[roleName];
+
+                return (
+                  <div key={roleIdx}>
+                    {/* Role Header */}
+                    <div
+                      className="h-[40px] flex items-center sticky top-0 z-[5] cursor-pointer hover:opacity-90 transition-opacity"
+                      style={{ backgroundColor: roleInfo?.backgroundColor || '#eae1ff' }}
+                      onClick={() => toggleRoleCollapse(roleName)}
+                    >
+                      <div className="w-[40px] flex items-center justify-center border-r border-[#e6e6ec]">
+                        <ChevronDown
+                          className={`w-[16px] h-[16px] transition-transform ${isCollapsed ? '-rotate-90' : ''}`}
+                          style={{ color: roleInfo?.color || '#7636ff' }}
+                          strokeWidth={2}
+                        />
+                      </div>
+                      <div className="w-[159px] flex items-center px-[16px] border-r border-[#e6e6ec]">
+                        <p
+                          className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[16px] uppercase"
+                          style={{ color: roleInfo?.color || '#7636ff' }}
+                        >
+                          {roleName}
+                        </p>
+                      </div>
+                      {/* Day column separators for role header */}
+                      {weekDays.map((_, dayIdx) => (
+                        <div key={dayIdx} className="flex-1 border-r border-[#e6e6ec] last:border-r-0 h-full" />
+                      ))}
                     </div>
-                    <div className="w-[159px] flex items-center px-[16px] border-r border-[#e6e6ec]">
-                      <p 
-                        className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] leading-[16px] uppercase"
-                        style={{ color: roleInfo?.color || '#7636ff' }}
+
+                    {/* Employees */}
+                    {!isCollapsed && roleEmployees.map((emp, empIdx) => (
+                      <div
+                        key={emp.id}
+                        className="h-[42px] flex items-center border-t border-[#e6e6ec]"
                       >
-                        {roleName}
-                      </p>
-                    </div>
-                    {/* Day column separators for role header */}
-                    {weekDays.map((_, dayIdx) => (
-                      <div key={dayIdx} className="flex-1 border-r border-[#e6e6ec] last:border-r-0 h-full" />
+                        {/* Number Column */}
+                        <div className="w-[40px] flex items-center justify-center border-r border-[#e6e6ec]">
+                          <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[16px] text-center">
+                            {empIdx + 1}
+                          </p>
+                        </div>
+                        {/* Name Column */}
+                        <div className="w-[159px] flex flex-col justify-center px-[16px] bg-[rgba(247,246,251,0)] border-r border-[#e6e6ec] gap-[2px]">
+                          <p className="font-['Poppins:Medium',_sans-serif] text-[15px] tracking-[-0.3px] text-[#19181d] leading-[16px]">
+                            {emp.name}
+                          </p>
+                          <p className="font-['Poppins:Regular',_sans-serif] text-[11px] tracking-[-0.22px] text-[#888796] leading-[11px]">
+                            {(() => {
+                              const hours = calculateEmployeeHours(emp.id);
+                              return `${hours.assigned}/${hours.expected}h`;
+                            })()}
+                          </p>
+                        </div>
+                        {/* Day Columns */}
+                        {weekDays.map((day, dayIdx) => {
+                          const assignment = getAssignmentForEmployeeAndDate(emp.id, day);
+
+                          return (
+                            <DroppableCell
+                              key={dayIdx}
+                              employeeId={emp.id}
+                              day={day}
+                              assignment={assignment}
+                            />
+                          );
+                        })}
+                      </div>
                     ))}
                   </div>
-
-                  {/* Employees */}
-                  {!isCollapsed && roleEmployees.map((emp, empIdx) => (
-                    <div 
-                      key={emp.id}
-                      className="h-[42px] flex items-center border-t border-[#e6e6ec]"
-                    >
-                      {/* Number Column */}
-                      <div className="w-[40px] flex items-center justify-center border-r border-[#e6e6ec]">
-                        <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[16px] text-center">
-                          {empIdx + 1}
-                        </p>
-                      </div>
-                      {/* Name Column */}
-                      <div className="w-[159px] flex flex-col justify-center px-[16px] bg-[rgba(247,246,251,0)] border-r border-[#e6e6ec] gap-[2px]">
-                        <p className="font-['Poppins:Medium',_sans-serif] text-[15px] tracking-[-0.3px] text-[#19181d] leading-[16px]">
-                          {emp.name}
-                        </p>
-                        <p className="font-['Poppins:Regular',_sans-serif] text-[11px] tracking-[-0.22px] text-[#888796] leading-[11px]">
-                          {(() => {
-                            const hours = calculateEmployeeHours(emp.id);
-                            return `${hours.assigned}/${hours.expected}h`;
-                          })()}
-                        </p>
-                      </div>
-                      {/* Day Columns */}
-                      {weekDays.map((day, dayIdx) => {
-                        const assignment = getAssignmentForEmployeeAndDate(emp.id, day);
-                        
-                        return (
-                          <DroppableCell
-                            key={dayIdx}
-                            employeeId={emp.id}
-                            day={day}
-                            assignment={assignment}
-                          />
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Edit Dialog */}
-      {editingAssignment && (
-        <EditShiftAssignmentDialog
-          isOpen={isEditDialogOpen}
-          onClose={() => {
-            setIsEditDialogOpen(false);
-            setEditingAssignment(null);
-          }}
-          onSave={handleSaveAssignment}
-          onDelete={handleDeleteAssignment}
-          assignment={editingAssignment}
-          employees={employees}
-        />
-      )}
-    </div>
+        {/* Edit Dialog */}
+        {editingAssignment && (
+          <EditShiftAssignmentDialog
+            isOpen={isEditDialogOpen}
+            onClose={() => {
+              setIsEditDialogOpen(false);
+              setEditingAssignment(null);
+            }}
+            onSave={handleSaveAssignment}
+            onDelete={handleDeleteAssignment}
+            assignment={editingAssignment}
+            employees={employees}
+          />
+        )}
+      </div>
     </DndProvider>
   );
 }

@@ -10,10 +10,10 @@ import { useEffect } from 'react';
 interface AddShiftProps {
   onSave: (shift: Partial<Shift>) => void;
   onDiscard: () => void;
-  editingShift?: Shift;
+  shift?: Shift;
 }
 
-export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
+export function AddShift({ onSave, onDiscard, shift: editingShift }: AddShiftProps) {
   const [shiftTitle, setShiftTitle] = React.useState(editingShift?.name ?? '');
   const [startTime, setStartTime] = React.useState(
     editingShift?.startTime ?? '09:00'
@@ -40,8 +40,8 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
   useEffect(() => {
     if (editingShift) {
       setShiftTitle(editingShift.name);
-      setStartTime(editingShift.startTime);
-      setEndTime(editingShift.endTime);
+      setStartTime(editingShift.startTime ?? '09:00');
+      setEndTime(editingShift.endTime ?? '17:00');
       setRules(editingShift.rules ? structuredClone(editingShift.rules) : []);
     }
   }, [editingShift]);
@@ -264,11 +264,10 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
                   <button
                     key={d}
                     onClick={() => toggleDay(d)}
-                    className={`px-3 py-1 rounded ${
-                      ruleForm.daysApplied.includes(d)
-                        ? 'bg-[#7636ff] text-white'
-                        : 'bg-white text-[#888796]'
-                    }`}
+                    className={`px-3 py-1 rounded ${ruleForm.daysApplied.includes(d)
+                      ? 'bg-[#7636ff] text-white'
+                      : 'bg-white text-[#888796]'
+                      }`}
                   >
                     {daysOfTheWeek(d)}
                   </button>
@@ -283,11 +282,10 @@ export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
                   <button
                     key={p}
                     onClick={() => setRuleForm((f) => ({ ...f, priority: p }))}
-                    className={`px-3 py-1 rounded ${
-                      ruleForm.priority === p
-                        ? 'bg-[#7636ff] text-white'
-                        : 'bg-white text-[#888796]'
-                    }`}
+                    className={`px-3 py-1 rounded ${ruleForm.priority === p
+                      ? 'bg-[#7636ff] text-white'
+                      : 'bg-white text-[#888796]'
+                      }`}
                   >
                     {p.charAt(0).toUpperCase() + p.slice(1)}
                   </button>

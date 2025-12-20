@@ -42,11 +42,6 @@ export function SidebarNavigation() {
       icon: Calendar,
     },
     {
-      name: "Generator 2",
-      href: "/generator2",
-      icon: Calendar,
-    },
-    {
       name: "Roles",
       href: "/roles",
       icon: Calendar,

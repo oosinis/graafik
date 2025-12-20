@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Dashboard from "./Dashboard";
 import type { Employee } from "@/models/Employee";
 import type { Shift } from "@/models/Shift";
-import type { GeneratedSchedule } from "@/models/Schedule";
+import type { ScheduleResponse } from "@/models/ScheduleResponse";
 import type { Role } from "@/models/Role";
 import { EmployeeService } from "@/services/employeeService";
 import { RoleService } from "@/services/roleService";
@@ -16,7 +16,7 @@ export default function DashboardPage() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [generatedSchedules, setGeneratedSchedules] =
-    useState<{ [key: string]: GeneratedSchedule }>({});
+    useState<{ [key: string]: ScheduleResponse }>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +32,16 @@ export default function DashboardPage() {
         setEmployees(employeesData);
         setRoles(rolesData);
         setShifts(shiftsData);
-        setGeneratedSchedules(schedulesData); //Check the schedule data structure
+
+        // Transform ScheduleResponse[] to { [key: string]: ScheduleResponse }
+        const formattedSchedules: { [key: string]: ScheduleResponse } = {};
+
+        schedulesData.forEach(schedule => {
+          const key = `${schedule.year}-${schedule.month}`;
+          formattedSchedules[key] = schedule;
+        });
+
+        setGeneratedSchedules(formattedSchedules);
 
       } catch (e) {
         console.error("Dashboard load failed:", e);
