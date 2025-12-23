@@ -4,14 +4,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import type { Employee } from '@/models/Employee';
 import type { Shift } from '@/models/Shift';
-import type { GeneratedSchedule } from '@/models/Schedule';
+import type { ScheduleResponse } from '@/models/ScheduleResponse';
 import { ScheduleCalendar } from '../schedule/ScheduleCalendar';
 
 interface DashboardProps {
   employees: Employee[];
   roles: Array<{ name: string; color: string; backgroundColor: string }>;
   shifts: Shift[];
-  generatedSchedules: { [key: string]: GeneratedSchedule };
+  generatedSchedules: { [key: string]: ScheduleResponse };
 }
 
 export function Dashboard({
@@ -66,6 +66,13 @@ export function Dashboard({
     const day = String(selectedDate.getDate()).padStart(2, '0');
     const todayDateKey = `${year}-${month}-${day}`;
 
+
+    // Find the day schedule for the selected date
+    const selectedDay = selectedDate.getDate();
+    const daySchedule = schedule.daySchedules.find(d => d.dayOfMonth === selectedDay);
+
+    if (!daySchedule) return [];
+
     // Get current time in minutes since midnight (only use real time if viewing today)
     const now = new Date();
     const currentTimeMinutes = isToday
@@ -85,6 +92,12 @@ export function Dashboard({
       const startMinutes = timeToMinutes(assignment.startTime);
       const endMinutes = timeToMinutes(assignment.endTime);
 
+    const todaysAssignments = daySchedule.assignments.filter(assignment => {
+      if (!assignment.shift) return false;
+
+      const startMinutes = timeToMinutes(assignment.shift.startTime || '00:00');
+      const endMinutes = timeToMinutes(assignment.shift.endTime || '00:00');
+
       // If viewing today, check if current time is within shift time
       // If viewing another day, show all shifts
       if (isToday) {
@@ -97,6 +110,11 @@ export function Dashboard({
 
     return todaysAssignments.map((assignment) => {
       const employee = employees.find((e) => e.id === assignment.employeeId);
+
+    return todaysAssignments.map(assignment => {
+      const employee = assignment.employee;
+      const role = employee.role;
+
       return {
         name: assignment.employeeName,
         role: employee?.role || 'Staff',
@@ -104,9 +122,15 @@ export function Dashboard({
         roleBg: assignment.shiftBg,
         time: `${assignment.startTime} - ${assignment.endTime}`,
         image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${assignment.employeeName}`,
+        name: employee.name,
+        role: role?.name || 'Staff',
+        roleColor: role?.color || '#cccccc',
+        roleBg: role?.backgroundColor || '#f0f0f0',
+        time: `${assignment.shift.startTime} - ${assignment.shift.endTime}`,
+        image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${employee.name}`
       };
     });
-  }, [selectedDate, generatedSchedules, employees, todayKey, isToday]);
+  }, [selectedDate, generatedSchedules, todayKey, isToday]);
 
   return (
     <div className="py-[32px] w-full">
@@ -189,6 +213,13 @@ export function Dashboard({
                 const day = String(selectedDate.getDate()).padStart(2, '0');
                 const todayDateKey = `${year}-${month}-${day}`;
 
+
+                // Find the day schedule for the selected date
+                const selectedDay = selectedDate.getDate();
+                const daySchedule = schedule.daySchedules.find(d => d.dayOfMonth === selectedDay);
+
+                if (!daySchedule) return [];
+
                 // Convert assignments to shifts format for calendar
                 return schedule.assignments
                   .filter((a) => a.date === todayDateKey && !a.isDayOff)
@@ -213,6 +244,26 @@ export function Dashboard({
                       day: 0, // Selected day (doesn't matter for dashboard view)
                     };
                   });
+                return daySchedule.assignments.map(assignment => {
+                  const employee = assignment.employee;
+                  const shift = assignment.shift;
+                  const role = employee.role;
+
+                  return {
+                    id: assignment.id, // Using assignment ID if available, otherwise constructing one might be better but let's assume assignment has ID
+                    employeeName: employee.name,
+                    employeeImage: `https://api.dicebear.com/7.x/avataaars/svg?seed=${employee.name}`,
+                    role: role?.name || 'Staff',
+                    roleColor: role?.color || '#cccccc',
+                    roleBg: role?.backgroundColor || '#f0f0f0',
+                    shiftType: shift.name || 'Shift',
+                    shiftColor: role?.color || '#cccccc', // Using role color for shift color as backup
+                    shiftBg: role?.backgroundColor || '#f0f0f0',
+                    startTime: shift.startTime || '00:00',
+                    endTime: shift.endTime || '00:00',
+                    day: 0 // Selected day (doesn't matter for dashboard view)
+                  };
+                });
               })()}
               currentDate={selectedDate}
             />

@@ -44,8 +44,8 @@ export function AddShift({
   useEffect(() => {
     if (editingShift) {
       setShiftTitle(editingShift.name);
-      setStartTime(editingShift.startTime);
-      setEndTime(editingShift.endTime);
+      setStartTime(editingShift.startTime ?? '09:00');
+      setEndTime(editingShift.endTime ?? '17:00');
       setRules(editingShift.rules ? structuredClone(editingShift.rules) : []);
     }
   }, [editingShift]);

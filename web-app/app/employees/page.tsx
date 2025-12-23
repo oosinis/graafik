@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import type { Employee } from "@/models/Employee";
 import type { Shift } from "@/models/Shift";
 import type { Role } from "@/services/roleService";
-import { AvailabilityData } from "./Availability";
+import { AvailabilityData } from "./AvailabilityDialog";
 import Employees from "./Employees";
 import { AddEmployee } from "./AddEmployee";
 import { EmployeeService } from "@/services/employeeService";

@@ -218,7 +218,7 @@ export function Generator({
       </div>
 
       {/* Month & Hours Section */}
-      <div className="bg-white rounded-[8px] p-4 sm:p-6 max-w-[930px] w-full mb-6">
+      <div className="bg-white rounded-[8px] p-[24px] w-[930px] mb-[24px]">
         <div className="mb-[16px] flex items-center justify-between">
           <div>
             <p className="font-['Poppins:Medium',_sans-serif] text-[24px] tracking-[-0.48px] text-[#19181d] leading-[24px] capitalize mb-[4px]">
@@ -243,7 +243,7 @@ export function Generator({
             <p className="font-['Poppins:Medium',_sans-serif] text-[14px] tracking-[-0.28px] text-[#19181d] leading-[14px] mb-[12px]">
               Select month
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-[18px]">
+            <div className="flex gap-[18px]">
               {/* Year Dropdown */}
               <div className="relative">
                 <button
@@ -368,8 +368,8 @@ export function Generator({
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 max-w-[930px] w-full">
-        <div className="bg-white rounded-[8px] p-4 border border-[#e6e6ec] w-full">
+      <div className="flex gap-[16px] mb-[24px]">
+        <div className="bg-white rounded-[8px] p-[16px] border border-[#e6e6ec] min-w-[180px]">
           <p className="font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] text-[#888796] leading-[13px] mb-[8px]">
             Total Employees
           </p>
@@ -377,7 +377,7 @@ export function Generator({
             {employees.length}
           </p>
         </div>
-        <div className="bg-white rounded-[8px] p-4 border border-[#e6e6ec] w-full">
+        <div className="bg-white rounded-[8px] p-[16px] border border-[#e6e6ec] min-w-[180px]">
           <p className="font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] text-[#888796] leading-[13px] mb-[8px]">
             Available Roles
           </p>
@@ -385,7 +385,7 @@ export function Generator({
             {roles.length}
           </p>
         </div>
-        <div className="bg-white rounded-[8px] p-4 border border-[#e6e6ec] w-full">
+        <div className="bg-white rounded-[8px] p-[16px] border border-[#e6e6ec] min-w-[180px] mr-[24px]">
           <p className="font-['Poppins:Regular',_sans-serif] text-[13px] tracking-[-0.26px] text-[#888796] leading-[13px] mb-[8px]">
             Shift Types
           </p>
@@ -396,7 +396,7 @@ export function Generator({
       </div>
 
       {/* Assign Employees Section */}
-      <div className="bg-white rounded-[8px] p-4 sm:p-6 max-w-[930px] w-full mb-6">
+      <div className="bg-white rounded-[8px] p-[24px] w-[930px] mb-[24px]">
         <div className="mb-[20px]">
           <p className="font-['Poppins:Medium',_sans-serif] text-[24px] tracking-[-0.48px] text-[#19181d] leading-[24px] capitalize mb-[4px]">
             Assign Employees
@@ -420,7 +420,7 @@ export function Generator({
                 key={employee.id}
                 className="bg-[#f7f6fb] rounded-[8px] p-[16px]"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+                <div className="flex items-center justify-between mb-[12px]">
                   <div className="flex items-center gap-[12px]">
                     <div
                       className="w-[32px] h-[32px] rounded-full flex items-center justify-center text-white"
@@ -539,7 +539,7 @@ export function Generator({
       </div>
 
       {/* Generate Button */}
-      <div className="w-full sm:w-auto">
+      <div className="pr-[24px]">
         <button
           onClick={handleGenerateSchedule}
           disabled={
