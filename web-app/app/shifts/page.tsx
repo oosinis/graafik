@@ -90,6 +90,8 @@ export default function ShiftsPage() {
       console.error('Failed to update shift', err);
     } finally {
       setPendingDeleteId(null);
+      setShowModal(false);
+      setEditingShift(null);
     }
   };
 
@@ -113,6 +115,7 @@ export default function ShiftsPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <AddShift
+              shift={editingShift}
               onSave={editingShift ? handleUpdateShift : handleCreateShift}
               onDiscard={() => {
                 setShowModal(false);

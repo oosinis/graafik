@@ -10,10 +10,14 @@ import { useEffect } from 'react';
 interface AddShiftProps {
   onSave: (shift: Partial<Shift>) => void;
   onDiscard: () => void;
-  editingShift?: Shift;
+  shift?: Shift;
 }
 
-export function AddShift({ onSave, onDiscard, editingShift }: AddShiftProps) {
+export function AddShift({
+  onSave,
+  onDiscard,
+  shift: editingShift,
+}: AddShiftProps) {
   const [shiftTitle, setShiftTitle] = React.useState(editingShift?.name ?? '');
   const [startTime, setStartTime] = React.useState(
     editingShift?.startTime ?? '09:00'
