@@ -91,7 +91,6 @@ export default function ShiftsPage() {
     } finally {
       setPendingDeleteId(null);
       setShowModal(false);
-      setEditingShift(null);
     }
   };
 
