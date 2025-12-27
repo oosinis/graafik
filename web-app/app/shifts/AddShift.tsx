@@ -13,7 +13,11 @@ interface AddShiftProps {
   shift?: Shift;
 }
 
-export function AddShift({ onSave, onDiscard, shift: editingShift }: AddShiftProps) {
+export function AddShift({
+  onSave,
+  onDiscard,
+  shift: editingShift,
+}: AddShiftProps) {
   const [shiftTitle, setShiftTitle] = React.useState(editingShift?.name ?? '');
   const [startTime, setStartTime] = React.useState(
     editingShift?.startTime ?? '09:00'
@@ -264,10 +268,11 @@ export function AddShift({ onSave, onDiscard, shift: editingShift }: AddShiftPro
                   <button
                     key={d}
                     onClick={() => toggleDay(d)}
-                    className={`px-3 py-1 rounded ${ruleForm.daysApplied.includes(d)
-                      ? 'bg-[#7636ff] text-white'
-                      : 'bg-white text-[#888796]'
-                      }`}
+                    className={`px-3 py-1 rounded ${
+                      ruleForm.daysApplied.includes(d)
+                        ? 'bg-[#7636ff] text-white'
+                        : 'bg-white text-[#888796]'
+                    }`}
                   >
                     {daysOfTheWeek(d)}
                   </button>
@@ -282,10 +287,11 @@ export function AddShift({ onSave, onDiscard, shift: editingShift }: AddShiftPro
                   <button
                     key={p}
                     onClick={() => setRuleForm((f) => ({ ...f, priority: p }))}
-                    className={`px-3 py-1 rounded ${ruleForm.priority === p
-                      ? 'bg-[#7636ff] text-white'
-                      : 'bg-white text-[#888796]'
-                      }`}
+                    className={`px-3 py-1 rounded ${
+                      ruleForm.priority === p
+                        ? 'bg-[#7636ff] text-white'
+                        : 'bg-white text-[#888796]'
+                    }`}
                   >
                     {p.charAt(0).toUpperCase() + p.slice(1)}
                   </button>

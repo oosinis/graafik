@@ -90,6 +90,7 @@ export default function ShiftsPage() {
       console.error('Failed to update shift', err);
     } finally {
       setPendingDeleteId(null);
+      setShowModal(false);
     }
   };
 
