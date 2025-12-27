@@ -438,7 +438,7 @@ export function Generator({
                         {employee.name}
                       </p>
                       <p className="font-['Poppins:Regular',_sans-serif] text-[12px] tracking-[-0.24px] text-[#888796] leading-[12px]">
-                        {employee.employeeRole || 'No role'} • FTE{' '}
+                        {employee.role?.name || 'No role'} • FTE{' '}
                         {employee.workLoad || 0}
                       </p>
                     </div>
